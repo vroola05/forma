@@ -1,0 +1,51 @@
+import { Router } from './router.js';
+import { Environment } from './environment.js';
+import { Header } from './components/header.js';
+
+import { Auth } from './auth.js';
+import { Lang } from './util/lang.js';
+
+export class Main {
+
+    auth = new Auth();
+    routes = [];
+
+    constructor(routes = [], baseAddition = undefined) {
+
+        this.routes = routes;
+        if (baseAddition) {
+            if (baseAddition.charAt(0) === '/') {
+                baseAddition.splice(0, 1);
+            }
+
+            if (baseAddition.slice(-1) !== '/') {
+                baseAddition += '/';
+            }
+
+            Environment.base += baseAddition;
+        }
+
+        Router.setBase(Environment.base);
+
+        Lang.load().then(() => {
+
+            const header = new Header();
+            const headerDom = document.getElementById('header');
+            headerDom.appendChild(header.getContent());
+
+            this.setRoutes();
+        });
+    }
+
+    setRoutes() {
+        for (const route of this.routes) {
+            Router.registerRoute(route.path, route.page);
+        }
+        
+        window.addEventListener('popstate', () => {
+            Router.route(window.location.pathname);
+        });
+        Router.route(window.location.pathname);
+    }
+}
+window.Main = Main;

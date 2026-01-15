@@ -1,0 +1,121 @@
+package org.commonground.formbuilder.services;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.commonground.formbuilder.config.FileStorageProperties;
+import org.commonground.formbuilder.model.FormList;
+import org.commonground.formbuilder.model.FormWrapper;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Service
+public class FormServiceLocal implements FormService {
+
+    private final Path storageLocation;
+
+    public FormServiceLocal(FileStorageProperties properties) {
+        this.storageLocation = Paths.get(properties.getPath()).toAbsolutePath().normalize();
+        try {
+            Files.createDirectories(this.storageLocation);
+        } catch (IOException e) {
+            throw new RuntimeException("Kan opslaglocatie niet aanmaken!", e);
+        }
+    }
+
+    public String save(FormWrapper formWrapper) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            if (formWrapper.getFileName() != null && !formWrapper.getFileName().equals(formWrapper.getForm().getName() + ".json")) {
+                Path oldFile = this.storageLocation.resolve(formWrapper.getFileName());
+                if (Files.exists(oldFile)) {
+                    Files.delete(oldFile);
+                }
+            }
+            formWrapper.setFileName(formWrapper.getForm().getName() + ".json");
+            Path targetLocation = this.storageLocation.resolve(formWrapper.getFileName());
+
+            Files.writeString(targetLocation, mapper.writeValueAsString(formWrapper), java.nio.charset.StandardCharsets.UTF_8);
+            return targetLocation.toString();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Fout bij parsen van JSON bestand", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Fout bij opslaan van JSON bestand", e);
+        }
+    }
+
+    public FormWrapper get(String formName) {
+        
+        try {
+            if (formName == null || !formName.matches("^[a-zA-Z0-9_-]{1,200}$")) {
+                throw new RuntimeException("Form name is leeg");
+            }
+
+            Path path =Path.of(this.storageLocation + "/" + formName + ".json");
+            if (Files.exists(path)) {
+                String jsonContent = Files.readString(path);
+                return parseFormWrapper(jsonContent);
+            } else {
+                throw new RuntimeException("Form file bestaat niet: " + path.toString());
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            // throw new RuntimeException("Fout bij parsen van JSON bestand", e);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // throw new RuntimeException("Fout bij ophalen van bestandslijst", e);
+        }
+        System.out.println("Ergens een error ");
+        return null;
+    }
+
+    public static FormWrapper parseFormWrapper(String input) throws JsonMappingException, JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        FormWrapper formrapper = mapper.readValue(input, FormWrapper.class);
+        return formrapper;
+    }
+
+    
+    public List<FormList> list() {
+        List<FormList> formLists = new ArrayList<>();
+        try {
+            
+            List<Path> paths = Files.list(this.storageLocation).toList();
+            for (Path path : paths) {
+                if (Files.isDirectory(path)) {
+                    continue;
+                }
+                if (!path.getFileName().toString().endsWith(".json")) {
+                    continue;
+                }
+                ObjectMapper mapper = new ObjectMapper();
+                
+                String jsonContent = Files.readString(path);
+                FormWrapper formWrapper = mapper.readValue(jsonContent, FormWrapper.class);
+                System.out.println("Jaja: " + path.toString());
+                FormList formList = new FormList(
+                    formWrapper.getForm().getName(),
+                    formWrapper.getForm().getLabel(),
+                    formWrapper.isActive());
+
+                formLists.add(formList);
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            // throw new RuntimeException("Fout bij parsen van JSON bestand", e);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // throw new RuntimeException("Fout bij ophalen van bestandslijst", e);
+        }
+        return formLists;
+    }
+
+    
+}

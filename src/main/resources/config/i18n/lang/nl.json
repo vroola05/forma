@@ -1,0 +1,54 @@
+{
+    "generic.lang": "Nederlands",
+    "generic.title": "Formulier Bouwer",
+    "generic.search": "Zoeken...",
+    
+    "generic.not.logged.in": "Niet ingelogd",
+    "generic.cancel": "Annuleren",
+    "generic.save": "Opslaan",
+
+    "header.home": "Home",
+
+    "overview.title": "Overzicht",
+    "overview.list.name": "Naam",
+    "overview.list.title": "Titel",
+    "overview.list.active": "Actief",
+    "overview.list.last.modified": "Laatst Gewijzigd",
+
+    "form.name": "Naam formulier",
+    "tab.new": "Nieuwe tab ",
+
+    "prop.option.value": "Waarde",
+    "prop.option.text": "Tekst",
+    "prop.list.text": "Waarde",
+
+    "prop.header": "Eigenschappen",
+    "prop.unknown.field": "Onbekend veld",
+
+    "prop.name.label": "Naam",
+    "prop.label.label": "Label",
+    "prop.class.label": "Css class",
+    "prop.metadata.label": "Metadata",
+
+    "prop.placeholder.label": "Placeholder",
+    "prop.readonly.label": "Alleen lezen",
+    "prop.required.label": "Verplicht",
+    "prop.minLength.label": "Minimale lengte",
+    "prop.maxLength.label": "Maximale lengte",
+    "prop.value.label": "Standaard waarde",
+    "prop.options.label": "Opties",
+    "prop.summary.confirmation.label": "Bevestiging overzichtspagina",
+
+    "prop.minSize.label": "Minimaal aantal rijen",
+    "prop.maxSize.label": "Maximaal aantal rijen",
+    "prop.layout.label": "Layout",
+    "prop.layout.label.list": "Lijst",
+    "prop.layout.label.table": "Tabel",
+
+    "prop.name.message": "Het veld Naam heeft de volgende specificaties:<br> - Het veld is verplicht<br /> - Maximaal 200 tekens.<br /> - Het Het veld Id mag de volgende tekens bevatten (a-z 0-9 of _ -).",
+    "prop.label.message": "Het veld Label heeft een maximum van 200 tekens.",
+    "prop.class.message": "Het veld Css class heeft een maximum van 200 tekens.",
+    "prop.metadata.message": "Het veld Metadata heeft een maximum van 200 tekens.",
+
+    "error.check.fields": "'Er is iets fout gegaan. Controleer of alle velden goed zijn ingevuld.'"
+}

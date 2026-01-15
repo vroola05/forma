@@ -1,0 +1,54 @@
+{
+    "generic.lang": "English",
+    "generic.title": "Form Builder",
+    "generic.search": "Search...",
+
+    "generic.not.logged.in": "Logged out",
+    "generic.cancel": "Cancel",
+    "generic.save": "Save",
+
+    "header.home": "Home",
+
+    "overview.title": "Overview",
+    "overview.list.name": "Name",
+    "overview.list.title": "Title",
+    "overview.list.active": "Active",
+    "overview.list.last.modified": "Last Modified",
+
+    "form.name": "Formname",
+    "tab.new": "New tab",
+
+    "prop.option.value": "Value",
+    "prop.option.text": "Text",
+    "prop.list.text": "Value",
+
+    "prop.header": "Properties",
+    "prop.unknown.field": "Unknown field",
+
+    "prop.name.label": "Name",
+    "prop.label.label": "Label",
+    "prop.class.label": "Css class",
+    "prop.metadata.label": "Metadata",
+
+    "prop.placeholder.label": "Placeholder",
+    "prop.readonly.label": "Readonly",
+    "prop.required.label": "Required",
+    "prop.minLength.label": "Min length",
+    "prop.maxLength.label": "Max length",
+    "prop.value.label": "Default value",
+    "prop.options.label": "Options",
+    "prop.summary.confirmation.label": "Confirmation summary page",
+
+    "prop.minSize.label": "Min row amount",
+    "prop.maxSize.label": "Max row amount",
+    "prop.layout.label": "Layout",
+    "prop.layout.label.list": "List",
+    "prop.layout.label.table": "Table",
+
+    "prop.name.message": "Name has is required, can have 200 characters and can have only these characters (a-z 0-9 of _ -).",
+    "prop.label.message": "Label can have a maximum of 200 characters.",
+    "prop.class.message": "Css is required and can have 200 character.",
+    "prop.metadata.message": "Metadata is required and can have 200 characters",
+
+    "error.check.fields": "'Something went wrong. Check if all fields are correct.'"
+}

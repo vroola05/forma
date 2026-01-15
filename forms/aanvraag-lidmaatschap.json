@@ -1,0 +1,252 @@
+{
+    "active": true,
+    "fileName": "aanvraag-lidmaatschap.json",
+    "form": {
+        "name": "aanvraag-lidmaatschap",
+        "label": "Aanvraagformulier lidmaatschap",
+        "classes": "",
+        "metadata": [],
+        "summaryConfirmation": [
+            "Ik verklaar dat ik het formulier naar waarheid heb ingevuld"
+        ],
+        "tabs": [
+            {
+                "name": "uw-gegevens",
+                "label": "Uw gegevens",
+                "classes": "",
+                "metadata": [
+                    "metadata1",
+                    "metadata2"
+                ],
+                "formGroups": [
+                    {
+                        "name": "naam",
+                        "label": "Naw gegevens",
+                        "classes": "",
+                        "metadata": [],
+                        "fields": [
+                            {
+                                "id": null,
+                                "name": "voornaam",
+                                "label": "Voornaam",
+                                "type": "text",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "values": null
+                            },
+                            {
+                                "id": null,
+                                "name": "tussenvoegsel",
+                                "label": "Tussenvoegsel",
+                                "type": "text",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": false,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "values": null
+                            },
+                            {
+                                "id": null,
+                                "name": "achternaam",
+                                "label": "Achternaam",
+                                "type": "text",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "values": null
+                            }
+                        ],
+                        "type": "form-group"
+                    },
+                    {
+                        "name": "adres",
+                        "label": "Adresgegevens",
+                        "classes": "",
+                        "metadata": [],
+                        "fields": [
+                            {
+                                "id": null,
+                                "name": "straat",
+                                "label": "Straat",
+                                "type": "text",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "values": null
+                            },
+                            {
+                                "id": null,
+                                "name": "huisnummer",
+                                "label": "Huisnummer",
+                                "type": "number",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "values": null
+                            },
+                            {
+                                "id": null,
+                                "name": "postcode",
+                                "label": "Postcode",
+                                "type": "text",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "values": null
+                            },
+                            {
+                                "id": null,
+                                "name": "woonplaats",
+                                "label": "Woonplaats",
+                                "type": "text",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "values": null
+                            }
+                        ],
+                        "type": "form-group",
+                        "condition": {
+                            "var1":"$.aanvraag-lidmaatschap.uw-gegevens.naam.voornaam",
+                            "operator":"eq",
+                            "var2":"test"
+                        }
+                    }
+                ],
+                "type": "tab"
+            },
+            {
+                "name": "motivatie",
+                "label": "Motivatie",
+                "classes": "",
+                "metadata": [],
+                "formGroups": [
+                    {
+                        "name": "motivatie",
+                        "label": "Motivatie",
+                        "classes": "",
+                        "metadata": [],
+                        "fields": [
+                            {
+                                "id": null,
+                                "name": "postcode",
+                                "label": "Wat is jouw motivatie",
+                                "type": "text",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "values": null
+                            }
+                        ],
+                        "type": "form-group"
+                    }
+                ],
+                "type": "tab",
+                "condition": {
+                    "var1":"$.aanvraag-lidmaatschap.uw-gegevens.naam.voornaam",
+                    "operator":"eq",
+                    "var2":"test"
+                }
+            },
+            {
+                "name": "contactgegevens",
+                "label": "Contactgegevens",
+                "classes": "",
+                "metadata": [],
+                "formGroups": [
+                    {
+                        "name": "contact",
+                        "label": "Contactgegevens",
+                        "classes": "",
+                        "metadata": [],
+                        "fields": [
+                            {
+                                "id": null,
+                                "name": "email",
+                                "label": "Email",
+                                "type": "text",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "values": null
+                            },
+                            {
+                                "id": null,
+                                "name": "telefoon",
+                                "label": "Telefoon",
+                                "type": "text",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": false,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "values": null
+                            }
+                        ],
+                        "type": "form-group"
+                    }
+                ],
+                "type": "tab"
+            }
+        ],
+        "type": "form"
+    }
+}

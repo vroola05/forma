@@ -1,0 +1,82 @@
+package org.commonground.formbuilder.model.form;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.commonground.formbuilder.model.form.condition.Condition;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class TextField implements Field {
+    private String id;
+    private String name;
+    private String label;
+
+    private FieldType type;
+    private String placeholder;
+    private String classes;
+    private Boolean readonly;
+    private Boolean required;
+    private Integer minlength;
+    private Integer maxlength;
+    private String value;
+    
+    private List<String> metadata;
+
+    private Map<String, String> data;
+    private Condition condition;
+
+    @JsonProperty("type")
+    public void setTypeFromJson(String typeValue) {
+        this.type = FieldType.fromValue(typeValue);
+    }
+
+    @Override
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public List<Option> getValues() {
+        return null;
+    }
+
+    @Override
+    public void setValues(List<Option> values) {
+    }
+
+    @Override
+    public Field cloneField() {
+        return new TextField(id, name, label, type, placeholder, classes, readonly, required, minlength, maxlength, value, metadata, data, condition);
+    }
+
+    @Override
+    public Map<String, String> getData() {
+        if (this.data == null) {
+            this.data = new HashMap<>();
+        }
+        return this.data;
+    }
+
+    @Override
+    public void setData(Map<String, String> data) {
+        this.data = data;
+    }
+
+    @Override
+    public List<Field> getFields() {
+        return null;
+    }
+
+    
+}
