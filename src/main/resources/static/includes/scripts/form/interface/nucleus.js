@@ -38,7 +38,6 @@ export class Nucleus {
      */
     afterFormInit() {
         if (this.showCondition !== undefined) {
-            console.log(this);
             this.showCondition.eval();
         }
     }

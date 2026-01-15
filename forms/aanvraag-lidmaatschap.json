@@ -31,7 +31,7 @@
                                 "label": "Voornaam",
                                 "type": "text",
                                 "placeholder": "",
-                                "classes": "",
+                                "classes": "voornaam",
                                 "readonly": false,
                                 "required": true,
                                 "minlength": null,
@@ -147,12 +147,135 @@
                                 "values": null
                             }
                         ],
-                        "type": "form-group",
-                        "condition": {
-                            "var1":"$.aanvraag-lidmaatschap.uw-gegevens.naam.voornaam",
-                            "operator":"eq",
-                            "var2":"test"
-                        }
+                        "type": "form-group"
+                    },
+                    {
+                        "name": "test-fields",
+                        "label": "Test set aan gegevens",
+                        "classes": "",
+                        "metadata": [],
+                        "fields": [
+                            {
+                                "id": null,
+                                "name": "number",
+                                "label": "Number",
+                                "type": "number",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "values": null
+                            },
+                            {
+                                "id": null,
+                                "name": "valuta",
+                                "label": "Valuta",
+                                "type": "valuta",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "values": null
+                            },
+                            {
+                                "id": null,
+                                "name": "date",
+                                "label": "Date",
+                                "type": "date",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "values": null
+                            },
+                            {
+                                "id": null,
+                                "name": "textarea",
+                                "label": "Textarea",
+                                "type": "textarea",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "values": null
+                            },
+                            {
+                                "id": null,
+                                "name": "select",
+                                "label": "Select",
+                                "type": "select",
+                                "placeholder": "Selecteer een item",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "value": null,
+                                "metadata": [],
+                                "data": {},
+                                "options": [
+                                    {"value": "1", "text": "Value 1"},
+                                    {"value": "2", "text": "Value 2"},
+                                    {"value": "3", "text": "Value 3"}
+                                ]
+                            },
+                            {
+                                "id": null,
+                                "name": "checkbox",
+                                "label": "Checkbox",
+                                "type": "checkbox",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "value": null,
+                                "metadata": [],
+                                "data": {},
+                                "options": [
+                                    {"value": "1", "text": "Value 1"},
+                                    {"value": "2", "text": "Value 2"},
+                                    {"value": "3", "text": "Value 3"}
+                                ]
+                            },
+                            {
+                                "id": null,
+                                "name": "radio",
+                                "label": "Radio",
+                                "type": "radio",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "value": null,
+                                "metadata": [],
+                                "data": {},
+                                "options": [
+                                    {"value": "1", "text": "Value 1"},
+                                    {"value": "2", "text": "Value 2"},
+                                    {"value": "3", "text": "Value 3"}
+                                ]
+                            }
+
+                        ],
+                        "type": "form-group"
                     }
                 ],
                 "type": "tab"

@@ -199,7 +199,7 @@ body {
 
     .tab-content-container {
         display: inline-block;
-        min-width: 768px;
+        width: 100%;
         overflow-x: auto;
     }
 

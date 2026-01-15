@@ -21,8 +21,10 @@ export class FormGroup extends Nucleus {
         this.createElement(formGroupData.name, formGroupData.label, formGroupData.classes);
 
         const formInputKeyValue = sessionStorage.getItem(FormGroup.page + '-' + this.name);
+
         if (formInputKeyValue) {
             this.formInputKeyValue = JSON.parse(formInputKeyValue);
+            console.log('this.formInputKeyValue', this.formInputKeyValue);
         }
 
         formGroupData.fields.forEach(fieldData => {
@@ -106,10 +108,9 @@ export class FormGroup extends Nucleus {
         this.formDomElements.append(field.getContent())
 
         // Kijk of er al een waarde in de sessionStorage staat voor dit formulier en deze field.
-        if (field.name in this.formInputKeyValue) {
-            if (field.type != 'repeating-group') {
-                field.setValue(this.formInputKeyValue[field.name], false);
-            }
+        if (field.name in this.formInputKeyValue && field.type != 'repeating-group') {
+            field.setValue(this.formInputKeyValue[field.name], false);
+            console.log(field.name, this.formInputKeyValue[field.name]);
         }
         
         field.afterInit();

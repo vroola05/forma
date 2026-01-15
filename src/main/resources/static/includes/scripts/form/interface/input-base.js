@@ -1,6 +1,8 @@
 import { Nucleus } from './nucleus.js';
 
 export class InputNucleus extends Nucleus {
+    content = document.createElement('div');
+    labelElement = document.createElement('label');
 
     value = '';
     id = '';
@@ -22,6 +24,27 @@ export class InputNucleus extends Nucleus {
         if (!label) {
             throw new Error('Label is a required parameter');
         }
+    }
+
+    createInput(inputElement) {
+        this.content.className = 'mb-2 row ' + (!this.classes ? '' : this.classes);
+
+        // Label
+        this.labelElement.className = 'col-sm-4 col-form-label';
+        this.labelElement.htmlFor = this.name;
+        this.labelElement.innerHTML = this.label;
+
+        // Input wrapper
+        const inputWrapper = document.createElement('div');
+        inputWrapper.className = 'col-sm-8';
+
+        this.feedbackElement = document.createElement('div');
+        this.feedbackElement.className = 'invalid-feedback';
+
+        inputWrapper.appendChild(inputElement);
+        inputWrapper.appendChild(this.feedbackElement);
+        this.content.appendChild(this.labelElement);
+        this.content.appendChild(inputWrapper);
     }
 
     hasOptions() {
@@ -46,12 +69,16 @@ export class InputNucleus extends Nucleus {
     setValue(value, noCallback = false) {
         this.value = value;
         this.inputElement.value = value;
+        this.valueChanged(noCallback);    
+        return this;
+    }
+
+    valueChanged(noCallback, value = undefined) {
         if (!noCallback && this.callback.length > 0) {
             this.callback.forEach( callback => {
-                callback(this.name, value, this);
+                callback(this.name, value ? value : this.value, this);
             });
         }
-        return this;
     }
 
     setData(data) {

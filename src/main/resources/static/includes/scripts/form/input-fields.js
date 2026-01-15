@@ -1,4 +1,3 @@
-import { Auth } from '../auth.js';
 import { InputNucleus } from './interface/input-base.js';
 
 /**
@@ -14,32 +13,12 @@ export class LabelField extends InputNucleus {
     }
 
     createElement() {
-        this.content = document.createElement('div');
-        this.content.className = 'mb-2 row';
-
-        // Label
-        this.labelElement = document.createElement('label');
-        this.labelElement.className = 'col-sm-4 col-form-label';
-        this.labelElement.htmlFor = this.name;
-        this.labelElement.innerHTML = this.label;
-
-        // Input wrapper
-        const inputWrapper = document.createElement('div');
-        inputWrapper.className = 'col-sm-8';
-
         // Input
         this.inputElement = document.createElement('div');
         this.inputElement.id = this.name;
         
         this.inputElement.innerHTML = this.getValue();
-        
-        this.feedbackElement = document.createElement('div');
-        this.feedbackElement.className = 'invalid-feedback';
-
-        inputWrapper.appendChild(this.inputElement);
-        inputWrapper.appendChild(this.feedbackElement);
-        this.content.appendChild(this.labelElement);
-        this.content.appendChild(inputWrapper);
+        this.createInput(this.inputElement);
     }
 
     setType(type) {
@@ -92,38 +71,19 @@ export class TextField extends InputNucleus {
     }
 
     createElement() {
-        this.content = document.createElement('div');
-        this.content.className = 'mb-2 row';
-
-        // Label
-        this.labelElement = document.createElement('label');
-        this.labelElement.className = 'col-sm-4 col-form-label';
-        this.labelElement.htmlFor = this.name;
-        this.labelElement.innerHTML = this.label;
-
-        // Input wrapper
-        const inputWrapper = document.createElement('div');
-        inputWrapper.className = 'col-sm-8';
-
         // Input
         this.inputElement = document.createElement('input');
         this.inputElement.className = 'form-control';
         this.inputElement.name = this.name;
         this.inputElement.id = this.name;
-        
         this.inputElement.value = this.getValue();
         
-        this.feedbackElement = document.createElement('div');
-        this.feedbackElement.className = 'invalid-feedback';
-
+        
         this.inputElement.addEventListener('change', (e) => {
             this.setValue(e.target.value);
         });
 
-        inputWrapper.appendChild(this.inputElement);
-        inputWrapper.appendChild(this.feedbackElement);
-        this.content.appendChild(this.labelElement);
-        this.content.appendChild(inputWrapper);
+        this.createInput(this.inputElement);
     }
 
     setType(type) {
@@ -142,6 +102,7 @@ export class TextField extends InputNucleus {
         }
         return this;
     }
+
     setMaxLength(length, message = 'Maximale lengte is ' + length) {
         if (length === null || length === undefined) {
             this.maxLength = undefined;
@@ -198,8 +159,6 @@ export class HiddenField extends InputNucleus {
     }
 
     createElement() {
-       
-
         // Input
         this.inputElement = document.createElement('input');
         this.inputElement.type = 'hidden';
@@ -208,9 +167,6 @@ export class HiddenField extends InputNucleus {
         this.inputElement.value = this.getValue();
     }
 
-    setId(id) {
-        
-    }
     setType(type) {
         this.type = type;
         this.inputElement.type = type;
@@ -301,19 +257,6 @@ export class TextAreaField extends InputNucleus {
     }
 
     createElement() {
-        this.content = document.createElement('div');
-        this.content.className = 'mb-2 row';
-
-        // Label
-        this.labelElement = document.createElement('label');
-        this.labelElement.className = 'col-sm-4 col-form-label';
-        this.labelElement.htmlFor = this.name;
-        this.labelElement.textContent = this.label;
-
-        // Input wrapper
-        const inputWrapper = document.createElement('div');
-        inputWrapper.className = 'col-sm-8';
-
         // Input
         this.inputElement = document.createElement('textarea');
         this.inputElement.className = 'form-control';
@@ -322,17 +265,11 @@ export class TextAreaField extends InputNucleus {
         
         this.inputElement.value = this.getValue();
         
-        this.feedbackElement = document.createElement('div');
-        this.feedbackElement.className = 'invalid-feedback';
-
         this.inputElement.addEventListener('change', (e) => {
             this.setValue(e.target.value);
         });
+        this.createInput(this.inputElement);
 
-        inputWrapper.appendChild(this.inputElement);
-        inputWrapper.appendChild(this.feedbackElement);
-        this.content.appendChild(this.labelElement);
-        this.content.appendChild(inputWrapper);
     }
 
     setMinLength(length, message = 'Minimale lengte is ' + length) {
@@ -345,6 +282,7 @@ export class TextAreaField extends InputNucleus {
         }
         return this;
     }
+
     setMaxLength(length, message = 'Maximale lengte is ' + length) {
         if (length === null || length === undefined) {
             this.maxLength = undefined;
@@ -392,8 +330,6 @@ export class TextAreaField extends InputNucleus {
  * Selectbox
  */
 export class SelectField extends InputNucleus {
-    changeColor = false;
-
     constructor(name, label, classes) {
         super(name, label);
         this.type = 'text';
@@ -402,19 +338,6 @@ export class SelectField extends InputNucleus {
     }
 
     createElement() {
-        this.content = document.createElement('div');
-        this.content.className = 'mb-2 row ' + (!this.classes ? '' : this.classes);
-
-        // Label
-        this.labelElement = document.createElement('label');
-        this.labelElement.className = 'col-sm-4 col-form-label';
-        this.labelElement.htmlFor = this.name;
-        this.labelElement.textContent = this.label;
-
-        // Input wrapper
-        const inputWrapper = document.createElement('div');
-        inputWrapper.className = 'col-sm-8';
-
         // Input
         this.inputElement = document.createElement('select');
         this.inputElement.className = 'form-select';
@@ -422,19 +345,9 @@ export class SelectField extends InputNucleus {
         this.inputElement.id = this.name;
         this.inputElement.placeholder = this.placeholder;
 
-        this.feedbackElement = document.createElement('div');
-        this.feedbackElement.className = 'invalid-feedback';
-
-        if (this.classes && this.classes.includes('select-color')) {
-            this.changeColor = true;
-        }
-
         this.inputElement.onchange = (e) => { this.onChange(e) };
-
-        inputWrapper.appendChild(this.inputElement);
-        inputWrapper.appendChild(this.feedbackElement);
-        this.content.appendChild(this.labelElement);
-        this.content.appendChild(inputWrapper);
+        
+        this.createInput(this.inputElement);
     }
 
     onChange(e) {
@@ -449,10 +362,12 @@ export class SelectField extends InputNucleus {
         if (!this.inputElement) {
             throw new Error('Input element is not created yet. Call createElement() first.');
         }
+        
         const option = document.createElement('option');
         option.value = value;
         option.textContent = text;
         this.inputElement.appendChild(option);
+
         return this;
     }
 
@@ -489,9 +404,11 @@ export class SelectField extends InputNucleus {
     }
 
     setValue(value, noCallback = false) {
+        
         if (value=== undefined || value === null) {
             this.value = '';
             this.inputElement.selectedIndex = -1;
+            
         } else if (typeof value === 'string') {
             this.inputElement.value = value;
             const opt = this.inputElement.options[this.inputElement.selectedIndex];
@@ -502,27 +419,9 @@ export class SelectField extends InputNucleus {
             this.value = value;
             this.inputElement.value = value.value;
         }
-        if (this.callback) {
-            this.callback(this.name, this.value);
-        }
 
-        if (this.changeColor) {
-            switch(this.inputElement.value) {
-                case '1':
-                    this.inputElement.style.setProperty("background-color", "#45b667ff", "important");
-                    break;
-                case '2':
-                    this.inputElement.style.setProperty("background-color", "#ec931eff", "important");
-                    break;
-                case '3':
-                    this.inputElement.style.setProperty("background-color", "#ff3366", "important");
-                    break;
-                default:
-                    this.inputElement.style.setProperty("background-color", "");
-                    break;
+        this.valueChanged(noCallback);
 
-            }
-        }
         return this;
     }
 
@@ -541,7 +440,6 @@ export class SelectField extends InputNucleus {
         selectField.minLength = this.minLength;
         selectField.maxLength = this.maxLength;
         selectField.validators = this.validators;
-        selectField.changeColor = this.changeColor;
         selectField.data = this.data;
         selectField.setValue(this.value);
         return selectField;
@@ -564,35 +462,15 @@ export class RadioField extends InputNucleus {
      * 
      */
     createElement() {
-        this.content = document.createElement('div');
-        this.content.className = 'mb-2 row field-wrapper' + (this.classes ? ' ' + this.classes : '');
-
-        // Label
-        this.labelElement = document.createElement('label');
-        this.labelElement.className = 'col-sm-4 col-form-label';
-        this.labelElement.htmlFor = this.name;
-        this.labelElement.textContent = this.label;
-
-        // Input wrapper
-        const inputWrapper = document.createElement('div');
-        inputWrapper.className = 'col-sm-8';
+        
+        // this.content.className = 'mb-2 row field-wrapper' + (this.classes ? ' ' + this.classes : '');
 
         this.inputElement = document.createElement('div');
         this.inputElement.className = 'radio-input-wrapper';
-
-        this.feedbackElement = document.createElement('div');
-        this.feedbackElement.className = 'invalid-feedback';
-
-        inputWrapper.appendChild(this.inputElement);
-        inputWrapper.appendChild(this.feedbackElement);
-        this.content.appendChild(this.labelElement);
-        this.content.appendChild(inputWrapper);
+        this.createInput(this.inputElement);
     }
 
     setReadonly(readonly) {
-        if (!Auth.inRoles(['ROLE_WRITE', 'ROLE_ADMIN'])) {
-            readonly = true;
-        }
         if (readonly === undefined) {
             readonly = false;
         }
@@ -685,9 +563,7 @@ export class RadioField extends InputNucleus {
     setInputValue(value, noCallback = false) {
         this.value = value;
         
-        if (!noCallback && this.callback) {
-            this.callback(this.name, this.value);
-        }
+        this.valueChanged(noCallback);
 
         return this;
     }
@@ -713,9 +589,8 @@ export class RadioField extends InputNucleus {
             }
         });
 
-        if (!noCallback && this.callback) {
-            this.callback(this.name, this.value);
-        }
+        this.valueChanged(noCallback);
+        
         return this;
     }
 
@@ -796,29 +671,11 @@ export class CheckboxField extends InputNucleus {
      * 
      */
     createElement() {
-        this.content = document.createElement('div');
-        this.content.className = 'mb-2 row field-wrapper' + (this.classes ? ' ' + this.classes : '');
-
-        // Label
-        this.labelElement = document.createElement('label');
-        this.labelElement.className = 'col-sm-4 col-form-label';
-        this.labelElement.htmlFor = this.name;
-        this.labelElement.textContent = this.label;
-
-        // Input wrapper
-        const inputWrapper = document.createElement('div');
-        inputWrapper.className = 'col-sm-8';
-
+        // this.content.className = 'mb-2 row field-wrapper' + (this.classes ? ' ' + this.classes : '');
         this.inputElement = document.createElement('div');
         this.inputElement.className = 'checkbox-input-wrapper';
 
-        this.feedbackElement = document.createElement('div');
-        this.feedbackElement.className = 'invalid-feedback';
-
-        inputWrapper.appendChild(this.inputElement);
-        inputWrapper.appendChild(this.feedbackElement);
-        this.content.appendChild(this.labelElement);
-        this.content.appendChild(inputWrapper);
+        this.createInput(this.inputElement);
     }
 
     /**
@@ -868,7 +725,7 @@ export class CheckboxField extends InputNucleus {
         this.inputElement.appendChild(checkboxElementContainer);
 
         if (checked) {
-            this.setValue({value, text});
+            this.setValue([{value, text}], true);
         }
         return this;
     }
@@ -905,11 +762,8 @@ export class CheckboxField extends InputNucleus {
 
         this.values.push(opt);
 
-        if (!noCallback && this.callback) {
-            this.callback(this.name, this.values);
-        }
-        
-        // this.value = value;
+        console.log('addInputValue', this.values);
+        this.valueChanged(noCallback, this.values);
 
         return this;
     }
@@ -921,9 +775,8 @@ export class CheckboxField extends InputNucleus {
 
         this.values.splice(index, 1);
 
-        if (!noCallback && this.callback) {
-            this.callback(this.name, this.values);
-        }
+        console.log('removeInputValue', this.values);
+        this.valueChanged(noCallback, this.values);
 
         return this;
     }
@@ -931,21 +784,24 @@ export class CheckboxField extends InputNucleus {
     /**
      * 
      */
-    setValue(values, noCallback = false) {
-        if (!values) {
+    setValue(options, noCallback = false) {
+        if (!options) {
             return this;
         }
+        if (!Array.isArray(options)) {
+            return this;
+        }
+
         this.inputElements.forEach(input => {
-            
-            if (input.checkbox.value == values.value) {
+            const option = options.find(o => o.value === input.checkbox.value);
+            if (option) {
                 input.checkbox.checked = true;
-                this.values.push(values);
+                this.values.push(option);
             }
         });
 
-        if (!noCallback && this.callback) {
-            this.callback(this.name, this.value);
-        }
+        
+        this.valueChanged(noCallback, this.values);
         return this;
     }
 
@@ -1014,9 +870,6 @@ export class CheckboxField extends InputNucleus {
     }
 
     setReadonly(readonly) {
-        if (!Auth.inRoles(['ROLE_WRITE', 'ROLE_ADMIN'])) {
-            readonly = true;
-        }
         if (readonly === undefined) {
             readonly = false;
         }
