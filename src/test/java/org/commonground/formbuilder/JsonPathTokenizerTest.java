@@ -8,10 +8,10 @@ import java.util.List;
 
 import org.commonground.formbuilder.model.FormWrapper;
 import org.commonground.formbuilder.model.form.Field;
-import org.commonground.formbuilder.model.form.condition.JsonPathFinder;
-import org.commonground.formbuilder.model.form.condition.ConditionParser;
-import org.commonground.formbuilder.model.form.condition.JsonPathTokenizer;
 import org.commonground.formbuilder.services.FormServiceLocal;
+import org.commonground.formbuilder.util.condition.ConditionParser;
+import org.commonground.formbuilder.util.condition.JsonPathFinder;
+import org.commonground.formbuilder.util.condition.JsonPathTokenizer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

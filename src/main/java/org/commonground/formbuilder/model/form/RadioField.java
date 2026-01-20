@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.commonground.formbuilder.exceptions.FieldValidationException;
 import org.commonground.formbuilder.model.form.condition.Condition;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -82,5 +83,9 @@ public class RadioField implements Field {
     @Override
     public List<Field> getFields() {
         return null;
+    }
+
+    @Override
+    public void validate(Object value) throws FieldValidationException {
     }
 }

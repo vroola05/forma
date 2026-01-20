@@ -13,16 +13,16 @@ export class Tab extends Nucleus {
     constructor(tabData, onTabClick) {
         super(tabData.name, tabData.label);
 
+        this.type = tabData.type;
+
         if (tabData.condition) {
             this.setShowConditions(tabData.condition);
         }
-        
 
         if (onTabClick) {
             this.onTabClick = onTabClick;
         }
         
-
         this.createElement();
         
         if (tabData.formGroups) {

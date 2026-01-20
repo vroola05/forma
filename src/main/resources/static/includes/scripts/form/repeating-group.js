@@ -25,10 +25,9 @@ export class RepeatingGroup extends InputNucleus {
     id = '';
 
     constructor(name, label, classes = '', layout = '') {
-        this.name = name;
-        this.label = label;
+        super(name, label);
+        
         this.layout = layout;
-
         this.createElement(classes);
         this.setId(name)
     }

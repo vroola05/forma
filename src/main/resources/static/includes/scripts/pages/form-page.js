@@ -69,11 +69,9 @@ export class FormPage extends Page {
                 }
                 
                 this.formWrapper = formWrapper;
-                
                 this.setTitle(this.formWrapper.form.label);
 
                 this.form = FormRenderer.createForm(this.formWrapper.form);
-                console.log('form geladen');
                 this.pageContentContainer.append(this.form.getContent());
 
                 this.footer = new Footer();
@@ -82,9 +80,12 @@ export class FormPage extends Page {
                 const formService = FormService.getInstance();
                 formService.setForm(this.form);
                 
-                const fields = formService.getFields();
-                for (const field of fields) {
-                    field.afterFormInit();
+                const fields = formService.getNucleus();
+
+                // Logic that needs to be initialized after the form is loaded.
+                // For example the showconditions
+                for (let i=0; i < fields.length; i++) {
+                    fields[i].afterFormInit();
                 }
 
                 this.formLogic = new FormLogic(this.form, this.footer);

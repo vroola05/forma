@@ -10,6 +10,7 @@ export class Form {
         this.template = sessionStorage.getItem('template');
         this.name = form.name;
         this.label = form.label;
+        this.type = form.type;
         this.classes = form.classes;
         this.metadata = form.metadata || [];
         this.summaryConfirmation = form.summaryConfirmation || [];

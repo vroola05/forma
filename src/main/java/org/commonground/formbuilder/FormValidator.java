@@ -12,13 +12,14 @@ import org.commonground.formbuilder.model.form.Form;
 import org.commonground.formbuilder.model.form.FormGroup;
 
 import org.commonground.formbuilder.model.form.TabPage;
-import org.commonground.formbuilder.model.form.TextField;
+import org.commonground.formbuilder.model.form.condition.Condition;
+import org.commonground.formbuilder.util.condition.ConditionParser;
 import org.springframework.validation.FieldError;
 
 public class FormValidator {
     
 
-    public static void validate(Form definition, Form form) {
+    public static void validate(Form form, Form definition) {
         if (form.getName() == null && !form.getName().equals(definition.getName())) {
             throw new FormValidationException(List.of(
                         new FieldError(form.getName(), form.getName(),
@@ -29,52 +30,52 @@ public class FormValidator {
     }
 
     private static void validateTabPages(Form definition, Form form) {
-        for (TabPage tabPage : form.getTabs()) {
-            Optional<TabPage> tabPageDefinitionOptional = definition.getTab(tabPage.getName());
-            if (tabPageDefinitionOptional.isEmpty()) {
+        for (TabPage tabPageDef : definition.getTabs()) {
+            Optional<TabPage> tabPageOptional = form.getTab(tabPageDef.getName());
+            if (tabPageOptional.isEmpty()) {
                 throw new FormValidationException(List.of(
-                        new FieldError(form.getName(), tabPage.getName(),
-                                String.format("Het tabblad {} is niet gevonden", tabPage.getLabel()))));
-
+                        new FieldError(form.getName(), tabPageDef.getName(),
+                                String.format("Het tabblad {} is niet gevonden", tabPageDef.getLabel()))));
             }
 
-            TabPage tabPageDefinition = tabPageDefinitionOptional.get();
-            validateFormGroups(tabPageDefinition, tabPage);
-
+            if (checkShowConditions(form, tabPageDef.getCondition())) {
+                validateFormGroups(form, tabPageOptional.get(), tabPageDef);
+            }
         }
     }
 
-    private static void validateFormGroups(TabPage tabPageDefinition, TabPage tabPage) {
-        for (FormGroup formGroup : tabPage.getFormGroups()) {
-            Optional<FormGroup> formGroupDefinitionOptional = tabPageDefinition.getFormGroup(formGroup.getName());
-            if (formGroupDefinitionOptional.isEmpty()) {
+    private static void validateFormGroups(Form form, TabPage tabPage, TabPage tabPageDefinition) {
+        for (FormGroup formGroupDef : tabPageDefinition.getFormGroups()) {
+            Optional<FormGroup> formGroupOptional = tabPage.getFormGroup(formGroupDef.getName());
+            if (formGroupOptional.isEmpty()) {
                 throw new FormValidationException(List.of(
-                        new FieldError(tabPage.getName(), formGroup.getName(),
-                                String.format("De set {} is niet gevonden", formGroup.getLabel()))));
+                        new FieldError(tabPage.getName(), formGroupDef.getName(),
+                                String.format("De set {} is niet gevonden", formGroupDef.getLabel()))));
             }
 
-            FormGroup formGroupDefinition = formGroupDefinitionOptional.get();
-            validateFields(formGroupDefinition, formGroup);
+            if (checkShowConditions(form, formGroupDef.getCondition())) {
+                validateFields(form, formGroupOptional.get(), formGroupDef);
+            }
         }
     }
 
-    private static void validateFields(FormGroup formGroupDefinition, FormGroup formGroup) {
+    private static void validateFields(Form form, FormGroup formGroup, FormGroup formGroupDefinition) {
         List<FieldError> fieldErrors = new ArrayList<>();
 
-        for (Field field : formGroup.getFields()) {
-            Optional<Field> fieldDefinitionOptional = formGroupDefinition.getField(field.getName());
-            if (fieldDefinitionOptional.isEmpty()) {
+        for (Field fieldDef : formGroupDefinition.getFields()) {
+            Optional<Field> fieldOptional = formGroup.getField(fieldDef.getName());
+            if (fieldOptional.isEmpty()) {
                 throw new FormValidationException(List.of(
-                        new FieldError(formGroup.getName(), field.getName(),
+                        new FieldError(formGroup.getName(), fieldDef.getName(),
                                 String.format("Het veld {} is niet gevonden", formGroup.getName()))));
             }
 
-            Field fieldDefinition = fieldDefinitionOptional.get();
-            
-            try {
-                validateField(fieldDefinition, field);
-            } catch (FieldValidationException e) {
-                fieldErrors.add(new FieldError(formGroup.getName(), field.getName(), e.getMessage()));
+            if (checkShowConditions(form, fieldDef.getCondition())) {
+                try {
+                    validateField(fieldOptional.get(), fieldDef);
+                } catch (FieldValidationException e) {
+                    fieldErrors.add(new FieldError(formGroup.getName(), fieldDef.getName(), e.getMessage()));
+                }
             }
         }
 
@@ -84,29 +85,17 @@ public class FormValidator {
     }
 
     private static void validateField(Field fieldDefinition, Field field) throws FieldValidationException {
-            if (FieldType.REPEATING_GROUP.equals(field.getType())) {
+        if (FieldType.REPEATING_GROUP.equals(field.getType())) {
 
-            } else if (FieldType.TEXT.equals(field.getType())) {
-                validateTextField((TextField)fieldDefinition, field.getValue());
-            }
-
+        } else if (FieldType.TEXT.equals(field.getType())) {
+            fieldDefinition.validate(field.getValue());
+        }
     }
 
-    private static void validateTextField(TextField definition, String value) throws FieldValidationException {
-        if (value == null) {
-            value = "";
+    private static boolean checkShowConditions(Form form, Condition condition) {
+        if (condition != null) {
+            return ConditionParser.checkCondition(form, condition);
         }
-
-        if (definition.getRequired() != null && definition.getRequired() && value.isEmpty()) {
-            throw new FieldValidationException(String.format("Het veld {} is verplicht", definition.getLabel()));
-        }
-
-        if (definition.getMinlength() != null && definition.getMinlength() > 0 && value.length() < definition.getMinlength()) {
-            throw new FieldValidationException(String.format("Het minimum aantal tekens voor {} is {}", definition.getLabel(), definition.getMinlength()));
-        }
-
-        if (definition.getMaxlength() != null && definition.getMaxlength() < 0 && value.length() > definition.getMaxlength()) {
-            throw new FieldValidationException(String.format("Het maximum aantal tekens voor {} is {}", definition.getLabel(), definition.getMaxlength()));
-        }
+        return true;
     }
 }

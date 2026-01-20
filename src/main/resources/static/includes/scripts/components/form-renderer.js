@@ -8,31 +8,34 @@ export class FormRenderer {
     static getFormData(form) {
         return {
             name: form.name,
+            type: form.type,
             tabs: FormRenderer.#getTabsData(form)
         }
     }
     static #getTabsData(form) {
-        return form.tabContentItems.map(tabContent => {
+    return form.fields.filter(tabContent => tabContent.name !== 'summary').map(tabContent => {
             return {
                 name: tabContent.name,
                 label: tabContent.label,
+                type: tabContent.type,
                 formGroups: FormRenderer.#getFormGroupsData(tabContent)
             };
         });
     }
 
     static #getFormGroupsData(tabContent) {
-        return tabContent.formGroups.map(formGroup => {
+        return tabContent.getFields().map(formGroup => {
             return {
                 name: formGroup.name,
                 label: formGroup.label,
+                type: formGroup.type,
                 fields: FormRenderer.#getFieldsData(formGroup)
             }
         });
     }
 
     static #getFieldsData(formGroup) {
-        return formGroup.formInputFields.map(field => {
+        return formGroup.getFields().map(field => {
             if (field.type == 'repeating-group') {
                 return {
                     name: field.name,
@@ -88,10 +91,7 @@ export class FormRenderer {
 
     static createFields(fields) {
         const fieldsInstances = [];
-        console.log('a');
         fields.forEach(fieldData => {
-            console.log('a');
-            
             fieldsInstances.push(FormRenderer.createField(fieldData));
         });
         return fieldsInstances;

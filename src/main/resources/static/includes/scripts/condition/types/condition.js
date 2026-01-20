@@ -6,8 +6,4 @@ export class Condition {
     var2;
     conditions;
     logicalOperator;
-
-    getConditionType() {
-        return !this.conditions ? ConditionType.SIMPLE : ConditionType.COMPOSITE;
-    }
 }

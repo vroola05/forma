@@ -147,7 +147,37 @@
                                 "values": null
                             }
                         ],
-                        "type": "form-group"
+                        "type": "form-group",
+                        "condition": {
+                            "logicalOperator": "and",
+                            "conditions": [
+                                {
+                                    "var1":"$.aanvraag-lidmaatschap.uw-gegevens.naam.voornaam",
+                                    "operator":"eqi",
+                                    "var2":"test"
+                                },
+                                {
+                                    "logicalOperator": "and",
+                                    "conditions": [
+                                        {
+                                            "var1":"$.aanvraag-lidmaatschap.uw-gegevens.test-fields.select",
+                                            "operator":"eqi",
+                                            "var2":"1"
+                                        },
+                                        {
+                                            "var1":"$.aanvraag-lidmaatschap.uw-gegevens.naam.tussenvoegsel",
+                                            "operator":"eqi",
+                                            "var2":"the"
+                                        },
+                                        {
+                                            "var1":"$.aanvraag-lidmaatschap.uw-gegevens.test-fields.checkbox",
+                                            "operator":"eqi",
+                                            "var2":"rood"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
                     },
                     {
                         "name": "test-fields",
@@ -250,9 +280,9 @@
                                 "metadata": [],
                                 "data": {},
                                 "options": [
-                                    {"value": "1", "text": "Value 1"},
-                                    {"value": "2", "text": "Value 2"},
-                                    {"value": "3", "text": "Value 3"}
+                                    {"value": "groen", "text": "Groen"},
+                                    {"value": "geel", "text": "Geel"},
+                                    {"value": "rood", "text": "Rood"}
                                 ]
                             },
                             {

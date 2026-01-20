@@ -1,4 +1,4 @@
-package org.commonground.formbuilder.model.form.condition;
+package org.commonground.formbuilder.util.condition;
 
 import java.util.ArrayList;
 import java.util.List;

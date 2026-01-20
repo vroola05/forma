@@ -166,12 +166,13 @@ body {
 
     padding: calc(var(--default-space) * 2);
     margin: calc(var(--default-space) * 2) calc(var(--default-space) * 4);
+    margin-bottom: 0px;
+
     border: var(--border-grey) solid 1px;
-    border-radius: var(--default-space);
+    border-bottom: 0px;
+    border-radius: var(--default-space) var(--default-space) 0 0;
 
     background-color: var(--white);
-
-    box-shadow: var(--border-grey) 1px 2px 10px 0px;
 
     .tab-nav-container {
         .tab-nav-inner-container {
@@ -228,6 +229,7 @@ body {
     }
 }
 
+
 /**********************************************
  * Footer
  ******************************************** */
@@ -236,11 +238,19 @@ body {
     bottom: 0;      
     display: flex;
     flex-direction: row;
+    background-color: var(--bs-light);
 
-    padding: calc(var(--default-space) * 2);
+    border-top: var(--border-grey) solid 1px;
+
+
+    /* margin: calc(var(--default-space) * 2) calc(var(--default-space) * 4); */
 
     .footer {
         flex: auto;
+
+        margin: calc(var(--default-space) * 2) calc(var(--default-space) * 4);
+        
+
         text-align: center;
         .footer-btn {
             margin: 0 calc(var(--default-space) / 2);
@@ -253,9 +263,18 @@ body {
         
         .buttons-container-left {
             float: left;
+            padding-left: var(--default-space);
+
+            .footer-btn:first-child {
+                margin: 0;
+            }
         }
         .buttons-container-right {
             float: right;
+            padding-right: var(--default-space);
+            .footer-btn:not(.hidden):not(:has(~ .footer-btn:not(.hidden))) {
+                margin: 0!important;
+            }
         }
     }
     

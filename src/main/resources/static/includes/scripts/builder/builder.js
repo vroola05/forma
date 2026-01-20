@@ -181,7 +181,7 @@ export class BuilderPage extends Page {
 
     getForm(formName) {
         this.loader.classList.add('active');
-        Http.get(`${Router.base}/api/forms/${formName}`, {})
+        Http.get(`${Router.base}/api/builder/form/${formName}`, {})
             .then(formWrapper => {
                 this.loader.classList.remove('active');
                 if (!formWrapper) {
@@ -201,8 +201,9 @@ export class BuilderPage extends Page {
     }
 
     postForm(input) {
+        log
         this.loader.classList.add('active');
-        Http.post(`${Router.base}/api/forms`, input)
+        Http.post(`${Router.base}/api/builder/form`, input)
             .then(tab => {
                 this.loader.classList.remove('active');
                 if (!tab) {

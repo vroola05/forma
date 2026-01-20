@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Operator {
+    EQI("eqi"),
+    NEQI("neqi"),
     EQ("eq"),
     NEQ("neq"),
     GT("gt"),

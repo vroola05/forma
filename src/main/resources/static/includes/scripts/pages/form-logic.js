@@ -1,5 +1,7 @@
 import { Router } from '../router.js';
 import { FormButton } from '../components/form-button.js'; 
+import { FormRenderer } from '../components/form-renderer.js';
+import { Http } from '../util/http.js';
 
 export class FormLogic {
 
@@ -10,6 +12,7 @@ export class FormLogic {
     // Functie voor het klikken op de annuleerknop
     
     constructor(form, footer) {
+        
         this.form = form;
         this.footer = footer;
         // Initialiseer de logica hier
@@ -21,8 +24,15 @@ export class FormLogic {
         this.nextBtn = new FormButton('Volgende', 'footer-btn btn-primary next', null, () => {
             this.form.setTabNext();
         }, false);
-        this.summaryBtn = new FormButton('Overzicht', 'footer-btn btn-primary next', null, () => { }, false);
-        this.submitBtn = new FormButton('Verzenden', 'footer-btn btn-primary submit', null, () => { }, false);
+        this.summaryBtn = new FormButton('Overzicht', 'footer-btn btn-primary next', null, () => {
+            this.form.setTab(`summary`);
+        }, false);
+        this.submitBtn = new FormButton('Verzenden', 'footer-btn btn-primary submit', null, () => {
+            
+            Http.post(`${Router.base}/api/forms`, FormRenderer.getFormData(this.form), {})
+                        .then(formWrapper => {});
+
+        }, false);
 
         this.footer.addButtonLeft(this.cancelBtn);
         this.footer.addButtonLeft(this.previousBtn);
@@ -34,7 +44,6 @@ export class FormLogic {
         // This will update the URL when the tab changes
         this.form.setOnTabChange((tab, index, size) => {
             Router.route(`/page/form/${Router.lastParams.formName}/tab/${tab.name}`);
-
             this.setCurrentTabButtons(tab, index, size);
         });
 
@@ -43,9 +52,7 @@ export class FormLogic {
         // if ('tab' in Router.lastParams) {
         //     this.form.setTab(Router.lastParams.tab);
         // }
-
-        this.currentTab = Router.lastParams.tabName || this.form.tabContentItems[0].name;
-
+        this.currentTab = Router.lastParams.tabName ? Router.lastParams.tabName : this.form.fields[0].name;
         this.form.setTab(this.currentTab);
     }
 

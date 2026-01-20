@@ -37,7 +37,7 @@ export class FormService {
         this.fields.push(field);
     }
 
-    getFields(fields) {
+    getNucleus(fields) {
         return this.fields;
     }
 }

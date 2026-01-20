@@ -16,6 +16,8 @@ const LogicalOperator = Object.freeze({
 });
 
 const Operator = Object.freeze({
+    EQI: 'eqi',
+    NEQI: 'neqi',
     EQ: 'eq',
     NEQ: 'neq',
     GT: 'gt',

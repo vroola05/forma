@@ -1,6 +1,7 @@
-package org.commonground.formbuilder.model.form.condition;
+package org.commonground.formbuilder.util.condition;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.commonground.formbuilder.model.form.Field;
@@ -8,6 +9,8 @@ import org.commonground.formbuilder.model.form.Field;
 public class JsonPathFinder {
     public static List<Field> evalTokenized(String path, Field input) {
         List<Field> results = new ArrayList<>();
+        List<String> a = JsonPathTokenizer.tokenize(path.toCharArray());
+        System.out.println(Arrays.deepToString(a.toArray()));
         evaluateRecursive(JsonPathTokenizer.tokenize(path.toCharArray()), 0, input, results);
         return results;
     }
@@ -17,9 +20,9 @@ public class JsonPathFinder {
 
         // 1. Basis: we zijn aan het einde van het pad
         if (tokenIndex >= tokens.size() - 1) {
-            // if (token.equals(currentField.getName())) {
+            if (currentField.getName().equals(tokens.get(tokens.size() - 1))) {
                 results.add(currentField);
-            // }
+            }
             return;
         } else {
         }

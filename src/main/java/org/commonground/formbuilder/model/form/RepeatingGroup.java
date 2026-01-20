@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.commonground.formbuilder.exceptions.FieldValidationException;
 import org.commonground.formbuilder.model.form.condition.Condition;
 
 import lombok.AllArgsConstructor;
@@ -86,5 +87,9 @@ public class RepeatingGroup implements Field {
     @Override
     public void setData(Map<String, String> data) {
         
+    }
+
+    @Override
+    public void validate(Object value) throws FieldValidationException {
     }
 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.commonground.formbuilder.exceptions.FieldValidationException;
 import org.commonground.formbuilder.model.form.condition.Condition;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -78,5 +79,24 @@ public class TextField implements Field {
         return null;
     }
 
-    
+    @Override
+    public void validate(Object value) throws FieldValidationException {
+        if (value == null) {
+            value = "";
+        }
+
+        String valueStr = (String)value;
+
+        if (getRequired() != null && getRequired() && valueStr.isEmpty()) {
+            throw new FieldValidationException(String.format("Het veld {} is verplicht", getLabel()));
+        }
+
+        if (getMinlength() != null && getMinlength() > 0 && valueStr.length() < getMinlength()) {
+            throw new FieldValidationException(String.format("Het minimum aantal tekens voor {} is {}", getLabel(), getMinlength()));
+        }
+
+        if (getMaxlength() != null && getMaxlength() < 0 && valueStr.length() > getMaxlength()) {
+            throw new FieldValidationException(String.format("Het maximum aantal tekens voor {} is {}", getLabel(), getMaxlength()));
+        }
+    }
 }

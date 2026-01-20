@@ -7,7 +7,7 @@ export class Nucleus {
 
     name = '';
     label = '';
-    type = 'text';
+    type = '';
 
     classes = '';
     show = true;
@@ -22,6 +22,7 @@ export class Nucleus {
         
         this.name = name;
         this.label = label;
+
 
         FormService.getInstance().addNucleus(this);
     }

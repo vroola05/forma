@@ -3,6 +3,7 @@ package org.commonground.formbuilder.model.form;
 import java.util.List;
 import java.util.Map;
 
+import org.commonground.formbuilder.exceptions.FieldValidationException;
 import org.commonground.formbuilder.model.form.condition.Condition;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -51,4 +52,5 @@ public interface Field {
     Field cloneField();
 
     List<Field> getFields();
+    void validate(Object value) throws FieldValidationException;
 }
