@@ -29,6 +29,7 @@ public class SelectField implements Field {
     private String classes;
     private Boolean readonly;
     private Boolean required;
+    private Boolean show;
 
     private String value;
     private List<Option> values;
@@ -38,6 +39,7 @@ public class SelectField implements Field {
     private Map<String, String> data;
 
     private Condition condition;
+    
 
     @JsonProperty("type")
     public void setTypeFromJson(String typeValue) {
@@ -56,7 +58,7 @@ public class SelectField implements Field {
 
     @Override
     public Field cloneField() {
-        return new SelectField(id, name, label, type, placeholder, classes, readonly, readonly, value, cloneOptions(values), metadata, cloneOptions(options), data, condition);
+        return new SelectField(id, name, label, type, placeholder, classes, readonly, readonly, show, value, cloneOptions(values), metadata, cloneOptions(options), data, condition);
     }
 
     public List<Option> cloneOptions(List<Option> options) {
@@ -80,6 +82,16 @@ public class SelectField implements Field {
     @Override
     public void setData(Map<String, String> data) {
         this.data = data;
+    }
+
+    @Override
+    public void setShow(Boolean show) {
+        this.show = show;
+    }
+
+    @Override
+    public Boolean isShow() {
+        return this.show;
     }
 
     @Override

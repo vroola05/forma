@@ -31,6 +31,7 @@ public class RepeatingGroup implements Field {
     private List<Field> fields;
     private List<List<Field>> sets;
     private Condition condition;
+    private Boolean show;
 
     @Override
     public String getLabel() {
@@ -87,6 +88,16 @@ public class RepeatingGroup implements Field {
     @Override
     public void setData(Map<String, String> data) {
         
+    }
+
+    @Override
+    public void setShow(Boolean show) {
+        this.show = show;
+    }
+
+    @Override
+    public Boolean isShow() {
+        return this.show;
     }
 
     @Override

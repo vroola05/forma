@@ -30,6 +30,7 @@ public class Form implements Field {
     private List<TabPage> tabs;
     private FieldType type;
     private Condition condition;
+    private Boolean show;
     
     @JsonProperty("type")
     public void setTypeFromJson(String typeValue) {
@@ -119,6 +120,16 @@ public class Form implements Field {
     @Override
     public void setData(Map<String, String> data) {
         
+    }
+
+    @Override
+    public void setShow(Boolean show) {
+        this.show = show;
+    }
+
+    @Override
+    public Boolean isShow() {
+        return this.show;
     }
 
     @Override

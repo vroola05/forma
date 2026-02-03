@@ -334,6 +334,29 @@ option:disabled {
 
 
 .field-wrapper {
+    display:flex;
+    .field-wrapper-label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .field-wrapper-input {
+
+    }
+    &.layout-row {
+        flex-direction: row;
+
+        .field-wrapper-label {
+            width: calc(100% / 3);
+        }
+        .field-wrapper-input {
+            width: calc(100% / 3 * 2);
+        }
+    }
+    &.layout-column {
+        flex-direction: column;
+    }
+
     .radio-input-wrapper {
         display: flex;
         flex-direction: row;

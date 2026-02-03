@@ -1,7 +1,6 @@
 
 import { Lang } from '../../util/lang.js';
 export class BuilderFieldProperties {
-    
     properties = {};
     onPropertyLabelChanged = [];
 
@@ -33,7 +32,8 @@ export class BuilderFieldProperties {
             property.type !== 'number' &&
             property.type !== 'boolean' &&
             property.type !== 'options' &&
-            property.type !== 'list') {
+            property.type !== 'list' &&
+            property.type !== 'condition') {
             throw new Error('property.type moet een van de volgende waarden hebben: string, number, boolean');
         }
         if (
@@ -105,7 +105,6 @@ export class BuilderFieldProperties {
         const propertyLabel = this.getPropertyValueById('label');
         const propertyName = this.getPropertyValueById('name');
 
-        console.log('Getting field identifier:', propertyLabel && propertyLabel !== '', propertyName && propertyName !== '');
         return propertyLabel && propertyLabel !== '' ? propertyLabel : propertyName && propertyName !== '' ? propertyName : Lang.get('prop.unknown.field');
     }
 

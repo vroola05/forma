@@ -122,6 +122,10 @@ export class FormGroup extends Nucleus {
      * @return {boolean} true als alle inputs geldig zijn, anders false
      */
     validate() {
+        if (!this.getShow()) {
+            return true;
+        }
+
         let valid = true
         this.formDomElements.classList.remove('was-validated');
 

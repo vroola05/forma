@@ -61,7 +61,7 @@ export class Form {
     }
 
     setTabPrevious() {
-        const fields = this.getFieldsShow();
+        const fields = this.getVisibleFields();
         const activeIndex = fields.findIndex(item => item.isActive());
         if (activeIndex > 0) {
             this.setTab(fields[activeIndex - 1].getName());
@@ -69,7 +69,7 @@ export class Form {
     }
 
     setTabNext() {
-        const fields = this.getFieldsShow();
+        const fields = this.getVisibleFields();
         const activeIndex = fields.findIndex(item => item.isActive());
         if (activeIndex >= 0 && fields.length - 1) {
             this.setTab(fields[activeIndex + 1].getName());
@@ -131,6 +131,10 @@ export class Form {
      * @returns 
      */
     validate() {
+        if (!this.getShow()) {
+            return true;
+        }
+
         console.log('Validating form');
         for(const tabObject of this.fields) {
             if (!tabObject.validate()) {
@@ -141,7 +145,6 @@ export class Form {
     }
 
     validateTab(tab) {
-        console.log('Validating tab:', tab.name);
         for (const formGroup of tab.formGroups) {
             if (!formGroup.validate()) {
                 return false;
@@ -177,8 +180,8 @@ export class Form {
         return this.metadata.size == 0 || this.metadata.has(metadata);
     }
 
-    getFieldsShow() {
-        return this.fields.filter(fields => fields.show);
+    getVisibleFields() {
+        return this.fields.filter(fields => fields.getShow());
     }
 
     getFields() {

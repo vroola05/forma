@@ -28,6 +28,7 @@ public class TextField implements Field {
     private String classes;
     private Boolean readonly;
     private Boolean required;
+    private Boolean show;
     private Integer minlength;
     private Integer maxlength;
     private String value;
@@ -58,7 +59,7 @@ public class TextField implements Field {
 
     @Override
     public Field cloneField() {
-        return new TextField(id, name, label, type, placeholder, classes, readonly, required, minlength, maxlength, value, metadata, data, condition);
+        return new TextField(id, name, label, type, placeholder, classes, readonly, required, show, minlength, maxlength, value, metadata, data, condition);
     }
 
     @Override
@@ -74,6 +75,16 @@ public class TextField implements Field {
         this.data = data;
     }
 
+    @Override
+    public void setShow(Boolean show) {
+        this.show = show;
+    }
+
+    @Override
+    public Boolean isShow() {
+        return this.show;
+    }
+    
     @Override
     public List<Field> getFields() {
         return null;

@@ -115,6 +115,9 @@ export class TextField extends InputNucleus {
     }
 
     validate(valid = true, message = '') {
+        if (!this.getShow()) {
+            return true;
+        }
         valid = super.validate(valid, message);
         if (valid) {
             if (this.minLength && this.getValue().length < this.minLength) {
@@ -408,7 +411,6 @@ export class SelectField extends InputNucleus {
         if (value=== undefined || value === null) {
             this.value = '';
             this.inputElement.selectedIndex = -1;
-            
         } else if (typeof value === 'string') {
             this.inputElement.value = value;
             const opt = this.inputElement.options[this.inputElement.selectedIndex];

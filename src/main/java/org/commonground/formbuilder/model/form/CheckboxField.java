@@ -29,6 +29,7 @@ public class CheckboxField implements Field {
     private String classes;
     private Boolean readonly;
     private Boolean required;
+    private Boolean show;
 
     private String value;
     private List<Option> values;
@@ -41,6 +42,7 @@ public class CheckboxField implements Field {
     @JsonProperty("type")
     public void setTypeFromJson(String typeValue) {
         this.type = FieldType.fromValue(typeValue);
+        
     }
 
     @Override
@@ -55,7 +57,7 @@ public class CheckboxField implements Field {
 
     @Override
     public Field cloneField() {
-        return new CheckboxField(id, name, label, type, placeholder, classes, readonly, readonly, value, cloneOptions(values), metadata, cloneOptions(options), data, condition);
+        return new CheckboxField(id, name, label, type, placeholder, classes, readonly, readonly, show, value, cloneOptions(values), metadata, cloneOptions(options), data, condition);
     }
 
     public List<Option> cloneOptions(List<Option> options) {
@@ -88,5 +90,15 @@ public class CheckboxField implements Field {
     
     @Override
     public void validate(Object value) throws FieldValidationException {
+    }
+
+    @Override
+    public void setShow(Boolean show) {
+        this.show = show;
+    }
+
+    @Override
+    public Boolean isShow() {
+        return this.show;
     }
 }

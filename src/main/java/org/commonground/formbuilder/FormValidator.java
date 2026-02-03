@@ -38,8 +38,10 @@ public class FormValidator {
                                 String.format("Het tabblad {} is niet gevonden", tabPageDef.getLabel()))));
             }
 
-            if (checkShowConditions(form, tabPageDef.getCondition())) {
-                validateFormGroups(form, tabPageOptional.get(), tabPageDef);
+            TabPage tabPage = tabPageOptional.get();
+            tabPage.setShow(checkShowConditions(form, tabPageDef.getCondition()));
+            if (tabPage.isShow()) {
+                validateFormGroups(form, tabPage, tabPageDef);
             }
         }
     }
@@ -53,8 +55,10 @@ public class FormValidator {
                                 String.format("De set {} is niet gevonden", formGroupDef.getLabel()))));
             }
 
-            if (checkShowConditions(form, formGroupDef.getCondition())) {
-                validateFields(form, formGroupOptional.get(), formGroupDef);
+            FormGroup formGroup = formGroupOptional.get();
+            formGroup.setShow(checkShowConditions(form, formGroupDef.getCondition()));
+            if (formGroup.isShow()) {
+                validateFields(form, formGroup, formGroupDef);
             }
         }
     }
@@ -70,9 +74,11 @@ public class FormValidator {
                                 String.format("Het veld {} is niet gevonden", formGroup.getName()))));
             }
 
-            if (checkShowConditions(form, fieldDef.getCondition())) {
+            Field field = fieldOptional.get();
+            field.setShow(checkShowConditions(form, fieldDef.getCondition()));
+            if (field.isShow()) {
                 try {
-                    validateField(fieldOptional.get(), fieldDef);
+                    validateField(field, fieldDef);
                 } catch (FieldValidationException e) {
                     fieldErrors.add(new FieldError(formGroup.getName(), fieldDef.getName(), e.getMessage()));
                 }
@@ -89,9 +95,23 @@ public class FormValidator {
 
         } else if (FieldType.TEXT.equals(field.getType())) {
             fieldDefinition.validate(field.getValue());
+        } else if (FieldType.SELECT.equals(field.getType())) {
+            fieldDefinition.validate(field.getValue());
+        } else if (FieldType.RADIO.equals(field.getType())) {
+            fieldDefinition.validate(field.getValue());
+        } else if (FieldType.CHECKBOX.equals(field.getType())) {
+            fieldDefinition.validate(field.getValue());
         }
+
+
     }
 
+    /**
+     * Checks if a field is hidden based on its value. If a field is hidden it is skipped in the further proces.
+     * @param form
+     * @param condition
+     * @return
+     */
     private static boolean checkShowConditions(Form form, Condition condition) {
         if (condition != null) {
             return ConditionParser.checkCondition(form, condition);

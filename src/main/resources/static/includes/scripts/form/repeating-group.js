@@ -355,6 +355,10 @@ export class RepeatingGroup extends InputNucleus {
      * @return {boolean} true als alle inputs geldig zijn, anders false
      */
     validate() {
+        if (!this.getShow()) {
+            return true;
+        }
+        
         let valid = true
         for (const set of this.groupInputSets) {
             for (const input of set) {

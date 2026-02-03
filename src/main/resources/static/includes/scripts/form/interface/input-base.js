@@ -1,5 +1,7 @@
 import { Nucleus } from './nucleus.js';
 
+export const InputLayout = ['layout-row', 'layout-column'];
+
 export class InputNucleus extends Nucleus {
     content = document.createElement('div');
     labelElement = document.createElement('label');
@@ -7,6 +9,7 @@ export class InputNucleus extends Nucleus {
     value = '';
     id = '';
     
+
     data = new Map();
 
     errors = [];
@@ -27,24 +30,29 @@ export class InputNucleus extends Nucleus {
     }
 
     createInput(inputElement) {
-        this.content.className = 'mb-2 row ' + (!this.classes ? '' : this.classes);
+        this.content.className = ' ' + (!this.classes ? '' : this.classes);
+        this.content.classList.add('field-wrapper');
 
         // Label
-        this.labelElement.className = 'col-sm-4 col-form-label';
+        this.labelElement.className = 'col-form-label';
         this.labelElement.htmlFor = this.name;
         this.labelElement.innerHTML = this.label;
+        this.labelElement.classList.add('field-wrapper-label');
 
         // Input wrapper
-        const inputWrapper = document.createElement('div');
-        inputWrapper.className = 'col-sm-8';
+        this.inputWrapper = document.createElement('div');
+        this.inputWrapper.className = 'field-wrapper-input';
 
         this.feedbackElement = document.createElement('div');
         this.feedbackElement.className = 'invalid-feedback';
 
-        inputWrapper.appendChild(inputElement);
-        inputWrapper.appendChild(this.feedbackElement);
+        this.setLayout(InputLayout[0])
+        
+
+        this.inputWrapper.appendChild(inputElement);
+        this.inputWrapper.appendChild(this.feedbackElement);
         this.content.appendChild(this.labelElement);
-        this.content.appendChild(inputWrapper);
+        this.content.appendChild(this.inputWrapper);
     }
 
     hasOptions() {
@@ -95,8 +103,6 @@ export class InputNucleus extends Nucleus {
             throw new Error('Callback must be a function');
         }
         this.callback.push(callback);
-
-        
     }
 
     setReadonly(readonly) {
@@ -126,6 +132,22 @@ export class InputNucleus extends Nucleus {
 
     setPlaceholder(placeholder) {
         this.inputElement.placeholder = placeholder;
+        return this;
+    }
+
+    setLayout(layout) {
+        if (InputLayout.includes(layout)) {
+            switch (layout) {
+                case 'layout-row':
+                    this.content.classList.remove('layout-column');
+                    this.content.classList.add('layout-row');
+                    break;
+                case 'layout-column':
+                    this.content.classList.remove('layout-row');
+                    this.content.classList.add('layout-column');
+                    break;
+            }
+        }
         return this;
     }
 

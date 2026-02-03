@@ -80,7 +80,6 @@ export class BuilderFormGroup extends BuilderFieldInterface {
 
     setLabel(value) {
         if (value) {
-            console.log('set label form group', value);
             this.builderFormFieldHeaderLabel.innerHTML = `${this.label} - (${value})`;
         } else {
             this.builderFormFieldHeaderLabel.innerHTML = `${this.label}`;

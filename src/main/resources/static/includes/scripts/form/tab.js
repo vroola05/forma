@@ -97,6 +97,10 @@ export class Tab extends Nucleus {
     }
 
     validate() {
+        if (!this.getShow()) {
+            return true;
+        }
+        
         for (const formGroup of this.fields) {
             if (!formGroup.validate()) {
                 return false;

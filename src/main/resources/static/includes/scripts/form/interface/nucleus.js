@@ -109,6 +109,10 @@ export class Nucleus {
         return this;
     }
 
+    getShow() {
+        return this.show;
+    }
+
     setShow(show) {
         this.show = show;
         if (show) {

@@ -29,6 +29,7 @@ public class FormGroup implements Field {
     private FieldType type;
 
     private Condition condition;
+    private Boolean show;
 
     @JsonProperty("type")
     public void setTypeFromJson(String typeValue) {
@@ -120,6 +121,16 @@ public class FormGroup implements Field {
     @Override
     public void setData(Map<String, String> data) {
         
+    }
+
+    @Override
+    public void setShow(Boolean show) {
+        this.show = show;
+    }
+
+    @Override
+    public Boolean isShow() {
+        return this.show;
     }
 
     @Override

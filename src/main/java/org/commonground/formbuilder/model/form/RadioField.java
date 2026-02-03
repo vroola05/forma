@@ -29,7 +29,7 @@ public class RadioField implements Field {
     private String classes;
     private Boolean readonly;
     private Boolean required;
-
+    private Boolean show;
     private String value;
     private List<String> metadata;
     private List<Option> options;
@@ -37,7 +37,7 @@ public class RadioField implements Field {
 
     private Map<String, String> data;
     private Condition condition;
-
+    
     @JsonProperty("type")
     public void setTypeFromJson(String typeValue) {
         this.type = FieldType.fromValue(typeValue);
@@ -54,7 +54,7 @@ public class RadioField implements Field {
     
     @Override
     public Field cloneField() {
-        return new RadioField(id, name, label, type, placeholder, classes, readonly, readonly, value, metadata, cloneOptions(options), cloneOptions(values), data, condition);
+        return new RadioField(id, name, label, type, placeholder, classes, readonly, readonly, show, value, metadata, cloneOptions(options), cloneOptions(values), data, condition);
     }
 
     public List<Option> cloneOptions(List<Option> options) {
@@ -80,6 +80,16 @@ public class RadioField implements Field {
         this.data = data;
     }
 
+    @Override
+    public void setShow(Boolean show) {
+        this.show = show;
+    }
+
+    @Override
+    public Boolean isShow() {
+        return this.show;
+    }
+    
     @Override
     public List<Field> getFields() {
         return null;

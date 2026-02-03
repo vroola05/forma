@@ -1,5 +1,6 @@
 import { EventService } from '../../services/event-service.js';
 import { BuilderPropertiesOptionsType } from './builder-properties-options-type.js';
+import { BuilderPropertiesConditionType } from './builder-properties-condition-type.js';
 import { Lang } from '../../util/lang.js';
 
 export class BuilderPropertyComponent {
@@ -9,7 +10,6 @@ export class BuilderPropertyComponent {
     onPropertyLabelChanged = null;
     
     constructor() {
-        console.log('create new property component')
         this.createContent();
 
         EventService.getInstance().addEventListener('properties-changed', (field) => {
@@ -66,6 +66,12 @@ export class BuilderPropertyComponent {
                             {label: Lang.get('prop.list.text'), value: 'value', type: 'text'}
                         ]);
                     this.fieldPropertiesContainer.appendChild(builderPropertiesListType.getContent());
+                    break;
+                case 'condition':
+                    const builderPropertiesConditionType = new BuilderPropertiesConditionType(this.field, property, [
+                            {label: Lang.get('prop.list.text'), value: 'value', type: 'text'}
+                        ]);
+                    this.fieldPropertiesContainer.appendChild(builderPropertiesConditionType.getContent());
                     break;
                 default:
                     this.getDefaultProperty(property);

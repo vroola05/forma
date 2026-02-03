@@ -51,6 +51,9 @@ public interface Field {
 
     Field cloneField();
 
+    void setShow(Boolean show);
+    Boolean isShow();
+
     List<Field> getFields();
     void validate(Object value) throws FieldValidationException;
 }

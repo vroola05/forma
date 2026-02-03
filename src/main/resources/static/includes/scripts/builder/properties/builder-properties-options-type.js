@@ -1,4 +1,5 @@
 import { EventService } from '../../services/event-service.js'
+import { BuilderPropertiesFooter } from './builder-properties-footer.js';
 
 export class BuilderPropertiesOptionsType {
     dropzone = null;
@@ -47,17 +48,12 @@ export class BuilderPropertiesOptionsType {
         keyValueContainer.appendChild(this.builderPropertyOptionsContainer);
         
 
-        const builderPropertiesFooter = document.createElement('div');
-        builderPropertiesFooter.className = 'builder-properties-footer';
-        this.content.appendChild(builderPropertiesFooter);
+        const builderPropertiesFooter = new BuilderPropertiesFooter('Item toevoegen')
+                .addButton('add', '', 'builder-properties-btn-add', (event) => {
+                    this.addRowNew();
+                });
+        this.content.appendChild(builderPropertiesFooter.getContent());
 
-        const buttonAdd = document.createElement('button');
-        buttonAdd.className = 'builder-properties-button-add';
-        buttonAdd.addEventListener('click', () => {
-            this.addRowNew();
-        });
-
-        builderPropertiesFooter.appendChild(buttonAdd);
         if (this.property.value) {
             const length = this.property.value.length;
             for (let i = 0; i < length; i++) {
@@ -160,9 +156,9 @@ export class BuilderPropertiesOptionsType {
         }
 
         const builderPropertyOptionItemDeleteContainer = document.createElement('div');
-        builderPropertyOptionItemDeleteContainer.className = 'options-type-col';
+        builderPropertyOptionItemDeleteContainer.className = 'options-type-col builder-properties-button-container';
         builderPropertyOptionItem.appendChild(builderPropertyOptionItemDeleteContainer);
-
+    
         const builderPropertyOptionItemDelete = document.createElement('button');
         builderPropertyOptionItemDelete.className = 'builder-properties-button-delete';
 
