@@ -6,9 +6,10 @@ export class BuilderPropertiesCondition {
     content = document.createElement('div');
     conditions = [];
     onDelete = undefined;
+    onChange = undefined;
     conditionType = undefined;
     
-    constructor(conditionData = undefined, onDelete = undefined) {
+    constructor(conditionData = undefined, onChange = undefined, onDelete = undefined) {
         
         this.guid = crypto.randomUUID();
 
@@ -16,6 +17,7 @@ export class BuilderPropertiesCondition {
             this.conditionType = ConditionType.SIMPLE === ConditionType[conditionData.conditionType] ? ConditionType.SIMPLE : ConditionType.COMPOSITE;
         }
         this.createContent(conditionData);
+        this.onChange = onChange;
         this.onDelete = onDelete;
     }
 
@@ -44,6 +46,7 @@ export class BuilderPropertiesCondition {
         buttonRemove.className = 'builder-properties-button-delete';
         buttonRemove.addEventListener('click', () => {
             this.onDelete(this);
+            this.valueChanged();
         });
         buttonContainer.appendChild(buttonRemove);
 
@@ -54,17 +57,15 @@ export class BuilderPropertiesCondition {
             this.conditionTypeSelect.setValue(String(ConditionType[conditionData.conditionType]));
         }
 
-        
-        
     }
 
     changeConditionType(conditionType) {
-        this.conditionType = conditionType;
+        this.conditionType = Number(conditionType);
 
-        if (Number(this.conditionType) === ConditionType.SIMPLE) {
+        if (this.conditionType === ConditionType.SIMPLE) {
             this.compositeConditionDom.classList.remove('active');
             this.simpleConditionDom.classList.add('active');
-        } else if (Number(this.conditionType) === ConditionType.COMPOSITE) {
+        } else if (this.conditionType === ConditionType.COMPOSITE) {
             this.simpleConditionDom.classList.remove('active');
             this.compositeConditionDom.classList.add('active');
         }
@@ -76,11 +77,18 @@ export class BuilderPropertiesCondition {
 
         this.var1SimpleTextfield = new TextField('var1', 'Variabele 1')
                 .setPlaceholder('Variabele 1')
-                .setLayout('layout-column');
+                .setLayout('layout-column')
+                .addValueChangedListener((value) => {
+                    this.valueChanged();
+                });
+        
         this.simpleConditionDom.appendChild(this.var1SimpleTextfield.getContent());
         this.operatorSimpleSelect = new SelectField('opereator', 'Operator')
                 .setPlaceholder('Relationele operator')
-                .setLayout('layout-column');
+                .setLayout('layout-column')
+                .addValueChangedListener((value) => {
+                    this.valueChanged();
+                });
         this.simpleConditionDom.appendChild(this.operatorSimpleSelect.getContent());
 
         for (const [key, value] of Object.entries(Operator)) {
@@ -89,7 +97,10 @@ export class BuilderPropertiesCondition {
 
         this.var2SimpleTextfield= new TextField('var2', 'Variabele 2')
                 .setPlaceholder('Variabele 2')
-                .setLayout('layout-column');
+                .setLayout('layout-column')
+                .addValueChangedListener((value) => {
+                    this.valueChanged();
+                });
         this.simpleConditionDom.appendChild(this.var2SimpleTextfield.getContent());
         this.content.appendChild(this.simpleConditionDom);
 
@@ -99,7 +110,6 @@ export class BuilderPropertiesCondition {
             this.var2SimpleTextfield.setValue(conditionData.var2);
             this.operatorSimpleSelect.setValue(''+conditionData.operator);
         }
-
     }
 
     createCompositeCondition(conditionData) {
@@ -108,7 +118,10 @@ export class BuilderPropertiesCondition {
         this.content.appendChild(this.compositeConditionDom);
 
         this.operatorCompositeSelect = new SelectField('opereator', 'Operator')
-                .setPlaceholder('Relationele operator');
+                .setPlaceholder('Relationele operator')
+                .addValueChangedListener((value) => {
+                    this.valueChanged();
+                });
         this.compositeConditionDom.appendChild(this.operatorCompositeSelect.getContent());
 
         for (const [key, value] of Object.entries(LogicalOperator)) {
@@ -133,9 +146,15 @@ export class BuilderPropertiesCondition {
         this.builderPropertiesFooter = new BuilderPropertiesFooter('Conditie toevoegen')
                 .addButton('add', '', 'builder-properties-btn-add', (event) => {
                     this.addCondition();
+                    this.valueChanged();
                 });
         this.compositeConditionDom.appendChild(this.builderPropertiesFooter.getContent());
+    
+        this.bindDragAndDrop();
         
+    }
+
+    bindDragAndDrop() {
         this.compositeConditionDropareaDom.addEventListener("dragover", (event) => {
             event.stopPropagation();
             event.preventDefault();
@@ -231,7 +250,11 @@ export class BuilderPropertiesCondition {
         builderPropertyOptionItemMoveContainer.className = 'options-type-col';
         builderPropertyOptionItem.appendChild(builderPropertyOptionItemMoveContainer);
 
-        const condition = new BuilderPropertiesCondition(conditionData, (builderPropertiesCondition) => {
+        const condition = new BuilderPropertiesCondition(
+            conditionData,
+            (onChangedValue) => {
+                this.valueChanged();
+            }, (builderPropertiesCondition) => {
             const index = this.conditions.indexOf(builderPropertiesCondition);
             if (index >= 0) {
                 this.conditions.splice(index, 1);
@@ -244,6 +267,27 @@ export class BuilderPropertiesCondition {
         builderPropertyOptionItemMoveContainer.appendChild(condition.getContent());
 
         this.conditions.push(condition);
+    }
+
+    valueChanged() {
+        if (this.onChange) {
+            this.onChange(this.getValue());
+        }
+    }
+
+    getValue() {
+        const result = {
+            
+        }
+        if (this.conditionType === ConditionType.SIMPLE) {
+            result.var1 = this.var1SimpleTextfield.getValue();
+            result.operator = this.operatorSimpleSelect.getValue();
+            result.var2 = this.var2SimpleTextfield.getValue();
+        } else if (this.conditionType === ConditionType.COMPOSITE) {
+            result.logicalOperator = this.operatorCompositeSelect.getValue();
+            result.conditions = this.conditions.map(condition => condition.getValue());
+        }
+        return result;
     }
 
     getContent() {

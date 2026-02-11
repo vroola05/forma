@@ -6,7 +6,7 @@ import { Lang } from '../../util/lang.js'
 
 export class BuilderForm extends BuilderFieldInterface {
     dropzone = null;
-    acceptedTypes = ['tab-page'];
+    acceptedTypes = ['tab'];
 
     builderFields = [];
 
@@ -90,7 +90,7 @@ export class BuilderForm extends BuilderFieldInterface {
 
         // When a new tab is created
         this.tabLabelCompontent.onCreateCallback = (tabLabelItem) => {
-            const tabPage = new BuilderTabPage('tab-page', tabLabelItem.getLabel());
+            const tabPage = new BuilderTabPage('tab', tabLabelItem.getLabel());
             tabLabelItem.setTabPage(tabPage);
             tabPage.setTabLabelItem(tabLabelItem);
 

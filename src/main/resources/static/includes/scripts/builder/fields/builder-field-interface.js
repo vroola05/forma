@@ -19,7 +19,7 @@ export class BuilderFieldInterface {
             {type: 'string', id: 'label', label: Lang.get('prop.label.label'), value: '', pattern: new RegExp(".{0,200}$"), message: Lang.get('prop.name.message')},
             {type: 'string', id: 'classes', label: Lang.get('prop.class.label'), value: '', pattern: new RegExp("^(?:(?=.{1,200}$)[a-z][a-z0-9_-]*(?:\s+[a-z][a-z0-9_-]*)*)?$", "i"), message: Lang.get('prop.class.message')},
             {type: 'list', id: 'metadata', label: Lang.get('prop.metadata.label'), value: [], pattern: new RegExp("^.{0,10}$"), message: Lang.get('prop.metadata.message')},
-            {type: 'condition', id: 'condition', label: 'Show condities', value: []}
+            {type: 'condition', id: 'condition', label: 'Show condities', value: {}}
         ]);
 
         this.fieldProperties.addLabelChangedListener((value) => {

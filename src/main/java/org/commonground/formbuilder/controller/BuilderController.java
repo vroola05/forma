@@ -39,7 +39,7 @@ public class BuilderController {
         FormBuilderValidator.validate(formWrapper);
         System.out.println("postBuilderForm");
         try {
-            fileStorageService.save(formWrapper);
+            // fileStorageService.save(formWrapper);
         } catch (Exception e) {
             return "Fout bij opslaan: " + e.getMessage();
         }

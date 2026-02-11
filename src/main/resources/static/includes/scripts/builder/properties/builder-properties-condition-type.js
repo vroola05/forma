@@ -63,13 +63,17 @@ export class BuilderPropertiesConditionType {
     }
 
     addCondition(conditionData = undefined) {
-        this.builderPropertiesCondition = new BuilderPropertiesCondition(conditionData, (builderPropertiesCondition) => {
-            this.builderPropertyOptionsContainer.innerHTML = '';
-            this.builderPropertiesCondition = undefined;
-            this.builderPropertiesFooter.show(true);
-        });
+        this.builderPropertiesCondition = new BuilderPropertiesCondition(
+            conditionData,
+            (value) => {
+                this.property.value = value;
+            },
+            (builderPropertiesCondition) => {
+                this.builderPropertyOptionsContainer.innerHTML = '';
+                this.builderPropertiesCondition = undefined;
+                this.builderPropertiesFooter.show(true);
+            });
         this.builderPropertyOptionsContainer.appendChild(this.builderPropertiesCondition.getContent());
-
     }
 
     getContent() {

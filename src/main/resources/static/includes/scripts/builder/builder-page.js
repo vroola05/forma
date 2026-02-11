@@ -201,7 +201,6 @@ export class BuilderPage extends Page {
     }
 
     postForm(input) {
-        log
         this.loader.classList.add('active');
         Http.post(`${Router.base}/api/builder/form`, input)
             .then(tab => {

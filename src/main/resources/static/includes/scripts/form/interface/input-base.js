@@ -103,6 +103,7 @@ export class InputNucleus extends Nucleus {
             throw new Error('Callback must be a function');
         }
         this.callback.push(callback);
+        return this;
     }
 
     setReadonly(readonly) {

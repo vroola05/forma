@@ -1,5 +1,7 @@
 
 import { Lang } from '../../util/lang.js';
+import { Operator, LogicalOperator } from '../../condition/types/condition-types.js';
+
 export class BuilderFieldProperties {
     properties = {};
     onPropertyLabelChanged = [];
@@ -51,7 +53,6 @@ export class BuilderFieldProperties {
  
     validateAll (field = null) {  
         for (const key in this.properties) {
-            console.log('Validating property:', field.label, key, this.properties[key]);
             this.validate(this.properties[key], field);
         }
     }
@@ -64,8 +65,26 @@ export class BuilderFieldProperties {
                     this.#validatePattern(item, property.pattern, property.message, field);
                 }
             }
+        } else if (property.type == 'condition') {
+            this.#validateCondition (property.value, field);
         } else {
             this.#validatePattern(property.value, property.pattern, property.message, field);
+        }
+    }
+
+    #validateCondition (condition, field = null) {
+        if (!condition) {
+            return;
+        }
+        const fieldName = `${field ? field.getLabel() : ''} - ${this.getFieldIdentifier()}`;
+        if (condition.conditions && condition.conditions.length > 0) {
+            if (!condition.logicalOperator || !Object.values(LogicalOperator).includes(condition.logicalOperator)) {
+                throw new Error(fieldName + " - Fout in de logische operator van de conditie.");
+            }
+        } else {
+            if (!condition.operator || !Object.values(Operator).includes(condition.operator)) {
+                throw new Error(fieldName + " - Fout in de operator van de conditie.");
+            }
         }
     }
 

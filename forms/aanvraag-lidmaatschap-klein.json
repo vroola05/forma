@@ -1,0 +1,108 @@
+{
+    "active": true,
+    "fileName": "aanvraag-lidmaatschap-klein.json",
+    "form": {
+        "name": "aanvraag-lidmaatschap-klein",
+        "label": "Aanvraagformulier lidmaatschap",
+        "classes": "",
+        "metadata": [],
+        "type": "form",
+        "summaryConfirmation": [
+            "Ik verklaar dat ik het formulier naar waarheid heb ingevuld"
+        ],
+        "tabs": [
+            {
+                "name": "uw-gegevens",
+                "label": "Uw gegevens",
+                "classes": "",
+                "type": "tab",
+                "metadata": [
+                    "metadata1",
+                    "metadata2"
+                ],
+                "formGroups": [
+                    {
+                        "name": "naam",
+                        "label": "Naw gegevens",
+                        "classes": "",
+                        "metadata": [],
+                        "fields": [
+                            {
+                                "id": null,
+                                "name": "voornaam",
+                                "label": "Voornaam",
+                                "type": "text",
+                                "placeholder": "",
+                                "classes": "voornaam",
+                                "readonly": false,
+                                "required": true,
+                                "show": null,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "condition": null,
+                                "fields": null,
+                                "values": null
+                            },
+                            {
+                                "id": null,
+                                "name": "tussenvoegsel",
+                                "label": "Tussenvoegsel",
+                                "type": "text",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": false,
+                                "show": null,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "condition": {
+                                    "var1": "1",
+                                    "operator": "eq",
+                                    "var2": "12",
+                                    "conditions": null,
+                                    "logicalOperator": null
+                                },
+                                "fields": null,
+                                "values": null
+                            },
+                            {
+                                "id": null,
+                                "name": "achternaam",
+                                "label": "Achternaam",
+                                "type": "text",
+                                "placeholder": "",
+                                "classes": "",
+                                "readonly": false,
+                                "required": true,
+                                "show": null,
+                                "minlength": null,
+                                "maxlength": null,
+                                "value": "",
+                                "metadata": [],
+                                "data": {},
+                                "condition": null,
+                                "fields": null,
+                                "values": null
+                            }
+                        ],
+                        "type": "form-group",
+                        "condition": null,
+                        "show": null,
+                        "value": null,
+                        "data": null,
+                        "values": null
+                    }
+                ]
+			}
+        
+        ],
+        "data": null,
+        "values": null
+    }
+}

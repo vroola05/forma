@@ -73,6 +73,7 @@ public class FormBuilderValidator {
             }
         }
     }
+    
     public static void validateField(Field field) {
         if (field == null) {
             throw new FormValidationException(List.of(new FieldError("field", "field", "Het veld is verplicht.")));
