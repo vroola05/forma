@@ -4,7 +4,8 @@ import { Page } from '../../shared/page-components/page.js';
 import { Http } from '../../shared/services/http.js';
 import { Router } from '../../shared/services/router.js';
 import { FormGroup } from '../../shared/form-components/form-group.js';
-import { CheckboxField, SelectField } from '../../shared/form-components/input-fields.js';
+import { CheckboxField } from '../../shared/form-components/checkbox-field.js';
+import { SelectField } from '../../shared/form-components/select-field.js';
 import { FormRenderer } from '../../form-viewer/components/form-renderer.js'
 
 export class RevisionPage extends Page {

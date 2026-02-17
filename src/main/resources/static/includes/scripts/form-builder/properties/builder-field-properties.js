@@ -1,6 +1,6 @@
 
 import { Lang } from '../../shared/services/lang.js';
-import { Operator, LogicalOperator } from '../../condition/types/condition-types.js';
+import { Operator, LogicalOperator } from '../../shared/condition-components/types/condition-types.js';
 
 export class BuilderFieldProperties {
     properties = {};

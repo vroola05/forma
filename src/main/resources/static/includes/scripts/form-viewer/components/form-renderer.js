@@ -1,4 +1,15 @@
-import { RadioField, LabelField, TextField, ValutaField, SelectField, HiddenField, DateField, TextAreaField, CheckboxField } from '../../shared/form-components/input-fields.js';
+
+
+import { LabelField } from '../../shared/form-components/label-field.js';
+import { TextField } from '../../shared/form-components/text-field.js';
+import { RadioField } from '../../shared/form-components/radio-field.js';
+import { ValutaField } from '../../shared/form-components/valuta-field.js';
+import { SelectField } from '../../shared/form-components/select-field.js';
+import { HiddenField } from '../../shared/form-components/hidden-field.js';
+import { DateField } from '../../shared/form-components/date-field.js';
+import { TextAreaField } from '../../shared/form-components/textarea-field.js';
+import { CheckboxField } from '../../shared/form-components/checkbox-field.js';
+
 import { Form } from '../../shared/form-components/form.js';
 import { FormSummaryRenderer } from './form-summary-renderer.js';
 import { RepeatingGroup } from '../../shared/form-components/repeating-group.js';

@@ -1,5 +1,5 @@
-import { BuilderPropertiesCondition } from './builder-properties-condition.js'
-import { BuilderPropertiesFooter } from './builder-properties-footer.js';
+import { BuilderPropertiesCondition } from './components/builder-properties-condition.js'
+import { BuilderPropertiesFooter } from './components/builder-properties-footer.js';
 
 export class BuilderPropertiesConditionType {
     dropzone = null;

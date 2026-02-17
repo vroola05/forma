@@ -718,3 +718,14 @@ Styles voor builder-field.js
         }
     }
 }
+
+
+.builder-autocomplete-wrapper {
+    position: relative;
+
+    .autocomplete-input {
+        background-color: white;
+        border: var(--bs-border-color) solid 1px;
+
+    }
+}

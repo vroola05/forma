@@ -1,0 +1,108 @@
+import { InputNucleus } from '../../../shared/form-components/interface/input-base.js';
+import { BuilderFormService } from '../../services/builder-form-service.js';
+
+/**
+ * Textfield
+ */
+export class AutocompleteField extends InputNucleus {
+    minLength = undefined;
+    maxLength = undefined;
+
+    constructor(name, label) {
+        super(name, label);
+        this.type = 'text';
+
+        this.createElement();
+    }
+
+    createElement() {
+        // Input
+        this.inputElement = document.createElement('input');
+        this.inputElement.className = 'form-control';
+        this.inputElement.name = this.name;
+        this.inputElement.id = this.name;
+        this.inputElement.value = this.getValue();
+
+
+        this.inputElement.addEventListener('input', (e) => {
+            const value = e.target.value;
+            if (value.startsWith('$')) {
+                const a = value.split('.');
+                console.log(a.at(-1));
+                if (this.autocompleteElement.classList.contains('hidden')) {
+                    this.autocompleteElement.classList.remove('hidden');
+                }
+                const builderForm = BuilderFormService.get();
+                console.log(builderForm);
+                
+                const name = builderForm.fieldProperties.getPropertyById('name').value;
+                const label = builderForm.fieldProperties.getPropertyById('label').value;
+                
+                console.log(value, name, label);
+            } else {
+                if (!this.autocompleteElement.classList.contains('hidden')) {
+                    this.autocompleteElement.classList.add('hidden');
+                }
+            }
+        });
+        
+        this.inputElement.addEventListener('change', (e) => {
+            this.setValue(e.target.value);
+        });
+
+        this.createInput(this.inputElement);
+
+        this.inputWrapper.classList.add('builder-autocomplete-wrapper')
+        this.autocompleteElement = document.createElement('div');
+        this.autocompleteElement.className = 'autocomplete-input';
+        this.inputWrapper.appendChild(this.autocompleteElement)
+    }
+
+    setType(type) {
+        this.type = type;
+        this.inputElement.type = type;
+        return this;
+    }
+
+    setMinLength(length, message = 'Minimale lengte is ' + length) {
+        if (length === null || length === undefined) {
+            this.minLength = undefined;
+            this.inputElement.removeAttribute('minLength');
+        } else {
+            this.minLength = length;
+            this.inputElement.minLength = length;
+        }
+        return this;
+    }
+
+    setMaxLength(length, message = 'Maximale lengte is ' + length) {
+        if (length === null || length === undefined) {
+            this.maxLength = undefined;
+            this.inputElement.removeAttribute('maxLength');
+        } else {
+            this.maxLength = length;
+            this.inputElement.maxLength = length;
+        }
+        return this;
+    }
+
+    validate(valid = true, message = '') {
+        if (!this.getShow()) {
+            return true;
+        }
+        valid = super.validate(valid, message);
+        if (valid) {
+            if (this.minLength && this.getValue().length < this.minLength) {
+                this.errors.push(`Minimaal ${this.minLength} tekens vereist.`);
+                valid = false;
+            }
+            if (this.maxLength && this.maxLength != null && this.getValue().length > this.maxLength) {
+                this.errors.push(`Maximaal ${this.maxLength} tekens toegestaan.`);
+                valid = false;
+            }
+        }
+
+        this.setvalidationState(valid);
+        return valid;
+    }
+}

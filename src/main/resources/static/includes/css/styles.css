@@ -332,7 +332,6 @@ option:disabled {
 }
 
 
-
 .field-wrapper {
     display:flex;
     .field-wrapper-label {
@@ -345,6 +344,7 @@ option:disabled {
     }
     &.layout-row {
         flex-direction: row;
+        padding: calc(var(--default-space) / 2);
 
         .field-wrapper-label {
             width: calc(100% / 3);

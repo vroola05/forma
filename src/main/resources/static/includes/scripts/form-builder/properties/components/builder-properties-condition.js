@@ -1,7 +1,8 @@
-import { AutocompleteField, SelectField } from '../../shared/form-components/input-fields.js';
-import { Operator, ConditionType, LogicalOperator } from '../../condition/types/condition-types.js';
+import { SelectField } from '../../../shared/form-components/select-field.js';
+import { AutocompleteField } from './autocomplete-field.js';
+import { Operator, ConditionType, LogicalOperator } from '../../../shared/condition-components/types/condition-types.js';
 import { BuilderPropertiesFooter } from './builder-properties-footer.js';
-import { BuilderFormService } from '../services/builder-form-service.js'
+import { BuilderFormService } from '../../services/builder-form-service.js'
 
 export class BuilderPropertiesCondition {
     content = document.createElement('div');
@@ -11,7 +12,6 @@ export class BuilderPropertiesCondition {
     conditionType = undefined;
     
     constructor(conditionData = undefined, onChange = undefined, onDelete = undefined) {
-        
         this.guid = crypto.randomUUID();
 
         if (conditionData && conditionData.conditionType) {

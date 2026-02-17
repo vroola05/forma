@@ -184,7 +184,7 @@ export class BuilderForm extends BuilderFieldInterface {
         return {
             ...this.fieldProperties.getProperties(),
             type: this.type,
-            tabs: this.builderFields.map(f => f.getData())
+            fields: this.builderFields.map(f => f.getData())
         };
     }
 }

@@ -119,7 +119,7 @@ export class BuilderTabPage extends BuilderFieldInterface {
         return {
             ...this.fieldProperties.getProperties(),
             type: this.type,
-            formGroups: this.builderFields.map(f => f.getData())
+            fields: this.builderFields.map(f => f.getData())
         };
     }
     

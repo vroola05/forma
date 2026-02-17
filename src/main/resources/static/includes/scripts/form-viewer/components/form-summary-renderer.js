@@ -1,4 +1,4 @@
-import { CheckboxField } from '../../shared/form-components/input-fields.js';
+import { CheckboxField } from '../../shared/form-components/checkbox-field.js';
 
 export class FormSummaryRenderer {
     constructor(form) {

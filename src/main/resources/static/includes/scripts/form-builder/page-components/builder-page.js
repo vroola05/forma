@@ -13,7 +13,7 @@ import { Lang } from '../../shared/services/lang.js';
 import { Router } from '../../shared/services/router.js';
 
 import { BuilderFormService } from '../services/builder-form-service.js';
-import { AutocompleteField } from '../../shared/form-components/input-fields.js';
+import { AutocompleteField } from '../properties/components/autocomplete-field.js';
 
 export class BuilderPage extends Page {
     content = document.createElement('div');
@@ -138,17 +138,7 @@ export class BuilderPage extends Page {
         this.builderPageFormContainer.appendChild(BuilderFormService.get().getContent());
 
 
-        const sampleField = new AutocompleteField('sample-field', 'sample-field')
-            .setPlaceholder('sample-field')
-            .addOnInputListener((value) => {
-                if (value.startsWith('$')) {
-                    const builderForm = BuilderFormService.get();
-                    console.log(builderForm);
-                    const name = builderForm.fieldProperties.getPropertyById('name').value;
-                    const label = builderForm.fieldProperties.getPropertyById('label').value;
-                    console.log(value, name, label);
-                }
-            });
+        const sampleField = new AutocompleteField('sample-field', 'sample-field');
         this.builderPageFormContainer.appendChild(sampleField.getContent());
     }
 
