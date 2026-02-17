@@ -9,7 +9,7 @@
         "summaryConfirmation": [
             "Ik verklaar dat ik het formulier naar waarheid heb ingevuld"
         ],
-        "tabs": [
+        "fields": [
             {
                 "name": "uw-gegevens",
                 "label": "Uw gegevens",
@@ -18,7 +18,7 @@
                     "metadata1",
                     "metadata2"
                 ],
-                "formGroups": [
+                "fields": [
                     {
                         "name": "naam",
                         "label": "Naw gegevens",
@@ -315,7 +315,7 @@
                 "label": "Motivatie",
                 "classes": "",
                 "metadata": [],
-                "formGroups": [
+                "fields": [
                     {
                         "name": "motivatie",
                         "label": "Motivatie",
@@ -354,7 +354,7 @@
                 "label": "Contactgegevens",
                 "classes": "",
                 "metadata": [],
-                "formGroups": [
+                "fields": [
                     {
                         "name": "contact",
                         "label": "Contactgegevens",

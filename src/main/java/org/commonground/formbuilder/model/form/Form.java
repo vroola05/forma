@@ -27,7 +27,7 @@ public class Form implements Field {
 
     private List<String> metadata;
     private List<String> summaryConfirmation;
-    private List<TabPage> tabs;
+    private List<TabPage> fields;
     private FieldType type;
     private Condition condition;
     private Boolean show;
@@ -38,16 +38,16 @@ public class Form implements Field {
     }
 
     public Optional<TabPage> getTab(String tabName) {
-        return tabs.stream().filter(tab -> tab.getName().equals(tabName)).findFirst();
+        return fields.stream().filter(tab -> tab.getName().equals(tabName)).findFirst();
     }
 
     public Optional<FormGroup> getFormGroup(String tabName, String formGroupName) {
-        Optional<TabPage> tabPageOptional = tabs.stream().filter(tab -> tab.getName().equals(tabName)).findFirst();
+        Optional<TabPage> tabPageOptional = fields.stream().filter(tab -> tab.getName().equals(tabName)).findFirst();
         return tabPageOptional.isEmpty() ? Optional.empty() : tabPageOptional.get().getFormGroup(formGroupName);
     }
 
     public Optional<Field> getField(String tabName, String formGroupName, String fieldName) {
-        Optional<TabPage> tabPageOptional = tabs.stream().filter(tab -> tab.getName().equals(tabName)).findFirst();
+        Optional<TabPage> tabPageOptional = fields.stream().filter(tab -> tab.getName().equals(tabName)).findFirst();
         return tabPageOptional.isEmpty() ? Optional.empty() : tabPageOptional.get().getField(formGroupName, fieldName);
     }
 
@@ -57,7 +57,7 @@ public class Form implements Field {
     }
 
     public void setFieldValue(String tabName, String formGroupName, String fieldName, String value) {
-        Optional<TabPage> tabPageOptional = tabs.stream().filter(tab -> tab.getName().equals(tabName)).findFirst();
+        Optional<TabPage> tabPageOptional = fields.stream().filter(tab -> tab.getName().equals(tabName)).findFirst();
         if (tabPageOptional.isEmpty()) {
             return;
         }
@@ -139,7 +139,7 @@ public class Form implements Field {
 
     @Override
     public List<Field> getFields() {
-        return this.tabs.stream().map(field -> (Field)field).toList();
+        return this.fields.stream().map(field -> (Field)field).toList();
     }
 
     @Override

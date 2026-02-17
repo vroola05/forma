@@ -1,9 +1,9 @@
-import { Router } from './router.js';
+import { Router } from './shared/services/router.js';
 import { Environment } from './environment.js';
-import { Header } from './components/header.js';
+import { Header } from './form-viewer/components/header.js';
 
 import { Auth } from './auth.js';
-import { Lang } from './util/lang.js';
+import { Lang } from './shared/services/lang.js';
 
 export class Main {
 

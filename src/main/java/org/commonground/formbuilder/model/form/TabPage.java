@@ -23,7 +23,7 @@ public class TabPage implements Field {
     private String label;
     private String classes;
     private List<String> metadata;
-    private List<FormGroup> formGroups;
+    private List<FormGroup> fields;
     private FieldType type;
     private Condition condition;
     private Boolean show;
@@ -34,11 +34,11 @@ public class TabPage implements Field {
     }
 
     public Optional<FormGroup> getFormGroup(String formGroupName) {
-        return formGroups.stream().filter(formGroup -> formGroup.getName().equals(formGroupName)).findFirst();
+        return fields.stream().filter(formGroup -> formGroup.getName().equals(formGroupName)).findFirst();
     }
 
     public Optional<Field> getField(String formGroupName, String fieldName) {
-        Optional<FormGroup> formGroupOptional = formGroups.stream().filter(tab -> tab.getName().equals(formGroupName)).findFirst();
+        Optional<FormGroup> formGroupOptional = fields.stream().filter(tab -> tab.getName().equals(formGroupName)).findFirst();
         return formGroupOptional.isEmpty() ? Optional.empty() : formGroupOptional.get().getField(fieldName);
     }
 
@@ -118,7 +118,7 @@ public class TabPage implements Field {
 
     @Override
     public List<Field> getFields() {
-        return this.formGroups.stream().map(field -> (Field)field).toList();
+        return this.fields.stream().map(field -> (Field)field).toList();
     }
 
     @Override

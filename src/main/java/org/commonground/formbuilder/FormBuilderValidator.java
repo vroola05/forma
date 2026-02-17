@@ -39,9 +39,9 @@ public class FormBuilderValidator {
 
         validateBase(form);
 
-        form.getTabs().forEach(tabPage -> {
+        form.getFields().forEach(tabPage -> {
             validateBase(tabPage);
-            tabPage.getFormGroups().forEach(formGroup -> {
+            tabPage.getFields().forEach(formGroup -> {
                 validateBase(formGroup);
                 formGroup.getFields().forEach(field -> {
                     validateField(field);

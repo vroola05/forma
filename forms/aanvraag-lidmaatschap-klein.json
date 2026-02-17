@@ -10,7 +10,7 @@
         "summaryConfirmation": [
             "Ik verklaar dat ik het formulier naar waarheid heb ingevuld"
         ],
-        "tabs": [
+        "fields": [
             {
                 "name": "uw-gegevens",
                 "label": "Uw gegevens",
@@ -20,7 +20,7 @@
                     "metadata1",
                     "metadata2"
                 ],
-                "formGroups": [
+                "fields": [
                     {
                         "name": "naam",
                         "label": "Naw gegevens",

@@ -16,7 +16,7 @@ public class SpaPageForwardController {
     //     return "forward:/builder.html";
     // }
 
-    // @RequestMapping("/builder/page/**")
+    // @RequestMapping("/form-builder/page/**")
     // public String forwardToBuilderPage() {
     //     return "forward:/builder.html";
     // }

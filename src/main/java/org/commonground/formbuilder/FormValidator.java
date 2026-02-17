@@ -30,7 +30,7 @@ public class FormValidator {
     }
 
     private static void validateTabPages(Form definition, Form form) {
-        for (TabPage tabPageDef : definition.getTabs()) {
+        for (Field tabPageDef : definition.getFields()) {
             Optional<TabPage> tabPageOptional = form.getTab(tabPageDef.getName());
             if (tabPageOptional.isEmpty()) {
                 throw new FormValidationException(List.of(
@@ -38,7 +38,7 @@ public class FormValidator {
                                 String.format("Het tabblad {} is niet gevonden", tabPageDef.getLabel()))));
             }
 
-            TabPage tabPage = tabPageOptional.get();
+            Field tabPage = tabPageOptional.get();
             tabPage.setShow(checkShowConditions(form, tabPageDef.getCondition()));
             if (tabPage.isShow()) {
                 validateFormGroups(form, tabPage, tabPageDef);
@@ -46,21 +46,21 @@ public class FormValidator {
         }
     }
 
-    private static void validateFormGroups(Form form, TabPage tabPage, TabPage tabPageDefinition) {
-        for (FormGroup formGroupDef : tabPageDefinition.getFormGroups()) {
-            Optional<FormGroup> formGroupOptional = tabPage.getFormGroup(formGroupDef.getName());
-            if (formGroupOptional.isEmpty()) {
-                throw new FormValidationException(List.of(
-                        new FieldError(tabPage.getName(), formGroupDef.getName(),
-                                String.format("De set {} is niet gevonden", formGroupDef.getLabel()))));
-            }
+    private static void validateFormGroups(Form form, Field tabPage, Field tabPageDefinition) {
+        // for (Field formGroupDef : tabPageDefinition.getFields()) {
+        //     Optional<Field> formGroupOptional = tabPage.getFields(formGroupDef.getName());
+        //     if (formGroupOptional.isEmpty()) {
+        //         throw new FormValidationException(List.of(
+        //                 new FieldError(tabPage.getName(), formGroupDef.getName(),
+        //                         String.format("De set {} is niet gevonden", formGroupDef.getLabel()))));
+        //     }
 
-            FormGroup formGroup = formGroupOptional.get();
-            formGroup.setShow(checkShowConditions(form, formGroupDef.getCondition()));
-            if (formGroup.isShow()) {
-                validateFields(form, formGroup, formGroupDef);
-            }
-        }
+        //     FormGroup formGroup = formGroupOptional.get();
+        //     formGroup.setShow(checkShowConditions(form, formGroupDef.getCondition()));
+        //     if (formGroup.isShow()) {
+        //         validateFields(form, formGroup, formGroupDef);
+        //     }
+        // }
     }
 
     private static void validateFields(Form form, FormGroup formGroup, FormGroup formGroupDefinition) {

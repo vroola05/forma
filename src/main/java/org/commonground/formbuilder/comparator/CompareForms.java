@@ -20,51 +20,51 @@ public class CompareForms {
         List<ComparatorForm> result = new ArrayList<>();
 
         // Vergelijk tabs vanuit current
-        current.getTabs().forEach(tab -> {
-            String tabName = tab.getName();
-            String tabTitle = tab.getLabel();
-            revision.getTab(tabName).ifPresentOrElse(
-                    tabRev -> {
-                        result.add(new ComparatorForm(ComparatorType.NOT_CHANGED, tabName, tabTitle, null, null));
-                        compareFormGroups(result, tab, tabRev, tabTitle);
-                    },
-                    () -> result.add(new ComparatorForm(ComparatorType.ADDED, tabName, tabTitle, null, null)));
-        });
+        // current.getTabs().forEach(tab -> {
+        //     String tabName = tab.getName();
+        //     String tabTitle = tab.getLabel();
+        //     revision.getTab(tabName).ifPresentOrElse(
+        //             tabRev -> {
+        //                 result.add(new ComparatorForm(ComparatorType.NOT_CHANGED, tabName, tabTitle, null, null));
+        //                 compareFormGroups(result, tab, tabRev, tabTitle);
+        //             },
+        //             () -> result.add(new ComparatorForm(ComparatorType.ADDED, tabName, tabTitle, null, null)));
+        // });
 
-        // Controleer tabs die verwijderd zijn
-        revision.getTabs().forEach(tabRev -> {
-            if (current.getTab(tabRev.getName()).isEmpty()) {
-                result.add(
-                        new ComparatorForm(ComparatorType.DELETED, tabRev.getName(), tabRev.getLabel(), null, null));
-            }
-        });
+        // // Controleer tabs die verwijderd zijn
+        // revision.getTabs().forEach(tabRev -> {
+        //     if (current.getTab(tabRev.getName()).isEmpty()) {
+        //         result.add(
+        //                 new ComparatorForm(ComparatorType.DELETED, tabRev.getName(), tabRev.getLabel(), null, null));
+        //     }
+        // });
         return result;
     }
 
     private static void compareFormGroups(List<ComparatorForm> result, TabPage tabCurrent, TabPage tabRevision,
             String tabTitle) {
-        tabCurrent.getFormGroups().forEach(fg -> {
-            String fgName = fg.getName();
-            String fgTitle = !fg.getLabel().equals("") ? fg.getLabel() : fgName;
+        // tabCurrent.getFormGroups().forEach(fg -> {
+        //     String fgName = fg.getName();
+        //     String fgTitle = !fg.getLabel().equals("") ? fg.getLabel() : fgName;
 
-            tabRevision.getFormGroup(fgName).ifPresentOrElse(
-                    fgRev -> {
-                        result.add(new ComparatorForm(ComparatorType.NOT_CHANGED, fgName, tabTitle + " / " + fgTitle,
-                                null, null));
+        //     tabRevision.getFormGroup(fgName).ifPresentOrElse(
+        //             fgRev -> {
+        //                 result.add(new ComparatorForm(ComparatorType.NOT_CHANGED, fgName, tabTitle + " / " + fgTitle,
+        //                         null, null));
 
-                        compareFields(result, fg, fgRev, tabTitle + " / " + fgTitle);
-                    },
-                    () -> result.add(
-                            new ComparatorForm(ComparatorType.ADDED, fgName, tabTitle + " / " + fgTitle, null, null)));
-        });
+        //                 compareFields(result, fg, fgRev, tabTitle + " / " + fgTitle);
+        //             },
+        //             () -> result.add(
+        //                     new ComparatorForm(ComparatorType.ADDED, fgName, tabTitle + " / " + fgTitle, null, null)));
+        // });
 
-        // Controleer formgroups die verwijderd zijn
-        tabRevision.getFormGroups().forEach(fgRev -> {
-            if (tabCurrent.getFormGroup(fgRev.getName()).isEmpty()) {
-                result.add(new ComparatorForm(ComparatorType.DELETED, fgRev.getName(),
-                        tabTitle + " / " + fgRev.getLabel(), null, null));
-            }
-        });
+        // // Controleer formgroups die verwijderd zijn
+        // tabRevision.getFormGroups().forEach(fgRev -> {
+        //     if (tabCurrent.getFormGroup(fgRev.getName()).isEmpty()) {
+        //         result.add(new ComparatorForm(ComparatorType.DELETED, fgRev.getName(),
+        //                 tabTitle + " / " + fgRev.getLabel(), null, null));
+        //     }
+        // });
     }
 
     private static void compareFields(List<ComparatorForm> result, FormGroup fgCurrent, FormGroup fgRevision,

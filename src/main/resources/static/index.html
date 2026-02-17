@@ -8,7 +8,7 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black" />
         <meta name="robots" content="noindex, nofollow" />
-
+        <link rel="icon" href="favicon.svg" type="image/svg+xml">
         <link href="includes/bootstrap-5.3.7/css/bootstrap.min.css" rel="stylesheet">
         <script src="includes/popper-2.11.8/popper.min.js"></script>
         <script src="includes/bootstrap-5.3.7/js/bootstrap.min.js"></script>
@@ -35,10 +35,10 @@
     <script type="module">
         import { Main } from './includes/scripts/main.js';
 
-        import { OverviewPage } from './includes/scripts/pages/overview.js';
-        import { FormPage } from './includes/scripts/pages/form-page.js';
-        import { RevisionPage } from './includes/scripts/pages/revision.js';
-        import { BuilderPage } from './includes/scripts/builder/builder-page.js';
+        import { OverviewPage } from './includes/scripts/form-builder/page-components/overview.js';
+        import { FormPage } from './includes/scripts/form-viewer/page-components/form-page.js';
+        import { RevisionPage } from './includes/scripts/form-builder/page-components/revision.js';
+        import { BuilderPage } from './includes/scripts/form-builder/page-components/builder-page.js';
         new Main([
             {'path': '/', 'page': OverviewPage},
             {'path': '/page/overview', 'page': OverviewPage},
@@ -46,7 +46,7 @@
             {'path': '/page/form/:formName/tab/:tabName', 'page': FormPage},
             {'path': '/page/detail/:id/revision', 'page': RevisionPage},
             {'path': '/page/builder', 'page': BuilderPage},
-            {'path': '/page/builder/:formName', 'page': BuilderPage}
+            {'path': '/page/form-builder/:formName', 'page': BuilderPage}
         ]);
     </script>
 </html>

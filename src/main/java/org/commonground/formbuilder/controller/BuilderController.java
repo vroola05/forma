@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/builder/form")
+@RequestMapping("/api/form-builder/form")
 public class BuilderController {
     
     @Autowired
