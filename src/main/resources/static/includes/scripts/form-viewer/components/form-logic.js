@@ -1,7 +1,7 @@
 import { Router } from '../../shared/services/router.js';
 import { FormButton } from './form-button.js'; 
 import { FormRenderer } from './form-renderer.js';
-import { Http } from '../../util/http.js';
+import { Http } from '../../shared/services/http.js';
 
 export class FormLogic {
 

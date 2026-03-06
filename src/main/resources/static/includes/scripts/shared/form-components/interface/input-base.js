@@ -75,8 +75,8 @@ export class InputNucleus extends Nucleus {
     }
 
     setValue(value, noCallback = false) {
-        this.value = value;
-        this.inputElement.value = value;
+        this.value = this.nullOrUndefined(value);
+        this.inputElement.value = this.value;
         this.valueChanged(noCallback);    
         return this;
     }
@@ -132,7 +132,7 @@ export class InputNucleus extends Nucleus {
     }
 
     setPlaceholder(placeholder) {
-        this.inputElement.placeholder = placeholder;
+        this.inputElement.placeholder = this.nullOrUndefined(placeholder);
         return this;
     }
 
@@ -205,6 +205,10 @@ export class InputNucleus extends Nucleus {
 
     getInput() {
         return this.inputElement;
+    }
+
+    nullOrUndefined(value) {
+        return value === null || value === undefined ? '' : value;
     }
 
 }

@@ -1,8 +1,10 @@
 package org.commonground.formbuilder.model.form;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.commonground.formbuilder.exceptions.FieldValidationException;
 import org.commonground.formbuilder.model.form.condition.Condition;
@@ -21,13 +23,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Form implements Field {
+    private UUID id;
     private String name;
     private String label;
     private String classes;
 
     private List<String> metadata;
     private List<String> summaryConfirmation;
-    private List<TabPage> fields;
+    @Builder.Default
+    private List<TabPage> fields = new ArrayList<>();
     private FieldType type;
     private Condition condition;
     private Boolean show;
@@ -41,31 +45,35 @@ public class Form implements Field {
         return fields.stream().filter(tab -> tab.getName().equals(tabName)).findFirst();
     }
 
-    public Optional<FormGroup> getFormGroup(String tabName, String formGroupName) {
-        Optional<TabPage> tabPageOptional = fields.stream().filter(tab -> tab.getName().equals(tabName)).findFirst();
-        return tabPageOptional.isEmpty() ? Optional.empty() : tabPageOptional.get().getFormGroup(formGroupName);
-    }
+    // public Optional<FormGroup> getFormGroup(String tabName, String formGroupName) {
+    //     Optional<TabPage> tabPageOptional = fields.stream().filter(tab -> tab.getName().equals(tabName)).findFirst();
+    //     return tabPageOptional.isEmpty() ? Optional.empty() : tabPageOptional.get().getFormGroup(formGroupName);
+    // }
 
-    public Optional<Field> getField(String tabName, String formGroupName, String fieldName) {
-        Optional<TabPage> tabPageOptional = fields.stream().filter(tab -> tab.getName().equals(tabName)).findFirst();
-        return tabPageOptional.isEmpty() ? Optional.empty() : tabPageOptional.get().getField(formGroupName, fieldName);
-    }
+    // public Optional<Field> getField(String tabName, String formGroupName, String fieldName) {
+    //     Optional<TabPage> tabPageOptional = fields.stream().filter(tab -> tab.getName().equals(tabName)).findFirst();
+    //     return tabPageOptional.isEmpty() ? Optional.empty() : tabPageOptional.get().getField(formGroupName, fieldName);
+    // }
 
-    public Optional<String> getFieldValue(String tabName, String formGroupName, String fieldName) {
-        Optional<Field> fieldOptional = getField(tabName, formGroupName, fieldName);
-        return fieldOptional.isEmpty() ? Optional.empty() : Optional.of(fieldOptional.get().getValue());
-    }
+    // public Optional<String> getFieldValue(String tabName, String formGroupName, String fieldName) {
+    //     Optional<Field> fieldOptional = getField(tabName, formGroupName, fieldName);
+    //     return fieldOptional.isEmpty() ? Optional.empty() : Optional.of(fieldOptional.get().getValue());
+    // }
 
-    public void setFieldValue(String tabName, String formGroupName, String fieldName, String value) {
-        Optional<TabPage> tabPageOptional = fields.stream().filter(tab -> tab.getName().equals(tabName)).findFirst();
-        if (tabPageOptional.isEmpty()) {
-            return;
-        }
-        Optional<Field> fieldOptional = tabPageOptional.get().getField(formGroupName, fieldName);
-        if (fieldOptional.isEmpty()) {
-            return;
-        }
-        fieldOptional.get().setValue(value);
+    // public void setFieldValue(String tabName, String formGroupName, String fieldName, String value) {
+    //     Optional<TabPage> tabPageOptional = fields.stream().filter(tab -> tab.getName().equals(tabName)).findFirst();
+    //     if (tabPageOptional.isEmpty()) {
+    //         return;
+    //     }
+    //     Optional<Field> fieldOptional = tabPageOptional.get().getField(formGroupName, fieldName);
+    //     if (fieldOptional.isEmpty()) {
+    //         return;
+    //     }
+    //     fieldOptional.get().setValue(value);
+    // }
+
+    public List<TabPage> getTabPages() {
+        return this.fields;
     }
 
     @Override
@@ -129,7 +137,7 @@ public class Form implements Field {
 
     @Override
     public Boolean isShow() {
-        return this.show;
+        return this.show == null ? true : this.show;
     }
 
     @Override
@@ -145,4 +153,5 @@ public class Form implements Field {
     @Override
     public void validate(Object value) throws FieldValidationException {
     }
+
 }

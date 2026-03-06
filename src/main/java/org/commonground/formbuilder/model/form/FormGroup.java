@@ -1,8 +1,10 @@
 package org.commonground.formbuilder.model.form;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.commonground.formbuilder.exceptions.FieldValidationException;
 import org.commonground.formbuilder.model.form.condition.Condition;
@@ -21,11 +23,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FormGroup implements Field {
+    private UUID id;
     private String name;
     private String label;
     private String classes;
     private List<String> metadata;
-    private List<Field> fields;
+    @Builder.Default
+    private List<Field> fields = new ArrayList<>();
     private FieldType type;
 
     private Condition condition;
@@ -130,7 +134,7 @@ public class FormGroup implements Field {
 
     @Override
     public Boolean isShow() {
-        return this.show;
+        return this.show == null ? true : this.show;
     }
 
     @Override

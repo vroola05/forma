@@ -1,5 +1,5 @@
 import { SelectField } from '../../../shared/form-components/select-field.js';
-import { AutocompleteField } from './autocomplete-field.js';
+import { BuilderConditionsAutocompleteField } from './builder-conditions-autocomplete-field.js';
 import { Operator, ConditionType, LogicalOperator } from '../../../shared/condition-components/types/condition-types.js';
 import { BuilderPropertiesFooter } from './builder-properties-footer.js';
 import { BuilderFormService } from '../../services/builder-form-service.js'
@@ -76,21 +76,12 @@ export class BuilderPropertiesCondition {
         this.simpleConditionDom = document.createElement('div');
         this.simpleConditionDom.className = 'builder-simple-condition';
 
-        this.var1SimpleTextfield = new AutocompleteField('var1', 'Variabele 1')
+        this.var1SimpleTextfield = new BuilderConditionsAutocompleteField('var1', 'Variabele 1')
                 .setPlaceholder('Variabele 1')
                 .setLayout('layout-column')
                 .addValueChangedListener((value) => {
                     console.log(value);
                     this.valueChanged();
-                })
-                .addOnInputListener((value) => {
-                    if (value.startsWith('$')) {
-                        
-                        const builderForm = BuilderFormService.get();
-                        console.log(value, builderForm.getName());
-
-
-                    }
                 });
         
         this.simpleConditionDom.appendChild(this.var1SimpleTextfield.getContent());
@@ -106,7 +97,7 @@ export class BuilderPropertiesCondition {
             this.operatorSimpleSelect.addOption(value, value);
         }
 
-        this.var2SimpleTextfield= new AutocompleteField('var2', 'Variabele 2')
+        this.var2SimpleTextfield= new BuilderConditionsAutocompleteField('var2', 'Variabele 2')
                 .setPlaceholder('Variabele 2')
                 .setLayout('layout-column')
                 .addValueChangedListener((value) => {

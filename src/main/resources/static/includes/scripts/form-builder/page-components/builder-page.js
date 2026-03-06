@@ -13,7 +13,6 @@ import { Lang } from '../../shared/services/lang.js';
 import { Router } from '../../shared/services/router.js';
 
 import { BuilderFormService } from '../services/builder-form-service.js';
-import { AutocompleteField } from '../properties/components/autocomplete-field.js';
 
 export class BuilderPage extends Page {
     content = document.createElement('div');
@@ -21,7 +20,7 @@ export class BuilderPage extends Page {
     builderPageMenuContainer = document.createElement('div');
     builderPageFormContainer = document.createElement('div');
     loader = document.querySelector('.loader');
-
+    isLoaded = false;
     builderFields = [];
 
     dropzone = null;
@@ -80,13 +79,18 @@ export class BuilderPage extends Page {
     }
 
     init(formWrapper) {
+
+        console.log('Start init');
         BuilderFormService.get().init(formWrapper.form);
+        console.log('End init');
+        this.isLoaded = true;
     }
 
     /**
      * 
      */
     afterInit() {
+        console.log('Start after init');
         // This is needed to ensure that the properties component is created after the page is fully initialized
         this.builderPropertiesComponent =  new BuilderPropertyComponent();
         this.builderPropertiesContainerWrapper.appendChild(this.builderPropertiesComponent.getContent());
@@ -105,6 +109,7 @@ export class BuilderPage extends Page {
             console.log('field deleted');
             this.updateForm();
         });
+        console.log('End after init');
     }
 
     createContent() {
@@ -136,10 +141,6 @@ export class BuilderPage extends Page {
         });
         
         this.builderPageFormContainer.appendChild(BuilderFormService.get().getContent());
-
-
-        const sampleField = new AutocompleteField('sample-field', 'sample-field');
-        this.builderPageFormContainer.appendChild(sampleField.getContent());
     }
 
     
@@ -182,7 +183,12 @@ export class BuilderPage extends Page {
     }
 
     updateForm() {
+        if (!this.isLoaded) {
+            return;
+        }
+
         try {
+
             this.formWrapper.form = BuilderFormService.get().getData();
             sessionStorage.setItem('form-wrapper', JSON.stringify(this.formWrapper));
         } catch(error) {

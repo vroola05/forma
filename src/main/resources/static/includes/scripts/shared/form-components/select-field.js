@@ -57,7 +57,7 @@ export class SelectField extends InputNucleus {
 
     setPlaceholder(placeholder) {
         const option = document.createElement('option');
-        option.textContent = placeholder;
+        option.textContent = this.nullOrUndefined(placeholder);
         option.disabled = true;
         option.selected = true;
 

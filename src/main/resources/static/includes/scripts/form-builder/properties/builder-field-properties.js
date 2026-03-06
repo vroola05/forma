@@ -29,6 +29,7 @@ export class BuilderFieldProperties {
      */
     addProperty(property) {
         if (
+            property.type !== 'hidden' &&
             property.type !== 'string' &&
             property.type !== 'select' &&
             property.type !== 'number' &&
@@ -138,7 +139,7 @@ export class BuilderFieldProperties {
             if (validate) {
                 this.validate(p);
             }
-
+            
             return [p.id, p.value];
         });
 

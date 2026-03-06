@@ -52,8 +52,7 @@ export class BuilderPropertiesConditionType {
                 });
         this.content.appendChild(this.builderPropertiesFooter.getContent());
 
-        if (this.property.value) {
-            console.log(this.property.value);
+        if (this.property.value && Object.keys(this.property.value).length > 0) {
             this.addCondition(this.property.value)
         }
         

@@ -5,12 +5,16 @@
     --secondary-color-light: color-mix(in srgb, var(--secondary-color), white 40%);
 
     --default-space: 10px;
+    --default-space-half: calc(var(--default-space) / 2);
+    --default-space-double: calc(var(--default-space) * 2);
+    --default-space-triple: calc(var(--default-space) * 3);
     /* #fbfbfb */
 }
 
 .hidden {
     display: none !important;
 }
+
 .no-metadata {
     display: none !important;
 }
@@ -31,9 +35,10 @@ body {
     height: 1em;
     border: 0;
     cursor: pointer;
+
     &:hover {
         filter: invert(200) sepia(100%) saturate(93%) hue-rotate(270deg) brightness(50%) contrast(300%);
-        
+
     }
 }
 
@@ -42,34 +47,30 @@ body {
 Styles voor builder.js
 */
 .builder-page-wrapper {
-    .builder-page-title {
-
-    }
+    .builder-page-title {}
 
     .builder-page-content-container {
         min-height: 78vh;
+
         /*
         Linker menu
         */
         .builder-page-menu-container {
+
             /*
             Item in het menu
             */
-            .builder-page-field-menu-item {
-                
-            }
+            .builder-page-field-menu-item {}
         }
 
         .builder-page-form-container {
             padding: 0px;
 
             border: #dee2e6 1px solid;
-            border-radius: 5px;
+            border-radius: var(--default-space-half);
         }
 
-        .builder-page-properties-container {
-        
-        }
+        .builder-page-properties-container {}
     }
 }
 
@@ -85,13 +86,13 @@ Styles voor builder-form.js
     margin: 0px;
 
     border: none;
-    border-radius: 5px;
+    border-radius: var(--default-space-half);
     background: #ececec;
 
     .builder-form-header-bar {
         display: flex;
         flex-direction: row;
-        margin: 5px 10px;
+        margin: var(--default-space-half) var(--default-space);
 
         font-size: larger;
         font-weight: bolder;
@@ -99,6 +100,7 @@ Styles voor builder-form.js
         .builder-form-header-bar-label {
             flex: auto;
         }
+
         .builder-form-header-bar-buttons {
             .builder-form-btn-edit {
                 background: transparent url("../images/three-dots-vertical.svg") center / 1em auto no-repeat;
@@ -141,22 +143,26 @@ Styles voor builder-tab-label.js
     font-size: larger;
 
     .disabled {
-        opacity: 0.2!important;
-        cursor: default!important;
+        opacity: 0.2 !important;
+        cursor: default !important;
 
     }
+
     .builder-tab-label-btn-left {
-        padding: 10px 0px 0px 20px;
+        padding: var(--default-space) 0px 0px var(--default-space-double) ;
         background: transparent url("../images/chevron-left.svg") center / 1em auto no-repeat;
     }
+
     .builder-tab-label-btn-add {
-        padding: 10px 20px 0px 0px;
+        padding: var(--default-space) var(--default-space-double)  0px 0px;
         background: transparent url("../images/plus-lg.svg") center / 1em auto no-repeat;
     }
+
     .builder-tab-label-btn-right {
-        padding: 10px 20px 0px 0px;
+        padding: var(--default-space) var(--default-space-double) 0px 0px;
         background: transparent url("../images/chevron-right.svg") center / 1em auto no-repeat;
     }
+
     .builder-tab-label-btn-tab-container {
         flex: auto;
         display: flex;
@@ -178,30 +184,31 @@ Styles voor builder-tab-label-item.js
 .builder-tab-label-item-container {
     display: flex;
     flex-direction: row;
-    
-    padding: 2px 10px;
-    padding-right: 5px;
+
+    padding: 2px var(--default-space);
+    padding-right: var(--default-space-half);
 
     border: #969696 solid 1px;
     border-bottom: 0px;
-    border-radius: 5px 5px 0px 0px;
+    border-radius: var(--default-space-half) var(--default-space-half) 0px 0px;
 
     cursor: pointer;
 
     &.active {
         border: #252525 solid 1px;
         border-bottom: 0px;
-        background:var(--bs-secondary-bg);
+        background: var(--bs-secondary-bg);
     }
 
     .builder-tab-label-item {
         white-space: nowrap;
         flex: auto;
     }
+
     .builder-tab-label-item-btn-close {
-        padding: 10px 10px 0px 0px;
+        padding: var(--default-space) var(--default-space) 0px 0px;
         background: transparent url("../images/x-lg.svg") center / 1em auto no-repeat;
-        
+
     }
 }
 
@@ -210,8 +217,8 @@ Styles voor builder-tab-label-item.js
 */
 .builder-tab-page {
     display: none;
-    margin: 0px 0px 30px 0px;
-    
+    margin: 0px 0px var(--default-space-triple) 0px;
+
     border: #252525 1px solid;
     background: var(--bs-secondary-bg);
 
@@ -227,13 +234,14 @@ Styles voor builder-tab-label-item.js
 
         font-size: larger;
         font-weight: bolder;
-        
+
         .builder-tab-page-header-bar-label {
             flex: auto;
         }
+
         .builder-tab-page-header-bar-buttons {
-            margin: 5px 0px 0 0;
-            
+            margin: var(--default-space-half) 0px 0 0;
+
             .builder-tab-page-btn-edit {
                 box-sizing: content-box;
                 width: 1em;
@@ -243,26 +251,25 @@ Styles voor builder-tab-label-item.js
             }
         }
     }
+
     .builder-tab-pages-container {
         flex: auto;
 
         .builder-tab-pages {
-            height: calc(100% - 10px);
+            height: calc(100% - var(--default-space));
             min-height: 200px;
-            margin: 5px;
-            padding-bottom: 20px;
+            margin: var(--default-space-half);
+            padding-bottom: var(--default-space-double);
             background-color: #fbfbfb;
-            
+
             border: var(--bs-border-color) 1px solid;
 
             &.drag-over {
-                background: repeating-linear-gradient(
-                    45deg,
-                    rgb(255, 255, 225),
-                    rgb(255, 255, 225) 10px,
-                    #ececec 10px,
-                    #ececec 20px
-                );
+                background: repeating-linear-gradient(45deg,
+                        rgb(255, 255, 225),
+                        rgb(255, 255, 225) var(--default-space),
+                        #ececec var(--default-space),
+                        #ececec var(--default-space-double));
             }
         }
     }
@@ -274,26 +281,27 @@ Styles voor builder-form-group.js
 .builder-form-group {
     position: relative;
     margin: 0px 0px 1px 0px;
-    padding: 5px 5px 10px 5px;
+    padding: var(--default-space-half) var(--default-space-half) var(--default-space) var(--default-space-half);
     background-color: var(--primary-color-light) !important;
     border: none;
 
     &.drag-item {
         border-top: var(--bs-secondary-color) 1px solid;
     }
-    
+
     .builder-form-group-header-bar {
         display: flex;
         flex-direction: row;
 
         font-size: larger;
         font-weight: bolder;
-        
+
         .builder-form-group-header-bar-label {
             flex: auto;
         }
+
         .builder-form-group-header-bar-buttons {
-            margin: 5px 0px 0 0;
+            margin: var(--default-space-half) 0px 0 0;
 
             .builder-form-group-btn-edit {
                 box-sizing: content-box;
@@ -302,6 +310,7 @@ Styles voor builder-form-group.js
                 border: 0;
                 background: transparent url("../images/three-dots-vertical.svg") center / 1em auto no-repeat;
             }
+
             .builder-form-group-btn-close {
                 box-sizing: content-box;
                 width: 1em;
@@ -313,28 +322,26 @@ Styles voor builder-form-group.js
     }
 
     .builder-form-group-field-container {
-        
-        background:#fbfbfb;
+
+        background: #fbfbfb;
         border: var(--bs-border-color) 1px solid;
-        border-radius: 5px;
-        
+        border-radius: var(--default-space-half);
+
         .builder-form-group-field {
             min-height: 100px;
-            padding-bottom: 30px;
-        
-            
+            padding-bottom: var(--default-space-triple);
+
+
 
             &.drag-over {
-                background: repeating-linear-gradient(
-                    45deg,
-                    rgb(255, 255, 225),
-                    rgb(255, 255, 225) 10px,
-                    #d1e3e4 10px,
-                    #d1e3e4 20px
-                );
+                background: repeating-linear-gradient(45deg,
+                        rgb(255, 255, 225),
+                        rgb(255, 255, 225) var(--default-space),
+                        #d1e3e4 var(--default-space),
+                        #d1e3e4 var(--default-space-double));
             }
         }
-            
+
     }
 }
 
@@ -344,27 +351,28 @@ Styles voor builder-repeating-group.js
 .builder-repeating-group {
     position: relative;
     margin: 2px;
-    padding: 5px 5px 10px 5px;
+    padding: var(--default-space-half) var(--default-space-half) var(--default-space) var(--default-space-half);
     background: var(--secondary-color-light);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--default-space-half);
 
     &.drag-item {
         border-top: var(--bs-secondary-color) 1px solid;
     }
-    
+
     .builder-repeating-group-header-bar {
         display: flex;
         flex-direction: row;
 
         font-size: larger;
         font-weight: bolder;
-        
+
         .builder-repeating-group-header-bar-label {
             flex: auto;
         }
+
         .builder-repeating-group-header-bar-buttons {
-            margin: 5px 0px 0 0;
+            margin: var(--default-space-half) 0px 0 0;
 
             .builder-repeating-group-btn-edit {
                 box-sizing: content-box;
@@ -373,6 +381,7 @@ Styles voor builder-repeating-group.js
                 border: 0;
                 background: transparent url("../images/three-dots-vertical.svg") center / 1em auto no-repeat;
             }
+
             .builder-repeating-group-btn-close {
                 box-sizing: content-box;
                 width: 1em;
@@ -384,25 +393,23 @@ Styles voor builder-repeating-group.js
     }
 
     .builder-repeating-group-field-container {
-        background:#fbfbfb;
+        background: #fbfbfb;
         border: var(--bs-border-color) 1px solid;
-        border-radius: 5px;
+        border-radius: var(--default-space-half);
 
         .builder-repeating-group-field {
             min-height: 100px;
-            padding-bottom: 30px;
-        
+            padding-bottom: var(--default-space-triple);
+
             &.drag-over {
-                background: repeating-linear-gradient(
-                    45deg,
-                    rgb(255, 255, 225),
-                    rgb(255, 255, 225) 10px,
-                    #d1e3e4 10px,
-                    #d1e3e4 20px
-                );
+                background: repeating-linear-gradient(45deg,
+                        rgb(255, 255, 225),
+                        rgb(255, 255, 225) var(--default-space),
+                        #d1e3e4 var(--default-space),
+                        #d1e3e4 var(--default-space-double));
             }
         }
-            
+
     }
 }
 
@@ -413,8 +420,8 @@ Styles voor builder-field.js
 
     background: var(--secondary-color-light);
     margin: 2px;
-    border-radius: 5px;
-    padding: 3px 10px;
+    border-radius: var(--default-space-half);
+    padding: 3px var(--default-space);
 
     .builder-field-header-bar {
         display: flex;
@@ -423,8 +430,9 @@ Styles voor builder-field.js
         .builder-field-header-bar-label {
             flex: auto;
         }
+
         .builder-field-header-bar-buttons {
-            margin: 5px 0px 0 0;
+            margin: var(--default-space-half) 0px 0 0;
 
             .builder-field-btn-edit {
                 box-sizing: content-box;
@@ -433,6 +441,7 @@ Styles voor builder-field.js
                 border: 0;
                 background: transparent url("../images/three-dots-vertical.svg") center / 1em auto no-repeat;
             }
+
             .builder-field-btn-close {
                 box-sizing: content-box;
                 width: 1em;
@@ -484,7 +493,7 @@ Styles voor builder-field.js
 .builder-properties-container {
     display: none;
     border: var(--bs-border-color) 1px solid;
-    border-radius: 5px;
+    border-radius: var(--default-space-half);
 
     &.active {
         display: block
@@ -522,13 +531,13 @@ Styles voor builder-field.js
                 border: 0;
                 background: transparent url("../images/arrows-angle-expand.svg") left / 1em auto no-repeat;
             }
-            
+
         }
     }
 
     .builder-field-properties-label {
-        margin: 5px 5px 15px 5px;
-        padding: 10px 10px;
+        margin: var(--default-space-half) var(--default-space-half) 15px var(--default-space-half);
+        padding: var(--default-space) var(--default-space);
         border: #dee2e6 solid 1px;
         border-left: 0;
         border-right: 0;
@@ -536,9 +545,9 @@ Styles voor builder-field.js
 
     .builder-properties-options-container {
         margin: 2px;
-        margin-bottom: 10px;
+        margin-bottom: var(--default-space);
         padding: 2px;
-        border-radius: 5px;
+        border-radius: var(--default-space-half);
 
         .builder-properties-options-content-container {
             display: table;
@@ -553,9 +562,9 @@ Styles voor builder-field.js
 
                 .options-type-col-header {
                     display: table-cell;
-                    padding: 0px 10px;
+                    padding: 0px var(--default-space);
                     vertical-align: middle;
-                    
+
                     text-overflow: ellipsis;
                     overflow: hidden;
                     white-space: nowrap;
@@ -566,23 +575,23 @@ Styles voor builder-field.js
             .builder-property-options-container {
                 display: table-row-group;
                 width: 100%;
-                
+
                 .builder-property-option-item {
                     display: table-row;
                     width: 100%;
-                    padding-left: calc(var(--default-space) * 2);
+                    padding-left: var(--default-space-double);
                     background: transparent url("../images/grip-vertical.svg") left / 1em auto no-repeat;
 
                     .options-type-col {
                         display: table-cell;
-                        
+
                         padding: 0px 1px;
 
                         &.move-col {
-                            width: calc(var(--default-space) * 3);
+                            width: var(--default-space-triple);
                             white-space: nowrap;
                         }
-                        
+
                         .form-check-input {
                             padding: 0px;
                             height: 1.2em;
@@ -592,18 +601,19 @@ Styles voor builder-field.js
 
                         &.builder-properties-button-container {
                             vertical-align: middle;
+
                             .builder-properties-button-delete {
                                 display: flex;
-                                margin-left: calc(var(--default-space) / 2);
+                                margin-left: var(--default-space-half);
                                 margin-right: 2px;
                                 padding: var(--default-space);
 
                                 background: transparent url("../images/x-lg.svg") center / 1em auto no-repeat;
                                 border: #cccccc solid 1px;
-                                border-radius: 4px;
+                                border-radius: var(--default-space-half);
                             }
                         }
-                        
+
                     }
                 }
             }
@@ -614,7 +624,7 @@ Styles voor builder-field.js
         margin: 2px;
         margin-bottom: var(--default-space);
         padding: 2px;
-        border-radius: calc(var(--default-space) / 2);
+        border-radius: var(--default-space-half);
 
         .builder-properties-condition-content-container {
             .builder-property-content-container {
@@ -623,27 +633,29 @@ Styles voor builder-field.js
                         display: flex;
                         flex-direction: row;
                         width: calc(100% - var(--default-space));
-                        margin: calc(var(--default-space) / 2);
+                        margin: var(--default-space-half);
 
                         .field-wrapper {
                             flex: auto;
                         }
+
                         .builder-properties-button-container {
                             display: flex;
                             align-items: center;
-    
+
                             .builder-properties-button-delete {
                                 display: flex;
-                                margin-left: calc(var(--default-space) / 2);
+                                margin-left: var(--default-space-half);
                                 margin-right: 2px;
                                 padding: var(--default-space);
 
                                 background: transparent url("../images/x-lg.svg") center / 1em auto no-repeat;
                                 border: #cccccc solid 1px;
-                                border-radius: 4px;
+                                border-radius: var(--default-space-half);
                             }
                         }
                     }
+
                     .builder-simple-condition {
                         display: none;
                         flex-direction: row;
@@ -652,45 +664,47 @@ Styles voor builder-field.js
                             display: flex;
                         }
                     }
+
                     .builder-composite-condition {
                         display: none;
-                        margin: calc(var(--default-space) / 2);
+                        margin: var(--default-space-half);
+
                         &.active {
                             display: block;
                         }
 
                         .builder-composite-condition-droparea {
-                            
+
                             width: 100%;
-                            
-                            padding: calc(var(--default-space) / 2);
+
+                            padding: var(--default-space-half);
                             border-radius: var(--default-space);
-                            margin-top: calc(var(--default-space) / 2);
+                            margin-top: var(--default-space-half);
 
                             &.drag-over {
                                 background-color: var(--secondary-color);
                             }
 
                             .builder-property-condition-row {
-                                
+
                                 width: 100%;
-                                    
+
                                 background: transparent url(../images/grip-vertical.svg) 0px 18px / 1em auto no-repeat;
 
                                 .options-type-col {
-                                        
-                                        margin: calc(var(--default-space) / 2) 0px calc(var(--default-space) / 2) calc(var(--default-space) * 2);
-                                        padding: calc(var(--default-space) / 2);
-                                        border: var(--bs-border-color) 1px solid;
-                                        border-radius: var(--default-space);
 
-                                        background: var(--bs-light);
+                                    margin: var(--default-space-half) 0px var(--default-space-half) var(--default-space-double);
+                                    padding: var(--default-space-half);
+                                    border: var(--bs-border-color) 1px solid;
+                                    border-radius: var(--default-space);
+
+                                    background: var(--bs-light);
                                 }
                             }
                         }
                     }
                 }
-                
+
 
             }
         }
@@ -703,16 +717,17 @@ Styles voor builder-field.js
 
         .builder-properties-footer-label {
             flex: auto;
-            margin: calc(var(--default-space) / 2);
+            margin: var(--default-space-half);
         }
+
         .builder-properties-footer-btn {
             .builder-properties-btn-add {
-                margin: 5px 3px;
-                padding: 10px;
+                margin: var(--default-space-half) 3px;
+                padding: var(--default-space);
 
                 background: transparent url(../images/plus-lg.svg) center / 1em auto no-repeat;
                 border: #cccccc solid 1px;
-                border-radius: 4px;
+                border-radius: var(--default-space-half);
 
             }
         }
@@ -723,9 +738,52 @@ Styles voor builder-field.js
 .builder-autocomplete-wrapper {
     position: relative;
 
-    .autocomplete-input {
+    .input-element-container {
+        display: flex;
+        flex-direction: row;
+
+        .autocomplete-input-btn {
+            padding: var(--default-space-half) var(--default-space);
+
+            border: #cccccc solid 1px;
+            border-radius: var(--default-space-half) 0px 0px var(--default-space-half);
+
+            font-weight: bolder;
+
+            cursor: pointer;
+
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .autocomplete-input {
+            border-radius: 0px var(--default-space-half) var(--default-space-half) 0px;
+        }
+    }
+
+    .autocomplete-menu {
+        position: absolute;
+        width: 100%;
+        min-width: 80px;
+
         background-color: white;
         border: var(--bs-border-color) solid 1px;
+        border-radius: var(--default-space-half);
+        box-shadow: 0px var(--default-space-half) 6px rgba(0, 0, 0, 0.1);
 
+        .autocomplete-menu-item {
+            padding: var(--default-space-half) var(--default-space);
+            cursor: pointer;
+
+            &:hover, &.selected {
+                background-color: var(--secondary-color-light);
+            }
+
+            .match {
+                font-weight: bold;
+                font-style: italic;
+            }
+        }
     }
+
 }

@@ -2,3 +2,5 @@
 /catalina.base_IS_UNDEFINED
 /logs
 /.vscode
+.env
+database/.env

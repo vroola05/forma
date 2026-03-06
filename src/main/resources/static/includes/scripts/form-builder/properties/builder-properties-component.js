@@ -34,7 +34,6 @@ export class BuilderPropertyComponent {
 
     changeProperties(field) {
         this.field = field;
-
         if (field == null) {
             this.fieldLabelContainer.innerHTML = `<div></div>`;
             this.fieldPropertiesContainer.innerHTML = '';
@@ -42,6 +41,7 @@ export class BuilderPropertyComponent {
             if (field.label) {
                 this.fieldLabelContainer.innerHTML = `<div>${field.label} - (${field.fieldProperties.getFieldIdentifier()})</div>`;
             }
+            
             this.fieldPropertiesContainer.innerHTML = '';
             this.createPropertiesDom();
         }
@@ -104,6 +104,8 @@ export class BuilderPropertyComponent {
 
     getPropertyDom(property) {
         switch (property.type) {
+            case 'hidden':
+                return this.getPropertyHiddenDom(property);
             case 'string':
                 return this.getPropertyStringDom(property);
             case 'number':
@@ -178,6 +180,18 @@ export class BuilderPropertyComponent {
             this.onPropertyChanged(event.target, property);
             
         };
+
+        return input;
+    }
+
+    getPropertyHiddenDom(property) {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = `field-property-${property.id}`;
+        input.value = property.value;
+        input.className = 'form-control';
+        input.readOnly = true;
+        input.disabled = true;
 
         return input;
     }

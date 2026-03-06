@@ -22,10 +22,13 @@ export class BuilderForm extends BuilderFieldInterface {
 
     init(properties) {
         if (properties) {
+            
             this.initDefaultProperties(properties);
 
             if (properties.fields) {
                 properties.fields.forEach(tab => {
+                    
+                    console.log('Initializing tab with properties');
                     const field = this.createTab();
                     field.init(tab);
                 });
@@ -90,7 +93,10 @@ export class BuilderForm extends BuilderFieldInterface {
 
         // When a new tab is created
         this.tabLabelCompontent.onCreateCallback = (tabLabelItem) => {
+            
+                    
             const tabPage = new BuilderTabPage('tab', tabLabelItem.getLabel());
+            
             tabLabelItem.setTabPage(tabPage);
             tabPage.setTabLabelItem(tabLabelItem);
 
@@ -100,7 +106,6 @@ export class BuilderForm extends BuilderFieldInterface {
                 }
             };
 
-            
             this.builderFormTab.appendChild(tabPage.getContent());
             this.builderFields.push(tabPage);
             EventService.callEventListener('properties-changed', tabPage);

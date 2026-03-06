@@ -76,6 +76,7 @@ export class BuilderField extends BuilderFieldInterface {
 
 
     getData() {
+        // console.log('this.fieldProperties.getProperties()', this.fieldProperties.getProperties());
         return {
             ...this.fieldProperties.getProperties(),
             type: this.type

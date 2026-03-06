@@ -1,4 +1,4 @@
-package org.commonground.formbuilder.services;
+package org.commonground.formbuilder.services.form;
 
 import java.util.List;
 

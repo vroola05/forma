@@ -2,6 +2,7 @@ package org.commonground.formbuilder.model.form;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.commonground.formbuilder.exceptions.FieldValidationException;
 import org.commonground.formbuilder.model.form.condition.Condition;
@@ -33,13 +34,21 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public interface Field {
 
+    UUID getId();
+    void setId(UUID id);
     String getName();
+    void setName(String name);
     String getLabel();
+    void setLabel(String label);
     String getClasses();
+    void setClasses(String classes);
     List<String> getMetadata();
+    void setMetadata(List<String> metadata);
     FieldType getType();
+    void setType(FieldType type);
     Condition getCondition();
-    
+    void setCondition(Condition condition);
+
     String getValue();
     List<Option> getValues();
     void setValues(List<Option> values);

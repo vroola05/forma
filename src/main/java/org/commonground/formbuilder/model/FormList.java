@@ -1,5 +1,7 @@
 package org.commonground.formbuilder.model;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FormList {
+    UUID id;
     String name;
     String label;
     boolean active;

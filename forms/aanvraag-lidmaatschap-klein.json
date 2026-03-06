@@ -6,7 +6,6 @@
         "label": "Aanvraagformulier lidmaatschap",
         "classes": "",
         "metadata": [],
-        "type": "form",
         "summaryConfirmation": [
             "Ik verklaar dat ik het formulier naar waarheid heb ingevuld"
         ],
@@ -15,7 +14,6 @@
                 "name": "uw-gegevens",
                 "label": "Uw gegevens",
                 "classes": "",
-                "type": "tab",
                 "metadata": [
                     "metadata1",
                     "metadata2"
@@ -77,7 +75,7 @@
                                 "label": "Achternaam",
                                 "type": "text",
                                 "placeholder": "",
-                                "classes": "",
+                                "classes": "voornaam",
                                 "readonly": false,
                                 "required": true,
                                 "show": null,
@@ -86,7 +84,13 @@
                                 "value": "",
                                 "metadata": [],
                                 "data": {},
-                                "condition": null,
+                                "condition": {
+                                    "var1": "$.aanvraag-lidmaatschap-klein.uw-gegevens.naam.tussenvoegsel",
+                                    "operator": "eq",
+                                    "var2": "de",
+                                    "conditions": null,
+                                    "logicalOperator": null
+                                },
                                 "fields": null,
                                 "values": null
                             }
@@ -98,10 +102,19 @@
                         "data": null,
                         "values": null
                     }
-                ]
-			}
-        
+                ],
+                "type": "tab",
+                "condition": null,
+                "show": null,
+                "value": null,
+                "data": null,
+                "values": null
+            }
         ],
+        "type": "form",
+        "condition": null,
+        "show": null,
+        "value": null,
         "data": null,
         "values": null
     }

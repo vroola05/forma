@@ -1,4 +1,4 @@
-package org.commonground.formbuilder.services;
+package org.commonground.formbuilder.services.form;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -100,7 +100,7 @@ public class FormServiceLocal implements FormService {
                 String jsonContent = Files.readString(path);
                 FormWrapper formWrapper = mapper.readValue(jsonContent, FormWrapper.class);
                 System.out.println("Jaja: " + path.toString());
-                FormList formList = new FormList(
+                FormList formList = new FormList(null,
                     formWrapper.getForm().getName(),
                     formWrapper.getForm().getLabel(),
                     formWrapper.isActive());

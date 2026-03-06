@@ -11,6 +11,7 @@ export class EventService {
 
     static callEventListener(event, value) {
         if (event in EventService.eventListeners) {
+
             EventService.eventListeners[event].forEach(callback => {
                 callback(value);
             });

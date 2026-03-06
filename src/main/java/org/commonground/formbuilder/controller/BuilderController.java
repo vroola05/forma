@@ -5,8 +5,8 @@ import java.util.List;
 import org.commonground.formbuilder.FormBuilderValidator;
 import org.commonground.formbuilder.model.FormList;
 import org.commonground.formbuilder.model.FormWrapper;
-import org.commonground.formbuilder.services.FormServiceLocal;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.commonground.formbuilder.services.form.FormServiceDatabase;
+import org.commonground.formbuilder.services.form.FormServiceLocal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,21 +17,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/form-builder/form")
 public class BuilderController {
-    
-    @Autowired
-    private FormServiceLocal fileStorageService;
+    private final FormServiceLocal fileStorageService;
+    private final FormServiceDatabase formServiceDatabase;
+
+    BuilderController(FormServiceLocal fileStorageService, FormServiceDatabase formServiceDatabase) {
+        this.fileStorageService = fileStorageService;
+        this.formServiceDatabase = formServiceDatabase;
+    }
 
     @GetMapping()
     public List<FormList> getForms() {
-        return fileStorageService.list();
+        return formServiceDatabase.list();
+        // return fileStorageService.list();
     }
-
 
     @GetMapping("/{formName}")
     public FormWrapper getForm(@PathVariable String formName) {
         System.out.println("getBuilderForm");
-        FormWrapper a = fileStorageService.get(formName);
-        return a;
+        return formServiceDatabase.get(formName);
+        // return fileStorageService.get(formName);
+        
     }
 
     @PostMapping()
@@ -40,6 +45,7 @@ public class BuilderController {
         System.out.println("postBuilderForm");
         try {
             // fileStorageService.save(formWrapper);
+            formServiceDatabase.save(formWrapper);
         } catch (Exception e) {
             return "Fout bij opslaan: " + e.getMessage();
         }

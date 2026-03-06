@@ -3,7 +3,7 @@ import { Page } from '../../shared/page-components/page.js';
 import { FormRenderer } from '../components/form-renderer.js'
 
 import { FormGroup } from '../../shared/form-components/form-group.js';
-import { Http, ValidationError } from '../../util/http.js';
+import { Http, ValidationError } from '../../shared/services/http.js';
 import { Footer } from '../components/footer.js';
 import { Toaster } from '../../shared/generic-components/toaster.js'
 import { FormLogic } from '../components/form-logic.js';

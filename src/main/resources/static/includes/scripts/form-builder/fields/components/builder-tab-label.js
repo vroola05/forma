@@ -128,6 +128,7 @@ export class BuilderTabLabel {
     }
 
     createTab() {
+        
         const tabLabelItemDoms = Array.from(this.builderTabLabelBtnTabContainerInner.children);
 
         const tabLabelItem = new BuilderTabLabelItem(tabLabelItemDoms.length + 1);
@@ -151,6 +152,7 @@ export class BuilderTabLabel {
         }
 
         return tabLabelItem.getTabPage();
+        
     }
 
     setActive(tabLabelItem) {

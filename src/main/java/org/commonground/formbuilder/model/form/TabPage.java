@@ -1,8 +1,10 @@
 package org.commonground.formbuilder.model.form;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.commonground.formbuilder.exceptions.FieldValidationException;
 import org.commonground.formbuilder.model.form.condition.Condition;
@@ -13,17 +15,22 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class TabPage implements Field {
+    private UUID id;
     private String name;
     private String label;
     private String classes;
+    private Boolean sharedTab;
     private List<String> metadata;
-    private List<FormGroup> fields;
+    @Builder.Default
+    private List<Field> fields = new ArrayList<>();
     private FieldType type;
     private Condition condition;
     private Boolean show;
@@ -33,20 +40,24 @@ public class TabPage implements Field {
         this.type = FieldType.fromValue(typeValue);
     }
 
-    public Optional<FormGroup> getFormGroup(String formGroupName) {
-        return fields.stream().filter(formGroup -> formGroup.getName().equals(formGroupName)).findFirst();
-    }
+    // public Optional<FormGroup> getFormGroup(String formGroupName) {
+    //     return fields.stream().filter(formGroup -> formGroup.getName().equals(formGroupName)).findFirst();
+    // }
 
-    public Optional<Field> getField(String formGroupName, String fieldName) {
-        Optional<FormGroup> formGroupOptional = fields.stream().filter(tab -> tab.getName().equals(formGroupName)).findFirst();
-        return formGroupOptional.isEmpty() ? Optional.empty() : formGroupOptional.get().getField(fieldName);
-    }
+    // public Optional<Field> getField(String formGroupName, String fieldName) {
+    //     Optional<FormGroup> formGroupOptional = fields.stream().filter(tab -> tab.getName().equals(formGroupName)).findFirst();
+    //     return formGroupOptional.isEmpty() ? Optional.empty() : formGroupOptional.get().getField(fieldName);
+    // }
 
-    public Optional<String> getFieldValue(String formGroupName, String fieldName) {
-        Optional<Field> fieldOptional = getField(formGroupName, fieldName);
-        return fieldOptional.isEmpty() ? Optional.empty() : Optional.of(fieldOptional.get().getValue());
-    }
+    // public Optional<String> getFieldValue(String formGroupName, String fieldName) {
+    //     Optional<Field> fieldOptional = getField(formGroupName, fieldName);
+    //     return fieldOptional.isEmpty() ? Optional.empty() : Optional.of(fieldOptional.get().getValue());
+    // }
     
+    public Boolean isSharedTab() {
+        return this.sharedTab == null ? false : this.sharedTab;
+    }
+
     @Override
     public String getName() {
         return this.name;
@@ -108,7 +119,7 @@ public class TabPage implements Field {
 
     @Override
     public Boolean isShow() {
-        return this.show;
+        return this.show == null ? true : this.show;
     }
 
     @Override

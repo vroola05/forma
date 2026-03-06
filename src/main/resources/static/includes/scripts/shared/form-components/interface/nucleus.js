@@ -1,5 +1,5 @@
 import { FormService } from '../../../form-viewer/services/form-service.js'
-import { Condition } from '../../../condition/types/condition-types.js';
+import { Condition } from '../../condition-components/types/condition-types.js';
 import { ConditionParser } from '../../condition-components/condition-parser.js';
 
 export class Nucleus {
