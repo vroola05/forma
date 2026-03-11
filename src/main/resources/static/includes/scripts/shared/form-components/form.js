@@ -8,6 +8,7 @@ export class Form {
         this.name = form.name;
         this.label = form.label;
         this.type = form.type;
+        this.id = form.id;
         this.classes = form.classes;
         this.metadata = form.metadata || [];
         this.summaryConfirmation = form.summaryConfirmation || [];

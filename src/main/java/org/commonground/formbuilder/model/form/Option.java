@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class Option {
     private String value;
     private String text;
-    private boolean selected;
+    private Boolean selected;
 
     public Option clone() {
         return new Option(value, text, selected);

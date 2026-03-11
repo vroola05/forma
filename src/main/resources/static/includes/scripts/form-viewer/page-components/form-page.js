@@ -4,7 +4,7 @@ import { FormRenderer } from '../components/form-renderer.js'
 
 import { FormGroup } from '../../shared/form-components/form-group.js';
 import { Http, ValidationError } from '../../shared/services/http.js';
-import { Footer } from '../components/footer.js';
+
 import { Toaster } from '../../shared/generic-components/toaster.js'
 import { FormLogic } from '../components/form-logic.js';
 import { FormService } from '../services/form-service.js'
@@ -48,9 +48,10 @@ export class FormPage extends Page {
         this.pageContentContainer.className = 'page-content-container';
         this.content.append(this.pageContentContainer);
 
-        this.footerContainer = document.createElement('div');
-        this.footerContainer.className = 'footer-container';
-        this.content.append(this.footerContainer);
+        
+        // this.footerContainer = document.createElement('div');
+        // this.footerContainer.className = 'footer-container';
+        // this.content.append(this.footerContainer);
 
     }
 
@@ -74,8 +75,8 @@ export class FormPage extends Page {
                 this.form = FormRenderer.createForm(this.formWrapper.form);
                 this.pageContentContainer.append(this.form.getContent());
 
-                this.footer = new Footer();
-                this.footerContainer.append(this.footer.getContent());
+                // this.footer = new Footer();
+                // this.footerContainer.append(this.footer.getContent());
 
                 const formService = FormService.getInstance();
                 formService.setForm(this.form);
@@ -88,7 +89,7 @@ export class FormPage extends Page {
                     fields[i].afterFormInit();
                 }
 
-                this.formLogic = new FormLogic(this.form, this.footer);
+                this.formLogic = new FormLogic(this.form);
             })
             .catch(error => {
                 this.loader.classList.remove('active');

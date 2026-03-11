@@ -3,6 +3,8 @@ import { FormButton } from './form-button.js';
 import { FormRenderer } from './form-renderer.js';
 import { Http } from '../../shared/services/http.js';
 
+import { footerService } from "../../shared/services/footer-service.js";
+
 export class FormLogic {
 
     // Function voor het klikken op een tab
@@ -11,10 +13,9 @@ export class FormLogic {
     // Functie voor het klikken op de verzendknop
     // Functie voor het klikken op de annuleerknop
     
-    constructor(form, footer) {
+    constructor(form) {
         
         this.form = form;
-        this.footer = footer;
         // Initialiseer de logica hier
 
         this.cancelBtn =new FormButton('Annuleren', 'footer-btn btn-secondary cancel', null, () => { });
@@ -28,17 +29,19 @@ export class FormLogic {
             this.form.setTab(`summary`);
         }, false);
         this.submitBtn = new FormButton('Verzenden', 'footer-btn btn-primary submit', null, () => {
-            
+            // console.log(this.form);
             Http.post(`${Router.base}/api/forms`, FormRenderer.getFormData(this.form), {})
                         .then(formWrapper => {});
 
         }, false);
 
-        this.footer.addButtonLeft(this.cancelBtn);
-        this.footer.addButtonLeft(this.previousBtn);
-        this.footer.addButtonRight(this.nextBtn);
-        this.footer.addButtonRight(this.summaryBtn);
-        this.footer.addButtonRight(this.submitBtn);
+        footerService.addButtonLeft(this.cancelBtn);
+        footerService.addButtonLeft(this.previousBtn);
+
+        
+        footerService.addButtonRight(this.nextBtn);
+        footerService.addButtonRight(this.summaryBtn);
+        footerService.addButtonRight(this.submitBtn);
         
         // Set the tab change handler
         // This will update the URL when the tab changes

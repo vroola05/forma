@@ -8,6 +8,8 @@ import org.commonground.formbuilder.database.dao.definition.FormDefinitionEntity
 import org.commonground.formbuilder.database.repository.FormDefinitionRepository;
 import org.commonground.formbuilder.model.FormList;
 import org.commonground.formbuilder.model.FormWrapper;
+import org.commonground.formbuilder.model.form.Field;
+import org.commonground.formbuilder.model.form.FieldType;
 import org.commonground.formbuilder.model.form.Form;
 import org.commonground.formbuilder.model.form.TabPage;
 import org.springframework.http.HttpStatus;
@@ -54,7 +56,8 @@ public class FormServiceDatabase implements FormService {
         FormDefinitionEntity resultEntity = this.formDefinitionRepository.save(formDefinitionEntity);
 
         int sortOrderTab = 0;
-        for (TabPage tabPage : form.getTabPages()) {
+        for (Field field : form.getFields()) {
+            TabPage tabPage = (TabPage) field;
             this.tabPageService.save(resultEntity, tabPage, sortOrderTab++);
        };
         
@@ -67,6 +70,7 @@ public class FormServiceDatabase implements FormService {
 
         Form form = new Form();
         form.setId(formDefinitionEntity.getId());
+        form.setType(FieldType.FORM);
         form.setName(formDefinitionEntity.getName());
         form.setLabel(formDefinitionEntity.getLabel());
         form.setClasses(formDefinitionEntity.getClasses());

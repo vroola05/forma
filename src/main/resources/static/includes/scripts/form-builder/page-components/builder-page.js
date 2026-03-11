@@ -5,7 +5,7 @@ import { BuilderPropertyComponent } from '../properties/builder-properties-compo
 import { EventService } from '../../shared/services/event-service.js';
 import { FIELD_TYPES } from '../field-types.js'
 import { FormButton } from '../../form-viewer/components/form-button.js';
-
+import { Footer } from '../../shared/generic-components/footer.js';
 import { Toaster } from '../../shared/generic-components/toaster.js';
 
 import { ValidationError, Http } from '../../shared/services/http.js';
@@ -49,6 +49,7 @@ export class BuilderPage extends Page {
                 };
 
                 this.postForm(formWrapper);
+
             })
         ], '');
 
@@ -75,11 +76,10 @@ export class BuilderPage extends Page {
             this.formWrapper = {
             };
         }
-        
+
     }
 
     init(formWrapper) {
-
         console.log('Start init');
         BuilderFormService.get().init(formWrapper.form);
         console.log('End init');

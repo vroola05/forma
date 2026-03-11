@@ -171,8 +171,8 @@ public class CompareForms {
             CheckboxField rf = (CheckboxField) current;
             CheckboxField rrevision = (CheckboxField) revision;
 
-            List<Option> fop = rf.getOptions().stream().filter(f -> f.isSelected()).toList();
-            List<Option> fopRev = rrevision.getOptions().stream().filter(f -> f.isSelected()).toList();
+            List<Option> fop = rf.getOptions().stream().filter(f -> f.getSelected() != null && f.getSelected()).toList();
+            List<Option> fopRev = rrevision.getOptions().stream().filter(f -> f.getSelected() != null && f.getSelected()).toList();
 
             // result.add(new ComparatorForm(isChanged(fop, fopRev)
             //         ? ComparatorType.CHANGED

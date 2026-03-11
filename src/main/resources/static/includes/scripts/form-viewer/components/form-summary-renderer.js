@@ -27,13 +27,18 @@ export class FormSummaryRenderer {
             if (tabPage.getName() === 'summary') {
                 continue;
             }
-
+            if (!tabPage.getShow()) {
+                continue;
+            }
             const tabWrapperInner = document.createElement('div');
             tabWrapperInner.className = 'summary-tab-wrapper-inner';
             tabWrapper.appendChild(tabWrapperInner);
             tabWrapperInner.appendChild(document.createElement('h2')).innerText = tabPage.getLabel();
 
             for (const formGroup of tabPage.getFields()) {
+                if (!formGroup.getShow()) {
+                    continue;
+                }
                 const formGroupWrapper = document.createElement('div');
                 formGroupWrapper.className = 'summary-form-group-wrapper';
                 tabWrapperInner.appendChild(formGroupWrapper);
@@ -47,6 +52,9 @@ export class FormSummaryRenderer {
                 formGroupWrapper.appendChild(groupWrapper);
 
                 for (const field of formGroup.getFields()) {
+                    if (!field.getShow()) {
+                        continue;
+                    }
                     const fieldWrapper = document.createElement('div');
                     fieldWrapper.className = 'summary-field-wrapper';
                     groupWrapper.appendChild(fieldWrapper);

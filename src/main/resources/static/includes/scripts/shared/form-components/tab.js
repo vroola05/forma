@@ -14,7 +14,7 @@ export class Tab extends Nucleus {
         super(tabData.name, tabData.label);
 
         this.type = tabData.type;
-
+        this.id = tabData.id;
         if (tabData.condition) {
             this.setShowConditions(tabData.condition);
         }

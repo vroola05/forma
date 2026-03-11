@@ -16,6 +16,7 @@ export class FormGroup extends Nucleus {
         super(formGroupData.name, formGroupData.label);
 
         this.type = formGroupData.type;
+        this.id = formGroupData.id;
         this.setMetadata(formGroupData.metadata);
         this.setShowConditions(formGroupData.condition);
 

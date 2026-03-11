@@ -234,10 +234,13 @@ body {
  * Footer
  ******************************************** */
 .footer-container {
-    position: sticky;
-    bottom: 0;      
+    position: fixed;
     display: flex;
     flex-direction: row;
+    bottom: 0;
+    width: 100%;
+    max-height: calc(var(--default-space) * 8);
+    
     background-color: var(--bs-light);
 
     border-top: var(--border-grey) solid 1px;
@@ -248,7 +251,7 @@ body {
     .footer {
         flex: auto;
 
-        margin: calc(var(--default-space) * 2) calc(var(--default-space) * 4);
+        margin: var(--default-space) calc(var(--default-space) * 4);
         
 
         text-align: center;

@@ -64,6 +64,7 @@ public class FieldServiceDatabase implements FieldService {
                 Field field;
                 if (isTextField(fieldType)) {
                     TextField textField = new TextField();
+                    textField.setPlaceholder(formFieldDefinitionEntity.getPlaceholder());
                     textField.setValue(formFieldDefinitionEntity.getValue());
                     textField.setReadonly(formFieldDefinitionEntity.getReadonly());
                     textField.setRequired(formFieldDefinitionEntity.getRequired());
@@ -75,7 +76,7 @@ public class FieldServiceDatabase implements FieldService {
                     fields.add(textField);
                 } else if (fieldType == FieldType.CHECKBOX) {
                     CheckboxField checkboxField = new CheckboxField();
-                    
+                    checkboxField.setPlaceholder(formFieldDefinitionEntity.getPlaceholder());
                     checkboxField.setValue(formFieldDefinitionEntity.getValue());
                     checkboxField.setReadonly(formFieldDefinitionEntity.getReadonly());
                     checkboxField.setRequired(formFieldDefinitionEntity.getRequired());
@@ -87,6 +88,7 @@ public class FieldServiceDatabase implements FieldService {
                     fields.add(checkboxField);
                 } else if (fieldType == FieldType.RADIO) {
                     RadioField radioField = new RadioField();
+                    radioField.setPlaceholder(formFieldDefinitionEntity.getPlaceholder());
                     radioField.setReadonly(formFieldDefinitionEntity.getReadonly());
                     radioField.setRequired(formFieldDefinitionEntity.getRequired());
                     radioField.setValue(formFieldDefinitionEntity.getValue());
@@ -98,6 +100,7 @@ public class FieldServiceDatabase implements FieldService {
                     fields.add(radioField);
                 } else if (fieldType == FieldType.SELECT) {
                     SelectField selectField = new SelectField();
+                    selectField.setPlaceholder(formFieldDefinitionEntity.getPlaceholder());
                     selectField.setValue(formFieldDefinitionEntity.getValue());
                     selectField.setReadonly(formFieldDefinitionEntity.getReadonly());
                     selectField.setRequired(formFieldDefinitionEntity.getRequired());
@@ -116,6 +119,7 @@ public class FieldServiceDatabase implements FieldService {
                 field.setType(fieldType);
                 field.setLabel(formFieldDefinitionEntity.getLabel());
                 field.setClasses(formFieldDefinitionEntity.getClasses());
+                
                 field.setMetadata(formFieldDefinitionEntity.getMetadata());
                 field.setCondition(formFieldDefinitionEntity.getCondition());
                 field.setShow(formFieldDefinitionEntity.getShow());
@@ -179,6 +183,7 @@ public class FieldServiceDatabase implements FieldService {
         if (isTextField(field.getType())) {
             TextField textField = (TextField) field;
             formFieldDefinitionEntity.setValue(textField.getValue());
+            formFieldDefinitionEntity.setPlaceholder(textField.getPlaceholder());
             formFieldDefinitionEntity.setReadonly(textField.getReadonly());
             formFieldDefinitionEntity.setRequired(textField.getRequired());
             formFieldDefinitionEntity.setMinLength(textField.getMinlength());
@@ -186,6 +191,7 @@ public class FieldServiceDatabase implements FieldService {
         } else if (field.getType() == FieldType.CHECKBOX) {
             CheckboxField checkboxField = (CheckboxField) field;
             formFieldDefinitionEntity.setValue(checkboxField.getValue());
+            formFieldDefinitionEntity.setPlaceholder(checkboxField.getPlaceholder());
             formFieldDefinitionEntity.setReadonly(checkboxField.getReadonly());
             formFieldDefinitionEntity.setRequired(checkboxField.getRequired());
             formFieldDefinitionEntity.setOptions(checkboxField.getOptions());
@@ -193,6 +199,7 @@ public class FieldServiceDatabase implements FieldService {
         } else if (field.getType() == FieldType.RADIO) {
             RadioField radioField = (RadioField) field;
             formFieldDefinitionEntity.setValue(radioField.getValue());
+            formFieldDefinitionEntity.setPlaceholder(radioField.getPlaceholder());
             formFieldDefinitionEntity.setReadonly(radioField.getReadonly());
             formFieldDefinitionEntity.setRequired(radioField.getRequired());
             formFieldDefinitionEntity.setOptions(radioField.getOptions());
@@ -200,6 +207,7 @@ public class FieldServiceDatabase implements FieldService {
         } else if (field.getType() == FieldType.SELECT) {
             SelectField selectField = (SelectField) field;
             formFieldDefinitionEntity.setValue(selectField.getValue());
+            formFieldDefinitionEntity.setPlaceholder(selectField.getPlaceholder());
             formFieldDefinitionEntity.setReadonly(selectField.getReadonly());
             formFieldDefinitionEntity.setRequired(selectField.getRequired());
             formFieldDefinitionEntity.setOptions(selectField.getOptions());

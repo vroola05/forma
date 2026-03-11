@@ -10,6 +10,7 @@ import org.commonground.formbuilder.database.dao.definition.FormTabInstanceDefin
 import org.commonground.formbuilder.database.repository.FormTabDefinitionEntityRepository;
 import org.commonground.formbuilder.database.repository.FormTabInstanceDefinitionRepository;
 import org.commonground.formbuilder.model.form.Field;
+import org.commonground.formbuilder.model.form.FieldType;
 import org.commonground.formbuilder.model.form.TabPage;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,7 @@ public class TabPageServiceDatabase implements TabPageService {
         for (FormTabInstanceDefinitionEntity formTabInstanceDefinitionEntity : formTabInstanceDefinitionEntities) {
             FormTabDefinitionEntity formTabDefinitionEntity = formTabInstanceDefinitionEntity.getTab();
             TabPage tabPage = new TabPage();
+            tabPage.setType(FieldType.TAB);
             tabPage.setId(formTabDefinitionEntity.getId());
             tabPage.setName(formTabDefinitionEntity.getName());
             tabPage.setLabel(formTabDefinitionEntity.getLabel());

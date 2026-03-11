@@ -20,6 +20,7 @@ export class FormRenderer {
         return {
             name: form.name,
             type: form.type,
+            id: form.id,
             fields: FormRenderer.#getTabsData(form)
         }
     }
@@ -30,6 +31,7 @@ export class FormRenderer {
                 name: tabContent.name,
                 label: tabContent.label,
                 type: tabContent.type,
+                id: tabContent.id,
                 fields: FormRenderer.#getFormGroupsData(tabContent)
             };
         });
@@ -41,6 +43,7 @@ export class FormRenderer {
                 name: formGroup.name,
                 label: formGroup.label,
                 type: formGroup.type,
+                id: formGroup.id,
                 fields: FormRenderer.#getFieldsData(formGroup)
             }
         });

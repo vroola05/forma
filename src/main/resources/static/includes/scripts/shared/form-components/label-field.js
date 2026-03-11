@@ -40,8 +40,8 @@ export class LabelField extends InputNucleus {
     }
 
     setValue(value, noCallback = false) {
-        this.value = this.nullOrUndefined(value);
-        this.inputElement.innerHTML = value;
+        this.value = value ?? '';
+        this.inputElement.innerHTML = this.value;
         return this;
     }
 

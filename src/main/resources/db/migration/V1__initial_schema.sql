@@ -80,7 +80,6 @@ CREATE TABLE form_field_definition (
     version bigint DEFAULT 0 NOT NULL
 );
 
-
 CREATE TABLE form_submission (
     id UUID PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,

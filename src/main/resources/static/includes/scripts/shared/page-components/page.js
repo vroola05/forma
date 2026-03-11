@@ -1,4 +1,5 @@
 import { FormGroup } from '../form-components/form-group.js';
+import { footerService } from "../services/footer-service.js";
 
 export class Page {
     parameters = undefined;
@@ -7,6 +8,7 @@ export class Page {
 
     constructor() {
         FormGroup.setPage(this.constructor.name);
+        footerService.clear();
         this.getPageParameters();
     }
 

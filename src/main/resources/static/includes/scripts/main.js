@@ -1,6 +1,8 @@
 import { Router } from './shared/services/router.js';
 import { Environment } from './environment.js';
 import { Header } from './form-viewer/components/header.js';
+import { Footer } from './shared/generic-components/footer.js';
+
 
 import { Auth } from './auth.js';
 import { Lang } from './shared/services/lang.js';
@@ -32,6 +34,10 @@ export class Main {
             const header = new Header();
             const headerDom = document.getElementById('header');
             headerDom.appendChild(header.getContent());
+
+            const footer = new Footer();
+            const footerDom = document.getElementById('footer');
+            footerDom.appendChild(footer.getContent());
 
             this.setRoutes();
         });
