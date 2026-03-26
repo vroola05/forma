@@ -56,6 +56,7 @@ body {
 
         .builder-window-frame-header-title {
             flex-grow: 1;
+            font-weight: bolder;
         }
 
         .builder-window-frame-header-btns {
@@ -443,15 +444,30 @@ Styles voor builder-field.js
         }
     }
 } */
+.builder-field-items {
+    list-style-type: none;
+    padding: var(--default-space-half);
+    margin: 0; 
+
+    .builder-page-field-item {
+        padding: var(--default-space-half) var(--default-space);
+        border-bottom: transparent solid 1px;
+
+        &::before {
+            margin-right: var(--default-space);
+            flex-shrink: 0;
+        }
+        
+        &:hover {
+            color: var(--secondary-color);
+
+            border-top: var(--bs-border-color) solid 1px;
+            border-bottom: var(--bs-border-color) solid 1px;
+        }
+    }
+}
 
 .builder-properties-container {
-    display: none;
-    border: var(--bs-border-color) 1px solid;
-    border-radius: var(--default-space-half);
-
-    &.active {
-        display: block
-    }
 
     .builder-field-properties {
         display: flex;
@@ -475,9 +491,7 @@ Styles voor builder-field.js
     .builder-field-properties-label {
         margin: var(--default-space-half) var(--default-space-half) 15px var(--default-space-half);
         padding: var(--default-space) var(--default-space);
-        border: #dee2e6 solid 1px;
-        border-left: 0;
-        border-right: 0;
+        border-bottom: #dee2e6 solid 1px;
     }
 
     .builder-properties-options-container {

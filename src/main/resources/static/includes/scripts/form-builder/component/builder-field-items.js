@@ -1,13 +1,14 @@
 import { WindowFrame } from './window-frame.js';
+import { Dropzone } from '../fields/components/dropzone.js';
 
 export class BuilderFieldItems {
     constructor(label) {
         this.windowFrame = new WindowFrame(label);
 
-        this.builderMenuUlContainer = document.createElement('ul');
-        this.builderMenuUlContainer.className = '';
+        this.builderFieldItems = document.createElement('ul');
+        this.builderFieldItems.className = 'builder-field-items';
 
-        this.windowFrame.setContent(this.builderMenuUlContainer);
+        this.windowFrame.setContent(this.builderFieldItems);
     }
 
     createItems(items) {
@@ -21,18 +22,18 @@ export class BuilderFieldItems {
      * @param {*} label 
      */
     createItem(icon, type, label) {
-        const builderPageFieldMenuItem = document.createElement('li');
-        builderPageFieldMenuItem.className = 'builder-page-field-menu-item';
-        builderPageFieldMenuItem.draggable = true;
-        builderPageFieldMenuItem.innerHTML = label;
-        builderPageFieldMenuItem.setAttribute('data-type', type);
-        builderPageFieldMenuItem.setAttribute('data-label', label);
+        const builderPageFieldItem = document.createElement('li');
+        builderPageFieldItem.className = 'builder-page-field-item' + (icon !== '' ? ' icon ' + icon : '');
+        builderPageFieldItem.draggable = true;
+        builderPageFieldItem.innerHTML = label;
+        builderPageFieldItem.setAttribute('data-type', type);
+        builderPageFieldItem.setAttribute('data-label', label);
 
-        builderPageFieldMenuItem.addEventListener("dragstart", (event) => {
+        builderPageFieldItem.addEventListener("dragstart", (event) => {
             Dropzone.setDraggedItem(event.target);
         });
 
-        this.builderMenuUlContainer.append(builderPageFieldMenuItem);
+        this.builderFieldItems.append(builderPageFieldItem);
     }
 
     getContent() {

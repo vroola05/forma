@@ -18,6 +18,16 @@
     "form.name": "Naam formulier",
     "tab.new": "Nieuwe tab ",
 
+    "field.type.form.group": "Groep",
+    "field.type.checkbox": "Checkboxveld",
+    "field.type.text": "Tekstveld",
+    "field.type.number": "Nummerveld",
+    "field.type.select": "Selectveld",
+    "field.type.radio": "Radioveld",
+    "field.type.date": "Datumveld",
+    "field.type.valuta": "Valutaveld",
+    "field.type.repeating.group": "Herhalende groep",
+
     "prop.option.value": "Waarde",
     "prop.option.text": "Tekst",
     "prop.list.text": "Waarde",

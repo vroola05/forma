@@ -22,13 +22,10 @@ export class BuilderForm extends BuilderFieldInterface {
 
     init(properties) {
         if (properties) {
-            
             this.initDefaultProperties(properties);
 
             if (properties.fields) {
                 properties.fields.forEach(tab => {
-                    
-                    console.log('Initializing tab with properties');
                     const field = this.createTab();
                     field.init(tab);
                 });

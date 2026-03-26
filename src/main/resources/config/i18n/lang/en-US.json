@@ -18,6 +18,16 @@
     "form.name": "Formname",
     "tab.new": "New tab",
 
+    "field.type.form.group": "Group",
+    "field.type.checkbox": "Checkboxfield",
+    "field.type.text": "Textfield",
+    "field.type.number": "Numberfield",
+    "field.type.select": "Selectfield",
+    "field.type.radio": "Radiofield",
+    "field.type.date": "Datefield",
+    "field.type.valuta": "Valutafield",
+    "field.type.repeating.group": "Repeating group",
+
     "prop.option.value": "Value",
     "prop.option.text": "Text",
     "prop.list.text": "Value",

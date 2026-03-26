@@ -1,10 +1,11 @@
 import { BuilderFieldInterface } from "../fields/builder-field-interface.js";
 import { Dropzone } from './components/dropzone.js';
 import { EventService } from '../../shared/services/event-service.js';
+import { Lang } from '../../shared/services/lang.js';
 
 export class BuilderTabPage extends BuilderFieldInterface {
     dropzone = null;
-    acceptedTypes = ['form-group'];
+    acceptedTypes = ['form-group', 'text', 'number', 'date', 'select', 'radio', 'valuta', 'repeating-group'];
     tabLabelItem = null;
     active = false;
 
@@ -20,7 +21,7 @@ export class BuilderTabPage extends BuilderFieldInterface {
             this.initDefaultProperties(properties);
 
             for (const formGroup of properties.fields) {
-                const field = this.dropzone.addItem('form-group', 'Form group');
+                const field = this.dropzone.addItem('form-group', Lang.get('field.type.form.group'));
                 field.init(formGroup);
             }
         }

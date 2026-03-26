@@ -2,6 +2,7 @@ import { BuilderPropertiesOptionsType } from './builder-properties-options-type.
 import { BuilderPropertiesConditionType } from './builder-properties-condition-type.js';
 import { EventService } from '../../shared/services/event-service.js';
 import { Lang } from '../../shared/services/lang.js';
+import { WindowFrame} from '../component/window-frame.js';
 
 export class BuilderPropertyComponent {
     content = document.createElement('div');
@@ -18,12 +19,11 @@ export class BuilderPropertyComponent {
     }
 
     createContent() {
-        this.content.className = 'builder-properties-container';
+        this.windowFrame = new WindowFrame(Lang.get('prop.header'));
+        this.windowFrame.hide();
+        this.windowFrame.setContent(this.content);
 
-        const fieldPropertiesHeader = document.createElement('div');
-        fieldPropertiesHeader.innerHTML = `<h2>${Lang.get('prop.header')}</h2>`;
-        fieldPropertiesHeader.className = 'builder-field-properties';
-        this.content.appendChild(fieldPropertiesHeader);
+        this.content.className = 'builder-properties-container';
 
         this.fieldLabelContainer.className = 'builder-field-properties-label';
         this.content.appendChild(this.fieldLabelContainer);
@@ -46,7 +46,7 @@ export class BuilderPropertyComponent {
             this.createPropertiesDom();
         }
 
-        this.content.classList.add('active');
+        this.windowFrame.show();
     }
 
     createPropertiesDom() {
@@ -236,6 +236,7 @@ export class BuilderPropertyComponent {
     }
 
     getContent() {
-        return this.content;
+        return this.windowFrame.getContent();
+        // return this.content;
     }
 }

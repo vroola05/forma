@@ -1,5 +1,5 @@
 export const FIELD_TYPES = {
-    'form-group': 'Form group',
+    'form-group': 'Group',
     'checkbox': 'Checkbox',
     'text': 'Text',
     'number': 'Number',

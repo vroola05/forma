@@ -1,8 +1,8 @@
 @font-face {
     font-family: "icons";
-    src: url("./icons.eot?500f72b8b0586bf460943bf68732a08e#iefix") format("embedded-opentype"),
-url("./icons.woff2?500f72b8b0586bf460943bf68732a08e") format("woff2"),
-url("./icons.woff?500f72b8b0586bf460943bf68732a08e") format("woff");
+    src: url("./icons.eot?b51ed969252e439c80670cd20f3b008f#iefix") format("embedded-opentype"),
+url("./icons.woff2?b51ed969252e439c80670cd20f3b008f") format("woff2"),
+url("./icons.woff?b51ed969252e439c80670cd20f3b008f") format("woff");
 }
 
 [class^="icon-"]:before, [class*=" icon-"]:before {
@@ -22,39 +22,66 @@ url("./icons.woff?500f72b8b0586bf460943bf68732a08e") format("woff");
 .icon-three-dots-vertical:before {
     content: "\f102";
 }
-.icon-plus-lg:before {
+.icon-repeat:before {
     content: "\f103";
 }
-.icon-person-circle:before {
+.icon-record-circle:before {
     content: "\f104";
 }
-.icon-lightning-charge:before {
+.icon-plus-lg:before {
     content: "\f105";
 }
-.icon-grip-vertical:before {
+.icon-person-circle:before {
     content: "\f106";
 }
-.icon-file-plus:before {
+.icon-lightning-charge:before {
     content: "\f107";
 }
-.icon-chevron-up:before {
+.icon-grip-vertical:before {
     content: "\f108";
 }
-.icon-chevron-right:before {
+.icon-fonts:before {
     content: "\f109";
 }
-.icon-chevron-left:before {
+.icon-file-plus:before {
     content: "\f10a";
 }
-.icon-chevron-down:before {
+.icon-currency-euro:before {
     content: "\f10b";
 }
-.icon-caret-right-fill:before {
+.icon-chevron-up:before {
     content: "\f10c";
 }
-.icon-arrows-angle-expand:before {
+.icon-chevron-right:before {
     content: "\f10d";
 }
-.icon-arrows-angle-contract:before {
+.icon-chevron-left:before {
     content: "\f10e";
+}
+.icon-chevron-down:before {
+    content: "\f10f";
+}
+.icon-check-square:before {
+    content: "\f110";
+}
+.icon-caret-right-fill:before {
+    content: "\f111";
+}
+.icon-card-text:before {
+    content: "\f112";
+}
+.icon-card-list:before {
+    content: "\f113";
+}
+.icon-calendar2-date:before {
+    content: "\f114";
+}
+.icon-arrows-angle-expand:before {
+    content: "\f115";
+}
+.icon-arrows-angle-contract:before {
+    content: "\f116";
+}
+.icon-9-square:before {
+    content: "\f117";
 }

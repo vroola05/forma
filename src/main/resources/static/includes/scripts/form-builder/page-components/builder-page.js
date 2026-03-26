@@ -135,15 +135,15 @@ export class BuilderPage extends Page {
 
         const builderFieldItems = new BuilderFieldItems('Basiscomponenten');
         builderFieldItems.createItems([
-            {icon: '', type: 'form-group', label: FIELD_TYPES['form-group']},
-            {icon: '', type: 'checkbox', label: FIELD_TYPES['checkbox']},
-            {icon: '', type: 'text', label: FIELD_TYPES['text']},
-            {icon: '', type: 'number', label: FIELD_TYPES['number']},
-            {icon: '', type: 'radio', label: FIELD_TYPES['radio']},
-            {icon: '', type: 'select', label: FIELD_TYPES['select']},
-            {icon: '', type: 'date', label: FIELD_TYPES['date']},
-            {icon: '', type: 'valuta', label: FIELD_TYPES['valuta']},
-            {icon: '', type: 'repeating-group', label: FIELD_TYPES['repeating-group']}
+            {icon: 'icon-card-text', type: 'form-group', label: Lang.get('field.type.form.group')},
+            {icon: 'icon-check-square', type: 'checkbox', label: Lang.get('field.type.checkbox')},
+            {icon: 'icon-fonts', type: 'text', label: Lang.get('field.type.text')},
+            {icon: 'icon-9-square', type: 'number', label: Lang.get('field.type.number')},
+            {icon: 'icon-record-circle', type: 'radio', label: Lang.get('field.type.radio')},
+            {icon: 'icon-card-list', type: 'select', label: Lang.get('field.type.select')},
+            {icon: 'icon-calendar2-date', type: 'date', label: Lang.get('field.type.date')},
+            {icon: 'icon-currency-euro', type: 'valuta', label: Lang.get('field.type.valuta')},
+            {icon: 'icon-repeat', type: 'repeating-group', label: Lang.get('field.type.repeating.group')}
         ]);
 
         this.builderPageMenuLeftContainer.append(builderFieldItems.getContent());

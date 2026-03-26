@@ -1,6 +1,6 @@
 export class WindowFrame {
     
-    constructor(label) {
+    constructor(label, collapsed = false) {
         this.frame = document.createElement('div');
         this.frame.className = 'builder-window-frame';
 
@@ -46,6 +46,17 @@ export class WindowFrame {
             this.frameContent.classList.add('hidden');
         }
     }
+
+    show() {
+        if (this.frame.classList.contains('hidden')) {
+            this.frame.classList.remove('hidden');
+        }
+    }
+
+    hide() {
+        this.frame.classList.add('hidden');
+    }
+
     setContent(content) {
         this.frameContent.appendChild(content);
     }

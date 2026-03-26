@@ -2,6 +2,7 @@ import { BuilderFormGroup } from '../builder-form-group.js';
 import { BuilderField, BuilderFieldOptions } from '../builder-field.js';
 import { BuilderRepeatingGroup } from '../builder-repeating-group.js';
 import { EventService } from '../../../shared/services/event-service.js';
+import { Lang } from '../../../shared/services/lang.js';
 
 export class Dropzone {
     static currentDraggedItem = null;
@@ -21,7 +22,7 @@ export class Dropzone {
 
         domElement.addEventListener("dragover", (event) => {
             event.preventDefault();
-
+            
             domElement.classList.add('drag-over');
 
             const field = event.target.closest('.draggable-item');
@@ -46,15 +47,18 @@ export class Dropzone {
 
             domElement.classList.remove('drag-over');
 
+            console.log('drop 1');
             if (Dropzone.currentDraggedItem == null) {
                 return;
             }
 
+            console.log('drop 2');
             // Check if the dropzone is the correct one
             if (!event.currentTarget.classList.contains("dropzone")) {
                 return
             }
 
+            console.log('drop 3');
             // It is posible that the drop event is fired by a child element, 
             // so we need to check if the dropzone is the target or one of its children
             const dropzone = event.target.closest('.dropzone')
@@ -62,6 +66,7 @@ export class Dropzone {
                 return;
             }
 
+            console.log('drop 4');
             let droppedOnformItem = event.target.closest('.draggable-item');
             if (droppedOnformItem && !dropzone.contains(droppedOnformItem)) {
                 droppedOnformItem = null;
@@ -71,15 +76,18 @@ export class Dropzone {
                 droppedOnformItem.classList.remove('drag-item');
             }
 
+            console.log('drop 5');
             const type = Dropzone.currentDraggedItem.dataset.type;
             if (!this.isAcceptedTypes(type)) {
                 return;
             }
 
+            console.log('drop 6');
             if (Dropzone.currentDraggedItem.classList.contains('builder-page-field-menu-item')) {
                 this.addItem(type, Dropzone.currentDraggedItem.dataset.label, droppedOnformItem);
             }
 
+            console.log('drop 7');
             if (Dropzone.currentDraggedItem.classList.contains('draggable-item')) {
                 this.moveItem(type, droppedOnformItem);
             }
@@ -88,6 +96,7 @@ export class Dropzone {
     }
 
     moveItem(type, droppedOnformItem) {
+        console.log('moveItem', type, droppedOnformItem);
         if (this.objectArray != null) {
             if (Dropzone.currentDraggedItem === droppedOnformItem) return;
 
@@ -113,7 +122,7 @@ export class Dropzone {
 
     addItem(type, label, droppedOnformItem) {
         const field = this.getField(type, label);
-
+        console.log('field', field);
         field.onDragStart = (event) => {
             Dropzone.setDraggedItem(event.target);
         };
@@ -152,23 +161,23 @@ export class Dropzone {
     getField(type, label) {
         switch(type) {
             case 'form-group':
-                return new BuilderFormGroup(type, label);
+                return new BuilderFormGroup(type, Lang.get('field.type.form.group'));
             case 'text':
-                return new BuilderField(type, label);
+                return new BuilderField(type, Lang.get('field.type.text'));
             case 'number':
-                return new BuilderField(type, label);
+                return new BuilderField(type, Lang.get('field.type.number'));
             case 'valuta':
-                return new BuilderField(type, label);
+                return new BuilderField(type, Lang.get('field.type.valuta'));
             case 'date':
-                return new BuilderField(type, label);
+                return new BuilderField(type, Lang.get('field.type.date'));
             case 'select':
-                return new BuilderFieldOptions(type, label);
+                return new BuilderFieldOptions(type, Lang.get('field.type.select'));
             case 'checkbox':
-                return new BuilderFieldOptions(type, label);
+                return new BuilderFieldOptions(type, Lang.get('field.type.checkbox'));
             case 'radio':
-                return new BuilderFieldOptions(type, label);
+                return new BuilderFieldOptions(type, Lang.get('field.type.radio'));
             case 'repeating-group':
-                return new BuilderRepeatingGroup(type, label);
+                return new BuilderRepeatingGroup(type, Lang.get('field.type.repeating.group'));
         }
         throw new Error('Onbekend type: ' + type);
     }
