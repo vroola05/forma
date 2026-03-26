@@ -60,7 +60,7 @@ export class BuilderForm extends BuilderFieldInterface {
         builderFormHeaderBar.appendChild(builderFormHeaderBarButtons);
 
         const builderFormBtnEdit = document.createElement('button');
-        builderFormBtnEdit.className = 'builder-btn-icon builder-form-btn-edit';
+        builderFormBtnEdit.className = 'builder-btn-icon icon icon-three-dots-vertical';
         builderFormBtnEdit.setAttribute('aria-label', "Close");
         builderFormHeaderBarButtons.appendChild(builderFormBtnEdit);
         builderFormBtnEdit.addEventListener('click', (event) => {

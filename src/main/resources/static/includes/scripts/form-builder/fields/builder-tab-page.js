@@ -49,7 +49,7 @@ export class BuilderTabPage extends BuilderFieldInterface {
         builderTabPageHeaderBar.appendChild(builderTabPageHeaderBarButtons);
 
         const builderTabPageBtnEdit = document.createElement('button');
-        builderTabPageBtnEdit.className = 'builder-tab-page-btn-edit';
+        builderTabPageBtnEdit.className = 'builder-btn-icon icon icon-three-dots-vertical';
         builderTabPageBtnEdit.setAttribute('aria-label', "Close");
         builderTabPageHeaderBarButtons.appendChild(builderTabPageBtnEdit);
         builderTabPageBtnEdit.addEventListener('click', (event) => {

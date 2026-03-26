@@ -15,7 +15,7 @@ export class BuilderTabLabel {
         this.builderTabLabelContainer.className = 'builder-tab-label-container';
 
         this.builderTabLabelBtnLeft = document.createElement('div');
-        this.builderTabLabelBtnLeft.className = 'builder-btn-icon builder-tab-label-btn-left';
+        this.builderTabLabelBtnLeft.className = 'builder-btn-icon builder-tab-label-btn icon icon-chevron-left';
         this.builderTabLabelContainer.appendChild(this.builderTabLabelBtnLeft);
         this.builderTabLabelBtnLeft.addEventListener('click', () => {
             if (!this.builderTabLabelBtnLeft.classList.contains('disabled')) {
@@ -74,7 +74,7 @@ export class BuilderTabLabel {
         resizeObserver.observe(this.builderTabLabelBtnTabContainer);
 
         const builderTabLabelBtnAdd = document.createElement('div');
-        builderTabLabelBtnAdd.className = 'builder-btn-icon builder-tab-label-btn-add';
+        builderTabLabelBtnAdd.className = 'builder-btn-icon builder-tab-label-btn icon icon-plus-lg';
         this.builderTabLabelContainer.appendChild(builderTabLabelBtnAdd);
         builderTabLabelBtnAdd.addEventListener('click', () => {
             const tab = this.createTab();
@@ -83,7 +83,7 @@ export class BuilderTabLabel {
         });
 
         this.builderTabLabelBtnRight = document.createElement('div');
-        this.builderTabLabelBtnRight.className = 'builder-btn-icon builder-tab-label-btn-right';
+        this.builderTabLabelBtnRight.className = 'builder-btn-icon builder-tab-label-btn icon icon-chevron-right';
         this.builderTabLabelContainer.appendChild(this.builderTabLabelBtnRight);
         this.builderTabLabelBtnRight.addEventListener('click', () => {
             if (!this.builderTabLabelBtnRight.classList.contains('disabled')) {

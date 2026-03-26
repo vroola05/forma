@@ -44,7 +44,7 @@ export class BuilderPropertiesCondition {
         builderConditionTypeContainer.appendChild(buttonContainer);
 
         const buttonRemove = document.createElement('button');
-        buttonRemove.className = 'builder-properties-button-delete';
+        buttonRemove.className = 'builder-btn-icon icon icon-x-lg';
         buttonRemove.addEventListener('click', () => {
             this.onDelete(this);
             this.valueChanged();
@@ -238,7 +238,7 @@ export class BuilderPropertiesCondition {
 
     addCondition(conditionData = {}) {
         const builderPropertyOptionItem = document.createElement('div');
-        builderPropertyOptionItem.className = 'builder-property-condition-row';
+        builderPropertyOptionItem.className = 'builder-property-condition-row icon icon-grip-vertical';
         builderPropertyOptionItem.setAttribute('data-guid', this.guid);
         builderPropertyOptionItem.setAttribute('draggable', 'true');
         builderPropertyOptionItem.addEventListener("dragstart", (event) => {

@@ -42,7 +42,7 @@ export class BuilderFormGroup extends BuilderFieldInterface {
         builderFormGroupHeaderBar.appendChild(builderFormGroupHeaderBarButtons);
 
         const builderFormGroupBtnEdit = document.createElement('button');
-        builderFormGroupBtnEdit.className = 'builder-form-group-btn-edit';
+        builderFormGroupBtnEdit.className = 'builder-btn-icon icon icon-three-dots-vertical';
         builderFormGroupHeaderBarButtons.appendChild(builderFormGroupBtnEdit);
         builderFormGroupBtnEdit.addEventListener('click', (event) => {
             event.preventDefault();
@@ -50,7 +50,7 @@ export class BuilderFormGroup extends BuilderFieldInterface {
         });
 
         const builderFormGroupBtnClose = document.createElement('button');
-        builderFormGroupBtnClose.className = 'builder-form-group-btn-close';
+        builderFormGroupBtnClose.className = 'builder-btn-icon icon icon-x-lg';
         builderFormGroupHeaderBarButtons.appendChild(builderFormGroupBtnClose);
         builderFormGroupBtnClose.addEventListener('click', (event) => {
             if (this.onDeleteCallback) {

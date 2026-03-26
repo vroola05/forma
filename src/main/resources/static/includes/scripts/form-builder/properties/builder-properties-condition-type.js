@@ -28,7 +28,7 @@ export class BuilderPropertiesConditionType {
         fieldPropertiesHeader.appendChild(propertiesHeaderBtns);
 
         const propertiesHeaderBtnExpand = document.createElement('button');
-        propertiesHeaderBtnExpand.className = 'builder-properties-header-btn-expand';
+        propertiesHeaderBtnExpand.className = 'builder-btn-icon icon icon-arrows-angle-expand';
         propertiesHeaderBtns.appendChild(propertiesHeaderBtnExpand);
         propertiesHeaderBtnExpand.addEventListener('click', (e) => {
 

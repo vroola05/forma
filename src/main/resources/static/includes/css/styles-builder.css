@@ -32,13 +32,40 @@ body {
 .builder-btn-icon {
     box-sizing: content-box;
     width: 1em;
-    height: 1em;
     border: 0;
     cursor: pointer;
 
+    background-color: transparent;
     &:hover {
         filter: invert(200) sepia(100%) saturate(93%) hue-rotate(270deg) brightness(50%) contrast(300%);
 
+    }
+}
+
+.builder-window-frame {
+    padding: 0px;
+    border: #dee2e6 1px solid;
+    border-radius: var(--default-space-half);
+
+    .builder-window-frame-header {
+        display: flex;
+        flex-direction: row;
+
+        padding: calc(var(--default-space) / 2);
+        border-bottom: #dee2e6 1px solid;
+
+        .builder-window-frame-header-title {
+            flex-grow: 1;
+        }
+
+        .builder-window-frame-header-btns {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    .builder-window-frame-content {
     }
 }
 
@@ -55,7 +82,7 @@ Styles voor builder.js
         /*
         Linker menu
         */
-        .builder-page-menu-container {
+        .builder-page-menu-left-container {
 
             /*
             Item in het menu
@@ -63,14 +90,14 @@ Styles voor builder.js
             .builder-page-field-menu-item {}
         }
 
-        .builder-page-form-container {
+        .builder-page-center-container {
             padding: 0px;
 
             border: #dee2e6 1px solid;
             border-radius: var(--default-space-half);
         }
 
-        .builder-page-properties-container {}
+        .builder-page-menu-right-container {}
     }
 }
 
@@ -99,12 +126,6 @@ Styles voor builder-form.js
 
         .builder-form-header-bar-label {
             flex: auto;
-        }
-
-        .builder-form-header-bar-buttons {
-            .builder-form-btn-edit {
-                background: transparent url("../images/three-dots-vertical.svg") center / 1em auto no-repeat;
-            }
         }
     }
 
@@ -136,6 +157,8 @@ Styles voor builder-tab-label.js
     display: flex;
     flex-direction: row;
     align-items: stretch;
+    align-items: center;
+    justify-content: center;
     height: 40px;
     width: 100%;
     z-index: 1;
@@ -148,19 +171,8 @@ Styles voor builder-tab-label.js
 
     }
 
-    .builder-tab-label-btn-left {
-        padding: var(--default-space) 0px 0px var(--default-space-double) ;
-        background: transparent url("../images/chevron-left.svg") center / 1em auto no-repeat;
-    }
-
-    .builder-tab-label-btn-add {
-        padding: var(--default-space) var(--default-space-double)  0px 0px;
-        background: transparent url("../images/plus-lg.svg") center / 1em auto no-repeat;
-    }
-
-    .builder-tab-label-btn-right {
-        padding: var(--default-space) var(--default-space-double) 0px 0px;
-        background: transparent url("../images/chevron-right.svg") center / 1em auto no-repeat;
+    .builder-tab-label-btn {
+         padding: 0px var(--default-space-half) 0px var(--default-space-half);
     }
 
     .builder-tab-label-btn-tab-container {
@@ -206,9 +218,7 @@ Styles voor builder-tab-label-item.js
     }
 
     .builder-tab-label-item-btn-close {
-        padding: var(--default-space) var(--default-space) 0px 0px;
-        background: transparent url("../images/x-lg.svg") center / 1em auto no-repeat;
-
+        padding: var(--default-space-half) var(--default-space-half) 0px var(--default-space-half);
     }
 }
 
@@ -241,14 +251,6 @@ Styles voor builder-tab-label-item.js
 
         .builder-tab-page-header-bar-buttons {
             margin: var(--default-space-half) 0px 0 0;
-
-            .builder-tab-page-btn-edit {
-                box-sizing: content-box;
-                width: 1em;
-                height: 1em;
-                border: 0;
-                background: transparent url("../images/three-dots-vertical.svg") center / 1em auto no-repeat;
-            }
         }
     }
 
@@ -302,22 +304,6 @@ Styles voor builder-form-group.js
 
         .builder-form-group-header-bar-buttons {
             margin: var(--default-space-half) 0px 0 0;
-
-            .builder-form-group-btn-edit {
-                box-sizing: content-box;
-                width: 1em;
-                height: 1em;
-                border: 0;
-                background: transparent url("../images/three-dots-vertical.svg") center / 1em auto no-repeat;
-            }
-
-            .builder-form-group-btn-close {
-                box-sizing: content-box;
-                width: 1em;
-                height: 1em;
-                border: 0;
-                background: transparent url("../images/x-lg.svg") center / 1em auto no-repeat;
-            }
         }
     }
 
@@ -373,22 +359,6 @@ Styles voor builder-repeating-group.js
 
         .builder-repeating-group-header-bar-buttons {
             margin: var(--default-space-half) 0px 0 0;
-
-            .builder-repeating-group-btn-edit {
-                box-sizing: content-box;
-                width: 1em;
-                height: 1em;
-                border: 0;
-                background: transparent url("../images/three-dots-vertical.svg") center / 1em auto no-repeat;
-            }
-
-            .builder-repeating-group-btn-close {
-                box-sizing: content-box;
-                width: 1em;
-                height: 1em;
-                border: 0;
-                background: transparent url("../images/x-lg.svg") center / 1em auto no-repeat;
-            }
         }
     }
 
@@ -433,22 +403,6 @@ Styles voor builder-field.js
 
         .builder-field-header-bar-buttons {
             margin: var(--default-space-half) 0px 0 0;
-
-            .builder-field-btn-edit {
-                box-sizing: content-box;
-                width: 1em;
-                height: 1em;
-                border: 0;
-                background: transparent url("../images/three-dots-vertical.svg") center / 1em auto no-repeat;
-            }
-
-            .builder-field-btn-close {
-                box-sizing: content-box;
-                width: 1em;
-                height: 1em;
-                border: 0;
-                background: transparent url("../images/x-lg.svg") center / 1em auto no-repeat;
-            }
         }
     }
 }
@@ -515,23 +469,6 @@ Styles voor builder-field.js
             display: flex;
             flex-direction: row;
             align-items: center;
-
-            .builder-properties-header-btn-contract {
-                box-sizing: content-box;
-                width: 1em;
-                height: 1em;
-                border: 0;
-                background: transparent url("../images/arrows-angle-contract.svg") left / 1em auto no-repeat;
-            }
-
-            .builder-properties-header-btn-expand {
-                box-sizing: content-box;
-                width: 1em;
-                height: 1em;
-                border: 0;
-                background: transparent url("../images/arrows-angle-expand.svg") left / 1em auto no-repeat;
-            }
-
         }
     }
 
@@ -580,7 +517,6 @@ Styles voor builder-field.js
                     display: table-row;
                     width: 100%;
                     padding-left: var(--default-space-double);
-                    background: transparent url("../images/grip-vertical.svg") left / 1em auto no-repeat;
 
                     .options-type-col {
                         display: table-cell;
@@ -601,17 +537,6 @@ Styles voor builder-field.js
 
                         &.builder-properties-button-container {
                             vertical-align: middle;
-
-                            .builder-properties-button-delete {
-                                display: flex;
-                                margin-left: var(--default-space-half);
-                                margin-right: 2px;
-                                padding: var(--default-space);
-
-                                background: transparent url("../images/x-lg.svg") center / 1em auto no-repeat;
-                                border: #cccccc solid 1px;
-                                border-radius: var(--default-space-half);
-                            }
                         }
 
                     }
@@ -642,17 +567,6 @@ Styles voor builder-field.js
                         .builder-properties-button-container {
                             display: flex;
                             align-items: center;
-
-                            .builder-properties-button-delete {
-                                display: flex;
-                                margin-left: var(--default-space-half);
-                                margin-right: 2px;
-                                padding: var(--default-space);
-
-                                background: transparent url("../images/x-lg.svg") center / 1em auto no-repeat;
-                                border: #cccccc solid 1px;
-                                border-radius: var(--default-space-half);
-                            }
                         }
                     }
 
@@ -686,14 +600,15 @@ Styles voor builder-field.js
                             }
 
                             .builder-property-condition-row {
-
+                                display: flex;
+                                flex-direction: row;
                                 width: 100%;
-
-                                background: transparent url(../images/grip-vertical.svg) 0px 18px / 1em auto no-repeat;
-
+                                &:before {
+                                    padding-top: var(--default-space-triple);;
+                                }
                                 .options-type-col {
-
-                                    margin: var(--default-space-half) 0px var(--default-space-half) var(--default-space-double);
+                                    flex-grow: 1;
+                                    margin: 0px 0px var(--default-space-half) var(--default-space);
                                     padding: var(--default-space-half);
                                     border: var(--bs-border-color) 1px solid;
                                     border-radius: var(--default-space);
@@ -718,18 +633,6 @@ Styles voor builder-field.js
         .builder-properties-footer-label {
             flex: auto;
             margin: var(--default-space-half);
-        }
-
-        .builder-properties-footer-btn {
-            .builder-properties-btn-add {
-                margin: var(--default-space-half) 3px;
-                padding: var(--default-space);
-
-                background: transparent url(../images/plus-lg.svg) center / 1em auto no-repeat;
-                border: #cccccc solid 1px;
-                border-radius: var(--default-space-half);
-
-            }
         }
     }
 }

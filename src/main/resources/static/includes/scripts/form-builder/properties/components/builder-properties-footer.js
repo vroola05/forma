@@ -23,7 +23,7 @@ export class BuilderPropertiesFooter {
         this.buttons[id] = func;
 
         const builderPropertiesBtnAdd = document.createElement('button');
-        builderPropertiesBtnAdd.className = 'builder-properties-btn-add';
+        builderPropertiesBtnAdd.className = 'builder-btn-icon icon icon-plus-lg';
         builderPropertiesBtnAdd.setAttribute('data-id', id);
         builderPropertiesBtnAdd.addEventListener('click', (event) => {
             if (event.target.dataset.id in this.buttons) {

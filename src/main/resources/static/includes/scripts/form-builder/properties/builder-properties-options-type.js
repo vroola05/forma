@@ -132,7 +132,7 @@ export class BuilderPropertiesOptionsType {
 
     addRow(index) {
         const builderPropertyOptionItem = document.createElement('div');
-        builderPropertyOptionItem.className = 'builder-property-option-item';
+        builderPropertyOptionItem.className = 'builder-property-option-item icon icon-grip-vertical';
         builderPropertyOptionItem.setAttribute('data-id', this.property.id);
         builderPropertyOptionItem.setAttribute('draggable', 'true');
         builderPropertyOptionItem.addEventListener("dragstart", (event) => {
@@ -140,11 +140,6 @@ export class BuilderPropertiesOptionsType {
         });
         
         this.builderPropertyOptionsContainer.appendChild(builderPropertyOptionItem);
-
-
-        const builderPropertyOptionItemMoveContainer = document.createElement('div');
-        builderPropertyOptionItemMoveContainer.className = 'options-type-col move-col';
-        builderPropertyOptionItem.appendChild(builderPropertyOptionItemMoveContainer);
 
         for (let i=0; i < this.valueDefault.length; i++) {
             builderPropertyOptionItem.appendChild(this.getInputCol(
@@ -160,7 +155,7 @@ export class BuilderPropertiesOptionsType {
         builderPropertyOptionItem.appendChild(builderPropertyOptionItemDeleteContainer);
     
         const builderPropertyOptionItemDelete = document.createElement('button');
-        builderPropertyOptionItemDelete.className = 'builder-properties-button-delete';
+        builderPropertyOptionItemDelete.className = 'builder-btn-icon icon icon-x-lg';
 
         builderPropertyOptionItemDeleteContainer.appendChild(builderPropertyOptionItemDelete);
         builderPropertyOptionItemDeleteContainer.onclick = (event) => {

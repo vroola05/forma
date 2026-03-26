@@ -45,7 +45,7 @@ export class BuilderField extends BuilderFieldInterface {
         builderFieldHeaderBar.appendChild(builderFieldHeaderBarButtons);
 
         const formItemProperties = document.createElement('button');
-        formItemProperties.className = 'builder-field-btn-edit';
+        formItemProperties.className = 'builder-btn-icon icon icon-three-dots-vertical';
         builderFieldHeaderBarButtons.appendChild(formItemProperties);
         formItemProperties.addEventListener('click', (event) => {
             event.preventDefault();
@@ -53,7 +53,7 @@ export class BuilderField extends BuilderFieldInterface {
         });
 
         const formItemClose = document.createElement('button');
-        formItemClose.className = 'builder-field-btn-close';
+        formItemClose.className = 'builder-btn-icon icon icon-x-lg';
         builderFieldHeaderBarButtons.appendChild(formItemClose);
         formItemClose.addEventListener('click', (event) => {
             if (this.onDeleteCallback) {

@@ -21,7 +21,7 @@ export class BuilderTabLabelItem {
         this.builderTabLabelItemContainer.appendChild(this.builderTabLabelItem);
 
         const builderTabLabelItemBtnClose = document.createElement('div');
-        builderTabLabelItemBtnClose.className = 'builder-btn-icon builder-tab-label-item-btn-close';
+        builderTabLabelItemBtnClose.className = 'builder-btn-icon builder-tab-label-item-btn-close icon icon-x-lg';
         this.builderTabLabelItemContainer.appendChild(builderTabLabelItemBtnClose);
 
         builderTabLabelItemBtnClose.addEventListener('click', (event) => {

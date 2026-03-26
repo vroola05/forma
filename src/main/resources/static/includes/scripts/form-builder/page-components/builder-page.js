@@ -5,9 +5,10 @@ import { BuilderPropertyComponent } from '../properties/builder-properties-compo
 import { EventService } from '../../shared/services/event-service.js';
 import { FIELD_TYPES } from '../field-types.js'
 import { FormButton } from '../../form-viewer/components/form-button.js';
-import { Footer } from '../../shared/generic-components/footer.js';
+import { footerService } from '../../shared/services/footer-service.js';
 import { Toaster } from '../../shared/generic-components/toaster.js';
 
+import { BuilderFieldItems } from '../component/builder-field-items.js';
 import { ValidationError, Http } from '../../shared/services/http.js';
 import { Lang } from '../../shared/services/lang.js';
 import { Router } from '../../shared/services/router.js';
@@ -17,8 +18,8 @@ import { BuilderFormService } from '../services/builder-form-service.js';
 export class BuilderPage extends Page {
     content = document.createElement('div');
     builderPageContentContainer = document.createElement('div');
-    builderPageMenuContainer = document.createElement('div');
-    builderPageFormContainer = document.createElement('div');
+    builderPageMenuLeftContainer = document.createElement('div');
+    builderPageCenterContainer = document.createElement('div');
     loader = document.querySelector('.loader');
     isLoaded = false;
     builderFields = [];
@@ -33,9 +34,9 @@ export class BuilderPage extends Page {
 
         BuilderFormService.set(new BuilderForm());
 
-        EventService.callEventListener('header-buttons-right', [
-            new FormButton(Lang.get('generic.cancel'), 'cancel', null, () => {console.log('cancel')}),
-            new FormButton(Lang.get('generic.save'), 'save', null, () => {
+        // EventService.callEventListener('header-buttons-right', [
+            footerService.addButtonRight(new FormButton(Lang.get('generic.cancel'), 'footer-btn btn-secondary cancel', null, () => {console.log('cancel')}));
+            footerService.addButtonRight(new FormButton(Lang.get('generic.save'), 'footer-btn btn-primary save', null, () => {
                 try {
                     BuilderFormService.get().validate();
                 } catch(error) {
@@ -50,8 +51,8 @@ export class BuilderPage extends Page {
 
                 this.postForm(formWrapper);
 
-            })
-        ], '');
+            }));
+        // ], '');
 
         this.createContent();
 
@@ -93,7 +94,7 @@ export class BuilderPage extends Page {
         console.log('Start after init');
         // This is needed to ensure that the properties component is created after the page is fully initialized
         this.builderPropertiesComponent =  new BuilderPropertyComponent();
-        this.builderPropertiesContainerWrapper.appendChild(this.builderPropertiesComponent.getContent());
+        this.builderPageMenuRightContainer.appendChild(this.builderPropertiesComponent.getContent());
 
         EventService.addEventListener('value-changed', (a, b) => {
             console.log('value changed');
@@ -122,45 +123,32 @@ export class BuilderPage extends Page {
         rowContainer.className = 'row';
         this.builderPageContentContainer.append(rowContainer);
 
-        this.builderPageMenuContainer.className = 'builder-page-menu-container col col-3';
-        rowContainer.append(this.builderPageMenuContainer);
+        this.builderPageMenuLeftContainer.className = 'builder-page-menu-left-container col col-3';
+        rowContainer.append(this.builderPageMenuLeftContainer);
 
-        this.builderPageFormContainer.className = 'builder-page-form-container col col-6';
-        rowContainer.append(this.builderPageFormContainer);
+        this.builderPageCenterContainer.className = 'builder-page-center-container col col-6';
+        rowContainer.append(this.builderPageCenterContainer);
 
-        this.builderPropertiesContainerWrapper = document.createElement('div');
-        this.builderPropertiesContainerWrapper.className = 'builder-page-properties-container col col-3';
-        rowContainer.append(this.builderPropertiesContainerWrapper);
+        this.builderPageMenuRightContainer = document.createElement('div');
+        this.builderPageMenuRightContainer.className = 'builder-page-menu-right-container col col-3';
+        rowContainer.append(this.builderPageMenuRightContainer);
 
-        this.builderMenuUlContainer = document.createElement('ul');
-        this.builderMenuUlContainer.className = 'list-group';
-        this.builderPageMenuContainer.append(this.builderMenuUlContainer);
+        const builderFieldItems = new BuilderFieldItems('Basiscomponenten');
+        builderFieldItems.createItems([
+            {icon: '', type: 'form-group', label: FIELD_TYPES['form-group']},
+            {icon: '', type: 'checkbox', label: FIELD_TYPES['checkbox']},
+            {icon: '', type: 'text', label: FIELD_TYPES['text']},
+            {icon: '', type: 'number', label: FIELD_TYPES['number']},
+            {icon: '', type: 'radio', label: FIELD_TYPES['radio']},
+            {icon: '', type: 'select', label: FIELD_TYPES['select']},
+            {icon: '', type: 'date', label: FIELD_TYPES['date']},
+            {icon: '', type: 'valuta', label: FIELD_TYPES['valuta']},
+            {icon: '', type: 'repeating-group', label: FIELD_TYPES['repeating-group']}
+        ]);
 
-        Object.entries(FIELD_TYPES).forEach(([type, label]) => {
-            this.createMenuItem(type, label);
-        });
-        
-        this.builderPageFormContainer.appendChild(BuilderFormService.get().getContent());
-    }
+        this.builderPageMenuLeftContainer.append(builderFieldItems.getContent());
 
-    
-
-    /**
-     * 
-     * @param {*} type 
-     * @param {*} label 
-     */
-    createMenuItem(type, label) {
-        const builderPageFieldMenuItem = document.createElement('li');
-        builderPageFieldMenuItem.className = 'builder-page-field-menu-item list-group-item';
-        builderPageFieldMenuItem.draggable = true;
-        builderPageFieldMenuItem.innerHTML = label;
-        builderPageFieldMenuItem.setAttribute('data-type', type);
-        builderPageFieldMenuItem.setAttribute('data-label', label);
-        this.builderMenuUlContainer.append(builderPageFieldMenuItem);
-        builderPageFieldMenuItem.addEventListener("dragstart", (event) => {
-            Dropzone.setDraggedItem(event.target);
-        });
+        this.builderPageCenterContainer.appendChild(BuilderFormService.get().getContent());
     }
 
     /**
