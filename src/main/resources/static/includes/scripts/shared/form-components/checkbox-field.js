@@ -109,7 +109,6 @@ export class CheckboxField extends InputNucleus {
 
         this.values.push(opt);
 
-        console.log('addInputValue', this.values);
         this.valueChanged(noCallback, this.values);
 
         return this;
@@ -122,7 +121,6 @@ export class CheckboxField extends InputNucleus {
 
         this.values.splice(index, 1);
 
-        console.log('removeInputValue', this.values);
         this.valueChanged(noCallback, this.values);
 
         return this;

@@ -316,7 +316,7 @@ Styles voor builder-form-group.js
 
         .builder-form-group-field {
             min-height: 100px;
-            padding-bottom: var(--default-space-triple);
+            padding-bottom: var(--default-space);
 
 
 

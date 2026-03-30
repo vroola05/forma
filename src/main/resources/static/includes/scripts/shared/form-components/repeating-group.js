@@ -122,14 +122,13 @@ export class RepeatingGroup extends InputNucleus {
      */
     checkMinMaxAmount() {
         if (this.minLength > 0) {
-            console.log('0 minling:', this.sets, this.minLength);
             if (this.sets.length < this.minLength) {
                 for (let i = this.sets.length; i < this.minLength; i++) {
                     console.log('Adding row to meet minLength requirement');
                     this.addRow(this.template);
                 }
             }
-            console.log('1 minling:', this.sets, this.minLength);
+
             if (this.sets.length <= this.minLength) {
                 this.sets.forEach(set => {
                     const deleteBtn = set.querySelector(".repeating-btn-delete");
@@ -138,7 +137,6 @@ export class RepeatingGroup extends InputNucleus {
 
                 });
             } else {
-                console.log('2 minling:', this.sets, this.minLength);
                 this.sets.forEach(set => {
                     const deleteBtn = set.querySelector(".repeating-btn-delete");
                     if (deleteBtn)
@@ -148,7 +146,6 @@ export class RepeatingGroup extends InputNucleus {
         }
 
         if (this.maxLength > 0) {
-            console.log('maxling:', this.maxLength);
             if (this.sets.length >= this.maxLength) {
                 this.addButtonContainerDomElements.classList.add('hidden');
             } else {
@@ -175,7 +172,7 @@ export class RepeatingGroup extends InputNucleus {
             console.error('can\'t append new row');
             return;
         }
-        console.log('Adding row:', i);
+
         const groupRemoveDomElement = document.createElement('button');
         groupRemoveDomElement.addEventListener('click', (e) => {
             e.preventDefault();
@@ -284,7 +281,6 @@ export class RepeatingGroup extends InputNucleus {
 
         if (this.layout !== 'table') {
             if (this.sets.length === 0 && this.labelDomElements.classList.contains('hidden')) {
-                console.log('Toon de titel!')
                 this.labelDomElements.classList.remove('hidden');
             }
         }

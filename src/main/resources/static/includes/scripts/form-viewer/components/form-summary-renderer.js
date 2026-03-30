@@ -74,7 +74,6 @@ export class FormSummaryRenderer {
 
         
         for (const i in this.form.summaryConfirmation) {
-            console.log('C:', this.form.summaryConfirmation[i]);
             const confirmationWrapper = document.createElement('div');
             confirmationWrapper.className = 'summary-confirmation-wrapper';
 

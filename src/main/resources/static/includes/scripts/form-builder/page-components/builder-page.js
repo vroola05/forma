@@ -1,9 +1,10 @@
 import { Page } from '../../shared/page-components/page.js';
 import { BuilderForm } from '../fields/builder-form.js';
-import { Dropzone } from '../fields/components/dropzone.js';
 import { BuilderPropertyComponent } from '../properties/builder-properties-component.js';
 import { EventService } from '../../shared/services/event-service.js';
-import { FIELD_TYPES } from '../field-types.js'
+
+import { Storage } from '../../shared/services/storage-service.js';
+
 import { FormButton } from '../../form-viewer/components/form-button.js';
 import { footerService } from '../../shared/services/footer-service.js';
 import { Toaster } from '../../shared/generic-components/toaster.js';
@@ -33,41 +34,39 @@ export class BuilderPage extends Page {
         this.setTitle('Ontwerp formulier');
 
         BuilderFormService.set(new BuilderForm());
+        footerService.addButtonRight(new FormButton(Lang.get('generic.cancel'), 'footer-btn btn-secondary cancel', null, () => {console.log('cancel')}));
+        footerService.addButtonRight(new FormButton(Lang.get('generic.save'), 'footer-btn btn-primary save', null, () => {
+            try {
+                BuilderFormService.get().validate();
+            } catch(error) {
+                Toaster.error(error.message);
+                return;
+            }
 
-        // EventService.callEventListener('header-buttons-right', [
-            footerService.addButtonRight(new FormButton(Lang.get('generic.cancel'), 'footer-btn btn-secondary cancel', null, () => {console.log('cancel')}));
-            footerService.addButtonRight(new FormButton(Lang.get('generic.save'), 'footer-btn btn-primary save', null, () => {
-                try {
-                    BuilderFormService.get().validate();
-                } catch(error) {
-                    Toaster.error(error.message);
-                    return;
-                }
+            const formWrapper = {
+                form: BuilderFormService.get().getData(),
+                active: true
+            };
 
-                const formWrapper = {
-                    form: BuilderFormService.get().getData(),
-                    active: true
-                };
+            this.postForm(formWrapper);
 
-                this.postForm(formWrapper);
-
-            }));
-        // ], '');
+        }));
 
         this.createContent();
 
         // Check if form name in session storage matches the one in the URL
-        let formName = sessionStorage.getItem('form-name');
-        if (Router.lastParams && 'formName' in Router.lastParams && Router.lastParams.formName) {
-            const formNameStored = sessionStorage.getItem('form-name');
-            if(formNameStored !== Router.lastParams.formName) {
-                sessionStorage.removeItem('form-wrapper');
-                sessionStorage.setItem('form-name', Router.lastParams.formName);
+        let formName = Storage.getPageItem('form-name');
+        if (
+            Router.lastParams 
+            && 'formName' in Router.lastParams 
+            && Router.lastParams.formName 
+            && formName !== Router.lastParams.formName) {
+                Storage.removePageItem('form-wrapper');
+                Storage.setPageItem('form-name', Router.lastParams.formName);
                 formName = Router.lastParams.formName;
-            }
         }
 
-        const formWrapperString = sessionStorage.getItem('form-wrapper');
+        const formWrapperString = Storage.getPageItem('form-wrapper');
         if (formWrapperString) {
             this.formWrapper = JSON.parse(formWrapperString);
             this.init(this.formWrapper);
@@ -176,9 +175,8 @@ export class BuilderPage extends Page {
         }
 
         try {
-
             this.formWrapper.form = BuilderFormService.get().getData();
-            sessionStorage.setItem('form-wrapper', JSON.stringify(this.formWrapper));
+            Storage.setPageItem('form-wrapper', JSON.stringify(this.formWrapper));
         } catch(error) {
             console.log(error);
         }

@@ -90,8 +90,6 @@ export class BuilderForm extends BuilderFieldInterface {
 
         // When a new tab is created
         this.tabLabelCompontent.onCreateCallback = (tabLabelItem) => {
-            
-                    
             const tabPage = new BuilderTabPage('tab', tabLabelItem.getLabel());
             
             tabLabelItem.setTabPage(tabPage);
@@ -111,7 +109,7 @@ export class BuilderForm extends BuilderFieldInterface {
 
         this.tabLabelCompontent.onMoveCallback = (draggedIndex, droppedIndex) => {
             const [draggedItem] = this.builderFields.splice(draggedIndex, 1);
-            
+
             if (droppedIndex == null) {
                 this.builderFields.push(draggedItem);
             } else {

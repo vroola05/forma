@@ -80,7 +80,6 @@ export class BuilderPropertiesCondition {
                 .setPlaceholder('Variabele 1')
                 .setLayout('layout-column')
                 .addValueChangedListener((value) => {
-                    console.log(value);
                     this.valueChanged();
                 });
         

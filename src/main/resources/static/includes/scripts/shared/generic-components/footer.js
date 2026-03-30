@@ -43,7 +43,6 @@ export class Footer {
     }
 
     addButtonLeft(formButton) {
-        console.log('Left', this.buttonsContainerLeft, formButton);
         this.buttonsContainerLeft.appendChild(formButton.getContent());
         
     }

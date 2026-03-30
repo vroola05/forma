@@ -47,18 +47,15 @@ export class Dropzone {
 
             domElement.classList.remove('drag-over');
 
-            console.log('drop 1');
             if (Dropzone.currentDraggedItem == null) {
                 return;
             }
 
-            console.log('drop 2');
             // Check if the dropzone is the correct one
             if (!event.currentTarget.classList.contains("dropzone")) {
                 return
             }
 
-            console.log('drop 3');
             // It is posible that the drop event is fired by a child element, 
             // so we need to check if the dropzone is the target or one of its children
             const dropzone = event.target.closest('.dropzone')
@@ -66,7 +63,6 @@ export class Dropzone {
                 return;
             }
 
-            console.log('drop 4');
             let droppedOnformItem = event.target.closest('.draggable-item');
             if (droppedOnformItem && !dropzone.contains(droppedOnformItem)) {
                 droppedOnformItem = null;
@@ -76,18 +72,15 @@ export class Dropzone {
                 droppedOnformItem.classList.remove('drag-item');
             }
 
-            console.log('drop 5');
             const type = Dropzone.currentDraggedItem.dataset.type;
             if (!this.isAcceptedTypes(type)) {
                 return;
             }
-
-            console.log('drop 6');
-            if (Dropzone.currentDraggedItem.classList.contains('builder-page-field-menu-item')) {
+            
+            if (Dropzone.currentDraggedItem.classList.contains('builder-page-field-item')) {
                 this.addItem(type, Dropzone.currentDraggedItem.dataset.label, droppedOnformItem);
             }
 
-            console.log('drop 7');
             if (Dropzone.currentDraggedItem.classList.contains('draggable-item')) {
                 this.moveItem(type, droppedOnformItem);
             }
@@ -95,34 +88,39 @@ export class Dropzone {
         });
     }
 
-    moveItem(type, droppedOnformItem) {
-        console.log('moveItem', type, droppedOnformItem);
+    moveItem(type, droppedItem) {
         if (this.objectArray != null) {
-            if (Dropzone.currentDraggedItem === droppedOnformItem) return;
+            if (Dropzone.currentDraggedItem === droppedItem)
+                return;
 
-            const bfOldIndex = this.objectArray.findIndex(bf => bf.getContent() === Dropzone.currentDraggedItem);
-            if (bfOldIndex === -1) return;
-            const [bfOld] = this.objectArray.splice(bfOldIndex, 1);
+            const draggedIndex = this.objectArray.findIndex(bf => bf.getContent() === Dropzone.currentDraggedItem);
+            
+            if (draggedIndex === -1)
+                return;
 
-            if (droppedOnformItem == null) {
-                this.objectArray.push(bfOld);
+            if (droppedItem == null) {
+                const [draggedItem] = this.objectArray.splice(draggedIndex, 1);
+                this.objectArray.push(draggedItem);
             } else {
-                const bfNewIndex = this.objectArray.findIndex(bf => bf.getContent() === droppedOnformItem);
-                if (bfNewIndex === -1) return;
-                this.objectArray.splice(bfNewIndex, 0, bfOld);
+                const draggedItem = this.objectArray[draggedIndex];
+                const droppedIndex = this.objectArray.findIndex(bf => bf.getContent() === droppedItem);
+
+                this.objectArray.splice(draggedIndex, 1);
+
+                this.objectArray.splice(droppedIndex, 0, draggedItem);
             }
+
             this.domElement.ionnerHTML = '';
             this.objectArray.forEach(bf => {
                 this.domElement.appendChild(bf.getContent());
             });
         }
 
-        this.onMoveCallback(type, Dropzone.currentDraggedItem.dataset.label, Dropzone.currentDraggedItem, droppedOnformItem);
+        this.onMoveCallback(type, Dropzone.currentDraggedItem.dataset.label, Dropzone.currentDraggedItem, droppedItem);
     }
 
     addItem(type, label, droppedOnformItem) {
         const field = this.getField(type, label);
-        console.log('field', field);
         field.onDragStart = (event) => {
             Dropzone.setDraggedItem(event.target);
         };

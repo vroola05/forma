@@ -241,7 +241,6 @@ export class FormRenderer {
                     .setReadonly(fieldData.readonly)
                     .setValue(fieldData.value)
                     .setShowConditions(fieldData.condition);
-                    console.log('tot hier11144');
 
             case 'repeating-group':
                 return new RepeatingGroup(fieldData.name, fieldData.label, fieldData.classes, fieldData.layout)

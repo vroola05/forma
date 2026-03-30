@@ -1,5 +1,5 @@
-import { FormGroup } from '../form-components/form-group.js';
-import { footerService } from "../services/footer-service.js";
+import { footerService } from '../services/footer-service.js';
+import { Storage } from '../services/storage-service.js';
 
 export class Page {
     parameters = undefined;
@@ -7,7 +7,7 @@ export class Page {
     title = '';
 
     constructor() {
-        FormGroup.setPage(this.constructor.name);
+        Storage.setPage(this.constructor.name);
         footerService.clear();
         this.getPageParameters();
     }
@@ -35,7 +35,7 @@ export class Page {
 
     getPageParameters() {
         if (!this.parameters) {
-            const parametersString = sessionStorage.getItem(FormGroup.page + '-params');
+            const parametersString = Storage.getPageItem('params');
             if (parametersString) {
                 this.parameters = JSON.parse(parametersString);
             }
@@ -44,7 +44,8 @@ export class Page {
     }
 
     setPageParameters(values) {
-        sessionStorage.setItem(FormGroup.page + '-params', JSON.stringify(values));
+        Storage.setPageItem('params', JSON.stringify(values));
         this.parameters = values;
     }
+
 }

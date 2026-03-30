@@ -1,14 +1,15 @@
 import { FormRenderer } from '../../form-viewer/components/form-renderer.js';
-
+import { Page } from '../page-components/page.js';
 import { InputNucleus } from './interface/input-base.js';
 import { RepeatingGroup } from './repeating-group.js';
+import { Storage } from '../services/storage-service.js';
 import { Nucleus } from './interface/nucleus.js';
 
 export class FormGroup extends Nucleus {
     content = document.createElement('div');
     formGroupTitleDom = document.createElement('div');
 
-    static page = '';
+    
     formInputKeyValue = {};
     fields = [];
 
@@ -22,7 +23,7 @@ export class FormGroup extends Nucleus {
 
         this.createElement(formGroupData.name, formGroupData.label, formGroupData.classes);
 
-        const formInputKeyValue = sessionStorage.getItem(FormGroup.page + '-' + this.name);
+        const formInputKeyValue = Storage.getPageItem(this.name);
 
         if (formInputKeyValue) {
             this.formInputKeyValue = JSON.parse(formInputKeyValue);
@@ -33,37 +34,6 @@ export class FormGroup extends Nucleus {
         });
     }
 
-    /**
-     * Dit is eem statische methode die de huidige pagina instelt.
-     * Het controleert of de nieuwe pagina verschilt van de huidige pagina.
-     * Indien dit het geval is, wordt de huidige pagina gewist uit de sessionStorage.
-     * Dit zorg ervoor dat de gegevens van de vorige pagina niet worden behouden.
-     * @param {*} page 
-     */
-    static setPage(page) {
-        const currentPage = sessionStorage.getItem('page')
-        if (page != currentPage) {
-            console.log('Clear because other page.');
-            FormGroup.clearPage(currentPage);
-        }
-
-        sessionStorage.setItem('page', page);
-        FormGroup.page = page;
-    }
-
-    /**
-     * Verwijdert alle items uit de sessionStorage die beginnen met de opgegeven pagina naam.
-     * Dit is handig om te voorkomen dat gegevens van de vorige pagina worden behouden.
-     * 
-     * @param {} page 
-     */
-    static clearPage(page) {
-        Object.keys(sessionStorage).forEach(key => {
-            if (key.startsWith(page)) {
-                sessionStorage.removeItem(key);
-            }
-        });
-    }
 
     /**
      * 
@@ -97,10 +67,10 @@ export class FormGroup extends Nucleus {
         }
 
         // Dit is een callback op de wijziging van de input waarde.
-        // Deze callback slaat de waarde op in de formInputKeyValue object en in de sessionStorage.
+        // Deze callback slaat de waarde op in de formInputKeyValue object en in de session storage.
         field.addValueChangedListener((name, value) => {
             this.formInputKeyValue[name] = value;
-            sessionStorage.setItem(FormGroup.page + '-' + this.name, JSON.stringify(this.formInputKeyValue));
+            Storage.setPageItem(this.name, JSON.stringify(this.formInputKeyValue));
         });
 
         field.setId(`${this.name}-${field.getName()}`);
@@ -108,7 +78,7 @@ export class FormGroup extends Nucleus {
 
         this.formDomElements.append(field.getContent())
 
-        // Kijk of er al een waarde in de sessionStorage staat voor dit formulier en deze field.
+        // Kijk of er al een waarde in de session storage staat voor dit formulier en deze field.
         if (field.name in this.formInputKeyValue && field.type != 'repeating-group') {
             field.setValue(this.formInputKeyValue[field.name], false);
         }

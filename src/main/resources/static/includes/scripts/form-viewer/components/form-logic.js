@@ -29,7 +29,6 @@ export class FormLogic {
             this.form.setTab(`summary`);
         }, false);
         this.submitBtn = new FormButton('Verzenden', 'footer-btn btn-primary submit', null, () => {
-            // console.log(this.form);
             Http.post(`${Router.base}/api/forms`, FormRenderer.getFormData(this.form), {})
                         .then(formWrapper => {});
 

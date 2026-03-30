@@ -66,10 +66,12 @@ export class BuilderTabPage extends BuilderFieldInterface {
         this.builderTabPages.className = 'builder-tab-pages';
         builderTabPagesContainer.appendChild(this.builderTabPages);
 
-        this.dropzone = new Dropzone(this.builderTabPages, this.builderFields, 
+        this.dropzone = new Dropzone(
+            this.builderTabPages,
+            this.builderFields, 
             (type, label, dragged, droppedOnformItem) => {
                 this.updateTabPage();
-            }, 
+            },
             (type, label, dragged, droppedOnformItem) => {
                 this.updateTabPage();
             },

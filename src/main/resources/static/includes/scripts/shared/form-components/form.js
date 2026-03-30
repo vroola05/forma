@@ -4,7 +4,6 @@ export class Form {
     fields = [];
 
     constructor(form) {
-        this.template = sessionStorage.getItem('template');
         this.name = form.name;
         this.label = form.label;
         this.type = form.type;
@@ -12,6 +11,7 @@ export class Form {
         this.classes = form.classes;
         this.metadata = form.metadata || [];
         this.summaryConfirmation = form.summaryConfirmation || [];
+
         this.createElement();
 
         form.fields.forEach(tabData => {
