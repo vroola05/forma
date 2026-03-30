@@ -96,17 +96,14 @@ export class BuilderPage extends Page {
         this.builderPageMenuRightContainer.appendChild(this.builderPropertiesComponent.getContent());
 
         EventService.addEventListener('value-changed', (a, b) => {
-            console.log('value changed');
             this.updateForm();
         });
 
         EventService.addEventListener('field-changed', (a, b) => {
-            console.log('field changed');
             this.updateForm();
         });
 
         EventService.addEventListener('field-deleted', (a, b) => {
-            console.log('field deleted');
             this.updateForm();
         });
         console.log('End after init');

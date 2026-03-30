@@ -21,7 +21,7 @@ export class BuilderTabPage extends BuilderFieldInterface {
             this.initDefaultProperties(properties);
 
             for (const formGroup of properties.fields) {
-                const field = this.dropzone.addItem('form-group', Lang.get('field.type.form.group'));
+                const field = this.dropzone.addNewItem('form-group', Lang.get('field.type.form.group'));
                 field.init(formGroup);
             }
         }

@@ -96,7 +96,7 @@ export class BuilderFormGroup extends BuilderFieldInterface {
 
             for (const field of properties.fields) {
                 if (field.type in FIELD_TYPES) {
-                    const f = this.dropzone.addItem(field.type, FIELD_TYPES[field.type]);
+                    const f = this.dropzone.addNewItem(field.type, FIELD_TYPES[field.type]);
                     f.init(field);
                 }
             }

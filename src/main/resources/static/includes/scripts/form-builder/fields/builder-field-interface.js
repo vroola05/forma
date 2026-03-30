@@ -3,7 +3,7 @@ import { Lang } from '../../shared/services/lang.js'
 
 export class BuilderFieldInterface {
     fieldProperties = new BuilderFieldProperties();
-
+    parent = null;
     onDragStart = null;
     onFieldPropertiesClicked = null;
     onFieldChanged = null;
@@ -60,5 +60,14 @@ export class BuilderFieldInterface {
         this.fieldProperties.onPropertyLabelChanged.forEach(changed => {
             changed(properties.label);
         });
+    }
+
+    getParent() {
+        return this.parent;
+    }
+
+    setParent(parent) {
+        this.parent = parent;
+        return this;
     }
 }
