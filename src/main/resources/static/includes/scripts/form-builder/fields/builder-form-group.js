@@ -7,7 +7,7 @@ export class BuilderFormGroup extends BuilderFieldInterface {
     dropzone = null;
     acceptedTypes = ['text', 'number', 'date', 'select', 'radio', 'valuta', 'repeating-group'];
 
-    builderFields = [];
+    builderChildFields = [];
 
     onDeleteCallback = null;
 
@@ -66,7 +66,7 @@ export class BuilderFormGroup extends BuilderFieldInterface {
         this.builderFormGroupField.className = 'builder-form-group-field';
         builderFormGroupFieldContainer.appendChild(this.builderFormGroupField);
 
-        this.dropzone = new Dropzone(this.builderFormGroupField, this.builderFields, 
+        this.dropzone = new Dropzone(this, this.builderFormGroupField, 
             (type, label, dragged, droppedOnformItem) => {
                 this.updateFormGroup();
             }, 
@@ -84,6 +84,10 @@ export class BuilderFormGroup extends BuilderFieldInterface {
         } else {
             this.builderFormFieldHeaderLabel.innerHTML = `${this.label}`;
         }
+    }
+
+    getFields() {
+        return this.builderChildFields;
     }
 
     getContent() {
@@ -111,14 +115,14 @@ export class BuilderFormGroup extends BuilderFieldInterface {
         return {
             ...this.fieldProperties.getProperties(), 
             type: this.type,
-            fields: this.builderFields.map(f => f.getData())
+            fields: this.builderChildFields.map(f => f.getData())
         };
     }
 
     validate() {
         this.fieldProperties.validateAll(this);
 
-        for (const field of this.builderFields) {
+        for (const field of this.builderChildFields) {
             field.validate();
         }
     }

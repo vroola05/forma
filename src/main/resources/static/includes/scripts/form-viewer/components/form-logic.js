@@ -6,18 +6,11 @@ import { Http } from '../../shared/services/http.js';
 import { footerService } from "../../shared/services/footer-service.js";
 
 export class FormLogic {
-
-    // Function voor het klikken op een tab
-    // Functie voor het klikken op de volgende knop
-    // Functie voor het klikken op de vorige knop
-    // Functie voor het klikken op de verzendknop
-    // Functie voor het klikken op de annuleerknop
     
     constructor(form) {
-        
         this.form = form;
-        // Initialiseer de logica hier
 
+        // Initialiseer de logica hier
         this.cancelBtn =new FormButton('Annuleren', 'footer-btn btn-secondary cancel', null, () => { });
         this.previousBtn = new FormButton('Vorige', 'footer-btn btn-secondary previous', null, () => {
             this.form.setTabPrevious();
@@ -31,13 +24,11 @@ export class FormLogic {
         this.submitBtn = new FormButton('Verzenden', 'footer-btn btn-primary submit', null, () => {
             Http.post(`${Router.base}/api/forms`, FormRenderer.getFormData(this.form), {})
                         .then(formWrapper => {});
-
         }, false);
 
         footerService.addButtonLeft(this.cancelBtn);
         footerService.addButtonLeft(this.previousBtn);
 
-        
         footerService.addButtonRight(this.nextBtn);
         footerService.addButtonRight(this.summaryBtn);
         footerService.addButtonRight(this.submitBtn);

@@ -297,6 +297,18 @@ option:disabled {
     background-size: calc(.75em + .375rem) calc(.75em + .375rem) !important;
 }
 
+.field-wrapper-input {
+    .radio-input-wrapper.is-invalid, .checkbox-input-wrapper.is-invalid {
+        input {
+            border-color: var(--bs-form-invalid-border-color) !important;
+        }
+        label {
+            color: var(--bs-form-invalid-border-color) !important;
+        }
+    }
+}
+
+
 
 /**********************************************
  * Overview pagina. Hoort eigenlijk in de builder...
@@ -537,25 +549,24 @@ Styles voor de form-group
                 }
 
                 .summary-form-group {
-                    margin-bottom: var(--default-space);
+                    margin-bottom: var(--default-space);    
+                }
+            }
+            .summary-field-wrapper {
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+                margin-bottom: calc(var(--default-space) / 4);
 
-                    .summary-field-wrapper {
-                        display: flex;
-                        flex-direction: row;
-                        width: 100%;
-                        margin-bottom: calc(var(--default-space) / 4);
-
-                        .summary-field-label {
-                            font-weight: 600;
-                            flex: 1;
-                            padding-right: var(--default-space);
-                            text-align: right;
-                        }
-                        .summary-field-value {
-                            padding-left: var(--default-space);
-                            flex: 2;
-                        }
-                    }
+                .summary-field-label {
+                    font-weight: 600;
+                    flex: 1;
+                    padding-right: var(--default-space);
+                    text-align: right;
+                }
+                .summary-field-value {
+                    padding-left: var(--default-space);
+                    flex: 2;
                 }
             }
         }

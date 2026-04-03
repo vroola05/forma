@@ -10,6 +10,7 @@ import { DateField } from '../../shared/form-components/date-field.js';
 import { TextAreaField } from '../../shared/form-components/textarea-field.js';
 import { CheckboxField } from '../../shared/form-components/checkbox-field.js';
 
+import { FormGroup } from '../../shared/form-components/form-group.js';
 import { Form } from '../../shared/form-components/form.js';
 import { FormSummaryRenderer } from './form-summary-renderer.js';
 import { RepeatingGroup } from '../../shared/form-components/repeating-group.js';
@@ -32,62 +33,121 @@ export class FormRenderer {
                 label: tabContent.label,
                 type: tabContent.type,
                 id: tabContent.id,
-                fields: FormRenderer.#getFormGroupsData(tabContent)
+                fields: FormRenderer.#getTabFieldData(tabContent)
             };
         });
     }
 
-    static #getFormGroupsData(tabContent) {
-        return tabContent.getFields().map(formGroup => {
-            return {
-                name: formGroup.name,
-                label: formGroup.label,
-                type: formGroup.type,
-                id: formGroup.id,
-                fields: FormRenderer.#getFieldsData(formGroup)
-            }
-        });
-    }
-
-    static #getFieldsData(formGroup) {
-        return formGroup.getFields().map(field => {
-            if (field.type == 'repeating-group') {
-                return {
-                    name: field.name,
-                    type: field.type,
-                    label: field.label,
-                    sets: field.groupInputSets.map(set => {
-                        return set.map(repField => {
-                            return {
-                                name: repField.name,
-                                type: repField.type,
-                                value: !repField.hasOptions() ? repField.getValue() : '',
-                                values: repField.hasOptions() ? repField.getOptions() : undefined,
-                                label: repField.label,
-                                classes: field.classes,
-                                readonly: repField.readonly,
-                                data: Object.fromEntries(repField.data)
-                            }
-                        })
-                    })
-                };
+    static #getTabFieldData(tabContent) {
+        return tabContent.getFields().map(field => {
+            if (field.type === 'form-group') {
+                return FormRenderer.#getFormGroupsData(field);
             } else {
-                return {
-                    name: field.name,
-                    type: field.type,
-                    value: !field.hasOptions() ? field.getValue() : '',
-                    values: field.hasOptions() ? field.getOptions() : undefined,
-                    label: field.label,
-                    classes: field.classes,
-                    readonly: field.readonly,
-                    data: Object.fromEntries(field.data)
-                }
+                return FormRenderer.#getFieldData(field);
             }
         });
     }
 
-    static createForm(formData) {
-        const form = new Form(formData);
+    static #getFormGroupsData(formGroup) {
+        return {
+            name: formGroup.name,
+            label: formGroup.label,
+            type: formGroup.type,
+            id: formGroup.id,
+            fields: FormRenderer.#getFieldsData(formGroup)
+        }
+    }
+
+    static #getFieldsData(fields) {
+        return fields.getFields().map(field => {
+           return FormRenderer.#getFieldData(field);
+        });
+    }
+
+    static #getFieldData(field) {
+        if (field.type == 'repeating-group') {
+            return {
+                name: field.name,
+                type: field.type,
+                label: field.label,
+                sets: field.groupInputSets.map(set => {
+                    return set.map(repField => {
+                        return {
+                            name: repField.name,
+                            type: repField.type,
+                            value: !repField.hasOptions() ? repField.getValue() : '',
+                            values: repField.hasOptions() ? repField.getOptions() : undefined,
+                            label: repField.label,
+                            classes: field.classes,
+                            readonly: repField.readonly,
+                            data: Object.fromEntries(repField.data)
+                        }
+                    })
+                })
+            };
+        } else {
+            return {
+                name: field.name,
+                type: field.type,
+                value: !field.hasOptions() ? field.getValue() : '',
+                values: field.hasOptions() ? field.getOptions() : undefined,
+                label: field.label,
+                classes: field.classes,
+                readonly: field.readonly,
+                data: Object.fromEntries(field.data)
+            }
+        }
+        return;
+    }
+
+
+    static getFormKeyVal(form) {
+        return {
+            fields: FormRenderer.#getTabKeyVal(form)
+        }
+    }
+
+    static #getTabKeyVal(form) {
+        return form.fields.filter(tabContent => tabContent.name !== 'summary').reduce((acc, tabContent) => {
+                acc[tabContent.name] = FormRenderer.#getFieldKeyVal(tabContent);
+                return acc;
+            }, {});
+    }
+
+    static #getFieldKeyVal(tabContent) {
+        
+        return tabContent.getFields().reduce((acc, field) => {
+            if (field.type === 'form-group') {
+                acc[field.name] = FormRenderer.#getFormGroupKeyValData(field);
+            } else {
+                acc[field.name] = FormRenderer.#getFieldKeyValData(field);
+            }
+            return acc;
+        }, {});
+    }
+
+    static #getFormGroupKeyValData(formGroup) {
+        return formGroup.getFields().reduce((acc, field) => {
+            acc[field.name] = FormRenderer.#getFieldKeyValData(field);
+            return acc;
+        }, {});
+    }
+
+    static #getFieldKeyValData(field) {
+        switch (field.type) {
+             case 'select':
+                return field.getOptions();
+            case 'radio':
+                return field.getOptions();
+            case 'checkbox':
+                return field.getOptions();
+
+        }
+        return field.getValue();
+    }
+    
+    static createForm(formData, state) {
+        const form = new Form(formData, state);
         const summaryTab = form.createTab({name:'summary', label: 'Summary'});
         const summaryRenderer = new FormSummaryRenderer(form);
         summaryTab.setContent(summaryRenderer);
@@ -112,13 +172,13 @@ export class FormRenderer {
         return fieldsInstances;
     }
 
-    static createField(fieldData) {
+    static createField(fieldData, state = null) {
         switch (fieldData.type) {
             case 'hidden':
                 return new HiddenField(fieldData.name, fieldData.label)
                     .setMetadata(fieldData.metadata)
                     .setData(fieldData.data)
-                    .setValue(fieldData.value, true);
+                    .setValue(state ? state : fieldData.value, true);
                 
             case 'label':
                 return new LabelField(fieldData.name, fieldData.label)
@@ -131,7 +191,7 @@ export class FormRenderer {
                     .setLabel(fieldData.label)
                     .setPlaceholder(fieldData.placeholder)
                     .setReadonly(fieldData.readonly)
-                    .setValue(fieldData.value, true)
+                    .setValue(state ? state : fieldData.value, true)
                     .setShowConditions(fieldData.condition);
                 
             case 'text':
@@ -145,7 +205,7 @@ export class FormRenderer {
                     .setLabel(fieldData.label)
                     .setPlaceholder(fieldData.placeholder)
                     .setReadonly(fieldData.readonly)
-                    .setValue(fieldData.value, true)
+                    .setValue(state ? state : fieldData.value, true)
                     .setShowConditions(fieldData.condition);
                 
             case 'number':
@@ -160,7 +220,7 @@ export class FormRenderer {
                     .setLabel(fieldData.label)
                     .setPlaceholder(fieldData.placeholder)
                     .setReadonly(fieldData.readonly)
-                    .setValue(fieldData.value, true)
+                    .setValue(state ? state : fieldData.value, true)
                     .setShowConditions(fieldData.condition);
                 
             case 'valuta':
@@ -175,7 +235,7 @@ export class FormRenderer {
                     .setLabel(fieldData.label)
                     .setPlaceholder(fieldData.placeholder)
                     .setReadonly(fieldData.readonly)
-                    .setValue(fieldData.value, true)
+                    .setValue(state ? state : fieldData.value, true)
                     .setShowConditions(fieldData.condition);
                 
             case 'date':
@@ -190,7 +250,7 @@ export class FormRenderer {
                     .setLabel(fieldData.label)
                     .setPlaceholder(fieldData.placeholder)
                     .setReadonly(fieldData.readonly)
-                    .setValue(fieldData.value, true)
+                    .setValue(state ? state : fieldData.value, true)
                     .setShowConditions(fieldData.condition);
                 
             case 'textarea':
@@ -204,7 +264,7 @@ export class FormRenderer {
                     .setLabel(fieldData.label)
                     .setPlaceholder(fieldData.placeholder)
                     .setReadonly(fieldData.readonly)
-                    .setValue(fieldData.value, true)
+                    .setValue(state ? state : fieldData.value, true)
                     .setShowConditions(fieldData.condition);
                 
             case 'radio':
@@ -216,7 +276,7 @@ export class FormRenderer {
                     .setClasses(fieldData.classes)
                     .addOptions(fieldData.options)
                     .setReadonly(fieldData.readonly)
-                    // .setValue(fieldData.value)
+                    .setValue(state ? state : fieldData.value)
                     .setShowConditions(fieldData.condition);
             case 'checkbox':
                 return new CheckboxField(fieldData.name, fieldData.label, fieldData.classes)
@@ -227,7 +287,7 @@ export class FormRenderer {
                     .setClasses(fieldData.classes)
                     .addOptions(fieldData.options)
                     .setReadonly(fieldData.readonly)
-                    .setValue(fieldData.value)
+                    .setValue(state ? state : fieldData.value)
                     .setShowConditions(fieldData.condition);
             case 'select':
                 return new SelectField(fieldData.name, fieldData.label, fieldData.classes)
@@ -239,9 +299,10 @@ export class FormRenderer {
                     .setPlaceholder(fieldData.placeholder)
                     .addOptions(fieldData.options)
                     .setReadonly(fieldData.readonly)
-                    .setValue(fieldData.value)
+                    .setValue(state ? state : fieldData.value)
                     .setShowConditions(fieldData.condition);
-
+            case 'form-group':
+                return new FormGroup(fieldData, state);
             case 'repeating-group':
                 return new RepeatingGroup(fieldData.name, fieldData.label, fieldData.classes, fieldData.layout)
                     .setType(fieldData.type)

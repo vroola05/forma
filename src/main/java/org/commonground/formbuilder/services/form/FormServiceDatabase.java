@@ -8,9 +8,11 @@ import org.commonground.formbuilder.database.dao.definition.FormDefinitionEntity
 import org.commonground.formbuilder.database.repository.FormDefinitionRepository;
 import org.commonground.formbuilder.model.FormList;
 import org.commonground.formbuilder.model.FormWrapper;
+import org.commonground.formbuilder.model.form.CheckboxField;
 import org.commonground.formbuilder.model.form.Field;
 import org.commonground.formbuilder.model.form.FieldType;
 import org.commonground.formbuilder.model.form.Form;
+import org.commonground.formbuilder.model.form.Option;
 import org.commonground.formbuilder.model.form.TabPage;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -49,7 +51,7 @@ public class FormServiceDatabase implements FormService {
         formDefinitionEntity.setLabel(form.getLabel());
         formDefinitionEntity.setClasses(form.getClasses());
         formDefinitionEntity.setMetadata(form.getMetadata());
-        formDefinitionEntity.setSummaryConfirmation(form.getSummaryConfirmation());
+        formDefinitionEntity.setConfirmation(form.getConfirmation());
         formDefinitionEntity.setCondition(form.getCondition());
         formDefinitionEntity.setShow(form.isShow());
 
@@ -60,7 +62,7 @@ public class FormServiceDatabase implements FormService {
             TabPage tabPage = (TabPage) field;
             this.tabPageService.save(resultEntity, tabPage, sortOrderTab++);
        };
-        
+
         return null;
     }
 
@@ -75,7 +77,23 @@ public class FormServiceDatabase implements FormService {
         form.setLabel(formDefinitionEntity.getLabel());
         form.setClasses(formDefinitionEntity.getClasses());
         form.setMetadata(formDefinitionEntity.getMetadata());
-        form.setSummaryConfirmation(formDefinitionEntity.getSummaryConfirmation());
+        form.setConfirmation(formDefinitionEntity.getConfirmation());
+        if (formDefinitionEntity.getConfirmation() != null) {
+            for (int i =0; i < formDefinitionEntity.getConfirmation().size(); i++) {
+                CheckboxField check = new CheckboxField();
+                check.setType(FieldType.CHECKBOX);
+                
+                check.setName("confirmation-" + (i+1));
+                check.setLabel(formDefinitionEntity.getConfirmation().get(i));
+                check.setRequired(true);
+                check.setOptions(new ArrayList<>());
+                check.getOptions().add(new Option(formDefinitionEntity.getConfirmation().get(i), formDefinitionEntity.getConfirmation().get(i), false));
+                form.getConfirmationCheck().add(check);
+            }
+            
+        }
+        
+
         form.setCondition(formDefinitionEntity.getCondition());
         form.setShow(formDefinitionEntity.isShow());
 

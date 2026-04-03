@@ -6,7 +6,7 @@
         "label": "Aanvraagformulier lidmaatschap",
         "classes": "",
         "metadata": [],
-        "summaryConfirmation": [
+        "confirmation": [
             "Ik verklaar dat ik het formulier naar waarheid heb ingevuld"
         ],
         "fields": [

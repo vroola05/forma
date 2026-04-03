@@ -1,12 +1,14 @@
 
 import { Lang } from '../../shared/services/lang.js';
 import { Operator, LogicalOperator } from '../../shared/condition-components/types/condition-types.js';
+import { ValidationError } from '../../shared/errors/validation-error.js'
 
 export class BuilderFieldProperties {
     properties = {};
     onPropertyLabelChanged = [];
-
-    constructor() {
+    field
+    constructor(field) {
+        this.field = field;
     }
 
     /**
@@ -59,6 +61,18 @@ export class BuilderFieldProperties {
     }
 
     validate (property, field = null) {
+        
+        // Check for unique
+        // It only checks in the group the field is in
+        if (property.value && property.unique && this.field.getParent()) {
+            const parentProperties = this.field.getParent().getChildFieldsPropertieById(property.id, property.value);
+
+            if (parentProperties && parentProperties.length > 1) {
+                const fieldName = `${field ? field.getLabel() : ''} - ${this.getFieldIdentifier()}`;
+                throw new ValidationError(fieldName, `Het veld is niet uniek.`).setField(field);
+            }
+        }
+
         if (property.type == 'options') {
         } else if (property.type == 'list') {
             if (property.value) {
@@ -74,27 +88,29 @@ export class BuilderFieldProperties {
     }
 
     #validateCondition (condition, field = null) {
-        if (!condition) {
+
+        if (!condition || Object.keys(condition).length === 0) {
             return;
         }
+        
         const fieldName = `${field ? field.getLabel() : ''} - ${this.getFieldIdentifier()}`;
         if (condition.conditions && condition.conditions.length > 0) {
             if (!condition.logicalOperator || !Object.values(LogicalOperator).includes(condition.logicalOperator)) {
-                throw new Error(fieldName + " - Fout in de logische operator van de conditie.");
+                throw new ValidationError(fieldName, "Fout in de logische operator van de conditie.").setField(field);
             }
         } else {
             if (!condition.operator || !Object.values(Operator).includes(condition.operator)) {
-                throw new Error(fieldName + " - Fout in de operator van de conditie.");
+                throw new ValidationError(fieldName, "Fout in de operator van de conditie.").setField(field);
             }
         }
     }
 
     #validatePattern (value, pattern, message, field = null) {
         if (pattern && !pattern.test(value)) {
-            console.warn('Validatie mislukt voor waarde:', "'"+value+"'", 'met patroon:', pattern, field);
+            console.warn('Validatie mislukt voor waarde:', "'" + value + "'", 'met patroon:', pattern, field);
 
             const fieldName = `${field ? field.getLabel() : ''} - ${this.getFieldIdentifier()}`;
-            throw new Error(fieldName + " - " + message);
+            throw new ValidationError(fieldName, message).setField(field);
         }
     }
     

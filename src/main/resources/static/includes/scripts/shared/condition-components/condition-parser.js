@@ -20,7 +20,7 @@ export class ConditionParser {
      * This function is also called from outside
      */
     eval() {
-        if (this.func && this.condition) {
+        if (this.func && this.condition && !Object.values(this.condition).every(waarde => !waarde)) {
             this.func(this.checkLogic(this.condition));
         }
     }

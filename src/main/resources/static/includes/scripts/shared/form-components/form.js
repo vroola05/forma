@@ -3,19 +3,21 @@ import { Tab } from './tab.js';
 export class Form {
     fields = [];
 
-    constructor(form) {
+    constructor(form, state) {
         this.name = form.name;
         this.label = form.label;
         this.type = form.type;
         this.id = form.id;
         this.classes = form.classes;
         this.metadata = form.metadata || [];
-        this.summaryConfirmation = form.summaryConfirmation || [];
+        this.confirmation = form.confirmation || [];
 
+        // confirmationCheck: FormRenderer.#getFieldsData(form.confirmationCheck),
         this.createElement();
 
+        const tabState = state.fields;
         form.fields.forEach(tabData => {
-            this.createTab(tabData);
+            this.createTab(tabData, tabState?.[tabData.name]);
         });
     }
 
@@ -45,8 +47,8 @@ export class Form {
      * @param {*} label 
      * @param {*} formGroups 
      */
-    createTab(tabData) {
-        const tab = new Tab(tabData, (tabName) => {
+    createTab(tabData, state) {
+        const tab = new Tab(tabData, state, (tabName) => {
             this.setTab(tabName);
         });
         

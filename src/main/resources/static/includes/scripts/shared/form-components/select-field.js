@@ -29,7 +29,7 @@ export class SelectField extends InputNucleus {
             return false;
         }
         const selectedOption = e.target.options[e.target.selectedIndex];
-        this.setValue({ value: e.target.value, text: selectedOption.text });
+        this.setValue([{ value: e.target.value, text: selectedOption.text }]);
     }
 
     addOption(value, text) {
@@ -67,34 +67,34 @@ export class SelectField extends InputNucleus {
     }
 
     getOptions() {
-        return this.value ? [this.value] : [];
+        return this.value ? this.value : [];
     }
 
     getValue() {
         if (!this.value)
             return '';
 
-        return (typeof this.value === 'string') ? this.value : this.value.value;
+        return (typeof this.value === 'string') ? this.value : this.value[0].value;
     }
 
     setValue(value, noCallback = false) {
-        
-        if (value=== undefined || value === null) {
+        // Check op null/undefined OF een lege array
+        const isEmpty = value === undefined || value === null || (Array.isArray(value) && value.length === 0);
+
+        if (isEmpty) {
             this.value = '';
             this.inputElement.selectedIndex = -1;
         } else if (typeof value === 'string') {
             this.inputElement.value = value;
-            const opt = this.inputElement.options[this.inputElement.selectedIndex];
-            if (opt) {
-                this.value = {value, text: this.inputElement.options[this.inputElement.selectedIndex].text};
-            }
+            const selectedOpt = this.inputElement.options[this.inputElement.selectedIndex];
+            this.value = selectedOpt ? [{ value, text: selectedOpt.text }] : '';
         } else {
+            // value is hier een gevulde array
             this.value = value;
-            this.inputElement.value = value.value;
+            this.inputElement.value = value[0]?.value ?? '';
         }
 
         this.valueChanged(noCallback);
-
         return this;
     }
 

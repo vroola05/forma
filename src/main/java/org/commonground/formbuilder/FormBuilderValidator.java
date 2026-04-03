@@ -5,6 +5,7 @@ import java.util.List;
 import org.commonground.formbuilder.exceptions.FormValidationException;
 import org.commonground.formbuilder.model.FormWrapper;
 import org.commonground.formbuilder.model.form.Field;
+import org.commonground.formbuilder.model.form.FieldType;
 import org.commonground.formbuilder.model.form.Form;
 import org.springframework.validation.FieldError;
 
@@ -41,13 +42,26 @@ public class FormBuilderValidator {
 
         form.getFields().forEach(tabPage -> {
             validateBase(tabPage);
-            tabPage.getFields().forEach(formGroup -> {
-                validateBase(formGroup);
-                formGroup.getFields().forEach(field -> {
-                    validateField(field);
-                });
+            tabPage.getFields().forEach(field -> {
+                validateRoute(field);
             });
         });
+    }
+
+    /**
+     * A tab can either contain a formgroup repeating group or a field.
+     * @param routeField
+     */
+    public static void validateRoute(Field routeField) {
+        validateBase(routeField);
+        if (FieldType.FORM_GROUP.equals(routeField.getType())) {
+            routeField.getFields().forEach(field -> {
+                validateBase(field);
+                validateField(field);
+            });
+        } else {
+            validateField(routeField);
+        }
     }
 
     public static void validateBase(Field field) {

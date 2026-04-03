@@ -8,7 +8,7 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
     dropzone = null;
     acceptedTypes = ['text', 'number', 'date', 'select', 'radio', 'valuta'];
 
-    builderFields = [];
+    builderChildFields = [];
 
     onDeleteCallback = null;
 
@@ -77,7 +77,7 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
         this.builderFormGroupField.className = 'builder-repeating-group-field';
         builderFormGroupFieldContainer.appendChild(this.builderFormGroupField);
 
-        this.dropzone = new Dropzone(this.builderFormGroupField, this.builderFields, 
+        this.dropzone = new Dropzone(this, this.builderFormGroupField, 
             (type, label, dragged, droppedOnformItem) => {
                 this.updateFormGroup();
             }, 
@@ -95,6 +95,10 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
         } else {
             this.builderFormFieldHeaderLabel.innerHTML = `${this.label}`;
         }
+    }
+
+    getFields() {
+        return this.builderChildFields;
     }
 
     getContent() {
@@ -126,7 +130,7 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
         return {
             ...this.fieldProperties.getProperties(), 
             type: this.type,
-            fields: this.builderFields.map(f => f.getData())
+            fields: this.builderChildFields.map(f => f.getData())
         };
     }
 
@@ -153,7 +157,7 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
             }
         }
 
-        for (const field of this.builderFields) {
+        for (const field of this.builderChildFields) {
             field.validate();
         }
     }

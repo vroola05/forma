@@ -33,21 +33,21 @@ export class Footer {
                 this.buttonsContainer.parentNode.classList.remove('hidden');
             }
             for (const button of buttons.left) {
-                this.addButtonLeft(button);
+                this.#addButtonLeft(button);
             }
             for (const button of buttons.right) {
-                this.addButtonRight(button);
+                this.#addButtonRight(button);
             }
         }
         // buttons.left: [], right: [] }
     }
 
-    addButtonLeft(formButton) {
+    #addButtonLeft(formButton) {
         this.buttonsContainerLeft.appendChild(formButton.getContent());
         
     }
 
-    addButtonRight(formButton) {
+    #addButtonRight(formButton) {
         this.buttonsContainerRight.appendChild(formButton.getContent());
     }
 

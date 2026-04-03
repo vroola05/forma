@@ -2,7 +2,6 @@ import { SelectField } from '../../../shared/form-components/select-field.js';
 import { BuilderConditionsAutocompleteField } from './builder-conditions-autocomplete-field.js';
 import { Operator, ConditionType, LogicalOperator } from '../../../shared/condition-components/types/condition-types.js';
 import { BuilderPropertiesFooter } from './builder-properties-footer.js';
-import { BuilderFormService } from '../../services/builder-form-service.js'
 
 export class BuilderPropertiesCondition {
     content = document.createElement('div');
@@ -17,6 +16,8 @@ export class BuilderPropertiesCondition {
         if (conditionData && conditionData.conditionType) {
             this.conditionType = ConditionType.SIMPLE === ConditionType[conditionData.conditionType] ? ConditionType.SIMPLE : ConditionType.COMPOSITE;
         }
+
+        console.log(conditionData, this.conditionType);
         this.createContent(conditionData);
         this.onChange = onChange;
         this.onDelete = onDelete;
@@ -30,9 +31,10 @@ export class BuilderPropertiesCondition {
         this.content.appendChild(builderConditionTypeContainer);
 
         this.conditionTypeSelect = new SelectField('condition-type', 'Type')
+                .enablePersistence(false)
                 .setPlaceholder('Condition type');
         this.conditionTypeSelect.addValueChangedListener((name, option) => {
-            this.changeConditionType(option.value);
+            this.changeConditionType(option[0].value);
         });
         this.conditionTypeSelect.addOption(ConditionType.SIMPLE, 'Simpel');
         this.conditionTypeSelect.addOption(ConditionType.COMPOSITE, 'Samengesteld');
@@ -46,23 +48,22 @@ export class BuilderPropertiesCondition {
         const buttonRemove = document.createElement('button');
         buttonRemove.className = 'builder-btn-icon icon icon-x-lg';
         buttonRemove.addEventListener('click', () => {
-            this.onDelete(this);
-            this.valueChanged();
+            
+            this.onDelete();
         });
         buttonContainer.appendChild(buttonRemove);
 
         this.createSimpleCondition(conditionData);
         this.createCompositeCondition(conditionData);
-
+        
         if (conditionData && conditionData.conditionType) {
             this.conditionTypeSelect.setValue(String(ConditionType[conditionData.conditionType]));
         }
-
+       
     }
 
     changeConditionType(conditionType) {
         this.conditionType = Number(conditionType);
-
         if (this.conditionType === ConditionType.SIMPLE) {
             this.compositeConditionDom.classList.remove('active');
             this.simpleConditionDom.classList.add('active');
@@ -75,16 +76,17 @@ export class BuilderPropertiesCondition {
     createSimpleCondition(conditionData) {
         this.simpleConditionDom = document.createElement('div');
         this.simpleConditionDom.className = 'builder-simple-condition';
-
         this.var1SimpleTextfield = new BuilderConditionsAutocompleteField('var1', 'Variabele 1')
+                .enablePersistence(false)
                 .setPlaceholder('Variabele 1')
                 .setLayout('layout-column')
                 .addValueChangedListener((value) => {
                     this.valueChanged();
                 });
-        
+
         this.simpleConditionDom.appendChild(this.var1SimpleTextfield.getContent());
         this.operatorSimpleSelect = new SelectField('opereator', 'Operator')
+                .enablePersistence(false)
                 .setPlaceholder('Relationele operator')
                 .setLayout('layout-column')
                 .addValueChangedListener((value) => {
@@ -97,6 +99,7 @@ export class BuilderPropertiesCondition {
         }
 
         this.var2SimpleTextfield= new BuilderConditionsAutocompleteField('var2', 'Variabele 2')
+                .enablePersistence(false)
                 .setPlaceholder('Variabele 2')
                 .setLayout('layout-column')
                 .addValueChangedListener((value) => {
@@ -119,6 +122,7 @@ export class BuilderPropertiesCondition {
         this.content.appendChild(this.compositeConditionDom);
 
         this.operatorCompositeSelect = new SelectField('opereator', 'Operator')
+                .enablePersistence(false)
                 .setPlaceholder('Relationele operator')
                 .addValueChangedListener((value) => {
                     this.valueChanged();
@@ -278,7 +282,8 @@ export class BuilderPropertiesCondition {
 
     getValue() {
         const result = {
-            
+            conditionType: Object.keys(ConditionType)
+                .find(key => ConditionType[key] === this.conditionType)
         }
         if (this.conditionType === ConditionType.SIMPLE) {
             result.var1 = this.var1SimpleTextfield.getValue();

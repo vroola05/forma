@@ -1,3 +1,6 @@
+import { FormRenderer } from '../components/form-renderer.js';
+import { Storage } from '../../shared/services/storage-service.js';
+
 export class FormService {
     static instance = null;
 
@@ -5,6 +8,8 @@ export class FormService {
 
     form = undefined;
     formChangeListeners = [];
+
+    stateTimeout = -1;
 
     static getInstance() {
         if (FormService.instance == null) {
@@ -14,6 +19,21 @@ export class FormService {
     }
 
     constructor() {
+    }
+
+    getState() {
+        const state = Storage.getPageItem('form-state');
+        return state ? JSON.parse(state) : {};
+    }
+
+    saveState() {
+        if (this.stateTimeout > -1) {
+            clearTimeout(this.stateTimeout);
+        }
+
+        this.stateTimeout = setTimeout(() => {
+            Storage.setPageItem('form-state', JSON.stringify(FormRenderer.getFormKeyVal(this.form)))
+        }, 200);
     }
 
     addEventListener(callback) {

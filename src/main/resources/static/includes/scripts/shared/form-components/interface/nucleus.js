@@ -23,7 +23,6 @@ export class Nucleus {
         this.name = name;
         this.label = label;
 
-
         FormService.getInstance().addNucleus(this);
     }
 
@@ -93,19 +92,26 @@ export class Nucleus {
     }
 
     setShowConditions(showCondition) {
-        if (showCondition) {
-            const condition = new Condition();
-            condition.var1 = showCondition.var1;
-            condition.operator = showCondition.operator;
-            condition.var2 = showCondition.var2;
-            condition.conditions = showCondition.conditions;
-            condition.logicalOperator = showCondition.logicalOperator;
-
-            this.showCondition = new ConditionParser(condition, (hasCondition) => {
-                this.setShow(hasCondition);
-            });
-            
+        if (!showCondition || Object.keys(showCondition).length === 0) {
+            return this;
         }
+
+        const isEmpty = Object.values(showCondition).every(waarde => !waarde);
+        if (isEmpty) {
+            return this;
+        }
+
+        const condition = new Condition();
+        condition.var1 = showCondition.var1;
+        condition.operator = showCondition.operator;
+        condition.var2 = showCondition.var2;
+        condition.conditions = showCondition.conditions;
+        condition.logicalOperator = showCondition.logicalOperator;
+
+        this.showCondition = new ConditionParser(condition, (hasCondition) => {
+            this.setShow(hasCondition);
+        });
+        
         return this;
     }
 
@@ -121,6 +127,4 @@ export class Nucleus {
             this.content.classList.add('hidden');
         }
     }
-
-    
 }

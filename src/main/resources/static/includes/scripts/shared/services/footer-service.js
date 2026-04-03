@@ -1,5 +1,4 @@
 class FooterService {
-
     constructor() {
         this.buttons = { left: [], right: [] };
         this.listeners = [];
@@ -25,6 +24,7 @@ class FooterService {
     }
 
     subscribe(callback) {
+
         this.listeners.push(callback);
     }
 }

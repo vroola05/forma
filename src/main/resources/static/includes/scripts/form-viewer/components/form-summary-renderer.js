@@ -1,4 +1,5 @@
 import { CheckboxField } from '../../shared/form-components/checkbox-field.js';
+import { FormRenderer } from './form-renderer.js';
 
 export class FormSummaryRenderer {
     constructor(form) {
@@ -36,52 +37,74 @@ export class FormSummaryRenderer {
             tabWrapperInner.appendChild(document.createElement('h2')).innerText = tabPage.getLabel();
 
             for (const formGroup of tabPage.getFields()) {
-                if (!formGroup.getShow()) {
-                    continue;
-                }
-                const formGroupWrapper = document.createElement('div');
-                formGroupWrapper.className = 'summary-form-group-wrapper';
-                tabWrapperInner.appendChild(formGroupWrapper);
-
-                if (formGroup.getLabel()) {
-                    formGroupWrapper.appendChild(document.createElement('h3')).innerText = formGroup.getLabel();
-                }
-
-                const groupWrapper = document.createElement('div');
-                groupWrapper.className = 'summary-form-group';
-                formGroupWrapper.appendChild(groupWrapper);
-
-                for (const field of formGroup.getFields()) {
-                    if (!field.getShow()) {
-                        continue;
-                    }
-                    const fieldWrapper = document.createElement('div');
-                    fieldWrapper.className = 'summary-field-wrapper';
-                    groupWrapper.appendChild(fieldWrapper);
-                    const fieldLabel = document.createElement('div');
-                    fieldLabel.className = 'summary-field-label';
-                    fieldLabel.innerHTML = `${field.getLabel()}:`;
-                    fieldWrapper.appendChild(fieldLabel);
-
-                    const fieldValue = document.createElement('div');
-                    fieldValue.className = 'summary-field-value';
-                    fieldValue.innerText = field.getValue() || '';
-                    fieldWrapper.appendChild(fieldValue);
-                }
+                this.#routeField(formGroup, tabWrapperInner);
             }
-            
         }
 
         
-        for (const i in this.form.summaryConfirmation) {
-            const confirmationWrapper = document.createElement('div');
-            confirmationWrapper.className = 'summary-confirmation-wrapper';
+        // for (const i in this.form.confirmation) {
+        //     const confirmationWrapper = document.createElement('div');
+        //     confirmationWrapper.className = 'summary-confirmation-wrapper';
 
-            const checkbox = new CheckboxField(`confirmation-${i}`, this.form.summaryConfirmation[i], '');
-            checkbox.addOption('confirm', '', false);
-            confirmationWrapper.appendChild(checkbox.getContent());
-            this.content.appendChild(confirmationWrapper);  
-        }
+        //     const checkbox = new CheckboxField(`confirmation-${i}`, this.form.confirmation[i], '');
+        //     checkbox.addOption('confirm', '', false);
+        //     confirmationWrapper.appendChild(checkbox.getContent());
+        //     this.content.appendChild(confirmationWrapper);  
+        // }
+
+        this.#createConfirmation();
+    }
+
+    #createConfirmation() {
+        console.log('this.form.confirmationCheck', this.form.confirmationCheck);
         
+        
+    }
+
+    #routeField(field, container) {
+        if (!field.getShow()) {
+            return;
+        }
+        if (field.getType() === 'form-group') {
+            this.#renderFormGroup(field, container);
+        } else {
+            this.#renderField(field, container);
+        }
+    }
+
+    #renderFormGroup(formGroup, container) {
+        const formGroupWrapper = document.createElement('div');
+        formGroupWrapper.className = 'summary-form-group-wrapper';
+        container.appendChild(formGroupWrapper);
+
+        if (formGroup.getLabel()) {
+            formGroupWrapper.appendChild(document.createElement('h3')).innerText = formGroup.getLabel();
+        }
+
+        const groupWrapper = document.createElement('div');
+        groupWrapper.className = 'summary-form-group';
+        formGroupWrapper.appendChild(groupWrapper);
+
+        for (const field of formGroup.getFields()) {
+            this.#renderField(field, groupWrapper);
+        }
+    }
+
+    #renderField(field, container) {
+        if (!field.getShow()) {
+            return;
+        }
+        const fieldWrapper = document.createElement('div');
+        fieldWrapper.className = 'summary-field-wrapper';
+        container.appendChild(fieldWrapper);
+        const fieldLabel = document.createElement('div');
+        fieldLabel.className = 'summary-field-label';
+        fieldLabel.innerHTML = `${field.getLabel()}:`;
+        fieldWrapper.appendChild(fieldLabel);
+
+        const fieldValue = document.createElement('div');
+        fieldValue.className = 'summary-field-value';
+        fieldValue.innerText = field.getValue() || '';
+        fieldWrapper.appendChild(fieldValue);
     }
 }

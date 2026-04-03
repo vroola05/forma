@@ -23,7 +23,7 @@ export class BuilderPage extends Page {
     builderPageCenterContainer = document.createElement('div');
     loader = document.querySelector('.loader');
     isLoaded = false;
-    builderFields = [];
+    builderChildFields = [];
 
     dropzone = null;
     acceptedTypes = ['tab'];
@@ -39,7 +39,7 @@ export class BuilderPage extends Page {
             try {
                 BuilderFormService.get().validate();
             } catch(error) {
-                Toaster.error(error.message);
+                Toaster.error(`${error.getPath()} - ${error.message}`);
                 return;
             }
 

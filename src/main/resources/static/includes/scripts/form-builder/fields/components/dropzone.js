@@ -4,16 +4,27 @@ import { BuilderRepeatingGroup } from '../builder-repeating-group.js';
 import { EventService } from '../../../shared/services/event-service.js';
 import { Lang } from '../../../shared/services/lang.js';
 
+/**
+ * The dropzone can be used to create a droppable area for builder-components
+ */
 export class Dropzone {
     static currentDraggedDom = null;
     static currentDraggedItem = null;
 
     acceptedTypes = [];
     domElement = null;
-    objectArray = null;
 
-    constructor(domElement, objectArray, onAddCallback, onMoveCallback, onPropertiesChangedCallback) {
-        this.objectArray = objectArray;
+    /**
+     * 
+     * @param {*} domElement - the dom element the drop event is attached to
+     * @param {*} objectArray - an array of Field elements 
+     * @param {*} onAddCallback 
+     * @param {*} onMoveCallback 
+     * @param {*} onPropertiesChangedCallback 
+     */
+    constructor(field, domElement, onAddCallback, onMoveCallback, onPropertiesChangedCallback) {
+        this.field = field;
+        
         this.domElement = domElement;
 
         this.onAddCallback = onAddCallback;
@@ -27,9 +38,9 @@ export class Dropzone {
             
             this.domElement.classList.add('drag-over');
 
-            const field = event.target.closest('.draggable-item');
-            if (field) {
-                field.classList.add('drag-item');
+            const fieldDraggable = event.target.closest('.draggable-item');
+            if (fieldDraggable) {
+                fieldDraggable.classList.add('drag-item');
             }
         });
 
@@ -38,9 +49,9 @@ export class Dropzone {
 
             this.domElement.classList.remove('drag-over');
 
-            const field = event.target.closest('.draggable-item');
-            if (field) {
-                field.classList.remove('drag-item');
+            const fieldDraggable = event.target.closest('.draggable-item');
+            if (fieldDraggable) {
+                fieldDraggable.classList.remove('drag-item');
             }
         });
 
@@ -98,13 +109,21 @@ export class Dropzone {
         this.currentDraggedDom = null;
     }
 
+    /**
+     * Move an element that is already in a Dropzone. Ik can be this dropzone but also an other dropzone
+     * @param {*} type 
+     * @param {*} droppedDom 
+     * @returns 
+     */
     changeExistingItem(type, droppedDom) {
-        if (this.objectArray != null) {
+        const builderChildFields = this.field.getFields();
+        if (builderChildFields != null) {
+            
             if (Dropzone.currentDraggedDom === droppedDom) {
                 return;
             }
 
-            const draggedIndex = this.objectArray.findIndex(bf => bf.getContent() === Dropzone.currentDraggedDom);
+            const draggedIndex = builderChildFields.findIndex(bf => bf.getContent() === Dropzone.currentDraggedDom);
             // Cant't find element in current Dropzone
             if (draggedIndex === -1) {
                 this.moveToOtherDropzone(droppedDom, Dropzone.currentDraggedItem);
@@ -121,36 +140,41 @@ export class Dropzone {
         if (!draggedItem) {
             return;
         }
-        
-        const draggedIndex = draggedItem.getParent().objectArray.findIndex(bf => bf.getContent() === Dropzone.currentDraggedDom);
+
+        const draggedIndex = draggedItem.getParent().getFields().findIndex(bf => bf.getContent() === Dropzone.currentDraggedDom);
+        // const draggedIndex = draggedItem.getParent().objectArray.findIndex(bf => bf.getContent() === Dropzone.currentDraggedDom);
         if (draggedIndex === -1) {
             return;
         }
 
-        draggedItem.getParent().objectArray.splice(draggedIndex, 1);
-        draggedItem.getParent().draw();
+        draggedItem.getParent().getFields().splice(draggedIndex, 1);
+        draggedItem.getParent().dropzone.draw();
+        // draggedItem.getParent().objectArray.splice(draggedIndex, 1);
+        // draggedItem.getParent().draw();
 
-        draggedItem.setParent(this);
+        draggedItem.setParent(this.field);
         this.bindFieldEvents(draggedItem);
+        const builderChildFields = this.field.getFields();
         if (droppedDom == null) {
-            this.objectArray.push(draggedItem);
+            builderChildFields.push(draggedItem);
         } else {
-            const droppedIndex = this.objectArray.findIndex(bf => bf.getContent() === droppedDom);
-            this.objectArray.splice(droppedIndex, 0, draggedItem);
+            const droppedIndex = builderChildFields.findIndex(bf => bf.getContent() === droppedDom);
+            builderChildFields.splice(droppedIndex, 0, draggedItem);
         }
         this.draw();
     }
 
     moveInCurrentDropzone(draggedIndex, droppedDom) {
+        const builderChildFields = this.field.getFields();
         if (droppedDom == null) {
-            const [draggedItem] = this.objectArray.splice(draggedIndex, 1);
-            this.objectArray.push(draggedItem);
+            const [draggedItem] = builderChildFields.splice(draggedIndex, 1);
+            builderChildFields.push(draggedItem);
         } else {
-            const draggedItem = this.objectArray[draggedIndex];
-            const droppedIndex = this.objectArray.findIndex(bf => bf.getContent() === droppedDom);
+            const draggedItem = builderChildFields[draggedIndex];
+            const droppedIndex = builderChildFields.findIndex(bf => bf.getContent() === droppedDom);
 
-            this.objectArray.splice(draggedIndex, 1);
-            this.objectArray.splice(droppedIndex, 0, draggedItem);
+            builderChildFields.splice(draggedIndex, 1);
+            builderChildFields.splice(droppedIndex, 0, draggedItem);
         }
 
         this.draw();
@@ -160,14 +184,16 @@ export class Dropzone {
         const field = this.getField(type);
         this.bindFieldEvents(field);
 
+        const builderChildFields = this.field.getFields();
+
         if (droppedOnformItem == null) {
             this.domElement.appendChild(field.getContent());
-            this.objectArray.push(field);
+            builderChildFields.push(field);
         } else {
-            const bfIndex = this.objectArray.findIndex(bf => bf.getContent() === droppedOnformItem);
+            const bfIndex = builderChildFields.findIndex(bf => bf.getContent() === droppedOnformItem);
             if (bfIndex === -1) return;
 
-            this.objectArray.splice(bfIndex, 0, field);
+            builderChildFields.splice(bfIndex, 0, field);
             this.domElement.insertBefore(field.getContent(), droppedOnformItem);
         }
 
@@ -177,9 +203,11 @@ export class Dropzone {
     }
 
     bindFieldEvents(field) {
+        
         field.onDragStart = (event) => {
             event.stopPropagation();
-            const currentDraggedItem = this.objectArray.find(bf => bf.getContent() === event.target);
+
+            const currentDraggedItem = this.field.getFields().find(bf => bf.getContent() === event.target);
             Dropzone.setDraggedItem(event.target, currentDraggedItem);
         };
 
@@ -189,9 +217,10 @@ export class Dropzone {
             }
         };
         field.onDeleteCallback = (field) => {
-            const index = this.objectArray.findIndex(bf => bf === field);
+            const builderChildFields = this.field.getFields();
+            const index = builderChildFields.findIndex(bf => bf === field);
             if (index !== -1) {
-                this.objectArray.splice(index, 1);
+                builderChildFields.splice(index, 1);
                 this.domElement.removeChild(field.getContent());
                 EventService.callEventListener('field-deleted', this);
             }
@@ -202,31 +231,31 @@ export class Dropzone {
         switch(type) {
             case 'form-group':
                 return new BuilderFormGroup(type, Lang.get('field.type.form.group'))
-                    .setParent(this);
+                    .setParent(this.field);
             case 'text':
                 return new BuilderField(type, Lang.get('field.type.text'))
-                    .setParent(this);
+                    .setParent(this.field);
             case 'number':
                 return new BuilderField(type, Lang.get('field.type.number'))
-                    .setParent(this);
+                    .setParent(this.field);
             case 'valuta':
                 return new BuilderField(type, Lang.get('field.type.valuta'))
-                    .setParent(this);
+                    .setParent(this.field);
             case 'date':
                 return new BuilderField(type, Lang.get('field.type.date'))
-                    .setParent(this);
+                    .setParent(this.field);
             case 'select':
                 return new BuilderFieldOptions(type, Lang.get('field.type.select'))
-                    .setParent(this);
+                    .setParent(this.field);
             case 'checkbox':
                 return new BuilderFieldOptions(type, Lang.get('field.type.checkbox'))
-                    .setParent(this);
+                    .setParent(this.field);
             case 'radio':
                 return new BuilderFieldOptions(type, Lang.get('field.type.radio'))
-                    .setParent(this);
+                    .setParent(this.field);
             case 'repeating-group':
                 return new BuilderRepeatingGroup(type, Lang.get('field.type.repeating.group'))
-                    .setParent(this);
+                    .setParent(this.field);
         }
         throw new Error('Onbekend type: ' + type);
     }
@@ -249,7 +278,7 @@ export class Dropzone {
 
     draw() {
         this.domElement.ionnerHTML = '';
-        this.objectArray.forEach(bf => {
+        this.field.getFields().forEach(bf => {
             this.domElement.appendChild(bf.getContent());
         });
     }

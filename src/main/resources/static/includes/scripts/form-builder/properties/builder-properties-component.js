@@ -2,8 +2,11 @@ import { BuilderPropertiesOptionsType } from './builder-properties-options-type.
 import { BuilderPropertiesConditionType } from './builder-properties-condition-type.js';
 import { EventService } from '../../shared/services/event-service.js';
 import { Lang } from '../../shared/services/lang.js';
-import { WindowFrame} from '../component/window-frame.js';
+import { WindowFrame } from '../component/window-frame.js';
 
+/**
+ * 
+ */
 export class BuilderPropertyComponent {
     content = document.createElement('div');
     fieldLabelContainer = document.createElement('div');
@@ -70,7 +73,10 @@ export class BuilderPropertyComponent {
                 case 'condition':
                     const builderPropertiesConditionType = new BuilderPropertiesConditionType(this.field, property, [
                             {label: Lang.get('prop.list.text'), value: 'value', type: 'text'}
-                        ]);
+                        ],
+                    (dom, property) => {
+                        this.onPropertyChanged(dom, property);
+                    });
                     this.fieldPropertiesContainer.appendChild(builderPropertiesConditionType.getContent());
                     break;
                 default:
@@ -99,7 +105,12 @@ export class BuilderPropertyComponent {
         input.setAttribute('data-id', property.id);
         inputWrapper.appendChild(input);
         
+        const inputErrors = document.createElement('div');
+        inputErrors.className = 'invalid-feedback';
+        inputWrapper.appendChild(inputErrors);
+
         this.fieldPropertiesContainer.appendChild(wrapper);
+        this.validate(property, input);
     }
 
     getPropertyDom(property) {
@@ -173,12 +184,10 @@ export class BuilderPropertyComponent {
             });
         }
         input.onchange = (event) => {
-            
             if (this.field.fieldProperties.properties[event.target.dataset.id]) {
                 this.field.fieldProperties.properties[event.target.dataset.id].value = event.target.value;
             }
             this.onPropertyChanged(event.target, property);
-            
         };
 
         return input;
@@ -205,38 +214,57 @@ export class BuilderPropertyComponent {
         input.className = 'form-control';
 
         input.onchange = (event) => {
-            
-            if (this.field.fieldProperties.properties[event.target.dataset.id]) {
-                this.field.fieldProperties.properties[event.target.dataset.id].value = event.target.value;
+            const prop = this.field.fieldProperties.properties[event.target.dataset.id];
+            if (prop) {
+                prop.value = event.target.value;
+                this.onPropertyChanged(event.target, prop);
+                this.validate(prop, event.target);
+                // if (!this.validate(prop, event.target, event.target.value)) {
+                //     // return;
+                // }
+
+                
+                
             }
-            this.onPropertyChanged(event.target, property);
-            
         };
 
         return input;
     }
 
-    onPropertyChanged(input, property) {
+    validate(property, input, value) {
         input.classList.remove('is-invalid');
+        const feedback = input.parentElement.querySelector('.invalid-feedback')
+        feedback.innerHTML = '';
         try {
-            this.field.fieldProperties.validate(property);
+            this.field.fieldProperties.validate(property, null);
+        } catch(error) {
+            input.classList.add('is-invalid');
+            feedback.innerHTML = error.message;
+            return false;
+        }
+        return true;
+    }
+    
+
+    onPropertyChanged(input, property) {
+        // input.classList.remove('is-invalid');
+        try {
+            // this.field.fieldProperties.validate(property);
             if (property.id == 'label') {
                 if (this.field.fieldProperties.onPropertyLabelChanged) {
                     this.field.fieldProperties.onPropertyLabelChanged.forEach(changed => {
                         changed(property.value);
                     });
-                    
                 }
             }
             
             EventService.callEventListener('value-changed', this.field, property);
         } catch(error) {
-            input.classList.add('is-invalid');
+            // input.classList.add('is-invalid');
         }
     }
 
     getContent() {
         return this.windowFrame.getContent();
-        // return this.content;
     }
 }

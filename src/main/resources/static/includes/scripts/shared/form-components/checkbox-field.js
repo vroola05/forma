@@ -114,6 +114,12 @@ export class CheckboxField extends InputNucleus {
         return this;
     }
 
+    /**
+     * 
+     * @param {*} opt 
+     * @param {*} noCallback 
+     * @returns 
+     */
     removeInputValue(opt, noCallback = false) {
         const index = this.values.findIndex(o => o.value === opt.value);
         if (index == -1) 
@@ -130,22 +136,23 @@ export class CheckboxField extends InputNucleus {
      * 
      */
     setValue(options, noCallback = false) {
-        if (!options) {
+        if (!options || !Array.isArray(options)) {
             return this;
         }
-        if (!Array.isArray(options)) {
-            return this;
-        }
-
+        
+        const optionMap = new Map(options.map(o => [String(o.value), o]))
         this.inputElements.forEach(input => {
-            const option = options.find(o => o.value === input.checkbox.value);
-            if (option) {
+            const val = String(input.checkbox.value);
+            const match = optionMap.get(val);
+
+            if (match) {
                 input.checkbox.checked = true;
-                this.values.push(option);
+                this.values.push(match);
+            } else {
+                input.checkbox.checked = false; // Optioneel: vink uit als niet in options
             }
         });
 
-        
         this.valueChanged(noCallback, this.values);
         return this;
     }

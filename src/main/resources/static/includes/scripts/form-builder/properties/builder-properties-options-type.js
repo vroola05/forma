@@ -1,6 +1,9 @@
 import { EventService } from '../../shared/services/event-service.js'
 import { BuilderPropertiesFooter } from './components/builder-properties-footer.js';
 
+/**
+ * 
+ */
 export class BuilderPropertiesOptionsType {
     dropzone = null;
 

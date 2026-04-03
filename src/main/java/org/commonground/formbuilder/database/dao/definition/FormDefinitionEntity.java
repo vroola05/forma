@@ -38,7 +38,7 @@ public class FormDefinitionEntity {
 
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(name = "summary_confirmation", columnDefinition = "text[]")
-    private List<String> summaryConfirmation;
+    private List<String> confirmation;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @JdbcType(PostgreSQLJsonPGObjectJsonType.class)
@@ -58,7 +58,7 @@ public class FormDefinitionEntity {
         return metadata == null ? null : metadata;
     }
 
-    public List<String> getSummaryConfirmation() {
-        return summaryConfirmation == null ? null : summaryConfirmation;
+    public List<String> getConfirmation() {
+        return confirmation == null ? null : confirmation;
     }
 }

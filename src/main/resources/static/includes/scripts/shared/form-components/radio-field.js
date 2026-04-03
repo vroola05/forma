@@ -16,7 +16,6 @@ export class RadioField extends InputNucleus {
      * 
      */
     createElement() {
-        
         // this.content.className = 'mb-2 row field-wrapper' + (this.classes ? ' ' + this.classes : '');
 
         this.inputElement = document.createElement('div');
@@ -70,7 +69,7 @@ export class RadioField extends InputNucleus {
         radioElement.setAttribute('data-text', text);
         radioElement.addEventListener('change', (e) => {
             const radioInputField = e.target.closest('.radio-input-field');
-            this.setInputValue({ value: radioInputField.value, text: radioInputField.dataset.text });
+            this.setInputValue([{ value: radioInputField.value, text: radioInputField.dataset.text }]);
         });
         radioElementContainer.appendChild(radioElement);
 
@@ -116,7 +115,6 @@ export class RadioField extends InputNucleus {
      */
     setInputValue(value, noCallback = false) {
         this.value = value;
-        
         this.valueChanged(noCallback);
 
         return this;
@@ -125,26 +123,57 @@ export class RadioField extends InputNucleus {
     /**
      * 
      */
+    // setValue(value, noCallback = false) {
+        
+    //     if (value && typeof value === 'string') {
+    //         const item = this.inputElements.find(input => value && input.radio.value == value);
+    //         if (item) {
+    //             this.value = [{value, text: item.radio.dataset.text}];
+    //         } else return this;
+    //     } else {
+    //         this.value = value;
+    //     }
+
+    //     this.inputElements.forEach(input => {
+    //         if (this.value && input.radio.value == this.value[0].value) {
+    //             input.radio.checked = true;
+    //         } else {
+    //             input.radio.checked = false;
+    //         }
+    //     });
+
+    //     this.valueChanged(noCallback);
+       
+    //     return this;
+    // }
+
     setValue(value, noCallback = false) {
-        if (value && typeof value === 'string') {
-            const item = this.inputElements.find(input => value && input.radio.value == value);
-            if (item) {
-                this.value = {value, text: item.radio.dataset.text};
-            } else return this;
+        const isEmpty = !value || (Array.isArray(value) && value.length === 0);
+
+        if (isEmpty) {
+            this.value = '';
+            this.inputElements.forEach(input => input.radio.checked = false);
         } else {
-            this.value = value;
+            const targetValue = typeof value === 'string' ? value : value[0]?.value;
+            let found = false;
+
+            this.inputElements.forEach(input => {
+                const isMatch = input.radio.value == targetValue;
+                input.radio.checked = isMatch;
+                
+                if (isMatch) {
+                    this.value = [{ value: targetValue, text: input.radio.dataset.text }];
+                    found = true;
+                }
+            });
+
+            // Als de string-waarde niet bestond in de opties: stop direct (zoals in je origineel)
+            if (typeof value === 'string' && !found) {
+                return this;
+            }
         }
 
-        this.inputElements.forEach(input => {
-            if (this.value && input.radio.value == this.value.value) {
-                input.radio.checked = true;
-            } else {
-                input.radio.checked = false;
-            }
-        });
-
         this.valueChanged(noCallback);
-        
         return this;
     }
 
@@ -153,7 +182,7 @@ export class RadioField extends InputNucleus {
      * @returns 
      */
     getValue() {
-        return !this.value ? '' : this.value.value;
+        return !this.value ? '' : this.value[0].value;
     }
 
     /**
@@ -161,7 +190,7 @@ export class RadioField extends InputNucleus {
      * @returns 
      */
     getOptions() {
-        return this.value ? [this.value] : [];
+        return this.value ? this.value : [];
     }
 
     /**

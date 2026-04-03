@@ -1,10 +1,13 @@
 import { Nucleus } from './nucleus.js';
+import { FormService } from '../../../form-viewer/services/form-service.js';
 
 export const InputLayout = ['layout-row', 'layout-column'];
 
 export class InputNucleus extends Nucleus {
     content = document.createElement('div');
     labelElement = document.createElement('label');
+
+    persistenceEnabled = true;
 
     value = '';
     id = '';
@@ -77,11 +80,15 @@ export class InputNucleus extends Nucleus {
     setValue(value, noCallback = false) {
         this.value = value ?? '';
         this.inputElement.value = this.value;
-        this.valueChanged(noCallback);    
+        this.valueChanged(noCallback);
         return this;
     }
 
     valueChanged(noCallback, value = undefined) {
+        if (!noCallback) {
+            this.saveState();
+        }
+        
         if (!noCallback && this.callback.length > 0) {
             this.callback.forEach( callback => {
                 callback(this.name, value ? value : this.value, this);
@@ -96,6 +103,17 @@ export class InputNucleus extends Nucleus {
             }
         }
         return this;
+    }
+
+    enablePersistence(enabled) {
+        this.persistenceEnabled = enabled;
+        return this;
+    }
+
+    saveState() {
+        if (this.persistenceEnabled) {
+            FormService.getInstance().saveState();
+        }
     }
 
     addValueChangedListener(callback) {
@@ -206,5 +224,4 @@ export class InputNucleus extends Nucleus {
     getInput() {
         return this.inputElement;
     }
-
 }

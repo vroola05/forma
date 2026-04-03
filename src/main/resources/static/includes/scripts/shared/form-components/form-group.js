@@ -10,12 +10,11 @@ export class FormGroup extends Nucleus {
     formGroupTitleDom = document.createElement('div');
 
     
-    formInputKeyValue = {};
+    // formInputKeyValue = {};
     fields = [];
 
-    constructor(formGroupData) {
+    constructor(formGroupData, state = null) {
         super(formGroupData.name, formGroupData.label);
-
         this.type = formGroupData.type;
         this.id = formGroupData.id;
         this.setMetadata(formGroupData.metadata);
@@ -23,14 +22,8 @@ export class FormGroup extends Nucleus {
 
         this.createElement(formGroupData.name, formGroupData.label, formGroupData.classes);
 
-        const formInputKeyValue = Storage.getPageItem(this.name);
-
-        if (formInputKeyValue) {
-            this.formInputKeyValue = JSON.parse(formInputKeyValue);
-        }
-
         formGroupData.fields.forEach(fieldData => {
-            this.createInput(fieldData);
+            this.createInput(fieldData, state?.[fieldData.name]);
         });
     }
 
@@ -60,28 +53,16 @@ export class FormGroup extends Nucleus {
 
     }
     
-    createInput(fieldData) {
-        let field = FormRenderer.createField(fieldData);
+    createInput(fieldData, state) {
+        let field = FormRenderer.createField(fieldData, state);
         if (!field || (!(field instanceof InputNucleus) && !(field instanceof RepeatingGroup))) {
             throw new Error('Input must be an instance of Input class');
         }
-
-        // Dit is een callback op de wijziging van de input waarde.
-        // Deze callback slaat de waarde op in de formInputKeyValue object en in de session storage.
-        field.addValueChangedListener((name, value) => {
-            this.formInputKeyValue[name] = value;
-            Storage.setPageItem(this.name, JSON.stringify(this.formInputKeyValue));
-        });
 
         field.setId(`${this.name}-${field.getName()}`);
         this.fields.push(field);
 
         this.formDomElements.append(field.getContent())
-
-        // Kijk of er al een waarde in de session storage staat voor dit formulier en deze field.
-        if (field.name in this.formInputKeyValue && field.type != 'repeating-group') {
-            field.setValue(this.formInputKeyValue[field.name], false);
-        }
         
         field.afterInit();
     }
@@ -112,7 +93,8 @@ export class FormGroup extends Nucleus {
     }
 
     getValue() {
-        return this.formInputKeyValue;
+        return null;
+        // return this.formInputKeyValue;
     }
 
     getFields() {

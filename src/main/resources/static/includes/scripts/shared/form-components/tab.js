@@ -1,6 +1,6 @@
 import { Nucleus } from './interface/nucleus.js';
 import { TabLabel } from './components/tab-label.js';
-import { FormGroup } from './form-group.js';
+import { FormRenderer } from '../../form-viewer/components/form-renderer.js';
 
 export class Tab extends Nucleus {
     content = document.createElement('div');
@@ -10,7 +10,7 @@ export class Tab extends Nucleus {
     tabLabel = undefined;
     onTabClick = undefined;
 
-    constructor(tabData, onTabClick) {
+    constructor(tabData, state, onTabClick) {
         super(tabData.name, tabData.label);
 
         this.type = tabData.type;
@@ -27,10 +27,9 @@ export class Tab extends Nucleus {
         
         if (tabData.fields) {
             tabData.fields.forEach(formGroup => {
-                this.createFormGroup(formGroup);
+                this.createField(formGroup, state?.[formGroup.name]);
             });
         }
-        
     }
 
     createElement() {
@@ -41,13 +40,13 @@ export class Tab extends Nucleus {
         });
     }
     
-    createFormGroup(formGroupData) {
-        const formGroup = new FormGroup(formGroupData);
-        this.fields.push(formGroup);
-        this.content.appendChild(formGroup.getContent());
+    createField(fieldData, state) {
+        let field = FormRenderer.createField(fieldData, state);
+        // const formGroup = new FormGroup(formGroupData);
+        this.fields.push(field);
+        this.content.appendChild(field.getContent());
     }
 
-    
     getFormGroups() {
         return this.fields;
     }

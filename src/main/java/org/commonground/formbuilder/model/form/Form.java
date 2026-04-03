@@ -29,7 +29,9 @@ public class Form implements Field {
     private String classes;
 
     private List<String> metadata;
-    private List<String> summaryConfirmation;
+    private List<String> confirmation;
+    @Builder.Default
+    private List<CheckboxField> confirmationCheck = new ArrayList<>();
     @Builder.Default
     private List<TabPage> fields = new ArrayList<>();
     private FieldType type;

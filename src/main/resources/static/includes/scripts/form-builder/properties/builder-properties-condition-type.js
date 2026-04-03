@@ -1,13 +1,17 @@
 import { BuilderPropertiesCondition } from './components/builder-properties-condition.js'
 import { BuilderPropertiesFooter } from './components/builder-properties-footer.js';
 
+/**
+ * 
+ */
 export class BuilderPropertiesConditionType {
     dropzone = null;
 
-    constructor(field, property, valueDefault) {
+    constructor(field, property, valueDefault, onChanged) {
         this.field = field;
         this.property = property;
         this.valueDefault = valueDefault;
+        this.onChanged = onChanged;
         this.createContent();
     }
 
@@ -52,6 +56,7 @@ export class BuilderPropertiesConditionType {
                 });
         this.content.appendChild(this.builderPropertiesFooter.getContent());
 
+        
         if (this.property.value && Object.keys(this.property.value).length > 0) {
             this.addCondition(this.property.value)
         }
@@ -63,12 +68,21 @@ export class BuilderPropertiesConditionType {
             conditionData,
             (value) => {
                 this.property.value = value;
+                if (this.onChanged) {
+                    this.onChanged(this.content, this.property);
+                }
             },
-            (builderPropertiesCondition) => {
+            () => {
+                this.property.value = null;
                 this.builderPropertyOptionsContainer.innerHTML = '';
                 this.builderPropertiesCondition = undefined;
                 this.builderPropertiesFooter.show(true);
+                
+                if (this.onChanged) {
+                    this.onChanged(this.content, this.property);
+                }
             });
+
         this.builderPropertyOptionsContainer.appendChild(this.builderPropertiesCondition.getContent());
     }
 

@@ -8,13 +8,13 @@ export class BuilderForm extends BuilderFieldInterface {
     dropzone = null;
     acceptedTypes = ['tab'];
 
-    builderFields = [];
+    builderChildFields = [];
 
     constructor() {
         super('form', '');
 
         this.fieldProperties.addProperties([
-            {type: 'list', id: 'summaryConfirmation', label: Lang.get('prop.summary.confirmation.label'), value: []}
+            {type: 'list', id: 'confirmation', label: Lang.get('prop.summary.confirmation.label'), value: []}
         ]);
 
         this.createContent();
@@ -102,25 +102,25 @@ export class BuilderForm extends BuilderFieldInterface {
             };
 
             this.builderFormTab.appendChild(tabPage.getContent());
-            this.builderFields.push(tabPage);
+            this.builderChildFields.push(tabPage);
             EventService.callEventListener('properties-changed', tabPage);
             this.tabLabelCompontent.setActive(tabLabelItem);
         };
 
         this.tabLabelCompontent.onMoveCallback = (draggedIndex, droppedIndex) => {
-            const [draggedItem] = this.builderFields.splice(draggedIndex, 1);
+            const [draggedItem] = this.builderChildFields.splice(draggedIndex, 1);
 
             if (droppedIndex == null) {
-                this.builderFields.push(draggedItem);
+                this.builderChildFields.push(draggedItem);
             } else {
-                this.builderFields.splice(droppedIndex, 0, draggedItem);
+                this.builderChildFields.splice(droppedIndex, 0, draggedItem);
             }
 
             EventService.callEventListener('field-changed', this);
         };
 
         this.tabLabelCompontent.onActivateCallback = (tabLabelItem) => {
-            for (const builderField of this.builderFields) {
+            for (const builderField of this.builderChildFields) {
                 if (builderField.getTabLabelItem() == tabLabelItem) {
                     EventService.callEventListener('properties-changed', tabLabelItem.getTabPage());
                     builderField.getTabLabelItem().setActive(true);
@@ -132,17 +132,17 @@ export class BuilderForm extends BuilderFieldInterface {
 
         this.tabLabelCompontent.onDeleteCallback = (tabLabelItem) => {
             EventService.callEventListener('properties-changed', null);
-            const index = this.builderFields.findIndex(bf => bf.getTabLabelItem() === tabLabelItem);
+            const index = this.builderChildFields.findIndex(bf => bf.getTabLabelItem() === tabLabelItem);
             
             if (index !== -1) {
-                if (this.builderFields.length > 1 && this.builderFields[index].isActive()) {
+                if (this.builderChildFields.length > 1 && this.builderChildFields[index].isActive()) {
                     const newIndex = index > 0 ? index - 1 : index + 1;
-                    this.tabLabelCompontent.setActive(this.builderFields[newIndex].getTabLabelItem());
+                    this.tabLabelCompontent.setActive(this.builderChildFields[newIndex].getTabLabelItem());
                 }
 
-                this.builderFormTab.removeChild(this.builderFields[index].getContent());
+                this.builderFormTab.removeChild(this.builderChildFields[index].getContent());
 
-                this.builderFields.splice(index, 1);
+                this.builderChildFields.splice(index, 1);
                 
                 EventService.callEventListener('field-deleted', this);
 
@@ -171,12 +171,10 @@ export class BuilderForm extends BuilderFieldInterface {
     }
 
     validate() {
-        console.log('Validating form');
-        console.log('Validating field properties', this.fieldProperties);
         this.fieldProperties.validateAll(this);
         
-        for (const tab of this.builderFields) {
-            tab.validate();
+        for (const field of this.builderChildFields) {
+            field.validate();
         }
     }
     
@@ -184,7 +182,7 @@ export class BuilderForm extends BuilderFieldInterface {
         return {
             ...this.fieldProperties.getProperties(),
             type: this.type,
-            fields: this.builderFields.map(f => f.getData())
+            fields: this.builderChildFields.map(f => f.getData())
         };
     }
 }

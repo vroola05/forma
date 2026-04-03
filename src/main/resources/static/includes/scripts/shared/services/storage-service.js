@@ -10,7 +10,7 @@ export class Storage {
     }
 
     static getPageItem(key) {
-        sessionStorage.getItem(Storage.page +'-'+ key);
+        return sessionStorage.getItem(Storage.page +'-'+ key);
     }
 
     static setPageItem(key, value) {

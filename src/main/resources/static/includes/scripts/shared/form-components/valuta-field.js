@@ -12,7 +12,6 @@ export class ValutaField extends TextField {
     }
 
     setValue(value, noCallback = false) {
-        
         // Format the value as currency
         super.setValue(this.formatCurrency(value ?? ''), noCallback);
         return this;

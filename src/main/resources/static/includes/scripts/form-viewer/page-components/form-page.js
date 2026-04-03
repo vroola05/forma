@@ -15,6 +15,8 @@ export class FormPage extends Page {
     buttonCancel = document.createElement('div');
     buttonSubmit = document.createElement('div');
     loader = document.querySelector('.loader');
+    formService = FormService.getInstance();
+
     projectName = '';
     groups = [];
 
@@ -47,12 +49,6 @@ export class FormPage extends Page {
         this.pageContentContainer.id = 'page-content-container';
         this.pageContentContainer.className = 'page-content-container';
         this.content.append(this.pageContentContainer);
-
-        
-        // this.footerContainer = document.createElement('div');
-        // this.footerContainer.className = 'footer-container';
-        // this.content.append(this.footerContainer);
-
     }
 
     afterInit() {
@@ -72,23 +68,19 @@ export class FormPage extends Page {
                 this.formWrapper = formWrapper;
                 this.setTitle(this.formWrapper.form.label);
 
-                this.form = FormRenderer.createForm(this.formWrapper.form);
+                const state = this.formService.getState();
+                this.form = FormRenderer.createForm(this.formWrapper.form, state);
                 this.pageContentContainer.append(this.form.getContent());
-
-                // this.footer = new Footer();
-                // this.footerContainer.append(this.footer.getContent());
-
-                const formService = FormService.getInstance();
-                formService.setForm(this.form);
                 
-                const fields = formService.getNucleus();
+                this.formService.setForm(this.form);
+
+                const fields = this.formService.getNucleus();
 
                 // Logic that needs to be initialized after the form is loaded.
                 // For example the showconditions
                 for (let i=0; i < fields.length; i++) {
                     fields[i].afterFormInit();
                 }
-
                 this.formLogic = new FormLogic(this.form);
             })
             .catch(error => {
@@ -98,8 +90,6 @@ export class FormPage extends Page {
                 }
             });
     }
-
-   
 
     setTitle(title) {
         this.title = title;

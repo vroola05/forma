@@ -1,7 +1,7 @@
 import { BuilderFieldInterface } from "../fields/builder-field-interface.js";
 import { Dropzone } from './components/dropzone.js';
 import { EventService } from '../../shared/services/event-service.js';
-import { Lang } from '../../shared/services/lang.js';
+import { FIELD_TYPES } from '../field-types.js'
 
 export class BuilderTabPage extends BuilderFieldInterface {
     dropzone = null;
@@ -9,7 +9,7 @@ export class BuilderTabPage extends BuilderFieldInterface {
     tabLabelItem = null;
     active = false;
 
-    builderFields = [];
+    builderChildFields = [];
 
     constructor(type, label) {
         super(type, label);
@@ -20,9 +20,9 @@ export class BuilderTabPage extends BuilderFieldInterface {
         if (properties) {
             this.initDefaultProperties(properties);
 
-            for (const formGroup of properties.fields) {
-                const field = this.dropzone.addNewItem('form-group', Lang.get('field.type.form.group'));
-                field.init(formGroup);
+            for (const fieldData of properties.fields) {
+                const field = this.dropzone.addNewItem(fieldData.type, FIELD_TYPES[fieldData.type]);
+                field.init(fieldData);
             }
         }
     }
@@ -67,8 +67,8 @@ export class BuilderTabPage extends BuilderFieldInterface {
         builderTabPagesContainer.appendChild(this.builderTabPages);
 
         this.dropzone = new Dropzone(
+            this,
             this.builderTabPages,
-            this.builderFields, 
             (type, label, dragged, droppedOnformItem) => {
                 this.updateTabPage();
             },
@@ -93,6 +93,10 @@ export class BuilderTabPage extends BuilderFieldInterface {
             this.label = value;
         }
         this.tabLabelItem.setLabel(value);
+    }
+
+    getFields() {
+        return this.builderChildFields;
     }
 
     getContent() {
@@ -122,15 +126,15 @@ export class BuilderTabPage extends BuilderFieldInterface {
         return {
             ...this.fieldProperties.getProperties(),
             type: this.type,
-            fields: this.builderFields.map(f => f.getData())
+            fields: this.builderChildFields.map(f => f.getData())
         };
     }
     
     validate() {
         this.fieldProperties.validateAll(this);
 
-        for (const formGroup of this.builderFields) {
-            formGroup.validate();
+        for (const field of this.builderChildFields) {
+            field.validate();
         }
     }
 }
