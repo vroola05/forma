@@ -1,5 +1,5 @@
 import { Tab } from './tab.js';
-
+import { FormRenderer } from '../../form-viewer/components/form-renderer.js';
 export class Form {
     fields = [];
 
@@ -11,7 +11,8 @@ export class Form {
         this.classes = form.classes;
         this.metadata = form.metadata || [];
         this.confirmation = form.confirmation || [];
-
+        // this.confirmationCheck = form.confirmationCheck || [];
+        
         // confirmationCheck: FormRenderer.#getFieldsData(form.confirmationCheck),
         this.createElement();
 
@@ -19,6 +20,24 @@ export class Form {
         form.fields.forEach(tabData => {
             this.createTab(tabData, tabState?.[tabData.name]);
         });
+
+        this.createConfirmations(form);
+    }
+
+    /**
+     * On the summary page it is posible to have confirmation checkboxes.
+     * 
+     * @param {*} form 
+     */
+    createConfirmations(form) {
+        this.confirmationCheck = [];
+        for (const f of form.confirmationCheck) {
+            const confirmation = FormRenderer.createField(f);
+            confirmation.setId(confirmation.getName());
+            confirmation.setLayout('layout-column');
+            this.confirmationCheck.push(confirmation);
+
+        }
     }
 
     /**
@@ -73,7 +92,6 @@ export class Form {
         const activeIndex = fields.findIndex(item => item.isActive());
         if (activeIndex >= 0 && fields.length - 1) {
             this.setTab(fields[activeIndex + 1].getName());
-            
         }
     }
 
@@ -131,14 +149,17 @@ export class Form {
      * @returns 
      */
     validate() {
-        if (!this.getShow()) {
-            return true;
+        for(const tab of this.fields) {
+            if (!tab.validate()) {
+                return false;
+            }
         }
 
-        console.log('Validating form');
-        for(const tabObject of this.fields) {
-            if (!tabObject.validate()) {
-                return false;
+        if (this.confirmationCheck) {
+            for(const field of this.confirmationCheck) {
+                if (!field.validate()) {
+                    return false;
+                }
             }
         }
         return true;
@@ -174,6 +195,10 @@ export class Form {
             }
         }
         return this;
+    }
+
+    getConfirmationCheck() {
+        return this.confirmationCheck;
     }
 
     hasMetadata(metadata) {

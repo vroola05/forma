@@ -9,8 +9,6 @@ export class FormGroup extends Nucleus {
     content = document.createElement('div');
     formGroupTitleDom = document.createElement('div');
 
-    
-    // formInputKeyValue = {};
     fields = [];
 
     constructor(formGroupData, state = null) {
@@ -26,7 +24,6 @@ export class FormGroup extends Nucleus {
             this.createInput(fieldData, state?.[fieldData.name]);
         });
     }
-
 
     /**
      * 
@@ -55,6 +52,8 @@ export class FormGroup extends Nucleus {
     
     createInput(fieldData, state) {
         let field = FormRenderer.createField(fieldData, state);
+        field.enablePersistence(true);
+
         if (!field || (!(field instanceof InputNucleus) && !(field instanceof RepeatingGroup))) {
             throw new Error('Input must be an instance of Input class');
         }

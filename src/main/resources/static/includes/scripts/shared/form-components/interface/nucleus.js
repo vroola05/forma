@@ -115,6 +115,10 @@ export class Nucleus {
         return this;
     }
 
+    enablePersistence(enabled) {
+        return this;
+    }
+
     getShow() {
         return this.show;
     }

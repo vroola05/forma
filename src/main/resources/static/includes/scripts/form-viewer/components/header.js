@@ -52,7 +52,7 @@ export class Header {
     }
 
     setLeftButtons() {
-        this.navbarNavLeft.appendChild(this.getNavBarItem(new FormButton(Lang.get('header.home'), 'home', Router.base)));
+        this.navbarNavLeft.appendChild(this.getNavBarItem(new FormButton(Lang.get('header.home'), 'home', Router.base + '/admin')));
     }
 
     getNavBarItem(formButton) {

@@ -107,7 +107,7 @@ export class OverviewPage extends Page {
             item.addEventListener('click', function () {
                 const formName = this.dataset.formName;
                 
-                Router.route(`/page/form-builder/${formName}`);
+                Router.route(`/admin/page/form-builder/${formName}`);
                 
             });
         });

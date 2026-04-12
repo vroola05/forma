@@ -102,6 +102,28 @@ Styles voor builder.js
     }
 }
 
+.builder-page-settings-container {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-around;
+    gap: 10px;
+    margin-bottom: var(--default-space);
+
+    .builder-page-settings-button {
+        flex: 1 0 auto;
+
+        background-color: white;
+        border: #dee2e6 1px solid;
+        border-radius: var(--default-space-half);
+
+        &.selected {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+    }
+}
+
 /**
 Styles voor builder-form.js
 */

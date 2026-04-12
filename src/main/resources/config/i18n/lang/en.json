@@ -18,6 +18,14 @@
     "form.name": "Formname",
     "tab.new": "New tab",
 
+    "page.settings.form": "Form",
+    "page.settings.generic": "Generic",
+    "page.settings.login": "Login",
+    "page.settings.mail": "Email",
+    "page.settings.successpage": "Success page",
+    "page.settings.registration": "Registration",
+    "page.settings.payment": "Payment",
+
     "field.type.form.group": "Group",
     "field.type.checkbox": "Checkboxfield",
     "field.type.text": "Textfield",

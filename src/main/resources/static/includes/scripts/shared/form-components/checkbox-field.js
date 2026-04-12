@@ -205,6 +205,7 @@ export class CheckboxField extends InputNucleus {
             this.inputElements[i].checkbox.name = this.id;
             this.inputElements[i].label.htmlFor = newId;
         }
+        return this;
     }
 
      validate(valid = true, message = '') {

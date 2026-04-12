@@ -31,7 +31,6 @@ export class BuilderPropertiesCondition {
         this.content.appendChild(builderConditionTypeContainer);
 
         this.conditionTypeSelect = new SelectField('condition-type', 'Type')
-                .enablePersistence(false)
                 .setPlaceholder('Condition type');
         this.conditionTypeSelect.addValueChangedListener((name, option) => {
             this.changeConditionType(option[0].value);
@@ -77,7 +76,6 @@ export class BuilderPropertiesCondition {
         this.simpleConditionDom = document.createElement('div');
         this.simpleConditionDom.className = 'builder-simple-condition';
         this.var1SimpleTextfield = new BuilderConditionsAutocompleteField('var1', 'Variabele 1')
-                .enablePersistence(false)
                 .setPlaceholder('Variabele 1')
                 .setLayout('layout-column')
                 .addValueChangedListener((value) => {
@@ -86,7 +84,6 @@ export class BuilderPropertiesCondition {
 
         this.simpleConditionDom.appendChild(this.var1SimpleTextfield.getContent());
         this.operatorSimpleSelect = new SelectField('opereator', 'Operator')
-                .enablePersistence(false)
                 .setPlaceholder('Relationele operator')
                 .setLayout('layout-column')
                 .addValueChangedListener((value) => {
@@ -99,7 +96,6 @@ export class BuilderPropertiesCondition {
         }
 
         this.var2SimpleTextfield= new BuilderConditionsAutocompleteField('var2', 'Variabele 2')
-                .enablePersistence(false)
                 .setPlaceholder('Variabele 2')
                 .setLayout('layout-column')
                 .addValueChangedListener((value) => {
@@ -122,7 +118,6 @@ export class BuilderPropertiesCondition {
         this.content.appendChild(this.compositeConditionDom);
 
         this.operatorCompositeSelect = new SelectField('opereator', 'Operator')
-                .enablePersistence(false)
                 .setPlaceholder('Relationele operator')
                 .addValueChangedListener((value) => {
                     this.valueChanged();

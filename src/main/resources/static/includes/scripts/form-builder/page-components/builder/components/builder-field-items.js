@@ -1,5 +1,5 @@
-import { WindowFrame } from './window-frame.js';
-import { Dropzone } from '../fields/components/dropzone.js';
+import { WindowFrame } from '../../../component/window-frame.js';
+import { Dropzone } from '../../../fields/components/dropzone.js';
 
 export class BuilderFieldItems {
     constructor(label) {

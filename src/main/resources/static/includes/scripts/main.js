@@ -17,7 +17,7 @@ export class Main {
         this.routes = routes;
         if (baseAddition) {
             if (baseAddition.charAt(0) === '/') {
-                baseAddition.splice(0, 1);
+                baseAddition.slice(0, 1);
             }
 
             if (baseAddition.slice(-1) !== '/') {
@@ -45,7 +45,7 @@ export class Main {
 
     setRoutes() {
         for (const route of this.routes) {
-            Router.registerRoute(route.path, route.page);
+            Router.registerRoute(route.path, route.page, route.routes);
         }
         
         window.addEventListener('popstate', () => {

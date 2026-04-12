@@ -28,7 +28,7 @@ public class AadOAuth2LoginSecurityConfig {
             
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/", "/index.html", "/builder.html", "/favicon.svg", "/favicon.ico", "/error", "/includes/**", "/css/**", "/js/**", "/images/**").permitAll()
-                .requestMatchers("/form-builder", "/form-builder/**", "/page/**", "/api/userinfo", "/api/**").permitAll()
+                .requestMatchers("/admin", "/admin/**", "/form-builder", "/form-builder/**", "/page/**", "/api/userinfo", "/api/**").permitAll()
                 .anyRequest().denyAll()
             );
         return http.build();

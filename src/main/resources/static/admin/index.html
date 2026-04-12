@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="nl">
+    <head>
+        <meta charset="UTF-8">
+        <title>Form builder</title>
+        <base href="" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <meta name="robots" content="noindex, nofollow" />
+        <link rel="icon" href="favicon.svg" type="image/svg+xml">
+        <link href="/includes/bootstrap-5.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <script src="/includes/popper-2.11.8/popper.min.js"></script>
+        <script src="/includes/bootstrap-5.3.7/js/bootstrap.min.js"></script>
+
+        <link href="/includes/css/fonts/icons.css" rel="stylesheet">
+        <link href="/includes/css/styles.css" rel="stylesheet">
+        <link href="/includes/css/styles-builder.css" rel="stylesheet">
+    </head>
+    <body class="">
+        <div id="header" class="header sticky-top"></div>
+        <div class="toast-container-wrapper container-fluid">
+            <div id="toast-container" class="mt-3 ms-5 me-5"></div>
+        </div>
+        <div id="content"></div>
+        <div id="footer" class="footer-container">
+
+        </div>
+        <div class="loader">
+            <div class="loader-container">
+                <div class="loader-spinner">
+                    <div class="spinner"></div>
+                </div>
+                <div class="loader-message">Even geduld...</div>
+            </div>
+        </div>
+
+    </body>
+
+    <script type="module">
+        import { Main } from '/includes/scripts/main.js';
+
+        import { OverviewPage } from '/includes/scripts/form-builder/page-components/overview.js';
+        import { FormPage } from '/includes/scripts/form-viewer/page-components/form-page.js';
+        import { RevisionPage } from '/includes/scripts/form-builder/page-components/revision.js';
+        import { BuilderPage } from '/includes/scripts/form-builder/page-components/builder/builder-page.js';
+        import { BuilderPageSettingsForm } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-form.js';
+        import { BuilderPageSettingsGeneric } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-generic.js';
+        import { BuilderPageSettingsLogin } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-login.js';
+        import { BuilderPageSettingsMail } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-mail.js';
+        import { BuilderPageSettingsPayment } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-payment.js';
+        import { BuilderPageSettingsRegistration } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-registration.js';
+        import { BuilderPageSettingsSuccess } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-success.js';
+        
+        
+        new Main([
+            {'path': '/admin', 'page': OverviewPage},
+            {'path': '/admin/page/overview', 'page': OverviewPage},
+            {
+                'path': '/admin/page/form-builder/:formName', 'page': BuilderPage,
+                'routes': [
+                    {'path': '', 'page': BuilderPageSettingsForm},
+                    {'path': '/settings-generic', 'page': BuilderPageSettingsGeneric},
+                    {'path': '/settings-login', 'page': BuilderPageSettingsLogin},
+                    {'path': '/settings-mail', 'page': BuilderPageSettingsMail},
+                    {'path': '/settings-success', 'page': BuilderPageSettingsSuccess},
+                    {'path': '/settings-registration', 'page': BuilderPageSettingsRegistration},
+                    {'path': '/settings-payment', 'page': BuilderPageSettingsPayment},
+                ]
+
+            }
+        ]);
+    </script>
+</html>

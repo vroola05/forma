@@ -1,24 +1,20 @@
 import { footerService } from '../services/footer-service.js';
 import { Storage } from '../services/storage-service.js';
+import { PageComponent } from './page-component.js';
 
-export class Page {
+export class Page extends PageComponent {
     parameters = undefined;
     content = '';
     title = '';
 
     constructor() {
+        super();
         Storage.setPage(this.constructor.name);
         footerService.clear();
         this.getPageParameters();
     }
 
-    setContent(content) {
-        this.content = content;
-    }
-
-    getContent() {
-        return this.content;
-    }
+    
 
     setTitle(title) {
         this.title = title;
@@ -29,9 +25,7 @@ export class Page {
         return this.title;
     }
 
-    afterInit() {
-        
-    }
+    
 
     getPageParameters() {
         if (!this.parameters) {

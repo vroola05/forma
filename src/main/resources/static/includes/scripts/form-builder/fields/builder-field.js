@@ -16,7 +16,6 @@ export class BuilderField extends BuilderFieldInterface {
             {type: 'number', id: 'minLength', label: Lang.get('prop.minLength.label'), value: ''},
             {type: 'number', id: 'maxLength', label: Lang.get('prop.maxLength.label'), value: ''},
             {type: 'string', id: 'value', label: Lang.get('prop.value.label'), value: ''}
-
         ]);
     }
 
@@ -73,7 +72,6 @@ export class BuilderField extends BuilderFieldInterface {
     getContent() {
         return this.builderField;
     }
-
 
     getData() {
         return {

@@ -90,6 +90,7 @@ export class BuilderForm extends BuilderFieldInterface {
 
         // When a new tab is created
         this.tabLabelCompontent.onCreateCallback = (tabLabelItem) => {
+            
             const tabPage = new BuilderTabPage('tab', tabLabelItem.getLabel());
             
             tabLabelItem.setTabPage(tabPage);
@@ -103,7 +104,6 @@ export class BuilderForm extends BuilderFieldInterface {
 
             this.builderFormTab.appendChild(tabPage.getContent());
             this.builderChildFields.push(tabPage);
-            EventService.callEventListener('properties-changed', tabPage);
             this.tabLabelCompontent.setActive(tabLabelItem);
         };
 
@@ -122,7 +122,6 @@ export class BuilderForm extends BuilderFieldInterface {
         this.tabLabelCompontent.onActivateCallback = (tabLabelItem) => {
             for (const builderField of this.builderChildFields) {
                 if (builderField.getTabLabelItem() == tabLabelItem) {
-                    EventService.callEventListener('properties-changed', tabLabelItem.getTabPage());
                     builderField.getTabLabelItem().setActive(true);
                 } else {
                     builderField.getTabLabelItem().setActive(false);

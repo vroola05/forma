@@ -1,15 +1,11 @@
 import { Router } from '../../shared/services/router.js';
 import { Page } from '../../shared/page-components/page.js';
-import { FormRenderer } from '../components/form-renderer.js'
 
 import { FormGroup } from '../../shared/form-components/form-group.js';
-import { Http, ValidationError } from '../../shared/services/http.js';
 
-import { Toaster } from '../../shared/generic-components/toaster.js'
-import { FormLogic } from '../components/form-logic.js';
 import { FormService } from '../services/form-service.js'
 
-export class FormPage extends Page {
+export class SuccessPage extends Page {
     content = document.createElement('div');
     pageContentContainer = document.createElement('div');
     buttonCancel = document.createElement('div');
@@ -53,43 +49,10 @@ export class FormPage extends Page {
     }
 
     afterInit() {
-        this.getForm(this.formName);
+        
     }
 
-    getForm(formName) {
-        this.loader.classList.add('active');
-        Http.get(`${Router.base}/api/forms/${formName}`, {})
-            .then(formWrapper => {
-                this.loader.classList.remove('active');
-                if (!formWrapper) {
-                    console.error('No fields found in the project details');
-                    return;
-                }
-                
-                this.formWrapper = formWrapper;
-                this.setTitle(this.formWrapper.form.label);
-
-                const state = this.formService.getState();
-                this.form = FormRenderer.createForm(this.formWrapper.form, state);
-                this.pageContentContainer.append(this.form.getContent());
-                this.formService.setForm(this.form);
-
-                const fields = this.formService.getNucleus();
-
-                // Logic that needs to be initialized after the form is loaded.
-                // For example the showconditions
-                for (let i=0; i < fields.length; i++) {
-                    fields[i].afterFormInit();
-                }
-                this.formLogic = new FormLogic(this.form);
-            })
-            .catch(error => {
-                this.loader.classList.remove('active');
-                if (error instanceof ValidationError) {
-                    Toaster.error('Er is iets fout gegaan. Controleer of alle velden goed zijn ingevuld.');
-                }
-            });
-    }
+    
 
     setTitle(title) {
         this.title = title;

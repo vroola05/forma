@@ -84,7 +84,7 @@ public class FormServiceDatabase implements FormService {
                 check.setType(FieldType.CHECKBOX);
                 
                 check.setName("confirmation-" + (i+1));
-                check.setLabel(formDefinitionEntity.getConfirmation().get(i));
+                check.setLabel("");
                 check.setRequired(true);
                 check.setOptions(new ArrayList<>());
                 check.getOptions().add(new Option(formDefinitionEntity.getConfirmation().get(i), formDefinitionEntity.getConfirmation().get(i), false));

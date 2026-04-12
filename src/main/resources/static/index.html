@@ -39,19 +39,12 @@
 
     <script type="module">
         import { Main } from './includes/scripts/main.js';
-
-        import { OverviewPage } from './includes/scripts/form-builder/page-components/overview.js';
         import { FormPage } from './includes/scripts/form-viewer/page-components/form-page.js';
-        import { RevisionPage } from './includes/scripts/form-builder/page-components/revision.js';
-        import { BuilderPage } from './includes/scripts/form-builder/page-components/builder-page.js';
+        import { SuccessPage } from './includes/scripts/form-viewer/page-components/success-page.js';
         new Main([
-            {'path': '/', 'page': OverviewPage},
-            {'path': '/page/overview', 'page': OverviewPage},
             {'path': '/page/form/:formName', 'page': FormPage},
             {'path': '/page/form/:formName/tab/:tabName', 'page': FormPage},
-            {'path': '/page/detail/:id/revision', 'page': RevisionPage},
-            {'path': '/page/builder', 'page': BuilderPage},
-            {'path': '/page/form-builder/:formName', 'page': BuilderPage}
+            {'path': '/page/form/:formName/success', 'page': SuccessPage}
         ]);
     </script>
 </html>

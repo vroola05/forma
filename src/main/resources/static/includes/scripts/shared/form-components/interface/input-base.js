@@ -7,7 +7,7 @@ export class InputNucleus extends Nucleus {
     content = document.createElement('div');
     labelElement = document.createElement('label');
 
-    persistenceEnabled = true;
+    #persistenceEnabled = false;
 
     value = '';
     id = '';
@@ -26,10 +26,6 @@ export class InputNucleus extends Nucleus {
 
     constructor(name, label) {
         super(name, label);
-
-        if (!label) {
-            throw new Error('Label is a required parameter');
-        }
     }
 
     createInput(inputElement) {
@@ -50,7 +46,6 @@ export class InputNucleus extends Nucleus {
         this.feedbackElement.className = 'invalid-feedback';
 
         this.setLayout(InputLayout[0])
-        
 
         this.inputWrapper.appendChild(inputElement);
         this.inputWrapper.appendChild(this.feedbackElement);
@@ -71,6 +66,7 @@ export class InputNucleus extends Nucleus {
         this.inputElement.name = id;
         this.inputElement.id = id;
         this.labelElement.htmlFor = id;
+        return this;
     }
 
     getValue() {
@@ -87,12 +83,12 @@ export class InputNucleus extends Nucleus {
     valueChanged(noCallback, value = undefined) {
         if (!noCallback) {
             this.saveState();
-        }
-        
-        if (!noCallback && this.callback.length > 0) {
-            this.callback.forEach( callback => {
-                callback(this.name, value ? value : this.value, this);
-            });
+
+            if (this.callback.length > 0) {
+                this.callback.forEach( callback => {
+                    callback(this.name, value ? value : this.value, this);
+                });
+            }
         }
     }
 
@@ -106,12 +102,12 @@ export class InputNucleus extends Nucleus {
     }
 
     enablePersistence(enabled) {
-        this.persistenceEnabled = enabled;
+        this.#persistenceEnabled = enabled;
         return this;
     }
 
     saveState() {
-        if (this.persistenceEnabled) {
+        if (this.#persistenceEnabled) {
             FormService.getInstance().saveState();
         }
     }

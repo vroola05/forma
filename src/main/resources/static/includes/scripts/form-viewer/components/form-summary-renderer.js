@@ -20,9 +20,9 @@ export class FormSummaryRenderer {
     onActiveChange(active) {
         this.content.innerHTML = '';
         
-        const tabWrapper = document.createElement('div');
-        tabWrapper.className = 'summary-tab-wrapper';
-        this.content.appendChild(tabWrapper);
+        this.tabWrapper = document.createElement('div');
+        this.tabWrapper.className = 'summary-tab-wrapper';
+        this.content.appendChild(this.tabWrapper);
 
         for (const tabPage of this.form.getFields()) {
             if (tabPage.getName() === 'summary') {
@@ -33,7 +33,7 @@ export class FormSummaryRenderer {
             }
             const tabWrapperInner = document.createElement('div');
             tabWrapperInner.className = 'summary-tab-wrapper-inner';
-            tabWrapper.appendChild(tabWrapperInner);
+            this.tabWrapper.appendChild(tabWrapperInner);
             tabWrapperInner.appendChild(document.createElement('h2')).innerText = tabPage.getLabel();
 
             for (const formGroup of tabPage.getFields()) {
@@ -41,24 +41,24 @@ export class FormSummaryRenderer {
             }
         }
 
-        
-        // for (const i in this.form.confirmation) {
-        //     const confirmationWrapper = document.createElement('div');
-        //     confirmationWrapper.className = 'summary-confirmation-wrapper';
-
-        //     const checkbox = new CheckboxField(`confirmation-${i}`, this.form.confirmation[i], '');
-        //     checkbox.addOption('confirm', '', false);
-        //     confirmationWrapper.appendChild(checkbox.getContent());
-        //     this.content.appendChild(confirmationWrapper);  
-        // }
-
         this.#createConfirmation();
     }
 
     #createConfirmation() {
-        console.log('this.form.confirmationCheck', this.form.confirmationCheck);
+        const tabWrapperInner = document.createElement('div');
+        tabWrapperInner.className = 'summary-tab-wrapper-inner';
+        this.tabWrapper.appendChild(tabWrapperInner);
         
-        
+        const confirmations = this.form.getConfirmationCheck();
+        if (confirmations) {
+            for (const confirmation of confirmations) {
+                const confirmationWrapper = document.createElement('div');
+                confirmationWrapper.className = 'summary-confirmation-wrapper';
+
+                confirmationWrapper.appendChild(confirmation.getContent());
+                tabWrapperInner.appendChild(confirmationWrapper);
+            }
+        }
     }
 
     #routeField(field, container) {

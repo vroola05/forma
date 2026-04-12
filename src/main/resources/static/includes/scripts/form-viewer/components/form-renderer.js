@@ -22,7 +22,8 @@ export class FormRenderer {
             name: form.name,
             type: form.type,
             id: form.id,
-            fields: FormRenderer.#getTabsData(form)
+            fields: FormRenderer.#getTabsData(form),
+            confirmationCheck: FormRenderer.#getFieldsData(form.getConfirmationCheck())
         }
     }
 
@@ -54,12 +55,12 @@ export class FormRenderer {
             label: formGroup.label,
             type: formGroup.type,
             id: formGroup.id,
-            fields: FormRenderer.#getFieldsData(formGroup)
+            fields: FormRenderer.#getFieldsData(formGroup.getFields())
         }
     }
 
     static #getFieldsData(fields) {
-        return fields.getFields().map(field => {
+        return fields.map(field => {
            return FormRenderer.#getFieldData(field);
         });
     }
@@ -97,57 +98,17 @@ export class FormRenderer {
                 data: Object.fromEntries(field.data)
             }
         }
-        return;
     }
 
-
-    static getFormKeyVal(form) {
-        return {
-            fields: FormRenderer.#getTabKeyVal(form)
-        }
-    }
-
-    static #getTabKeyVal(form) {
-        return form.fields.filter(tabContent => tabContent.name !== 'summary').reduce((acc, tabContent) => {
-                acc[tabContent.name] = FormRenderer.#getFieldKeyVal(tabContent);
-                return acc;
-            }, {});
-    }
-
-    static #getFieldKeyVal(tabContent) {
-        
-        return tabContent.getFields().reduce((acc, field) => {
-            if (field.type === 'form-group') {
-                acc[field.name] = FormRenderer.#getFormGroupKeyValData(field);
-            } else {
-                acc[field.name] = FormRenderer.#getFieldKeyValData(field);
-            }
-            return acc;
-        }, {});
-    }
-
-    static #getFormGroupKeyValData(formGroup) {
-        return formGroup.getFields().reduce((acc, field) => {
-            acc[field.name] = FormRenderer.#getFieldKeyValData(field);
-            return acc;
-        }, {});
-    }
-
-    static #getFieldKeyValData(field) {
-        switch (field.type) {
-             case 'select':
-                return field.getOptions();
-            case 'radio':
-                return field.getOptions();
-            case 'checkbox':
-                return field.getOptions();
-
-        }
-        return field.getValue();
-    }
-    
+    /**
+     * Creates a form
+     * @param {*} formData 
+     * @param {*} state
+     * @returns 
+     */
     static createForm(formData, state) {
         const form = new Form(formData, state);
+        
         const summaryTab = form.createTab({name:'summary', label: 'Summary'});
         const summaryRenderer = new FormSummaryRenderer(form);
         summaryTab.setContent(summaryRenderer);
@@ -167,7 +128,9 @@ export class FormRenderer {
     static createFields(fields) {
         const fieldsInstances = [];
         fields.forEach(fieldData => {
-            fieldsInstances.push(FormRenderer.createField(fieldData));
+            const field = FormRenderer.createField(fieldData);
+            field.persistenceEnabled(true)
+            fieldsInstances.push(field);
         });
         return fieldsInstances;
     }
@@ -193,7 +156,7 @@ export class FormRenderer {
                     .setReadonly(fieldData.readonly)
                     .setValue(state ? state : fieldData.value, true)
                     .setShowConditions(fieldData.condition);
-                
+
             case 'text':
                 return new TextField(fieldData.name, fieldData.label)
                     .setMetadata(fieldData.metadata)
@@ -207,7 +170,7 @@ export class FormRenderer {
                     .setReadonly(fieldData.readonly)
                     .setValue(state ? state : fieldData.value, true)
                     .setShowConditions(fieldData.condition);
-                
+
             case 'number':
                 return new TextField(fieldData.name, fieldData.label)
                     .setType('number')
@@ -278,6 +241,7 @@ export class FormRenderer {
                     .setReadonly(fieldData.readonly)
                     .setValue(state ? state : fieldData.value)
                     .setShowConditions(fieldData.condition);
+
             case 'checkbox':
                 return new CheckboxField(fieldData.name, fieldData.label, fieldData.classes)
                     .setType(fieldData.type)
@@ -289,6 +253,7 @@ export class FormRenderer {
                     .setReadonly(fieldData.readonly)
                     .setValue(state ? state : fieldData.value)
                     .setShowConditions(fieldData.condition);
+
             case 'select':
                 return new SelectField(fieldData.name, fieldData.label, fieldData.classes)
                     .setType(fieldData.type)
@@ -301,8 +266,10 @@ export class FormRenderer {
                     .setReadonly(fieldData.readonly)
                     .setValue(state ? state : fieldData.value)
                     .setShowConditions(fieldData.condition);
+
             case 'form-group':
                 return new FormGroup(fieldData, state);
+
             case 'repeating-group':
                 return new RepeatingGroup(fieldData.name, fieldData.label, fieldData.classes, fieldData.layout)
                     .setType(fieldData.type)
@@ -311,12 +278,62 @@ export class FormRenderer {
                     .setMaxLength(fieldData.maxSize)
                     .registerSet(FormRenderer.createFields(fieldData.fields))
                     .addSet(FormRenderer.#createRepeatingSets(fieldData.sets))
-                
-                
+
             // Add more cases for other field types as needed
             default:
                 console.warn(`Unknown field type: ${fieldData.type}`);
                 return;
         }
+    }
+
+    /**
+     * Returns a map of key/values from the form to the fields.
+     * Ik can be used to sava de state of the form
+     * @param {*} form 
+     * @returns 
+     */
+    static getFormKeyVal(form) {
+        return {
+            fields: FormRenderer.#getTabKeyVal(form)
+        }
+    }
+
+    static #getTabKeyVal(form) {
+        return form.fields.filter(tabContent => tabContent.name !== 'summary').reduce((acc, tabContent) => {
+                acc[tabContent.name] = FormRenderer.#getFieldKeyVal(tabContent);
+                return acc;
+            }, {});
+    }
+
+    static #getFieldKeyVal(tabContent) {
+        
+        return tabContent.getFields().reduce((acc, field) => {
+            if (field.type === 'form-group') {
+                acc[field.name] = FormRenderer.#getFormGroupKeyValData(field);
+            } else {
+                acc[field.name] = FormRenderer.#getFieldKeyValData(field);
+            }
+            return acc;
+        }, {});
+    }
+
+    static #getFormGroupKeyValData(formGroup) {
+        return formGroup.getFields().reduce((acc, field) => {
+            acc[field.name] = FormRenderer.#getFieldKeyValData(field);
+            return acc;
+        }, {});
+    }
+
+    static #getFieldKeyValData(field) {
+        switch (field.type) {
+             case 'select':
+                return field.getOptions();
+            case 'radio':
+                return field.getOptions();
+            case 'checkbox':
+                return field.getOptions();
+
+        }
+        return field.getValue();
     }
 }

@@ -61,7 +61,6 @@ export class BuilderFieldProperties {
     }
 
     validate (property, field = null) {
-        
         // Check for unique
         // It only checks in the group the field is in
         if (property.value && property.unique && this.field.getParent()) {

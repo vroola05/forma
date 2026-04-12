@@ -42,7 +42,7 @@ export class Tab extends Nucleus {
     
     createField(fieldData, state) {
         let field = FormRenderer.createField(fieldData, state);
-        // const formGroup = new FormGroup(formGroupData);
+        field.enablePersistence(true);
         this.fields.push(field);
         this.content.appendChild(field.getContent());
     }
@@ -100,12 +100,13 @@ export class Tab extends Nucleus {
             return true;
         }
         
+        let isValid = true;
         for (const formGroup of this.fields) {
             if (!formGroup.validate()) {
-                return false;
+                isValid = false;
             }
         }
-        return true;
+        return isValid;
     }
 
     getFields() {

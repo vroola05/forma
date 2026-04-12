@@ -10,6 +10,8 @@ import { footerService } from '../../shared/services/footer-service.js';
 import { Toaster } from '../../shared/generic-components/toaster.js';
 
 import { BuilderFieldItems } from '../component/builder-field-items.js';
+import { BuilderPageSettingButtons } from '../component/builder-page-setting-buttons.js';
+
 import { ValidationError, Http } from '../../shared/services/http.js';
 import { Lang } from '../../shared/services/lang.js';
 import { Router } from '../../shared/services/router.js';
@@ -20,7 +22,9 @@ export class BuilderPage extends Page {
     content = document.createElement('div');
     builderPageContentContainer = document.createElement('div');
     builderPageMenuLeftContainer = document.createElement('div');
+    builderPageMenuRightContainer = document.createElement('div');
     builderPageCenterContainer = document.createElement('div');
+
     loader = document.querySelector('.loader');
     isLoaded = false;
     builderChildFields = [];
@@ -54,16 +58,16 @@ export class BuilderPage extends Page {
 
         this.createContent();
 
+        
         // Check if form name in session storage matches the one in the URL
         let formName = Storage.getPageItem('form-name');
-        if (
-            Router.lastParams 
-            && 'formName' in Router.lastParams 
-            && Router.lastParams.formName 
-            && formName !== Router.lastParams.formName) {
+        const formNameUrlParam = Router.getUrlParameter('formName');
+        
+        if (formNameUrlParam 
+            && formName !== formNameUrlParam) {
                 Storage.removePageItem('form-wrapper');
-                Storage.setPageItem('form-name', Router.lastParams.formName);
-                formName = Router.lastParams.formName;
+                Storage.setPageItem('form-name', formNameUrlParam);
+                formName = formNameUrlParam;
         }
 
         const formWrapperString = Storage.getPageItem('form-wrapper');
@@ -71,7 +75,7 @@ export class BuilderPage extends Page {
             this.formWrapper = JSON.parse(formWrapperString);
             this.init(this.formWrapper);
         } else if (formName) {
-            this.getForm(Router.lastParams.formName);
+            this.getForm(formNameUrlParam);
         } else {
             this.formWrapper = {
             };
@@ -125,9 +129,14 @@ export class BuilderPage extends Page {
         this.builderPageCenterContainer.className = 'builder-page-center-container col col-6';
         rowContainer.append(this.builderPageCenterContainer);
 
-        this.builderPageMenuRightContainer = document.createElement('div');
         this.builderPageMenuRightContainer.className = 'builder-page-menu-right-container col col-3';
         rowContainer.append(this.builderPageMenuRightContainer);
+
+        const builderPageSettingButtons = new BuilderPageSettingButtons();
+
+        this.builderPageMenuLeftContainer.appendChild(builderPageSettingButtons.getContent());
+
+
 
         const builderFieldItems = new BuilderFieldItems('Basiscomponenten');
         builderFieldItems.createItems([

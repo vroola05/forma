@@ -198,7 +198,6 @@ export class Dropzone {
         }
 
         this.onAddCallback(type, label, this.currentDraggedDom, droppedOnformItem);
-        EventService.callEventListener('properties-changed', field);
         return field;
     }
 

@@ -22,6 +22,10 @@ export class FormLogic {
             this.form.setTab(`summary`);
         }, false);
         this.submitBtn = new FormButton('Verzenden', 'footer-btn btn-primary submit', null, () => {
+            if (!this.form.validate()) {
+                return;
+            }
+
             Http.post(`${Router.base}/api/forms`, FormRenderer.getFormData(this.form), {})
                         .then(formWrapper => {});
         }, false);
@@ -36,16 +40,15 @@ export class FormLogic {
         // Set the tab change handler
         // This will update the URL when the tab changes
         this.form.setOnTabChange((tab, index, size) => {
-            Router.route(`/page/form/${Router.lastParams.formName}/tab/${tab.name}`);
+            const formNameUrlParam = Router.getUrlParameter('formName');
+            Router.route(`/page/form/${formNameUrlParam}/tab/${tab.name}`);
             this.setCurrentTabButtons(tab, index, size);
         });
 
         // If a tab is specified in the URL parameters, set it as the active tab
         // This allows the page to load with the correct tab active based on the URL
-        // if ('tab' in Router.lastParams) {
-        //     this.form.setTab(Router.lastParams.tab);
-        // }
-        this.currentTab = Router.lastParams.tabName ? Router.lastParams.tabName : this.form.fields[0].name;
+        const tabNameUrlParam = Router.getUrlParameter('tabName');
+        this.currentTab = tabNameUrlParam ? tabNameUrlParam : this.form.fields[0].name;
         this.form.setTab(this.currentTab);
     }
 
