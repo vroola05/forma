@@ -11,6 +11,11 @@
 
     --border-grey: #d1d1d1;
 
+    --bg-grey: #f8f9fa;
+    --bg-grey-dark: #e6eaed;
+    --bg-grey-darker: #cfd4d5;
+
+
     --default-space: 10px;
 
     --max-width-default: 1280px;
@@ -24,7 +29,7 @@
 }
 
 body {
-    background-color: var(--bs-light);
+    background-color: var(--bg-grey);
 }
 
 .width-10 {width: 10% !important;}
@@ -111,6 +116,13 @@ body {
         border: var(--primary-color) 1px solid !important;
         background-color: var(--white) !important;
         color: var(--primary-color) !important;
+    }
+    &:disabled {
+        border: var(--bg-grey-dark) 1px solid !important;
+        background-color: var(--bg-grey-darker) !important;
+        color: var(--white);
+        cursor: not-allowed;
+        pointer-events: none;
     }
 }
 
@@ -241,7 +253,7 @@ body {
     width: 100%;
     max-height: calc(var(--default-space) * 8);
     
-    background-color: var(--bs-light);
+    background-color: var(--bg-grey);
 
     border-top: var(--border-grey) solid 1px;
 

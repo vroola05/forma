@@ -15,7 +15,7 @@ import { Lang } from '../../../shared/services/lang.js';
 import { Router } from '../../../shared/services/router.js';
 
 import { BuilderFormService } from '../../services/builder-form-service.js';
-
+import { FormWrapper } from '../../../shared/model/form-data.js';
 
 
 export class BuilderPage extends Page {
@@ -34,23 +34,23 @@ export class BuilderPage extends Page {
         super();
         this.setTitle('Ontwerp formulier');
 
-        
+        console.log('BuilderPage');
 
         this.createContent();
         this.attachSubView(this.content);
 
-        BuilderFormService.set(new BuilderForm());
+        BuilderFormService.setBuilderForm(new BuilderForm());
         footerService.addButtonRight(new FormButton(Lang.get('generic.cancel'), 'footer-btn btn-secondary cancel', null, () => {console.log('cancel')}));
         footerService.addButtonRight(new FormButton(Lang.get('generic.save'), 'footer-btn btn-primary save', null, () => {
             try {
-                BuilderFormService.get().validate();
+                BuilderFormService.getBuilderForm().validate();
             } catch(error) {
                 Toaster.error(`${error.getPath()} - ${error.message}`);
                 return;
             }
 
             const formWrapper = {
-                form: BuilderFormService.get().getData(),
+                form: BuilderFormService.getBuilderForm().getData(),
                 active: true
             };
 
@@ -71,20 +71,17 @@ export class BuilderPage extends Page {
 
         const formWrapperString = Storage.getPageItem('form-wrapper');
         if (formWrapperString) {
-            this.formWrapper = JSON.parse(formWrapperString);
-            this.init(this.formWrapper);
+            BuilderFormService.setFormWrapper(new FormWrapper(JSON.parse(formWrapperString)));
+            this.init(BuilderFormService.getFormWrapper());
         } else if (formName) {
             this.getForm(formNameUrlParam);
         } else {
-            this.formWrapper = {
-            };
+            BuilderFormService.setFormWrapper(new FormWrapper());
         }
     }
 
     init(formWrapper) {
-        console.log('Start init builder-page');
-        BuilderFormService.get().init(formWrapper.form);
-        console.log('End init builder-page');
+        BuilderFormService.getBuilderForm().init(formWrapper.form);
         this.isLoaded = true;
     }
 
@@ -92,9 +89,6 @@ export class BuilderPage extends Page {
      * 
      */
     afterInit() {
-        console.log('Start after init builder-page');
-        // This is needed to ensure that the properties component is created after the page is fully initialized
-
         EventService.addEventListener('value-changed', (a, b) => {
             this.updateForm();
         });
@@ -106,7 +100,10 @@ export class BuilderPage extends Page {
         EventService.addEventListener('field-deleted', (a, b) => {
             this.updateForm();
         });
-        console.log('End after init builder-page');
+
+        EventService.addEventListener('settings-changed', (a, b) => {
+            console.log(a);
+        });
     }
 
 
@@ -120,8 +117,9 @@ export class BuilderPage extends Page {
         }
 
         try {
-            this.formWrapper.form = BuilderFormService.get().getData();
-            Storage.setPageItem('form-wrapper', JSON.stringify(this.formWrapper));
+            BuilderFormService.getFormWrapper().form = BuilderFormService.getBuilderForm().getData();
+            Storage.setPageItem('form-wrapper', JSON.stringify(BuilderFormService.getFormWrapper()));
+
         } catch(error) {
             console.log(error);
         }
@@ -130,15 +128,14 @@ export class BuilderPage extends Page {
     getForm(formName) {
         this.loader.classList.add('active');
         Http.get(`${Router.base}/api/form-builder/form/${formName}`, {})
-            .then(formWrapper => {
+            .then(formWrapperData => {
                 this.loader.classList.remove('active');
-                if (!formWrapper) {
+                if (!formWrapperData) {
                     console.error('No fields found in the project details');
                     return;
                 }
-                
-                this.formWrapper = formWrapper;
-                this.init(formWrapper);
+                BuilderFormService.setFormWrapper(new FormWrapper(formWrapperData));
+                this.init(BuilderFormService.getFormWrapper());
             })
             .catch(error => {
                 this.loader.classList.remove('active');

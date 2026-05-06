@@ -1,6 +1,6 @@
 package org.commonground.formbuilder.model;
 
-import org.commonground.formbuilder.model.form.Form;
+import org.commonground.formbuilder.model.editor.TiptapNode;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,9 +13,6 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FormWrapper {
-    boolean active;
-    String fileName;
-    FormConfig formConfig;
-    Form form;
+public class FormConfigSuccessPage {
+    TiptapNode mailTemplate;
 }

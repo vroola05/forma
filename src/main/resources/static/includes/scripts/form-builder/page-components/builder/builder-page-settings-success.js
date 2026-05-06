@@ -1,12 +1,9 @@
 import { PageComponent } from '../../../shared/page-components/page-component.js';
 import { BuilderLayout } from './components/builder-layout.js';
-
-import { Editor } from 'https://esm.sh/@tiptap/core'
-import StarterKit from 'https://esm.sh/@tiptap/starter-kit'
-import Document from 'https://esm.sh/@tiptap/extension-document'
-import Paragraph from 'https://esm.sh/@tiptap/extension-paragraph'
-import Text from 'https://esm.sh/@tiptap/extension-text'
-import Heading from 'https://esm.sh/@tiptap/extension-heading'
+import { BuilderEditor } from '../../component/editor/builder-editor.js';
+import { BuilderCssEditor } from '../../component/editor/builder-css-editor.js';
+import { EventService } from '../../../shared/services/event-service.js';
+import { BuilderFormService } from '../../services/builder-form-service.js';
 
 export class BuilderPageSettingsSuccess extends PageComponent {
     #builderLayout = null;
@@ -16,30 +13,25 @@ export class BuilderPageSettingsSuccess extends PageComponent {
 
         this.#builderLayout = new BuilderLayout();
 
-        const content = document.createElement('div');
-        content.className = 'element';
-        new Editor({
-            element: content,
-            extensions: [
-                StarterKit,
-                Document,
-                Paragraph,
-                Text,
-                Heading.configure({
-                levels: [1, 2, 3],
-                })
-            ],
-            autofocus: true,
-            content: '<p>Hello from CDN!</p>',
-        })
+        const editor = new BuilderEditor((data) => this.onEditorValueChanged(data));
+        const content = editor.getContent();
+
         this.#builderLayout.setCenterContent(content);
+
+        this.subscriptions.push(BuilderFormService.formWrapperSubscription((formWrapper) => {
+            console.log('formWrapper', formWrapper);
+        }));
+    }
+
+    onEditorValueChanged(data) {
+        EventService.callEventListener('settings-changed', data);
     }
 
     /**
      * 
      */
     afterInit() {
-
+        
     }
 
     getContent() {

@@ -1,7 +1,7 @@
 import { Nucleus } from './nucleus.js';
 import { FormService } from '../../../form-viewer/services/form-service.js';
 
-export const InputLayout = ['layout-row', 'layout-column'];
+export const InputLayout = ['no-label', 'layout-row', 'layout-column'];
 
 export class InputNucleus extends Nucleus {
     content = document.createElement('div');
@@ -32,11 +32,12 @@ export class InputNucleus extends Nucleus {
         this.content.className = ' ' + (!this.classes ? '' : this.classes);
         this.content.classList.add('field-wrapper');
 
+        this.setLayout(InputLayout[0])
+
         // Label
-        this.labelElement.className = 'col-form-label';
+        this.labelElement.className = 'col-form-label field-wrapper-label';
         this.labelElement.htmlFor = this.name;
         this.labelElement.innerHTML = this.label;
-        this.labelElement.classList.add('field-wrapper-label');
 
         // Input wrapper
         this.inputWrapper = document.createElement('div');
@@ -45,7 +46,7 @@ export class InputNucleus extends Nucleus {
         this.feedbackElement = document.createElement('div');
         this.feedbackElement.className = 'invalid-feedback';
 
-        this.setLayout(InputLayout[0])
+        
 
         this.inputWrapper.appendChild(inputElement);
         this.inputWrapper.appendChild(this.feedbackElement);

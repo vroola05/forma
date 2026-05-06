@@ -1,18 +1,18 @@
 export class EventService {
 
-    static eventListeners = {};
+    static #eventListeners = {};
 
     static addEventListener(event, callback) {
-        if (!(event in EventService.eventListeners)) {
-            EventService.eventListeners[event] = [];
+        if (!(event in EventService.#eventListeners)) {
+            EventService.#eventListeners[event] = [];
         }
-        EventService.eventListeners[event].push(callback);
+        EventService.#eventListeners[event].push(callback);
     }
 
     static callEventListener(event, value) {
-        if (event in EventService.eventListeners) {
+        if (event in EventService.#eventListeners) {
 
-            EventService.eventListeners[event].forEach(callback => {
+            EventService.#eventListeners[event].forEach(callback => {
                 callback(value);
             });
         }

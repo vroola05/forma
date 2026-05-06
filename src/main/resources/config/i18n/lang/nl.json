@@ -9,6 +9,12 @@
 
     "header.home": "Home",
 
+    "text.editor.table.create": "Maken",
+    "text.editor.table.row.add": "Rij toevoegen",
+    "text.editor.table.row.delete": "Rij verwijderen",
+    "text.editor.table.col.add": "Kolom toevoegen",
+    "text.editor.table.col.delete": "Kolom verwijderen",
+
     "overview.title": "Overzicht",
     "overview.list.name": "Naam",
     "overview.list.title": "Titel",

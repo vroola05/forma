@@ -29,15 +29,7 @@ export class BuilderConditionsAutocompleteField extends InputNucleus {
         autoCompleteMenuIcon.innerHTML = '$';
         inputElementContainer.appendChild(autoCompleteMenuIcon);
         autoCompleteMenuIcon.addEventListener('click', () => {
-            if (this.hasFocus == true) {
-                this.cancelBlur = true;
-            }
-            if (this.autocompleteMenuElement.classList.contains('hidden')) {
-                this.searchPath(this.inputElement.value);
-                this.focus();
-            } else {
-                this.showAutocompleteMenu(false);
-            }
+            this.toggle();
         });
 
         this.inputElement = document.createElement('input');
@@ -75,7 +67,18 @@ export class BuilderConditionsAutocompleteField extends InputNucleus {
         }
     }
 
-    
+    toggle() {
+        if (this.hasFocus == true) {
+            this.cancelBlur = true;
+        }
+        if (this.autocompleteMenuElement.classList.contains('hidden')) {
+            this.searchPath(this.inputElement.value);
+            this.focus();
+        } else {
+            this.showAutocompleteMenu(false);
+        }
+        return this;
+    }
 
     showAutocompleteMenu(show) {
         const isHidden = this.autocompleteMenuElement.classList.contains('hidden');
@@ -125,10 +128,16 @@ export class BuilderConditionsAutocompleteField extends InputNucleus {
                     
                     this.focus();
                     this.searchPath(value);
+                    if (this.onListItemClickedListener) {
+                        this.onListItemClickedListener(this.getValue());
+                    }
                 } else {
                     const value = tokens.join('.');
                     this.setValue(value);
                     this.showAutocompleteMenu(false);
+                    if (this.onFieldFoundListener) {
+                        this.onFieldFoundListener(this.getValue());
+                    }
                 }
             });
         });
@@ -166,9 +175,10 @@ export class BuilderConditionsAutocompleteField extends InputNucleus {
     }
 
     getCurrentBuilderFields(tokens) {
-        let fields = [BuilderFormService.get()];
+        let fields = [BuilderFormService.getBuilderForm()];
         for (let i = 1; i < tokens.length; i++) {
             if (i >= tokens.length - 1) {
+                console.log('Getting fields for token:', tokens[i], 'in fields:', fields);
                 return this.getFields(fields, tokens[i]);
             }
 
@@ -243,6 +253,16 @@ export class BuilderConditionsAutocompleteField extends InputNucleus {
         return valid;
     }
 
+    setOnListItemClickedListener(listener) {
+        this.onListItemClickedListener = listener;
+        return this;
+    }
+    
+    setOnFieldFoundListener(listener) {
+        this.onFieldFoundListener = listener;
+        return this;
+    }
+
     /**
      * Check if the input value starts with '$', if not hide the autocomplete menu, otherwise search for matching fields and show the autocomplete menu
      */
@@ -298,7 +318,7 @@ export class BuilderConditionsAutocompleteField extends InputNucleus {
             if (!this.isAutocompleteVisible) {
                 return;
             }
-
+            console.log('Key down:', e.key);
             switch (e.key) {
                 case 'ArrowUp':
                     e.preventDefault();

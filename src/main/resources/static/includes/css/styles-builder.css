@@ -20,7 +20,7 @@
 }
 
 body {
-    background-color: var(--bs-light);
+    background-color: var(--bg-grey);
 }
 
 /* ***************************************************************************** */
@@ -649,7 +649,7 @@ Styles voor builder-field.js
                                     border: var(--bs-border-color) 1px solid;
                                     border-radius: var(--default-space);
 
-                                    background: var(--bs-light);
+                                    background: var(--bg-grey);
                                 }
                             }
                         }
@@ -701,10 +701,9 @@ Styles voor builder-field.js
     }
 
     .autocomplete-menu {
-        position: absolute;
-        width: 100%;
+        position: fixed;
         min-width: 80px;
-
+        white-space: nowrap;
         background-color: white;
         border: var(--bs-border-color) solid 1px;
         border-radius: var(--default-space-half);
@@ -722,6 +721,138 @@ Styles voor builder-field.js
                 font-weight: bold;
                 font-style: italic;
             }
+        }
+    }
+
+}
+
+.builder-text-editor.editor-container {
+    border: 1px solid #ddd;
+    border-radius: var(--default-space);
+    overflow: hidden;
+    font-family: sans-serif;
+
+    .builder-text-editor-toolbar {
+        background: white;
+        padding: var(--default-space-double);
+        border-bottom: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--default-space-half);
+    
+
+        button {
+            padding: 0px var(--default-space);
+            background: var(--bg-grey-dark);
+
+            border: none;
+            border-radius: var(--default-space-half);
+            cursor: pointer;
+            &.icon {
+                padding-top: var(--default-space-half);
+                line-height: inherit!important;
+            }
+        }
+        button.is-active {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        button:hover {
+            background: var(--bg-grey-darker);
+        }
+
+        .divider {
+            width: 1px;
+            background: var(--bg-grey-darker);
+            margin: 0 var(--default-space-half);
+        }
+        .danger {
+            color: #d00;
+        }
+    }
+
+    .editor-content {
+        background: white;
+    }
+
+    .tiptap.ProseMirror {
+        min-height: 250px;
+        max-height: 600px;
+        padding: var(--default-space-double);
+        outline: none;
+        overflow-y: auto;
+    }
+
+
+    table {
+        border-collapse: collapse;
+        /* width: 100%; */
+    }
+    table td, .tiptap table th {
+        border: 1px solid var(--border-grey);
+        /* padding: var(--default-space-double); */
+        
+    }
+
+    
+    
+    .builder-editor-td {
+        position: relative;
+        .builder-editor-td-menu {
+            display: none;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            pointer-events: none;
+        }
+
+        
+    }
+    .builder-editor-td.is-active-cell {
+        color: red;
+            .builder-editor-td-menu {
+            display: flex;
+        }
+    }
+
+    .builder-editor-td.is-active-cell {
+        color: red;
+    }
+   
+}
+
+.builder-table-dropdown {
+    display: block;
+    position: absolute;
+    background-color: var(--white);
+    border: 1px solid var(--border-grey);
+    padding: var(--default-space);
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+    .builder-table-dropdown-input-container {
+        margin-bottom: var(--default-space);
+        
+        input {
+            width: 40px;
+            border: var(--border-grey) solid 1px;
+            border-radius: var(--default-space-half);
+        }
+        .btn-create-table {
+            margin-left: var(--default-space);
+        }
+    }
+
+    .builder-table-dropdown-btns-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: var(--default-space-half);
+
+        button {
+            border-radius: var(--default-space-half);
         }
     }
 

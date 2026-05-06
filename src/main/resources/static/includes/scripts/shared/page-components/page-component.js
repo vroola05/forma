@@ -2,7 +2,7 @@
 export class PageComponent {
     #subViewContainer = null;
     #subView = null;
-
+    subscriptions = [];
     content = '';
 
     constructor() {
@@ -55,5 +55,11 @@ export class PageComponent {
     }
 
     destroy() {
+        
+        if (this.subscriptions) {
+            this.subscriptions.forEach(unsubscribe => {
+                unsubscribe();
+            });
+        }
     }
 }
