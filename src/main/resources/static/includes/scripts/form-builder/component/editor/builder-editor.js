@@ -73,6 +73,10 @@ export class BuilderEditor  {
         })
     }
 
+    addDataContent(data) {
+        this.#editor.commands.setContent(data, false);
+    }
+
     #updateEditor() {
         if (this.timeout) {
             clearTimeout(this.timeout);

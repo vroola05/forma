@@ -15,7 +15,7 @@ import { Lang } from '../../../shared/services/lang.js';
 import { Router } from '../../../shared/services/router.js';
 
 import { BuilderFormService } from '../../services/builder-form-service.js';
-import { FormWrapper } from '../../../shared/model/form-data.js';
+import { FormWrapper, FormConfig } from '../../../shared/model/form-data.js';
 
 
 export class BuilderPage extends Page {
@@ -33,8 +33,6 @@ export class BuilderPage extends Page {
     constructor() {
         super();
         this.setTitle('Ontwerp formulier');
-
-        console.log('BuilderPage');
 
         this.createContent();
         this.attachSubView(this.content);
@@ -102,7 +100,7 @@ export class BuilderPage extends Page {
         });
 
         EventService.addEventListener('settings-changed', (a, b) => {
-            console.log(a);
+            Storage.setPageItem('form-wrapper', JSON.stringify(BuilderFormService.getFormWrapper()));
         });
     }
 
@@ -134,11 +132,37 @@ export class BuilderPage extends Page {
                     console.error('No fields found in the project details');
                     return;
                 }
+
+                if (!formWrapperData?.formConfig) {
+                    formWrapperData.formConfig = new FormConfig();
+                }
+
                 BuilderFormService.setFormWrapper(new FormWrapper(formWrapperData));
+
                 this.init(BuilderFormService.getFormWrapper());
             })
             .catch(error => {
                 this.loader.classList.remove('active');
+                if (error instanceof ValidationError) {
+                    Toaster.error(Lang.get('error.check.fields'));
+                }
+            });
+    }
+
+    postForm(input) {
+        this.loader.classList.add('active');
+        Http.post(`${Router.base}/api/form-builder/form`, input)
+            .then(tab => {
+                this.loader.classList.remove('active');
+                if (!tab) {
+                    console.error('No fields found in the project details');
+                    return;
+                }
+                Router.route('/');
+            })
+            .catch(error => {
+                this.loader.classList.remove('active');
+                console.log(error);
                 if (error instanceof ValidationError) {
                     Toaster.error(Lang.get('error.check.fields'));
                 }

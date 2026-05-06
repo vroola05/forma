@@ -7,23 +7,42 @@ import { BuilderFormService } from '../../services/builder-form-service.js';
 
 export class BuilderPageSettingsSuccess extends PageComponent {
     #builderLayout = null;
-    
+    #isEditorLoaded = false;
+
     constructor() {
         super();
 
         this.#builderLayout = new BuilderLayout();
 
-        const editor = new BuilderEditor((data) => this.onEditorValueChanged(data));
-        const content = editor.getContent();
+        this.editor = new BuilderEditor((data) => this.onEditorValueChanged(data));
+        const content = this.editor.getContent();
 
         this.#builderLayout.setCenterContent(content);
 
         this.subscriptions.push(BuilderFormService.formWrapperSubscription((formWrapper) => {
-            console.log('formWrapper', formWrapper);
+            if (!this.#isEditorLoaded) {
+                if (formWrapper?.formConfig?.formConfigSuccessPage) {
+                    this.formConfigSuccessPage = formWrapper?.formConfig?.formConfigSuccessPage;
+                } else {
+                    this.formConfigSuccessPage = new FormConfigSuccessPage();
+                }
+
+                if (this.formConfigSuccessPage?.mailTemplate) {
+                    this.editor.addDataContent(formWrapper?.formConfig?.formConfigSuccessPage?.mailTemplate);
+                }
+                this.#isEditorLoaded = true;
+            }
+
         }));
     }
 
     onEditorValueChanged(data) {
+        const formWrapper = BuilderFormService.getFormWrapper();
+        formWrapper.formConfig.formConfigSuccessPage = this.formConfigSuccessPage;
+        this.formConfigSuccessPage.mailTemplate = data;
+        BuilderFormService.setFormWrapper(formWrapper);
+
+
         EventService.callEventListener('settings-changed', data);
     }
 
@@ -38,3 +57,5 @@ export class BuilderPageSettingsSuccess extends PageComponent {
         return this.#builderLayout.getContent();
     }
 }
+
+

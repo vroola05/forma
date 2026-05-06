@@ -60,6 +60,7 @@ export class PageComponent {
             this.subscriptions.forEach(unsubscribe => {
                 unsubscribe();
             });
+            this.subscriptions = [];
         }
     }
 }
