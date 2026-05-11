@@ -69,13 +69,13 @@ public class ConditionParser {
         List<String> var2Values = new ArrayList<>();
 
         if (isField(condition.getVar1())) {
-            var1Values = getFieldValues(JsonPathFinder.evalTokenized(condition.getVar1(), form));
+            var1Values = JsonPathFinder.evalTokenized(condition.getVar1(), form);
         } else {
             var1Values.add(condition.getVar1());
         }
         
         if (isField(condition.getVar2())) {
-            var2Values = getFieldValues(JsonPathFinder.evalTokenized(condition.getVar2(), form));
+            var2Values = JsonPathFinder.evalTokenized(condition.getVar2(), form);
         } else {
             var2Values.add(condition.getVar2());
         }
@@ -90,20 +90,7 @@ public class ConditionParser {
         return true;
     }
 
-    private static List<String> getFieldValues(List<Field> fields) {
-        List<String> output = new ArrayList<>();
-        for (Field field : fields) {
-            if (
-                FieldType.CHECKBOX.equals(field.getType())
-                || FieldType.SELECT.equals(field.getType())
-                || FieldType.RADIO.equals(field.getType())) {
-                System.out.println("getFieldValues: " + field.getName());
-            } else {
-                output.add(field.getValue());
-            }
-        }
-        return output;
-    }
+    
 
     private static boolean checkValue(String var1Value, Operator operator, String var2Value) {
         switch (operator) {

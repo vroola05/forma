@@ -29,23 +29,26 @@ public class FormSubmissionDatabaseService implements FormSubmissionService {
     }
 
     @Override
-    public Field get(UUID id) {
-        return null;
+    public FormSubmissionEntity getFormSubmissionEntity(UUID id) {
+        return formSubmissionRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Form niet gevonden"));
     }
 
     @Override
     @Transactional
-    public void save(Form form) {
+    public UUID save(Form form) {
         FormDefinitionEntity formDefinitionEntity = this.formDefinitionRepository.findById(form.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Form niet gevonden"));
         
         FormSubmissionEntity formSubmissionEntity = new FormSubmissionEntity();
         formSubmissionEntity.setId(UUID.randomUUID());
         formSubmissionEntity.setModifiedAt(OffsetDateTime.now());
-        formSubmissionEntity.setFormDefinition(formDefinitionEntity);
+        
+        formSubmissionEntity.setFormDefinitionId(formDefinitionEntity.getId());
         formSubmissionEntity.setFormName(formDefinitionEntity.getName());
         formSubmissionEntity.setFormVersion(formDefinitionEntity.getVersion().longValue());
         formSubmissionEntity.setData(form);
 
-        formSubmissionRepository.save(formSubmissionEntity);
+        FormSubmissionEntity result = formSubmissionRepository.save(formSubmissionEntity);
+
+        return result.getId();
     }
 }

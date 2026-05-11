@@ -6,7 +6,6 @@ import org.commonground.formbuilder.FormBuilderValidator;
 import org.commonground.formbuilder.model.FormList;
 import org.commonground.formbuilder.model.FormWrapper;
 import org.commonground.formbuilder.services.form.FormServiceDatabase;
-import org.commonground.formbuilder.services.form.FormServiceLocal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,11 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/form-builder/form")
 public class BuilderController {
-    private final FormServiceLocal fileStorageService;
-    private final FormServiceDatabase formServiceDatabase;
+        private final FormServiceDatabase formServiceDatabase;
 
-    BuilderController(FormServiceLocal fileStorageService, FormServiceDatabase formServiceDatabase) {
-        this.fileStorageService = fileStorageService;
+    BuilderController(FormServiceDatabase formServiceDatabase) {
+
         this.formServiceDatabase = formServiceDatabase;
     }
 

@@ -18,7 +18,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -46,6 +45,9 @@ public class FormSubmissionEntity {
     @JdbcType(PostgreSQLJsonPGObjectJsonType.class)
     @Column(columnDefinition = "jsonb")
     private Form data;
+
+    @Column(name = "form_id")
+    private UUID formDefinitionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "form_id", insertable = false, updatable = false)

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.commonground.formbuilder.config.FileStorageProperties;
+import org.commonground.formbuilder.database.dao.definition.FormDefinitionEntity;
 import org.commonground.formbuilder.model.FormList;
 import org.commonground.formbuilder.model.FormWrapper;
 import org.springframework.stereotype.Service;
@@ -115,6 +116,12 @@ public class FormServiceLocal implements FormService {
             // throw new RuntimeException("Fout bij ophalen van bestandslijst", e);
         }
         return formLists;
+    }
+
+    @Override
+    public FormWrapper transform(FormDefinitionEntity formDefinitionEntity) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'transform'");
     }
 
     

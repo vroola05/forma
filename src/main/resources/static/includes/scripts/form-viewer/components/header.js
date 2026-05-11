@@ -8,9 +8,20 @@ export class Header {
     constructor() {
         this.createContent();
 
-        EventService.addEventListener('header-buttons-right', (a, b) => {
+        EventService.addEventListener('header-home', (homeUrl) => {
+            this.navbarNavLeft.appendChild(this.getNavBarItem(new FormButton(Lang.get('header.home'), 'home', homeUrl)));
+        });
+        
+        EventService.addEventListener('header-buttons-left', (formButtons) => {
+            this.navbarNavLeft.innerHTML = '';
+            for (const formButton of formButtons) {
+                this.navbarNavLeft.appendChild(this.getNavBarItem(formButton));
+            }
+        });
+
+        EventService.addEventListener('header-buttons-right', (formButtons) => {
             this.navbarNavRight.innerHTML = '';
-            for (const formButton of a) {
+            for (const formButton of formButtons) {
                 this.navbarNavRight.appendChild(this.getNavBarItem(formButton));
             }
         });
@@ -24,36 +35,18 @@ export class Header {
         navbarInner.className = 'container-fluid';
         this.navbar.appendChild(navbarInner);
 
-        const navbarToggler = document.createElement('button');
-        navbarToggler.className = 'navbar-toggler';
-        navbarToggler.type = 'button';
-        navbarToggler.ariaControls='navbarNav';
-        navbarToggler.ariaExpanded='false';
-        navbarToggler.ariaLabel='Toggle navigation';
-        navbarToggler.setAttribute('data-bs-toggle', 'collapse');
-        navbarToggler.setAttribute('data-bs-target', '#navbarNav');
-        navbarToggler.innerHTML = '<span class="navbar-toggler-icon"></span>';
-        navbarInner.appendChild(navbarToggler);
 
-        const navbarCollapse = document.createElement('div');
-        navbarCollapse.id = 'navbarNav';
-        navbarCollapse.className = 'collapse navbar-collapse';
+        
 
         this.navbarNavLeft = document.createElement('ul');
         this.navbarNavLeft.className = 'navbar-nav';
-        navbarCollapse.appendChild(this.navbarNavLeft);
-        this.setLeftButtons();
-
+        navbarInner.appendChild(this.navbarNavLeft);
+        
         this.navbarNavRight = document.createElement('ul');
         this.navbarNavRight.className = 'navbar-nav ms-auto';
-        navbarCollapse.appendChild(this.navbarNavRight);
-
-        navbarInner.appendChild(navbarCollapse);
+        navbarInner.appendChild(this.navbarNavRight);
     }
 
-    setLeftButtons() {
-        this.navbarNavLeft.appendChild(this.getNavBarItem(new FormButton(Lang.get('header.home'), 'home', Router.base + '/admin')));
-    }
 
     getNavBarItem(formButton) {
         const navItem = document.createElement('li');

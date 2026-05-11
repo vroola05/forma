@@ -22,12 +22,14 @@ export class Http {
     }
 
     static post(url, body, options = {}) {
+        const isObject = body !== null && typeof body === 'object';
+
         return fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(body)
+            body: isObject ? JSON.stringify(body) : body
         })
             .then(response => {
                 if (response.ok) return response.json();
@@ -36,12 +38,16 @@ export class Http {
     }
 
     static put(url, body, options = {}) {
+
+        const isObject = body !== null && typeof body === 'object';
+
+        
         return fetch(url, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(body)
+            body: isObject ? JSON.stringify(body) : body
         })
             .then(response => {
                 if (response.ok) return response.json();

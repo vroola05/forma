@@ -18,7 +18,9 @@
         <link href="includes/css/styles-builder.css" rel="stylesheet">
     </head>
     <body class="">
-        <div id="header" class="header sticky-top"></div>
+        <div id="header" class="header">
+
+        </div>
         <div class="toast-container-wrapper container-fluid">
             <div id="toast-container" class="mt-3 ms-5 me-5"></div>
         </div>
@@ -41,10 +43,13 @@
         import { Main } from './includes/scripts/main.js';
         import { FormPage } from './includes/scripts/form-viewer/page-components/form-page.js';
         import { SuccessPage } from './includes/scripts/form-viewer/page-components/success-page.js';
+        import { Router } from './includes/scripts/shared/services/router.js';
         new Main([
             {'path': '/page/form/:formName', 'page': FormPage},
             {'path': '/page/form/:formName/tab/:tabName', 'page': FormPage},
             {'path': '/page/form/:formName/success', 'page': SuccessPage}
-        ]);
+        ]).setHome(Router.base + '/admin');
+
+
     </script>
 </html>

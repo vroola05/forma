@@ -27,8 +27,8 @@ export class BuilderPageSettingsSuccess extends PageComponent {
                     this.formConfigSuccessPage = new FormConfigSuccessPage();
                 }
 
-                if (this.formConfigSuccessPage?.mailTemplate) {
-                    this.editor.addDataContent(formWrapper?.formConfig?.formConfigSuccessPage?.mailTemplate);
+                if (this.formConfigSuccessPage?.template) {
+                    this.editor.addDataContent(formWrapper?.formConfig?.formConfigSuccessPage?.template);
                 }
                 this.#isEditorLoaded = true;
             }
@@ -39,7 +39,7 @@ export class BuilderPageSettingsSuccess extends PageComponent {
     onEditorValueChanged(data) {
         const formWrapper = BuilderFormService.getFormWrapper();
         formWrapper.formConfig.formConfigSuccessPage = this.formConfigSuccessPage;
-        this.formConfigSuccessPage.mailTemplate = data;
+        this.formConfigSuccessPage.template = data;
         BuilderFormService.setFormWrapper(formWrapper);
 
 

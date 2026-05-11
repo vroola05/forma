@@ -31,6 +31,17 @@ export class FormConfig {
 
 export class FormConfigSuccessPage {
     constructor (data = {}) {
-        this.mailTemplate = data.mailTemplate;
+        this.id = data.id;
+        this.name = data.name;
+        this.title = data.title;
+        this.template = data.template;
+        this.content = data.content;
+        this.showSummary = data.showSummary;
+    }
+}
+
+export class FormSubmission {
+    constructor (data = {}) {
+        this.submissionId = data.submissionId;
     }
 }

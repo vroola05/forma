@@ -62,12 +62,19 @@ export class Router {
      * Routes to the given path if it has a registered pageComponentDefinition
      * @param {string} path 
      */
-    static route(path) {
+    static route(path, dataParams = {}) {
+
+        const isObject = dataParams !== null && typeof dataParams === 'object';
+        const params = dataParams instanceof Map 
+            ? dataParams 
+            : new Map(!isObject ? [] : Object.entries(dataParams ?? {}))
+
+
         if (path.startsWith(Router.basePath)) {
             path = path.slice(Router.basePath.length) || "/";
         }
 
-        const currentRoute = Router.#matchRoute(path);
+        const currentRoute = Router.#matchRoute(path, dataParams);
 
         if (currentRoute) {
             if (window.location.pathname !== path) {
@@ -75,7 +82,6 @@ export class Router {
             }
             if (currentRoute.parent) {
                 if (currentRoute.parent?.pageComponentDefinition !== Router.#currentRoute?.parent?.pageComponentDefinition) {
-
                     Router.#currentRoute = currentRoute;
                     Router.#currentRoute.pageComponent = new currentRoute.parent.pageComponentDefinition();
                     Router.#content.innerHTML = '';
@@ -96,7 +102,6 @@ export class Router {
             } else if (currentRoute.pageComponentDefinition !== Router.#currentRoute?.pageComponentDefinition) {
                 Router.#currentRoute = currentRoute;
                 const page = new currentRoute.pageComponentDefinition();
-                console.log('Change normal', currentRoute.pageComponent);
                 Router.#content.innerHTML = '';
                 Router.#content.append(page.getContent());
 
@@ -112,12 +117,13 @@ export class Router {
 
     //
 
-    static #matchRoute(currentPath) {
+    static #matchRoute(currentPath, dataParams = null) {
         for (const { path, pageComponentDefinition,  parent, child} of Router.routes) {
             const matchParams = Router.#getRouteMatchParams(path, currentPath);
             if (matchParams) {
                 const currentRoute = {
                     urlParams: matchParams,
+                    dataParams: dataParams,
                     path,
                     pageComponentDefinition,
                     parent,
@@ -156,6 +162,13 @@ export class Router {
         return Router.#currentRoute?.urlParams?.[param];
     }
 
+    static hasDataParameter(param) {
+        return param in (Router.#currentRoute?.dataParams ?? {});
+    }
+
+    static getDataParameter(param) {
+        return Router.#currentRoute?.dataParams?.[param];
+    }
 
     static getCurrentRoute() {
         return Object.freeze({ ...Router.#currentRoute });

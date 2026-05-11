@@ -47,12 +47,9 @@ export class BuilderPage extends Page {
                 return;
             }
 
-            const formWrapper = {
-                form: BuilderFormService.getBuilderForm().getData(),
-                active: true
-            };
+            
 
-            this.postForm(formWrapper);
+            this.postForm();
 
         }));
 
@@ -149,9 +146,9 @@ export class BuilderPage extends Page {
             });
     }
 
-    postForm(input) {
+    postForm() {
         this.loader.classList.add('active');
-        Http.post(`${Router.base}/api/form-builder/form`, input)
+        Http.post(`${Router.base}/api/form-builder/form`, BuilderFormService.getFormWrapper())
             .then(tab => {
                 this.loader.classList.remove('active');
                 if (!tab) {

@@ -1,18 +1,36 @@
 package org.commonground.formbuilder.util.condition;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.commonground.formbuilder.model.form.Field;
+import org.commonground.formbuilder.model.form.FieldType;
 
 public class JsonPathFinder {
-    public static List<Field> evalTokenized(String path, Field input) {
+
+    public static List<String> evalTokenized(String path, Field input) {
+        return JsonPathFinder.getFieldValues(evalTokenizedFields(path, input));
+    }
+
+    public static List<Field> evalTokenizedFields(String path, Field input) {
         List<Field> results = new ArrayList<>();
-        List<String> a = JsonPathTokenizer.tokenize(path.toCharArray());
-        System.out.println(Arrays.deepToString(a.toArray()));
         evaluateRecursive(JsonPathTokenizer.tokenize(path.toCharArray()), 0, input, results);
         return results;
+    }
+
+    public static List<String> getFieldValues(List<Field> fields) {
+        List<String> output = new ArrayList<>();
+        for (Field field : fields) {
+            if (
+                FieldType.CHECKBOX.equals(field.getType())
+                || FieldType.SELECT.equals(field.getType())
+                || FieldType.RADIO.equals(field.getType())) {
+                System.out.println("getFieldValues: " + field.getName());
+            } else {
+                output.add(field.getValue());
+            }
+        }
+        return output;
     }
 
     private static void evaluateRecursive(List<String> tokens, int tokenIndex, Field currentField,

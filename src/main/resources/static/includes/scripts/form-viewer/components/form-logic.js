@@ -2,7 +2,7 @@ import { Router } from '../../shared/services/router.js';
 import { FormButton } from './form-button.js'; 
 import { FormRenderer } from './form-renderer.js';
 import { Http } from '../../shared/services/http.js';
-
+import { FormSubmission } from '../../shared/model/form-data.js';
 import { footerService } from "../../shared/services/footer-service.js";
 
 export class FormLogic {
@@ -27,7 +27,12 @@ export class FormLogic {
             }
 
             Http.post(`${Router.base}/api/forms`, FormRenderer.getFormData(this.form), {})
-                        .then(formWrapper => {});
+                        .then(formSubmissionData => {
+                            const formNameUrlParam = Router.getUrlParameter('formName');
+                            Router.route(`/page/form/${formNameUrlParam}/success`, {
+                                formSubmission: new FormSubmission(formSubmissionData)
+                            });
+                        });
         }, false);
 
         footerService.addButtonLeft(this.cancelBtn);

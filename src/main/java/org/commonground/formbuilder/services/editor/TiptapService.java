@@ -4,40 +4,73 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.commonground.formbuilder.model.editor.TiptapNode;
+import org.commonground.formbuilder.model.form.Form;
+import org.commonground.formbuilder.util.condition.JsonPathFinder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TiptapService {
-    public String convertToHtml(TiptapNode node) {
+    public String convert(TiptapNode node, Form form) {
+        return "<div class=\"form-template\">" + convertToHtml(node, form) + "</div>";
+    }
+
+    private String convertToHtml(TiptapNode node, Form form) {
         if (node == null)
             return "";
 
-        if ("text".equals(node.type)) {
-            return applyMarks(node.text, node.marks);
+        if ("text".equals(node.getType())) {
+            return applyMarks(node.getText(), node.getMarks());
         }
 
-        // 2. Verwerk de inhoud van de node (recursie)
+        if ("mention".equals(node.getType())) {
+            return applyMention(node, form);
+        }
+
         String innerHtml = "";
-        if (node.content != null) {
-            innerHtml = node.content.stream()
-                    .map(this::convertToHtml)
+        if (node.getContent() != null) {
+            innerHtml = node.getContent().stream()
+                    .map(content -> convertToHtml(content, form))
                     .collect(Collectors.joining());
         }
 
-        // 3. Map type naar HTML tag
-        return switch (node.type != null ? node.type : "") {
+        return switch (node.getType() != null ? node.getType() : "") {
             case "doc" -> innerHtml;
             case "paragraph" -> "<p>" + innerHtml + "</p>";
             case "heading" -> {
-                int level = (node.attrs != null) ? (int) node.attrs.getOrDefault("level", 1) : 1;
+                int level = (node.getAttrs() != null) ? (int) node.getAttrs().getOrDefault("level", 1) : 1;
                 yield "<h" + level + ">" + innerHtml + "</h" + level + ">";
             }
             case "bulletList" -> "<ul>" + innerHtml + "</ul>";
             case "orderedList" -> "<ol>" + innerHtml + "</ol>";
             case "listItem" -> "<li>" + innerHtml + "</li>";
+            case "table" -> "<table>" + innerHtml + "</table>";
+            case "tableRow" -> "<tr>" + innerHtml + "</tr>";
+            case "tableCell" -> "<td>" + innerHtml + "</td>";
+            case "tableHeader" -> "<th>" + innerHtml + "</th>";
             case "hardBreak" -> "<br>";
             default -> innerHtml;
         };
+    }
+
+    private String applyMention(TiptapNode node, Form form) {
+        if (node.getAttrs().containsKey("mentionSuggestionChar")) {
+            String mentionKey = (String) node.getAttrs().get("mentionSuggestionChar");
+
+            return switch (mentionKey) {
+                case "$" -> applyDollarMention((String) node.getAttrs().get("id"), form);
+                default -> "";
+            };
+        }
+        
+        return "";
+    }
+
+    private String applyDollarMention(String input, Form form) {
+        input = input.replace("{", "$.").replace("}", "");
+        List<String> output = JsonPathFinder.evalTokenized(input, form);
+
+        
+        return String.join(", ", output);
     }
 
     private String applyMarks(String text, List<TiptapNode.TiptapMark> marks) {

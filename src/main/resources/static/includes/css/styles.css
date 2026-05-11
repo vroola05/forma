@@ -171,6 +171,10 @@ body {
     }
 }
 
+.page-content-container {
+
+}
+
 .form-container {
     display: flex;
     flex-direction: row;
@@ -235,6 +239,18 @@ body {
 
             .form-group-container {
                 margin-left: 0;
+                
+            }
+        }
+    }
+
+    &.success-page {
+        
+        .form-template {
+            h1 {
+
+            }
+            h2 {
                 
             }
         }
