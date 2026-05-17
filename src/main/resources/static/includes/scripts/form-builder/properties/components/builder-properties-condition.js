@@ -17,7 +17,6 @@ export class BuilderPropertiesCondition {
             this.conditionType = ConditionType.SIMPLE === ConditionType[conditionData.conditionType] ? ConditionType.SIMPLE : ConditionType.COMPOSITE;
         }
 
-        console.log(conditionData, this.conditionType);
         this.createContent(conditionData);
         this.onChange = onChange;
         this.onDelete = onDelete;

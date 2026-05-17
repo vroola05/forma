@@ -124,7 +124,6 @@ export class RepeatingGroup extends InputNucleus {
         if (this.minLength > 0) {
             if (this.sets.length < this.minLength) {
                 for (let i = this.sets.length; i < this.minLength; i++) {
-                    console.log('Adding row to meet minLength requirement');
                     this.addRow(this.template);
                 }
             }
@@ -188,7 +187,6 @@ export class RepeatingGroup extends InputNucleus {
         this.addRowContainer(i, groupRemoveDomElement);
         
         template.forEach(input => {
-            // console.log('input', input);
             this.registerSetInput(input, i);
 
         });

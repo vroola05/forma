@@ -58,7 +58,7 @@ export class FormPage extends Page {
 
     getForm(formName) {
         this.loader.classList.add('active');
-        Http.get(`${Router.base}/api/forms/${formName}`, {})
+        Http.get(`${Router.tenantPath}/api/forms/${formName}`, {})
             .then(formWrapper => {
                 this.loader.classList.remove('active');
                 if (!formWrapper) {

@@ -25,8 +25,6 @@ export class Page extends PageComponent {
         return this.title;
     }
 
-    
-
     getPageParameters() {
         if (!this.parameters) {
             const parametersString = Storage.getPageItem('params');

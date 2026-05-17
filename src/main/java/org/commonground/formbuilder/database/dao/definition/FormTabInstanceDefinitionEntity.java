@@ -1,5 +1,7 @@
 package org.commonground.formbuilder.database.dao.definition;
 
+import org.commonground.formbuilder.database.dao.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -8,16 +10,18 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "form_tab_instance_definition")
 @IdClass(FormTabInstanceIdEntity.class)
-public class FormTabInstanceDefinitionEntity {
+public class FormTabInstanceDefinitionEntity extends BaseEntity {
     @Id
     @ManyToOne
     @JoinColumn(name = "form_id")

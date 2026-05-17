@@ -3,7 +3,6 @@ package org.commonground.formbuilder.model.form;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.commonground.formbuilder.exceptions.FieldValidationException;

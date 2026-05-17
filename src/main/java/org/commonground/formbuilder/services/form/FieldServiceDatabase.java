@@ -30,7 +30,7 @@ public class FieldServiceDatabase implements FieldService {
     }
 
     public FormFieldDefinitionEntity getFormFieldDefinitionById(UUID id) {
-        return this.formFieldDefinitionRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Form field niet gevonden"));
+        return this.formFieldDefinitionRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.field.error.not_found}"));
     }
 
     @Override
@@ -111,7 +111,7 @@ public class FieldServiceDatabase implements FieldService {
 
                     fields.add(selectField);
                 } else {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported field type");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{form.field.error.unsupported_field_type}");
                 }
 
                 field.setId(formFieldDefinitionEntity.getId());
@@ -163,7 +163,7 @@ public class FieldServiceDatabase implements FieldService {
             int sortOrderFormGroupField = 0;
             for (Field formGroupField : formGroup.getFields()) {
                 if (formGroupField.getType() == FieldType.FORM_GROUP) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No inner form groups allowed");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{form.group.error.no_inner_groups}");
                 }
                 this.formFieldDefinitionRepository.save(formFieldDefinitionEntity);
                 saveStructure(null, formFieldDefinitionEntity, formGroupField, sortOrderFormGroupField++);

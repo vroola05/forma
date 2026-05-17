@@ -1,4 +1,4 @@
-import { FormRenderer } from '../components/form-renderer.js';
+// import { FormRenderer } from '../components/form-renderer.js';
 import { Storage } from '../../shared/services/storage-service.js';
 
 export class FormService {
@@ -32,7 +32,8 @@ export class FormService {
         }
 
         this.stateTimeout = setTimeout(() => {
-            Storage.setPageItem('form-state', JSON.stringify(FormRenderer.getFormKeyVal(this.form)))
+            // @TODO: Create's a circular dependency when creating a textfied
+            // Storage.setPageItem('form-state', JSON.stringify(FormRenderer.getFormKeyVal(this.form)))
         }, 200);
     }
 

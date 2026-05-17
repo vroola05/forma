@@ -4,13 +4,11 @@ import java.util.UUID;
 
 import org.commonground.formbuilder.database.dao.definition.FormConfigSuccessPageEntity;
 import org.commonground.formbuilder.database.dao.definition.FormDefinitionEntity;
-import org.commonground.formbuilder.database.dao.submission.FormSubmissionEntity;
 import org.commonground.formbuilder.database.repository.FormConfigSuccessPageRepository;
 import org.commonground.formbuilder.model.FormConfigSuccessPage;
 import org.commonground.formbuilder.model.FormWrapper;
 import org.commonground.formbuilder.model.form.Form;
 import org.commonground.formbuilder.services.editor.TiptapService;
-import org.commonground.formbuilder.services.form.FormService;
 import org.commonground.formbuilder.services.submission.FormSubmissionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class FormConfigSuccessPageServiceDatabase implements FormConfigSuccessPageService {
     private final FormConfigSuccessPageRepository formConfigSuccessPageRepository;
-    private final FormSubmissionService formSubmissionService;
     private final TiptapService tiptapService;
 
     public FormConfigSuccessPageServiceDatabase(
@@ -28,7 +25,6 @@ public class FormConfigSuccessPageServiceDatabase implements FormConfigSuccessPa
             TiptapService tiptapService) {
 
         this.formConfigSuccessPageRepository = formConfigSuccessPageRepository;
-        this.formSubmissionService = formSubmissionService;
         this.tiptapService = tiptapService;
     }
 
@@ -73,7 +69,7 @@ public class FormConfigSuccessPageServiceDatabase implements FormConfigSuccessPa
         if (formWrapper.getFormConfig() == null 
                 || formWrapper.getFormConfig().getFormConfigSuccessPage() == null
                 || formWrapper.getFormConfig().getFormConfigSuccessPage().getTemplate() == null) {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Form niet gevonden");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.config.successpage.template.error.not_found}");
         }
 
         return this.tiptapService.convert(formWrapper.getFormConfig().getFormConfigSuccessPage().getTemplate(), form);

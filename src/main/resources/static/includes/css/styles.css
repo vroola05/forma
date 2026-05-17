@@ -8,7 +8,7 @@
 
     --black: #000000;
     --white: #ffffff;
-
+    --validation: #c51414;
     --border-grey: #d1d1d1;
 
     --bg-grey: #f8f9fa;
@@ -142,22 +142,65 @@ body {
  * Header
  ******************************************** */
 .header {
-    background-color: var(--primary-color);
-    color: var(--white);
-    text-align: center;
 
-    .navbar-brand-logo {
-        height: calc(var(--default-space) * 3);
-        width: auto;
-        margin-right: var(--default-space);
+    .header-logo-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: var(--default-space);
+
+        .header-logo {
+            height: 80px;
+        }
+    }
+    .header-navbar{
+        display: flex;
+        flex-direction: row;
+
+        background-color: var(--primary-color);
+        color: var(--white);
+        text-align: center;
+
+        .form-btn {
+            padding: var(--default-space);
+
+            border: none;
+
+            color: var(--white);
+            background: none;
+        }
+
+        .header-navbar-home {
+            .header-home {
+                font-weight: bold;
+            }
+        }
+        .header-divider-container {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        ul {
+            display: flex;
+            flex-direction: row;
+            margin: 0;
+            padding: 0;
+
+            list-style: none;
+        }
         
-    }
-    .nav-link {
-        cursor: pointer;
-    }
-    .dropdown {
-        margin-left: auto;
-        margin-right: auto;
+        .header-navbar-left {
+            
+        }
+
+        .header-navbar-right {
+            margin-left: auto;
+        }
+
+        .nav-link {
+            cursor: pointer;
+        }
     }
 }
 

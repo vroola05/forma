@@ -1,3 +1,4 @@
+import { Router } from '../../services/router.js';
 export class FormButton {
     button = document.createElement('button');
     label = '';
@@ -8,7 +9,7 @@ export class FormButton {
 
     constructor(label, classes, path, event, show = true) {
         this.label = label;
-        this.classes = classes;
+        this.classes = 'form-btn' + (!classes ? '' : ' ' + classes);
         this.path = path;
         this.event = event;
         
@@ -23,6 +24,7 @@ export class FormButton {
     show() {
         this.button.classList.remove('hidden');
     }
+
     hide() {
         this.button.classList.add('hidden');
     }
@@ -31,7 +33,9 @@ export class FormButton {
         this.button.className = (this.classes ? ' ' + this.classes : '');
         this.button.innerText = this.label;
         if (this.path !== null) {
-            this.button.href = this.path;
+            this.button.addEventListener('click', (e) => {
+                Router.route(this.path);
+            });
         }
         if (this.event) {
             this.button.addEventListener('click', (e) => {

@@ -36,7 +36,7 @@ public class TabPageServiceDatabase implements TabPageService {
     }
 
     public FormTabDefinitionEntity getFormTabDefinitionById(UUID id) {
-        return this.formTabDefinitionEntityRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Form tab niet gevonden"));
+        return this.formTabDefinitionEntityRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.tab.error.not_found}"));
     }
 
     @Override

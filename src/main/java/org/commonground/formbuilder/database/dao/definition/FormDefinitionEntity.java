@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.commonground.formbuilder.database.dao.BaseEntity;
 import org.commonground.formbuilder.model.form.condition.Condition;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.dialect.type.PostgreSQLJsonPGObjectJsonType;
 import org.hibernate.type.SqlTypes;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,20 +20,23 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "form_definition")
-public class FormDefinitionEntity {
+public class FormDefinitionEntity extends BaseEntity {
     @Id
     private UUID id;
     @Column(nullable = false)
     private String name;
     private String label;
     private String classes;
+
+    @Column(nullable = false)
+    private UUID tenantId;
 
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(name = "metadata", columnDefinition = "text[]")
@@ -46,10 +51,6 @@ public class FormDefinitionEntity {
     @Column(columnDefinition = "jsonb")
     private Condition condition;
     private boolean show;
-
-    @Version
-    @Column(nullable = false)
-    private Long version;
 
     @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FormTabInstanceDefinitionEntity> tabs = new ArrayList<>();

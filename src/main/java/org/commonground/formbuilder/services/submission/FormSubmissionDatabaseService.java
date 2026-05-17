@@ -7,7 +7,6 @@ import org.commonground.formbuilder.database.dao.definition.FormDefinitionEntity
 import org.commonground.formbuilder.database.dao.submission.FormSubmissionEntity;
 import org.commonground.formbuilder.database.repository.FormDefinitionRepository;
 import org.commonground.formbuilder.database.repository.FormSubmissionRepository;
-import org.commonground.formbuilder.model.form.Field;
 import org.commonground.formbuilder.model.form.Form;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,13 +29,13 @@ public class FormSubmissionDatabaseService implements FormSubmissionService {
 
     @Override
     public FormSubmissionEntity getFormSubmissionEntity(UUID id) {
-        return formSubmissionRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Form niet gevonden"));
+        return formSubmissionRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.submission.error.not_found}"));
     }
 
     @Override
     @Transactional
     public UUID save(Form form) {
-        FormDefinitionEntity formDefinitionEntity = this.formDefinitionRepository.findById(form.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Form niet gevonden"));
+        FormDefinitionEntity formDefinitionEntity = this.formDefinitionRepository.findById(form.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.definition.error.not_found}"));
         
         FormSubmissionEntity formSubmissionEntity = new FormSubmissionEntity();
         formSubmissionEntity.setId(UUID.randomUUID());

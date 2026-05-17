@@ -11,7 +11,7 @@ export class BuilderLayout {
         this.#content.className = 'container-fluid mt-4 builder-page-wrapper';
 
         const builderPageContentContainer = document.createElement('div');
-        builderPageContentContainer.className = 'builder-page-#content-container mt-5 ms-5 me-5 mb-3';
+        builderPageContentContainer.className = 'builder-page-content-container mt-5 ms-5 me-5 mb-3';
         this.#content.append(builderPageContentContainer);
 
         const rowContainer = document.createElement('div');

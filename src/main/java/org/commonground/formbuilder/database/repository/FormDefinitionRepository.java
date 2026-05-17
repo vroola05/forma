@@ -8,5 +8,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FormDefinitionRepository extends JpaRepository<FormDefinitionEntity, UUID> {
     Optional<FormDefinitionEntity> findByName(String name);
-
 }

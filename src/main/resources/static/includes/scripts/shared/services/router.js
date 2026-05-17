@@ -1,12 +1,16 @@
 
 export class Router {
-    static base = '';
+    static #base = '';
+    static #tenantSlug = '';
+    static #homeUrl = '/';
+    static #loginUrl = '/';
+
     static basePath = '';
     static routes = []
     static #currentRoute = null;
     static lastParams = null;
-    
-    static #content = document.getElementById('content');
+
+    static #routerOutlet = document.getElementById('router-outlet');
 
     static setBase(base) {
         let baseTag = document.querySelector('base');
@@ -18,11 +22,43 @@ export class Router {
         try {
             const url = new URL(base);
             Router.basePath = url.pathname;
+            
         } catch (e) {
             Router.basePath = base;
         }
 
-        Router.base = base
+        Router.#base = !base ? '' : base;
+    }
+
+    static get base() {
+        return Router.#base;
+    }
+
+    static setTenant() {
+        let path = window.location.pathname;
+        if (path.startsWith(Router.#base)) {
+            path = path.substring(Router.#base.length);
+        }
+
+        if (path.startsWith('/')) {
+            path = path.substring(1);
+        }
+
+        const segments = path.split('/');
+
+        if (!segments[0] || segments[0].length == 0) {
+            throw new Error('No tenant in path');
+        }
+
+        Router.#tenantSlug = segments[0];
+    }
+
+    static get tenantSlug() {
+        return Router.#tenantSlug;
+    }
+
+    static get tenantPath() {
+        return  Router.#base + '/' + Router.#tenantSlug;
     }
 
     /**
@@ -31,13 +67,14 @@ export class Router {
      * @param {Page} pageComponentDefinition - A class that implements Page
      */
     static registerRoute(path, pageComponentDefinition, routes, parent = null, child = null) {
+        
         const currentRoute = {
-            path: path,
+            path: `/${Router.#tenantSlug}${path}`,
             pageComponentDefinition: pageComponentDefinition,
             parent: parent,
             child: child
         };
-        
+
         let register = true;
 
         if (routes) {
@@ -63,18 +100,21 @@ export class Router {
      * @param {string} path 
      */
     static route(path, dataParams = {}) {
-
+    
         const isObject = dataParams !== null && typeof dataParams === 'object';
         const params = dataParams instanceof Map 
             ? dataParams 
             : new Map(!isObject ? [] : Object.entries(dataParams ?? {}))
 
-
         if (path.startsWith(Router.basePath)) {
             path = path.slice(Router.basePath.length) || "/";
         }
+        
+        if (!path.startsWith(`/${Router.#tenantSlug}`)) {
+            path = `/${Router.#tenantSlug}${path}`;
+        }
 
-        const currentRoute = Router.#matchRoute(path, dataParams);
+        const currentRoute = Router.matchRoute(path, dataParams);
 
         if (currentRoute) {
             if (window.location.pathname !== path) {
@@ -84,8 +124,8 @@ export class Router {
                 if (currentRoute.parent?.pageComponentDefinition !== Router.#currentRoute?.parent?.pageComponentDefinition) {
                     Router.#currentRoute = currentRoute;
                     Router.#currentRoute.pageComponent = new currentRoute.parent.pageComponentDefinition();
-                    Router.#content.innerHTML = '';
-                    Router.#content.append(Router.#currentRoute.pageComponent.getContent());
+                    Router.#routerOutlet.innerHTML = '';
+                    Router.#routerOutlet.append(Router.#currentRoute.pageComponent.getContent());
                     Router.#currentRoute.pageComponent.afterInit();
                 } else {
                     const pageComponent = Router.#currentRoute.pageComponent;
@@ -102,8 +142,8 @@ export class Router {
             } else if (currentRoute.pageComponentDefinition !== Router.#currentRoute?.pageComponentDefinition) {
                 Router.#currentRoute = currentRoute;
                 const page = new currentRoute.pageComponentDefinition();
-                Router.#content.innerHTML = '';
-                Router.#content.append(page.getContent());
+                Router.#routerOutlet.innerHTML = '';
+                Router.#routerOutlet.append(page.getContent());
 
                 page.afterInit();
             }
@@ -112,12 +152,10 @@ export class Router {
         }
 
         Router.#currentRoute = null;
-        Router.#content.innerHTML = `<h1>404 Not Found</h1><p>No route found for ${path}</p>`;
+        Router.#routerOutlet.innerHTML = `<h1>404 Not Found</h1><p>No route found for ${path}</p>`;
     }
 
-    //
-
-    static #matchRoute(currentPath, dataParams = null) {
+    static matchRoute(currentPath, dataParams = null) {
         for (const { path, pageComponentDefinition,  parent, child} of Router.routes) {
             const matchParams = Router.#getRouteMatchParams(path, currentPath);
             if (matchParams) {
@@ -152,6 +190,26 @@ export class Router {
         }
         
         return null;
+    }
+
+    static setHome(homeUrl) {
+        Router.#homeUrl = homeUrl;
+    }
+
+    static home() {
+        Router.route(Router.#homeUrl);
+    }
+
+    static setLogin(loginUrl) {
+        Router.#loginUrl = loginUrl;
+    }
+
+    static isLogin(path) {
+        return window.location.pathname == Router.tenantPath + Router.#loginUrl;
+    }
+
+    static login() {
+        Router.route(Router.#loginUrl);
     }
 
     static hasUrlParameter(param) {

@@ -70,7 +70,7 @@ export class SuccessPage extends Page {
             Storage.setPageItem('formSubmission', JSON.stringify(formSubmission));
         }
 
-        Http.post(`${Router.base}/api/forms/success-page`, formSubmission, {})
+        Http.post(`${Router.tenantPath}/api/forms/success-page`, formSubmission, {})
             .then(formConfigSuccessPageData => {
                 const formConfigSuccessPage = new FormConfigSuccessPage(formConfigSuccessPageData);
 

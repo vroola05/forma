@@ -15,6 +15,7 @@ import org.commonground.formbuilder.model.form.FieldType;
 import org.commonground.formbuilder.model.form.Form;
 import org.commonground.formbuilder.model.form.Option;
 import org.commonground.formbuilder.model.form.TabPage;
+import org.commonground.formbuilder.model.settings.Tenant;
 import org.commonground.formbuilder.services.formConfig.FormConfigSuccessPageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -41,12 +42,12 @@ public class FormServiceDatabase implements FormService {
 
     public FormDefinitionEntity getFormDefinitionById(UUID id) {
         return this.formDefinitionRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Form niet gevonden"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.definition.error.not_found}"));
     }
 
     @Override
     @Transactional
-    public String save(FormWrapper formWrapper) {
+    public String save(Tenant tenant, FormWrapper formWrapper) {
 
         Form form = formWrapper.getForm();
         FormDefinitionEntity formDefinitionEntity = form.getId() == null
@@ -56,6 +57,7 @@ public class FormServiceDatabase implements FormService {
         if (form.getId() == null) {
             formDefinitionEntity.setId(UUID.randomUUID());
         }
+        formDefinitionEntity.setTenantId(tenant.getId());
         formDefinitionEntity.setName(form.getName());
         formDefinitionEntity.setLabel(form.getLabel());
         formDefinitionEntity.setClasses(form.getClasses());
@@ -85,10 +87,8 @@ public class FormServiceDatabase implements FormService {
 
     @Override
     public FormWrapper get(String formName) {
-        
-
         FormDefinitionEntity formDefinitionEntity = this.formDefinitionRepository.findByName(formName)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Form niet gevonden"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.definition.error.not_found}"));
 
         return transform(formDefinitionEntity);
     }

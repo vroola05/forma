@@ -1,3 +1,14 @@
+export class Tenant {
+    constructor(data = {}) {
+        this.slug = data.slug;
+        this.name = data.name;
+        this.logoUrl = data.logoUrl;
+        this.homePage = data.homePage;
+        this.active = data.active;
+        this.contactEmail = data.contactEmail;
+    }
+}
+
 export class FormWrapper {
     constructor(data = {}) {
         this.active = data.active;

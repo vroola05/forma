@@ -12,7 +12,7 @@ export class Lang {
         return new Promise((resolve, reject) => {
         let language = navigator.language || navigator.userLanguage;
 
-        Http.get(`${Router.base}/api/language/${language}`, {})
+        Http.get(`${Router.tenantPath}/api/language/${language}`, {})
             .then(translation => {
                 if (translation) {
                     this.translation = translation;
@@ -27,6 +27,6 @@ export class Lang {
     }
 
     static get(key){
-        return key in this.translation ? this.translation[key] : 'haha';
+        return key in this.translation ? this.translation[key] : key;
     }
 }

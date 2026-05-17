@@ -15,7 +15,7 @@ import org.commonground.formbuilder.services.LanguageService;
 
 
 @RestController
-@RequestMapping("/api/language")
+@RequestMapping("/{tenantSlug}/api/language")
 public class LanguageController {
     
     @Autowired

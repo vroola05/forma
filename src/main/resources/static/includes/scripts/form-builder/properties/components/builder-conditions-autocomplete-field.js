@@ -178,7 +178,6 @@ export class BuilderConditionsAutocompleteField extends InputNucleus {
         let fields = [BuilderFormService.getBuilderForm()];
         for (let i = 1; i < tokens.length; i++) {
             if (i >= tokens.length - 1) {
-                console.log('Getting fields for token:', tokens[i], 'in fields:', fields);
                 return this.getFields(fields, tokens[i]);
             }
 
@@ -318,7 +317,7 @@ export class BuilderConditionsAutocompleteField extends InputNucleus {
             if (!this.isAutocompleteVisible) {
                 return;
             }
-            console.log('Key down:', e.key);
+            
             switch (e.key) {
                 case 'ArrowUp':
                     e.preventDefault();

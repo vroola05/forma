@@ -1,6 +1,6 @@
 {
     "generic.lang": "Nederlands",
-    "generic.title": "Formulier Bouwer",
+    "generic.title": "Forma",
     "generic.search": "Zoeken...",
     
     "generic.not.logged.in": "Niet ingelogd",
@@ -8,6 +8,17 @@
     "generic.save": "Opslaan",
 
     "header.home": "Home",
+
+    "login.title": "Aanmelden bij Forma",
+    "login.header": "Aanmelden",
+    "login.text": "Welkom bij Forma. Log in om uw formulieren en inzendingen te beheren.",
+    "login.username": "Gebruikersnaam",
+    "login.password": "Wachtwoord",
+    "login.submit": "Aanmelden",
+
+    "dashboad.title": "Dashboad",
+
+    "tenant.title": "Tenants",
 
     "text.editor.table.create": "Maken",
     "text.editor.table.row.add": "Rij toevoegen",

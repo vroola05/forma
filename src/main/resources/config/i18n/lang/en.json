@@ -9,6 +9,17 @@
 
     "header.home": "Home",
 
+    "login.title": "Login to Forma",
+    "login.header": "Login",
+    "login.text": "Welcom to Forma. Login to manage your forms and submissions.",
+    "login.username": "Username",
+    "login.password": "Password",
+    "login.submit": "Login",
+
+    "dashboad.title": "Dashboad",
+
+    "tenant.title": "Tenants",
+
     "overview.title": "Overview",
     "overview.list.name": "Name",
     "overview.list.title": "Title",

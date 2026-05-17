@@ -5,7 +5,7 @@ import { EventService } from '../../../shared/services/event-service.js';
 
 import { Storage } from '../../../shared/services/storage-service.js';
 
-import { FormButton } from '../../../form-viewer/components/form-button.js';
+import { FormButton } from '../../../shared/form-components/components/form-button.js';
 import { footerService } from '../../../shared/services/footer-service.js';
 import { Toaster } from '../../../shared/generic-components/toaster.js';
 
@@ -114,7 +114,6 @@ export class BuilderPage extends Page {
         try {
             BuilderFormService.getFormWrapper().form = BuilderFormService.getBuilderForm().getData();
             Storage.setPageItem('form-wrapper', JSON.stringify(BuilderFormService.getFormWrapper()));
-
         } catch(error) {
             console.log(error);
         }
@@ -122,7 +121,7 @@ export class BuilderPage extends Page {
 
     getForm(formName) {
         this.loader.classList.add('active');
-        Http.get(`${Router.base}/api/form-builder/form/${formName}`, {})
+        Http.get(`${Router.tenantPath}/api/form-builder/form/${formName}`, {})
             .then(formWrapperData => {
                 this.loader.classList.remove('active');
                 if (!formWrapperData) {
@@ -148,7 +147,7 @@ export class BuilderPage extends Page {
 
     postForm() {
         this.loader.classList.add('active');
-        Http.post(`${Router.base}/api/form-builder/form`, BuilderFormService.getFormWrapper())
+        Http.post(`${Router.tenantPath}/api/form-builder/form`, BuilderFormService.getFormWrapper())
             .then(tab => {
                 this.loader.classList.remove('active');
                 if (!tab) {

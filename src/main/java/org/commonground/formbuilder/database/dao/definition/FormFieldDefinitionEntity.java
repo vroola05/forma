@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.commonground.formbuilder.database.dao.BaseEntity;
 import org.commonground.formbuilder.model.form.Option;
 import org.commonground.formbuilder.model.form.condition.Condition;
 import org.hibernate.annotations.JdbcType;
@@ -19,14 +20,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "form_field_definition")
-public class FormFieldDefinitionEntity {
+public class FormFieldDefinitionEntity extends BaseEntity {
     @Id
     private UUID id;
 

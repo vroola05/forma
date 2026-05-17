@@ -2,6 +2,7 @@ import { Page } from '../../shared/page-components/page.js';
 import { Http } from '../../shared/services/http.js';
 import { Router } from '../../shared/services/router.js';
 import { Lang } from '../../shared/services/lang.js';
+import { AdminHeader } from '../component/admin-header.js';
 
 export class OverviewPage extends Page {
     searchtimeout = null;
@@ -18,6 +19,7 @@ export class OverviewPage extends Page {
     constructor() {
         super();
         this.setTitle(Lang.get('overview.title'));
+        this.header = new AdminHeader();
         this.createContent();
     }
 
@@ -69,7 +71,7 @@ export class OverviewPage extends Page {
     getOverviewItems() {
         
             this.loader.classList.add('active');
-            Http.get(`${Router.base}/api/forms`, {})
+            Http.get(`${Router.tenantPath}/api/forms`, {})
                 .then(formsList => {
                     this.loader.classList.remove('active');
                     this.formsList = formsList;
@@ -137,5 +139,13 @@ export class OverviewPage extends Page {
                 this.parseOverviewItems();
              }, 500);
         });
+    }
+
+    
+    getContent() {
+        const fragment = document.createDocumentFragment();
+        fragment.append(this.header.getContent(), this.content);
+
+        return fragment;
     }
 }

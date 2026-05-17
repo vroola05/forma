@@ -1,5 +1,5 @@
 import { Router } from '../../shared/services/router.js';
-import { FormButton } from './form-button.js'; 
+import { FormButton } from '../../shared/form-components/components/form-button.js'; 
 import { FormRenderer } from './form-renderer.js';
 import { Http } from '../../shared/services/http.js';
 import { FormSubmission } from '../../shared/model/form-data.js';
@@ -26,7 +26,7 @@ export class FormLogic {
                 return;
             }
 
-            Http.post(`${Router.base}/api/forms`, FormRenderer.getFormData(this.form), {})
+            Http.post(`${Router.tenantPath}/api/forms`, FormRenderer.getFormData(this.form), {})
                         .then(formSubmissionData => {
                             const formNameUrlParam = Router.getUrlParameter('formName');
                             Router.route(`/page/form/${formNameUrlParam}/success`, {
