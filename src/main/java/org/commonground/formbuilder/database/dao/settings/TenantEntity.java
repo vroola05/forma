@@ -25,11 +25,11 @@ public class TenantEntity extends BaseEntity {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
-    private String logoUrl;
+    private String logo;
     @Column(nullable = false)
     private String homePage;
     @Column(nullable = false)
     private boolean active;
     @Column(nullable = false)
-    private String contactEmail;
+    private String email;
 }

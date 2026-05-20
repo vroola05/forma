@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class GlobalAdminInitializer implements CommandLineRunner {
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 

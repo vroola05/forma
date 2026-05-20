@@ -2,12 +2,31 @@
     "generic.lang": "Nederlands",
     "generic.title": "Forma",
     "generic.search": "Zoeken...",
-    
+
     "generic.not.logged.in": "Niet ingelogd",
     "generic.cancel": "Annuleren",
     "generic.save": "Opslaan",
 
+    "generic.role.global.admin": "Global admin",
+    "generic.role.tenant.admin": "Tenant admin",
+    "generic.role.tenant.user": "Tenant user",
+
+    "generic.validation.required": "Dit is een verplicht veld.",
+    "generic.validation.email": "Dit is geen geldig e-mailadres.",
+    "generic.validation.number": "Dit is geen geldig nummer.",
+    "generic.validation.date": "Dit is geen geldige datum.",
+
+    "generic.name": "Naam",
+    "generic.username": "Gebruikersnaam",
+    "generic.password": "Wachtwoord",
+    "generic.email": "E-mailadres",
+    "generic.active": "Actief",
+
+    "generic.yes": "Ja",
+    "generic.no": "Nee",
+
     "header.home": "Home",
+
 
     "login.title": "Aanmelden bij Forma",
     "login.header": "Aanmelden",
@@ -19,6 +38,13 @@
     "dashboad.title": "Dashboad",
 
     "tenant.title": "Tenants",
+    "tenant.new.title": "Nieuwe tenant",
+    "tenant.field.name": "Tenant naam",
+    "tenant.field.slug": "Tenant url-naam",
+    "tenant.field.logo": "Logo",
+    "tenant.field.home.page": "Homepage",
+
+    "user.title": "Gebruiker",
 
     "text.editor.table.create": "Maken",
     "text.editor.table.row.add": "Rij toevoegen",
@@ -26,11 +52,11 @@
     "text.editor.table.col.add": "Kolom toevoegen",
     "text.editor.table.col.delete": "Kolom verwijderen",
 
-    "overview.title": "Overzicht",
-    "overview.list.name": "Naam",
-    "overview.list.title": "Titel",
-    "overview.list.active": "Actief",
-    "overview.list.last.modified": "Laatst Gewijzigd",
+    "form.dashboard.title": "Formulieren dashboad",
+    "form.dashboard.list.name": "Naam",
+    "form.dashboard.list.title": "Titel",
+    "form.dashboard.list.active": "Actief",
+    "form.dashboard.list.last.modified": "Laatst Gewijzigd",
 
     "form.name": "Naam formulier",
     "tab.new": "Nieuwe tab ",

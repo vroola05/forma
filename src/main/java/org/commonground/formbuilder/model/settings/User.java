@@ -3,18 +3,17 @@ package org.commonground.formbuilder.model.settings;
 import java.util.UUID;
 
 import org.commonground.formbuilder.util.RegexConstants;
+import org.commonground.formbuilder.validator.ValidPassword;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class Tenant {
+public class User {
     private UUID id;
 
     @NotBlank(message = "{validation.required}")
@@ -22,22 +21,19 @@ public class Tenant {
     private String name;
 
     @NotBlank(message = "{validation.required}")
-    @Pattern(
-        regexp = RegexConstants.SLUG_REGEX,
-        message = "{validation.slug}"
-    )
-    private String slug;
-    private String logo;
-    private String homePage;
+    private String username;
+    
+    @NotBlank(message = "{validation.required}")
+    @ValidPassword
+    private String password;
 
-    private boolean active;
-
+    @NotBlank(message = "{validation.required}")
     @Email(
         regexp = RegexConstants.EMAIL_REGEX, message = "{validation.email}"
     )
     private String email;
 
-    @Valid
-    private User tenantAdmin;
+    private UserRole role;
 
+    private boolean active;
 }

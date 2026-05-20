@@ -1,11 +1,30 @@
 export class Tenant {
     constructor(data = {}) {
+        this.id = data.id;
         this.slug = data.slug;
         this.name = data.name;
-        this.logoUrl = data.logoUrl;
+        this.logo = data.logo;
         this.homePage = data.homePage;
+        this.email = data.email;
         this.active = data.active;
-        this.contactEmail = data.contactEmail;
+    }
+
+    setTenantAdmin(user) {
+        this.tenantAdmin = user;
+    }
+}
+
+export class User {
+    constructor(data = {}) {
+        this.name = data.name;
+        this.username = data.username;
+        this.password = data.password;
+        this.email = data.email;
+        this.active = data.active;
+    }
+
+    setAdminUser() {
+        
     }
 }
 

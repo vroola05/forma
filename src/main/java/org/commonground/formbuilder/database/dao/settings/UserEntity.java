@@ -31,6 +31,8 @@ public class UserEntity extends BaseEntity {
     private UUID id;
     private UUID tenantId;
     @Column(nullable = false)
+    private String name;
+    @Column(nullable = false)
     private String username;
     @Column(nullable = false)
     private String password;
@@ -39,8 +41,9 @@ public class UserEntity extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role;
-    private String authProvider;
-    private String external_id;
+
+    private String authProvider; // For future use
+    private String external_id; // For future use
     @Column(nullable = false)
     private boolean active;
 

@@ -11,6 +11,7 @@ public class SecurityConstants {
         "/index.html",
         "/builder.html",
         "/favicon.svg",
+        "/favicon.svg",
         "/favicon.ico",
         "/error",
         "/includes/**",

@@ -15,8 +15,8 @@ export class FormGroup extends Nucleus {
         super(formGroupData.name, formGroupData.label);
         this.type = formGroupData.type;
         this.id = formGroupData.id;
-        this.setMetadata(formGroupData.metadata);
-        this.setShowConditions(formGroupData.condition);
+        this.setMetadata(formGroupData?.metadata);
+        this.setShowConditions(formGroupData?.condition);
 
         this.createElement(formGroupData.name, formGroupData.label, formGroupData.classes);
 
@@ -91,12 +91,49 @@ export class FormGroup extends Nucleus {
         return valid;
     }
 
+    /**
+     * Expects th
+     * @param {*} fieldErrors 
+     */
+    setBackendErrors(fieldErrors) {
+        console.log(fieldErrors);
+        this.fields.forEach(field => {
+            if (fieldErrors.has(field.getName())) {
+                console.log(fieldErrors.get(field.getName()));
+                field.setBackendErrors(false, fieldErrors.get(field.getName()));
+            } else {
+                field.setBackendErrors(true);
+            }
+        });
+    }
+
     getValue() {
         return null;
-        // return this.formInputKeyValue;
     }
 
     getFields() {
         return this.fields;
+    }
+
+    getField(name) {
+        return this.fields.find(f => f.name === name);
+    }
+
+    getFieldValue(name) {
+        const field = this.fields.find(f => f.name === name);
+        return !field ? undefined : field.hasOptions() ? field.getOptions() : field.getValue();
+    }
+
+    setFields(fields) {
+        if (!fields || !Array.isArray(fields)) {
+            return ;
+        }
+
+        this.fields = fields;
+        for (const field of this.fields) {
+            this.formDomElements.append(field.getContent())
+        }
+        
+        return this;
     }
 }

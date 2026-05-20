@@ -9,13 +9,13 @@ export class AdminHeader extends Header {
     constructor() {
         super();
         EventService.callEventListener('header-buttons-left', [
-            new FormButton('Formulieren', null, '/admin/page/form/overview'),
+            new FormButton('Formulieren', null, '/admin/page/form'),
             new FormButton('Tenants', null, '/admin/page/tenant')
 
         ]);
 
         EventService.callEventListener('header-buttons-right', [
-            new FormButton('Instellingen', null, '/admin/page/form/overview')
+            new FormButton('Instellingen', null, '/admin/page/form')
         ]);
     }
 

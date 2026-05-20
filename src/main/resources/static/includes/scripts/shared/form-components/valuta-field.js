@@ -20,7 +20,6 @@ export class ValutaField extends TextField {
     formatCurrency(value) {
         if (value === null || value === undefined || value === '')
             return '';
-        // Zorg dat het een float is en altijd twee decimalen toont
         value = parseFloat(value.replace(',', '.')).toFixed(2)
         if (isNaN(value)) {
             return '';

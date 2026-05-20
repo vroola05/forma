@@ -1,6 +1,6 @@
 import { Nucleus } from './nucleus.js';
 import { FormService } from '../../../form-viewer/services/form-service.js';
-
+import { Lang } from '../../services/lang.js';
 export const InputLayout = ['no-label', 'layout-row', 'layout-column'];
 
 export class InputNucleus extends Nucleus {
@@ -11,7 +11,6 @@ export class InputNucleus extends Nucleus {
 
     value = '';
     id = '';
-    
 
     data = new Map();
 
@@ -31,7 +30,6 @@ export class InputNucleus extends Nucleus {
     createInput(inputElement) {
         this.content.className = ' ' + (!this.classes ? '' : this.classes);
         this.content.classList.add('field-wrapper');
-
         this.setLayout(InputLayout[0])
 
         // Label
@@ -143,6 +141,14 @@ export class InputNucleus extends Nucleus {
     setRequired(required) {
         this.required = required;
         this.inputElement.required = required;
+        if (required ) {
+            if (!this.labelElement.classList.contains('required')) {
+                this.labelElement.classList.add('required');
+            }
+        } else {
+            this.labelElement.classList.remove('required');
+        }
+            
         return this;
     }
 
@@ -181,36 +187,50 @@ export class InputNucleus extends Nucleus {
         this.inputElement.classList.remove('is-valid', 'is-invalid');
 
         if (this.required && !this.getValue()) {
-            this.errors.push('Dit veld is verplicht.');
+            this.errors.push(Lang.get('generic.validation.required'));
             valid = false;
         } else if (!valid) {
             this.errors.push(message);
         } else {
-            if (this.type === 'email' && this.getValue() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.getValue())) {
-                this.errors.push('Dit is geen geldig email adres.');
+
+            if (this.type === 'email' && this.getValue() && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(this.getValue())) {
+                this.errors.push(Lang.get('generic.validation.email'));
                 valid = false;
             }
             if (this.type === 'number' && this.getValue() && isNaN(this.getValue())) {
-                this.errors.push('Dit veld geen geldig nummer.');
+                this.errors.push(Lang.get('generic.validation.number'));
                 valid = false;
             }
             if (this.type === 'date' && this.getValue() && isNaN(Date.parse(this.getValue()))) {
-                this.errors.push(`Dit ${this.getValue()} veld is geen geldige datum.`);
+                this.errors.push(Lang.get('generic.validation.date'));
                 valid = false;
             }
 
         }
 
-        this.setvalidationState(valid);
+        this.setValidationState(valid);
 
         return valid;
     }
 
-    setvalidationState(valid) {
+    setBackendErrors(valid, errors = undefined) {
+        this.errors = [];
+        if (errors) {
+            if (Array.isArray(errors)) {
+                errors.forEach(error => {this.errors.push(error);})
+            } else {
+                this.errors.push(errors);
+            }
+            
+            this.setValidationState(valid);
+        }
+    }
+
+    setValidationState(valid) {
         if (valid == false) {
             this.inputElement.classList.remove('is-valid');
             this.inputElement.classList.add('is-invalid');
-            this.feedbackElement.textContent = this.errors.join(' ');
+            this.feedbackElement.innerHTML = this.errors.join('<br />');
         } else {
             this.inputElement.classList.remove('is-invalid');
             this.inputElement.classList.add('is-valid');

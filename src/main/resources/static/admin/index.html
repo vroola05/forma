@@ -2,13 +2,13 @@
 <html lang="nl">
     <head>
         <meta charset="UTF-8">
-        <title>Form builder</title>
+        <title>Forma</title>
         <base href="" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black" />
         <meta name="robots" content="noindex, nofollow" />
-        <link rel="icon" href="favicon.svg" type="image/svg+xml">
+        <link rel="icon" href="/includes/images/favicon.svg" type="image/svg+xml">
         <link href="/includes/bootstrap-5.3.7/css/bootstrap.min.css" rel="stylesheet">
         <script src="/includes/popper-2.11.8/popper.min.js"></script>
         <script src="/includes/bootstrap-5.3.7/js/bootstrap.min.js"></script>
@@ -36,11 +36,11 @@
 
     <script type="module">
         import { Main } from '/includes/scripts/main.js';
-
-        import { LoginPage } from '/includes/scripts/form-builder/page-components/login-page.js';
-        import { DashboardPage } from '/includes/scripts/form-builder/page-components/dashboard-page.js';
+        import { LoginPage } from '/includes/scripts/form-builder/page-components/login/login-page.js';
+        import { DashboardPage } from '/includes/scripts/form-builder/page-components/dashboard/dashboard-page.js';
         import { TenantPage } from '/includes/scripts/form-builder/page-components/tenant/tenant-page.js';
-        import { OverviewPage } from '/includes/scripts/form-builder/page-components/overview-page.js';
+        import { TenantPageNew } from '/includes/scripts/form-builder/page-components/tenant/tenant-page-new.js';
+        import { FormDashboard } from '/includes/scripts/form-builder/page-components/builder/form-dashboard-page.js';
         import { FormPage } from '/includes/scripts/form-viewer/page-components/form-page.js';
         import { RevisionPage } from '/includes/scripts/form-builder/page-components/revision.js';
         import { BuilderPage } from '/includes/scripts/form-builder/page-components/builder/builder-page.js';
@@ -50,7 +50,7 @@
         import { BuilderPageSettingsMail } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-mail.js';
         import { BuilderPageSettingsPayment } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-payment.js';
         import { BuilderPageSettingsRegistration } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-registration.js';
-        import { BuilderPageSettingsSuccess } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-success.js';
+        // import { BuilderPageSettingsSuccess } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-success.js';
         
         
         new Main([
@@ -58,7 +58,8 @@
             
             {'path': '/admin/page/login', 'page': LoginPage},
             {'path': '/admin/page/tenant', 'page': TenantPage},
-            {'path': '/admin/page/form/overview', 'page': OverviewPage},
+            {'path': '/admin/page/tenant/new', 'page': TenantPageNew},
+            {'path': '/admin/page/form', 'page': FormDashboard},
             {
                 'path': '/admin/page/form-builder/:formName', 'page': BuilderPage,
                 'routes': [
@@ -66,7 +67,7 @@
                     {'path': '/settings-generic', 'page': BuilderPageSettingsGeneric},
                     {'path': '/settings-login', 'page': BuilderPageSettingsLogin},
                     {'path': '/settings-mail', 'page': BuilderPageSettingsMail},
-                    {'path': '/settings-success', 'page': BuilderPageSettingsSuccess},
+                    // {'path': '/settings-success', 'page': BuilderPageSettingsSuccess},
                     {'path': '/settings-registration', 'page': BuilderPageSettingsRegistration},
                     {'path': '/settings-payment', 'page': BuilderPageSettingsPayment},
                 ]

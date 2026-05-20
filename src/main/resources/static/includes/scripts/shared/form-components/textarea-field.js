@@ -66,7 +66,7 @@ export class TextAreaField extends InputNucleus {
             }
         }
 
-        this.setvalidationState(valid);
+        this.setValidationState(valid);
         return valid;
     }
 

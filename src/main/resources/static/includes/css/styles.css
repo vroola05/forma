@@ -1,4 +1,10 @@
 :root {
+    --bp-sm: 36rem;
+    --bp-md: 48rem;
+    --bp-lg: 64rem;
+    --bp-xl: 80rem;
+    --bp-2xl: 96rem;
+
     --primary-color: #659197;
     --primary-color-light: color-mix(in srgb, var(--primary-color), var(--white) 40%);
     --primary-color-lighter: color-mix(in srgb, var(--primary-color), var(--white) 95%);
@@ -104,8 +110,6 @@ body {
     .w-lg-90 { width: 90%!important; }
     .w-lg-100 { width: 100%!important; }
 }
-
-
 
 .btn-primary {
     border: var(--primary-color) 1px solid !important;
@@ -228,8 +232,7 @@ body {
     margin-bottom: 0px;
 
     border: var(--border-grey) solid 1px;
-    border-bottom: 0px;
-    border-radius: var(--default-space) var(--default-space) 0 0;
+    border-radius: var(--default-space) var(--default-space);
 
     background-color: var(--white);
 
@@ -319,7 +322,7 @@ body {
 
     /* margin: calc(var(--default-space) * 2) calc(var(--default-space) * 4); */
 
-    .footer {
+    .footer-buttons {
         flex: auto;
 
         margin: var(--default-space) calc(var(--default-space) * 4);
@@ -381,26 +384,7 @@ option:disabled {
 
 
 
-/**********************************************
- * Overview pagina. Hoort eigenlijk in de builder...
- ******************************************** */
-.overview-wrapper {
-    .overview-items-wrapper {
-        .overview-items {
-            background-color: var(--white);
 
-            .overview-header {
-                background-color: var(--primary-color);
-                color: var(--white);
-                font-weight: bold;
-            }
-
-            .overview-item {
-                cursor: pointer;
-            }
-        }
-    }
-}
 
 
 
@@ -420,28 +404,28 @@ option:disabled {
 
 .field-wrapper {
     display:flex;
+    flex-direction: row;
+
+    padding: calc(var(--default-space) / 2);
+
     .field-wrapper-label {
+        width: calc(100% / 3);
+
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        &.required::after {
+            content: " *";   
+            color: #dc3545; 
+            font-weight: bold;
+            margin-left: 2px;
+        }
     }
+
     .field-wrapper-input {
+        width: calc(100% / 3 * 2);
+    }
 
-    }
-    &.layout-row {
-        flex-direction: row;
-        padding: calc(var(--default-space) / 2);
-
-        .field-wrapper-label {
-            width: calc(100% / 3);
-        }
-        .field-wrapper-input {
-            width: calc(100% / 3 * 2);
-        }
-    }
-    &.layout-column {
-        flex-direction: column;
-    }
 
     .radio-input-wrapper {
         display: flex;

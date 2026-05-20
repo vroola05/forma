@@ -1,10 +1,10 @@
-import { Page } from '../../shared/page-components/page.js';
-import { Http } from '../../shared/services/http.js';
-import { Router } from '../../shared/services/router.js';
-import { Lang } from '../../shared/services/lang.js';
-import { AdminHeader } from '../component/admin-header.js';
+import { Page } from '../../../shared/page-components/page.js';
+import { Http } from '../../../shared/services/http.js';
+import { Router } from '../../../shared/services/router.js';
+import { Lang } from '../../../shared/services/lang.js';
+import { AdminHeader } from '../../component/admin-header.js';
 
-export class OverviewPage extends Page {
+export class FormDashboard extends Page {
     searchtimeout = null;
     formsList = [];
     search = '';
@@ -18,7 +18,7 @@ export class OverviewPage extends Page {
 
     constructor() {
         super();
-        this.setTitle(Lang.get('overview.title'));
+        this.setTitle(Lang.get('form.dashboard.title'));
         this.header = new AdminHeader();
         this.createContent();
     }
@@ -26,11 +26,11 @@ export class OverviewPage extends Page {
 
     createContent() {
         this.content = document.createElement('div');
-        this.content.className = 'container-fluid mt-4 overview-wrapper';
+        this.content.className = 'container-fluid mt-4 form-dashboard-wrapper';
 
         const header = document.createElement('h1');
         header.className = 'text-center';
-        header.innerHTML = Lang.get('overview.title');
+        header.innerHTML = Lang.get('form.dashboard.title');
         this.content.append(header);
 
         const seachBar = document.createElement('div');
@@ -44,21 +44,21 @@ export class OverviewPage extends Page {
         this.searchInput = document.createElement('input');
         this.searchInput.className = 'form-control form-control-lg';
         this.searchInput.type = 'text';
-        this.searchInput.id = 'overview-search';
+        this.searchInput.id = 'form-dashboard-search';
         
         this.searchInput.placeholder = Lang.get('generic.search');
         this.searchInput.ariaLabel = Lang.get('generic.search');
         seachBarInner.append(this.searchInput);
 
 
-        const overviewItemsWrapper = document.createElement('div');
-        overviewItemsWrapper.className = 'overview-items-wrapper mt-2 m-1 m-lg-5';
-        this.content.append(overviewItemsWrapper);
+        const formDashboardItemsWrapper = document.createElement('div');
+        formDashboardItemsWrapper.className = 'form-dashboard-items-wrapper mt-2 m-1 m-lg-5';
+        this.content.append(formDashboardItemsWrapper);
 
-        this.overviewItems = document.createElement('div');
-        this.overviewItems.id = 'overview-items';
-        this.overviewItems.className = 'container-fluid overview-items';
-        overviewItemsWrapper.append(this.overviewItems);
+        this.formDashboardItems = document.createElement('div');
+        this.formDashboardItems.id = 'form-dashboard-items';
+        this.formDashboardItems.className = 'container-fluid form-dashboard-items';
+        formDashboardItemsWrapper.append(this.formDashboardItems);
     }
 
     afterInit() {
@@ -91,21 +91,21 @@ export class OverviewPage extends Page {
 
         );
         
-        this.overviewItems.innerHTML = 
-        `<div class="overview-header shadow-sm fw-bolder row p-1 p-lg-2 border-bottom">
-                <div class="col-12 col-md-5">${Lang.get('overview.list.name')}</div>
-                <div class="col-12 col-md-5">${Lang.get('overview.list.title')}</div>
-                <div class="col-12 col-md-2">${Lang.get('overview.list.active')}</div>
+        this.formDashboardItems.innerHTML = 
+        `<div class="form-dashboard-header shadow-sm fw-bolder row p-1 p-lg-2 border-bottom">
+                <div class="col-12 col-md-5">${Lang.get('form.dashboard.list.name')}</div>
+                <div class="col-12 col-md-5">${Lang.get('form.dashboard.list.title')}</div>
+                <div class="col-12 col-md-2">${Lang.get('form.dashboard.list.active')}</div>
                 
             </div>` +
         formsList.map(formList => `
-            <div class="overview-item row p-1 p-lg-2 border-bottom" data-form-name="${this.notNull(formList.name)}">
+            <div class="form-dashboard-item row p-1 p-lg-2 border-bottom" data-form-name="${this.notNull(formList.name)}">
                 <div class="col-12 col-md-5 d-flex flex-row flex-lg-column"><div class="flex-grow-1">${this.notNull(formList.name)}</div></div>
                 <div class="col-12 col-md-5 d-flex flex-row flex-lg-column"><div class="flex-grow-1">${this.notNull(formList.title)}</div></div>
                 <div class="col-12 col-md-2 d-flex flex-row flex-lg-column"><div class="flex-grow-1">${this.notNull(formList.active)}</div></div>
             </div>`).join('');
 
-        document.querySelectorAll('.overview-item').forEach(item => {
+        document.querySelectorAll('.form-dashboard-item').forEach(item => {
             item.addEventListener('click', function () {
                 const formName = this.dataset.formName;
                 

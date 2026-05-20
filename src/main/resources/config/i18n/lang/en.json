@@ -7,6 +7,24 @@
     "generic.cancel": "Cancel",
     "generic.save": "Save",
 
+    "generic.role.global.admin": "Global admin",
+    "generic.role.tenant.admin": "Tenant admin",
+    "generic.role.tenant.user": "Tenant user",
+
+    "generic.validation.required": "This field is required.",
+    "generic.validation.email": "This email is not valid.",
+    "generic.validation.number": "This is not a valid number.",
+    "generic.validation.date": "This is not a valid date.",
+
+    "generic.name": "Name",
+    "generic.username": "Username",
+    "generic.password": "Password",
+    "generic.email": "Email",
+    "generic.active": "Active",
+
+    "generic.yes": "Yes",
+    "generic.no": "No",
+
     "header.home": "Home",
 
     "login.title": "Login to Forma",
@@ -19,13 +37,20 @@
     "dashboad.title": "Dashboad",
 
     "tenant.title": "Tenants",
+    "tenant.new.title": "New tenant",
+    "tenant.field.name": "Tenant name",
+    "tenant.field.slug": "Tenant url-name",
+    "tenant.field.logo": "Logo",
+    "tenant.field.home.page": "Homepage",
 
-    "overview.title": "Overview",
-    "overview.list.name": "Name",
-    "overview.list.title": "Title",
-    "overview.list.active": "Active",
-    "overview.list.last.modified": "Last Modified",
+    "user.title": "User",
 
+    "form.dashboard.title": "Form dashboad",
+    "form.dashboard.list.name": "Name",
+    "form.dashboard.list.title": "Title",
+    "form.dashboard.list.active": "Active",
+    "form.dashboard.list.last.modified": "Last Modified",
+    
     "form.name": "Formname",
     "tab.new": "New tab",
 

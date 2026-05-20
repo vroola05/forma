@@ -5,5 +5,5 @@ import org.commonground.formbuilder.model.settings.Tenant;
 public interface TenantService {
     
     public Tenant get(String tenantSlug);
-    public void save(Tenant tenant);
+    public Tenant save(Tenant tenant);
 }

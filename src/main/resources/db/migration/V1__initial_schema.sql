@@ -21,11 +21,11 @@ CREATE TABLE tenant (
     id UUID PRIMARY KEY,
     slug TEXT UNIQUE NOT NULL,
     name TEXT NOT NULL,
-    logo_url TEXT NULL,
+    logo TEXT NULL,
     home_page TEXT NULL,
     
     active BOOLEAN DEFAULT true NOT NULL,
-    contact_email TEXT NOT NULL,
+    email TEXT NOT NULL,
     
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -35,6 +35,7 @@ CREATE TABLE tenant (
 CREATE TABLE users (
     id UUID PRIMARY KEY,
     tenant_id UUID REFERENCES tenant(id),
+    name TEXT NOT NULL,
     username TEXT NOT NULL,
     password TEXT NOT NULL,
     email TEXT NOT NULL,

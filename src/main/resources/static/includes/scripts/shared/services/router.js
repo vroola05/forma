@@ -100,7 +100,9 @@ export class Router {
      * @param {string} path 
      */
     static route(path, dataParams = {}) {
-    
+        if (!path) {
+            return;
+        }
         const isObject = dataParams !== null && typeof dataParams === 'object';
         const params = dataParams instanceof Map 
             ? dataParams 
@@ -110,6 +112,7 @@ export class Router {
             path = path.slice(Router.basePath.length) || "/";
         }
         
+        console.log('path', path, Router.#tenantSlug);
         if (!path.startsWith(`/${Router.#tenantSlug}`)) {
             path = `/${Router.#tenantSlug}${path}`;
         }

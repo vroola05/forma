@@ -216,7 +216,7 @@ export class CheckboxField extends InputNucleus {
             valid = false;
         }
 
-        this.setvalidationState(valid);
+        this.setValidationState(valid);
         
 
         return valid;

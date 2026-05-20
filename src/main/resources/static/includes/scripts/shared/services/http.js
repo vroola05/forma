@@ -5,10 +5,27 @@ export class ValidationError extends Error {
     constructor(message, fields) {
         super(message);
         this.name = "ValidationError";
-        this.fields = new Map();
-        Object.entries(fields).forEach(([key, waarde]) => {
-            this.fields.set(key, waarde);
+        
+        this.fields = this.#getFieldMap(fields);
+        
+    }
+
+    /**
+     * This function creates an object like map structure
+     * @param {*} errors 
+     * @returns 
+     */
+    #getFieldMap(errors) {
+        const fields = new Map();
+        Object.entries(errors).forEach(([key, waarde]) => {
+            if (typeof waarde === 'string' || Array.isArray(waarde)) {
+                fields.set(key, waarde);
+            } else {
+                fields.set(key, this.#getFieldMap(waarde));
+            }
         });
+
+        return fields;
     }
 
     getFields() {

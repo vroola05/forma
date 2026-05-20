@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -56,6 +55,7 @@ public class SecurityConfig {
             .securityMatcher("/system/**")
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
+                .requestMatchers(SecurityConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
                 .requestMatchers(
                     "/system/page/**",
                     "/system/admin",
@@ -95,6 +95,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers(SecurityConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
                 .requestMatchers(
+                    "/{tenantSlug}/public/**",
                     "/{tenantSlug}/page/**",
                     "/{tenantSlug}/admin",
                     "/{tenantSlug}/admin/page/**",

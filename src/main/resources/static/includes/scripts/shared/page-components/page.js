@@ -4,7 +4,7 @@ import { PageComponent } from './page-component.js';
 
 export class Page extends PageComponent {
     parameters = undefined;
-    content = '';
+    content = document.createElement('div');
     title = '';
 
     constructor() {

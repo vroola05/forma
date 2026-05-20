@@ -248,7 +248,7 @@ export class BuilderConditionsAutocompleteField extends InputNucleus {
             }
         }
 
-        this.setvalidationState(valid);
+        this.setValidationState(valid);
         return valid;
     }
 

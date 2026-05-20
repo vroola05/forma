@@ -9,11 +9,13 @@ import { HiddenField } from '../../shared/form-components/hidden-field.js';
 import { DateField } from '../../shared/form-components/date-field.js';
 import { TextAreaField } from '../../shared/form-components/textarea-field.js';
 import { CheckboxField } from '../../shared/form-components/checkbox-field.js';
+import { FileUploadField } from '../../shared/form-components/upload-field.js';
 
 import { FormGroup } from '../../shared/form-components/form-group.js';
 import { Form } from '../../shared/form-components/form.js';
 import { FormSummaryRenderer } from './form-summary-renderer.js';
 import { RepeatingGroup } from '../../shared/form-components/repeating-group.js';
+import { PasswordField } from '../../shared/form-components/password-field.js';
 
 export class FormRenderer {
 
@@ -23,7 +25,7 @@ export class FormRenderer {
             type: form.type,
             id: form.id,
             fields: FormRenderer.#getTabsData(form),
-            confirmationCheck: FormRenderer.#getFieldsData(form.getConfirmationCheck())
+            confirmationCheck: !form.getConfirmationCheck() ? undefined : FormRenderer.#getFieldsData(form.getConfirmationCheck())
         }
     }
 
@@ -42,14 +44,14 @@ export class FormRenderer {
     static #getTabFieldData(tabContent) {
         return tabContent.getFields().map(field => {
             if (field.type === 'form-group') {
-                return FormRenderer.#getFormGroupsData(field);
+                return FormRenderer.getGroupsData(field);
             } else {
-                return FormRenderer.#getFieldData(field);
+                return FormRenderer.getFieldData(field);
             }
         });
     }
 
-    static #getFormGroupsData(formGroup) {
+    static getGroupsData(formGroup) {
         return {
             name: formGroup.name,
             label: formGroup.label,
@@ -61,11 +63,11 @@ export class FormRenderer {
 
     static #getFieldsData(fields) {
         return fields.map(field => {
-           return FormRenderer.#getFieldData(field);
+           return FormRenderer.getFieldData(field);
         });
     }
 
-    static #getFieldData(field) {
+    static getFieldData(field) {
         if (field.type == 'repeating-group') {
             return {
                 name: field.name,
@@ -86,6 +88,15 @@ export class FormRenderer {
                     })
                 })
             };
+        } else if (field.type == 'file') {
+            return {
+                name: field.name,
+                type: field.type,
+                value: field.getFileNames(),
+                label: field.label,
+                classes: field.classes,
+                readonly: field.readonly
+            }
         } else {
             return {
                 name: field.name,
@@ -229,7 +240,49 @@ export class FormRenderer {
                     .setReadonly(fieldData.readonly)
                     .setValue(state ? state : fieldData.value, true)
                     .setShowConditions(fieldData.condition);
-                
+
+            case 'email':
+                return new TextField(fieldData.name, fieldData.label)
+                    .setType('email')
+                    .setMetadata(fieldData.metadata)
+                    .setData(fieldData.data)
+                    .setRequired(fieldData.required)
+                    .setClasses(fieldData.classes)
+                    .setMinLength(fieldData.minlength)
+                    .setMaxLength(fieldData.maxlength)
+                    .setLabel(fieldData.label)
+                    .setPlaceholder(fieldData.placeholder)
+                    .setReadonly(fieldData.readonly)
+                    .setValue(state ? state : fieldData.value, true)
+                    .setShowConditions(fieldData.condition);
+
+            case 'password':
+                return new PasswordField(fieldData.name, fieldData.label)
+                    .setMetadata(fieldData.metadata)
+                    .setData(fieldData.data)
+                    .setRequired(fieldData.required)
+                    .setClasses(fieldData.classes)
+                    .setMinLength(fieldData.minlength)
+                    .setMaxLength(fieldData.maxlength)
+                    .setLabel(fieldData.label)
+                    .setPlaceholder(fieldData.placeholder)
+                    .setReadonly(fieldData.readonly)
+                    .setValue(state ? state : fieldData.value, true)
+                    .setShowConditions(fieldData.condition);
+            case 'file':
+                return new FileUploadField(fieldData.name, fieldData.label)
+                    .setType('file')
+                    .setMetadata(fieldData.metadata)
+                    .setData(fieldData.data)
+                    .setClasses(fieldData.classes)
+                    .setRequired(fieldData.required)
+                    .setLabel(fieldData.label)
+                    .setPlaceholder(fieldData.placeholder)
+                    .setReadonly(fieldData.readonly)
+                    .setShowConditions(fieldData.condition)
+                    .setMultiple(fieldData.multiple)
+                    .setAccept(fieldData.extensions)
+                    .setMaxFileSize(fieldData.megaBytes);
             case 'radio':
                 return new RadioField(fieldData.name, fieldData.label, fieldData.classes)
                     .setType(fieldData.type)

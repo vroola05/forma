@@ -10,8 +10,13 @@ export class Footer {
 
 
     createContent() {
+        
+        this.footerContainer = document.createElement('div');
+        this.footerContainer.className = 'footer-container';
+
         this.buttonsContainer = document.createElement('div');
-        this.buttonsContainer.className = 'footer';
+        this.buttonsContainer.className = 'footer-buttons';
+        this.footerContainer. appendChild(this.buttonsContainer);
 
         this.buttonsContainerLeft = document.createElement('div');
         this.buttonsContainerLeft.className = 'buttons-container-left';
@@ -23,15 +28,18 @@ export class Footer {
     }
 
     render(buttons) {
+        
         this.buttonsContainerLeft.innerHTML = '';
         this.buttonsContainerRight.innerHTML = '';
 
         if (buttons) {
+            console.log('aaa', buttons);
             if (buttons.left.length == 0 && buttons.right.length == 0) {
                 this.buttonsContainer.parentNode.classList.add('hidden');
             } else {
                 this.buttonsContainer.parentNode.classList.remove('hidden');
             }
+            
             for (const button of buttons.left) {
                 this.#addButtonLeft(button);
             }
@@ -39,7 +47,6 @@ export class Footer {
                 this.#addButtonRight(button);
             }
         }
-        // buttons.left: [], right: [] }
     }
 
     #addButtonLeft(formButton) {
@@ -52,6 +59,6 @@ export class Footer {
     }
 
     getContent() {
-        return this.buttonsContainer;
+        return this.footerContainer;
     }
 }

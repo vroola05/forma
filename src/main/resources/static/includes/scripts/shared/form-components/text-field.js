@@ -75,7 +75,7 @@ export class TextField extends InputNucleus {
             }
         }
 
-        this.setvalidationState(valid);
+        this.setValidationState(valid);
         return valid;
     }
 
