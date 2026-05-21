@@ -59,11 +59,13 @@ services:
   sw_s3:
     image: chrislusf/seaweedfs:latest
     container_name: app_sw_s3
-    command: "s3 -filer=sw_filer:8888 -ip.bind=0.0.0.0 -port=8333"
+    command: "s3 -filer=sw_filer:8888 -ip.bind=0.0.0.0 -port=8333 -config=/etc/seaweedfs/s3.json"
     ports:
       - "8333:8333" # S3 API-poort voor Spring Boot
     depends_on:
       - sw_filer
+    volumes:
+      - ./s3.json:/etc/seaweedfs/s3.json:ro
     networks:
       - forma-network
 

@@ -9,7 +9,6 @@ import { AdminHeader } from '../../component/admin-header.js';
 import { Column, List, ListDefinition } from '../../../shared/generic-components/list.js';
 import { EventService } from '../../../shared/services/event-service.js';
 
-
 export class TenantPage extends SettingsPage {
 
     constructor() {
@@ -27,16 +26,21 @@ export class TenantPage extends SettingsPage {
             new Column('Active', 'boolean', 'active')
         ]));
 
+        this.tenantList.setOnClick((index, tenant) => {
+            Router.route(`/admin/page/tenant/edit/${tenant.slug}`);
+        });
         this.append(this.tenantList.getContent());
 
-        this.tenantList.setData([
-            {'name': 'Forma', 'slug': 'forma', 'active': true}
-        ]);
     }
 
     afterInit() {
-        
+        Http.post(`${Router.tenantPath}/api/tenant/list`, {})
+        .then((tenants) => {
+            this.tenantList.setData(tenants);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
     }
-
     
 }

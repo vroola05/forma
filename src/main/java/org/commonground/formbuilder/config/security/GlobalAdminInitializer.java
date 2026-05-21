@@ -31,7 +31,7 @@ public class GlobalAdminInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (userRepository.findByUsername(adminUsername).isEmpty()) {
+        if (userRepository.findByUsernameAndTenantId(adminUsername, null).isEmpty()) {
             UserEntity admin = new UserEntity();
             admin.setId(UUID.randomUUID());
             admin.setUsername(adminUsername);

@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.commonground.formbuilder.model.UserDetailsExtended;
+import org.commonground.formbuilder.model.settings.UserRole;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,30 +25,44 @@ public class SecurityService {
         throw new IllegalStateException("{auth.session_expired}");
     }
 
-    private Optional<UserDetailsExtended> getHuidigeGebruiker() {
+    private Optional<UserDetailsExtended> getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getPrincipal() instanceof UserDetailsExtended) {
+            System.out.println("Retrieving current user: " + ((UserDetailsExtended) auth.getPrincipal()).getUsername());
             return Optional.of((UserDetailsExtended) auth.getPrincipal());
         }
         return Optional.empty();
     }
 
-    public boolean heeftToegangTotTenant(UUID gevraagdeTenantId) {
-        return getHuidigeGebruiker()
-                .map(user -> user.getTenantId().equals(gevraagdeTenantId))
+    public boolean isTenantUser(UUID tenantId) {
+        System.out.println("Checking if user belongs to tenant: " + tenantId);
+        return getCurrentUser()
+                .map(user -> user.getTenantId().equals(tenantId))
                 .orElse(false);
     }
 
-    public boolean heeftRolInTenant(UUID gevraagdeTenantId, String vereisteRol) {
-        return getHuidigeGebruiker()
-                .map(user -> user.getTenantId().equals(gevraagdeTenantId) && 
+    public boolean hasRole(UserRole requiredRole) {
+        System.out.println("Checking if user has role: " + requiredRole);
+        return getCurrentUser()
+                .map(user -> user.getAuthorities().stream()
+                        .anyMatch(a -> a.getAuthority().equals(requiredRole.toString())))
+                .orElse(false);
+    }
+
+    public boolean hasTenantRole(UUID tenantId, UserRole requiredRole) {
+        System.out.println("Checking if user has role " + requiredRole + " for tenant: " + tenantId);
+        return getCurrentUser()
+                .map(user -> user.getTenantId().equals(tenantId) && 
                              user.getAuthorities().stream()
-                                 .anyMatch(a -> a.getAuthority().equals(vereisteRol)))
+                                 .anyMatch(a -> a.getAuthority().equals(requiredRole.toString())))
                 .orElse(false);
     }
 
-    public void valideerToegangTotTenant(UUID gevraagdeTenantId) {
-        if (!heeftToegangTotTenant(gevraagdeTenantId)) {
+    
+
+    public void validateAccessToTenant(UUID tenantId) {
+        System.out.println("Validating access to tenant: " + tenantId);
+        if (!isTenantUser(tenantId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "{auth.tenant_access_denied}");
         }
     }

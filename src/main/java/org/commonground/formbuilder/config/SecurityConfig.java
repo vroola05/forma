@@ -1,6 +1,6 @@
 package org.commonground.formbuilder.config;
 
-import org.commonground.formbuilder.config.tenant.SecurityTenantFilter;
+// import org.commonground.formbuilder.config.tenant.SecurityTenantFilter;
 import org.commonground.formbuilder.services.TenantUserDetailsService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -23,19 +23,19 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final HandlerExceptionResolver resolver;
-    private final SecurityTenantFilter securityTenantFilter;
+    // private final SecurityTenantFilter securityTenantFilter;
     private final TenantUserDetailsService tenantUserDetailsService;
     private final PasswordEncoder passwordEncoder;
 
     // Injecteer de volledig door Spring opgebouwde filter
     public SecurityConfig(
             @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver,
-            SecurityTenantFilter securityTenantFilter,
+            // SecurityTenantFilter securityTenantFilter,
             TenantUserDetailsService tenantUserDetailsService,
             PasswordEncoder passwordEncoder) {
 
         this.resolver =  resolver;
-        this.securityTenantFilter = securityTenantFilter;
+        // this.securityTenantFilter = securityTenantFilter;
         this.tenantUserDetailsService = tenantUserDetailsService;
         this.passwordEncoder = passwordEncoder;
 
@@ -55,7 +55,7 @@ public class SecurityConfig {
             .securityMatcher("/system/**")
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers(SecurityConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
+                .requestMatchers(AppConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
                 .requestMatchers(
                     "/system/page/**",
                     "/system/admin",
@@ -90,10 +90,11 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain tenantAndPublicFilterChain(HttpSecurity http) throws Exception {
+        System.out.println("Configuring tenant and public security filter chain");
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers(SecurityConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
+                .requestMatchers(AppConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
                 .requestMatchers(
                     "/{tenantSlug}/public/**",
                     "/{tenantSlug}/page/**",
@@ -103,7 +104,7 @@ public class SecurityConfig {
                     "/{tenantSlug}/api/language/nl").permitAll()
                 .requestMatchers(
                     "/{tenantSlug}/admin/**",
-                    "/{tenantSlug}/api/**").hasAnyRole("TENANT_ADMIN", "TENANT_USER")
+                    "/{tenantSlug}/api/**").hasAnyRole("GLOBAL_ADMIN", "TENANT_ADMIN", "TENANT_USER")
                 
                 .anyRequest().denyAll()
             )
@@ -112,10 +113,10 @@ public class SecurityConfig {
                         resolver.resolveException(req, res, null, new ResponseStatusException(
                                 HttpStatus.UNAUTHORIZED, "{login.failure}"))
             ))
-            .addFilterBefore(this.securityTenantFilter, UsernamePasswordAuthenticationFilter.class)
+            // .addFilterBefore(this.securityTenantFilter, UsernamePasswordAuthenticationFilter.class)
             .formLogin(form -> form
                 .loginPage("/{tenantSlug}/admin/page/login")
-                .loginProcessingUrl("/{tenantSlug}/admin/api/login")
+                .loginProcessingUrl("/{tenantSlug}/api/login")
                 .successHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
                 .failureHandler((req, res, authException) -> 
                         resolver.resolveException(req, res, null, new ResponseStatusException(

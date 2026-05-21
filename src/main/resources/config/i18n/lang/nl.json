@@ -39,6 +39,7 @@
 
     "tenant.title": "Tenants",
     "tenant.new.title": "Nieuwe tenant",
+    "tenant.edit.title": "Tenant bewerken",
     "tenant.field.name": "Tenant naam",
     "tenant.field.slug": "Tenant url-naam",
     "tenant.field.logo": "Logo",

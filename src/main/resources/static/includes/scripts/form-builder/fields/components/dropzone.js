@@ -221,7 +221,7 @@ export class Dropzone {
             if (index !== -1) {
                 builderChildFields.splice(index, 1);
                 this.domElement.removeChild(field.getContent());
-                EventService.callEventListener('field-deleted', this);
+                EventService.emit('field-deleted', this);
             }
         }
     }

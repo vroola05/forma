@@ -1,7 +1,9 @@
 package org.commonground.formbuilder.services;
 
+import java.util.List;
 import java.util.UUID;
 
+import org.commonground.formbuilder.config.AppConstants;
 import org.commonground.formbuilder.database.dao.settings.TenantEntity;
 import org.commonground.formbuilder.database.repository.TenantRepository;
 import org.commonground.formbuilder.mapper.TenantMapper;
@@ -11,6 +13,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class TenantServiceDatabase implements TenantService {
@@ -26,21 +30,37 @@ public class TenantServiceDatabase implements TenantService {
     }
 
     @Override
-    @Cacheable(value = "tenants", key = "#slug")
-    public Tenant get(String tenantSlug) {
+    public List<Tenant> getAll() {
+        List<TenantEntity> tenantEntities = this.tenantRepository.findAll();
+        return tenantMapper.toResponseDtoList(tenantEntities);
+    }
 
-        if ("system".equals(tenantSlug)) {
+    @Override
+    @Cacheable(cacheNames = "tenants", key = "#p0")
+    public TenantEntity get(UUID id) {
+        
+        
+        return tenantRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{tenant.error.not_found}"));
+    }
+
+    @Override
+    @Cacheable(value = "tenants", key = "#slug")
+    public Tenant get(String slug) {
+        // Return empty tenant for system tenant, as this is not stored in the database
+        if (AppConstants.SYSTEM_TENANT_SLUG.equals(slug)) {
             Tenant tenant = new Tenant();
             return tenant;
         }
-        TenantEntity tenantEntity = this.tenantRepository.findBySlug(tenantSlug)
+
+        TenantEntity tenantEntity = this.tenantRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{tenant.error.not_found}"));
 
         return tenantMapper.toResponseDto(tenantEntity);
     }
 
     @Override
-    @CacheEvict(value = "tenants", key = "#tenant.slug")
+    @CacheEvict(value = "tenants", key = "#p0.slug")
     public Tenant save(Tenant tenant) {
         TenantEntity tenantEntity;
         if (tenant.getId() == null) {
@@ -54,6 +74,13 @@ public class TenantServiceDatabase implements TenantService {
         }
         
         return tenantMapper.toResponseDto(tenantEntity);
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(value = "tenants", key = "#p0.slug")
+    public TenantEntity save(TenantEntity tenantEntity) {
+        return this.tenantRepository.save(tenantEntity);
     }
     
 }

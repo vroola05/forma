@@ -57,7 +57,7 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
         builderFormGroupHeaderBarButtons.appendChild(builderFormGroupBtnEdit);
         builderFormGroupBtnEdit.addEventListener('click', (event) => {
             event.preventDefault();
-            EventService.callEventListener('properties-changed', this);
+            EventService.emit('properties-changed', this);
         });
 
         const builderFormGroupBtnClose = document.createElement('button');
@@ -123,7 +123,7 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
     }
 
     updateFormGroup() {
-        EventService.callEventListener('field-changed', this);
+        EventService.emit('field-changed', this);
     }
 
     getData() {

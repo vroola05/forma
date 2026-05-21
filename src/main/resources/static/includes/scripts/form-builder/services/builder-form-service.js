@@ -1,8 +1,8 @@
-import { ObservableState } from '../../shared/services/observable-state.js';
+import { Observable } from '../../shared/services/observable.js';
 
 export class BuilderFormService {
-    static #builderForm = new ObservableState(undefined);
-    static #formWrapper = new ObservableState(undefined);
+    static #builderForm = new Observable(undefined);
+    static #formWrapper = new Observable(undefined);
     
     static getBuilderForm() {
         return this.#builderForm.value;

@@ -40,6 +40,7 @@
         import { DashboardPage } from '/includes/scripts/form-builder/page-components/dashboard/dashboard-page.js';
         import { TenantPage } from '/includes/scripts/form-builder/page-components/tenant/tenant-page.js';
         import { TenantPageNew } from '/includes/scripts/form-builder/page-components/tenant/tenant-page-new.js';
+        import { TenantPageEdit } from '/includes/scripts/form-builder/page-components/tenant/tenant-page-edit.js';
         import { FormDashboard } from '/includes/scripts/form-builder/page-components/builder/form-dashboard-page.js';
         import { FormPage } from '/includes/scripts/form-viewer/page-components/form-page.js';
         import { RevisionPage } from '/includes/scripts/form-builder/page-components/revision.js';
@@ -50,7 +51,7 @@
         import { BuilderPageSettingsMail } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-mail.js';
         import { BuilderPageSettingsPayment } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-payment.js';
         import { BuilderPageSettingsRegistration } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-registration.js';
-        // import { BuilderPageSettingsSuccess } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-success.js';
+        import { BuilderPageSettingsSuccess } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-success.js';
         
         
         new Main([
@@ -59,7 +60,8 @@
             {'path': '/admin/page/login', 'page': LoginPage},
             {'path': '/admin/page/tenant', 'page': TenantPage},
             {'path': '/admin/page/tenant/new', 'page': TenantPageNew},
-            {'path': '/admin/page/form', 'page': FormDashboard},
+            {'path': '/admin/page/tenant/edit/:slug', 'page': TenantPageEdit},
+            {'path': '/admin/page/forms', 'page': FormDashboard},
             {
                 'path': '/admin/page/form-builder/:formName', 'page': BuilderPage,
                 'routes': [
@@ -67,7 +69,7 @@
                     {'path': '/settings-generic', 'page': BuilderPageSettingsGeneric},
                     {'path': '/settings-login', 'page': BuilderPageSettingsLogin},
                     {'path': '/settings-mail', 'page': BuilderPageSettingsMail},
-                    // {'path': '/settings-success', 'page': BuilderPageSettingsSuccess},
+                    {'path': '/settings-success', 'page': BuilderPageSettingsSuccess},
                     {'path': '/settings-registration', 'page': BuilderPageSettingsRegistration},
                     {'path': '/settings-payment', 'page': BuilderPageSettingsPayment},
                 ]

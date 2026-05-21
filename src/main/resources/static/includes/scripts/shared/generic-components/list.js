@@ -21,6 +21,8 @@ export class ListDefinition {
 export class List {
     builderList = document.createElement('div');
 
+    data = [];
+
     constructor(tableDefinition) {
         this.tableDefinition = tableDefinition;
 
@@ -69,20 +71,31 @@ export class List {
         return this.builderList;
     }
 
+    setOnClick(onClick) {
+        this.onClick = onClick;
+    }
+
     setData(data = []) {
+        this.data = data;
         this.builderListBody.innerHTML = '';
 
-        for (const row of data) {
-            this.builderListBody.appendChild(this.createDataRow(row));
+        for (const [index, row] of data.entries()) {
+            this.builderListBody.appendChild(this.createDataRow(index, row));
         }
     }
 
-    createDataRow(row) {
+    createDataRow(index, row) {
         const builderListRow = document.createElement('div');
         builderListRow.className = 'builder-list-row';
-        console.log(this.tableDefinition.columns);
+        builderListRow.dataset.index = index;
+        builderListRow.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (this.onClick) {
+                this.onClick(index, row);
+            }
+        });
+
         for (const column of this.tableDefinition.columns) {
-            console.log(column.fieldName in row)
             if (column.fieldName in row) {
                 const builderListCol = document.createElement('div');
                 builderListCol.className = 'builder-list-column';
@@ -90,7 +103,6 @@ export class List {
                 builderListRow.append(builderListCol);
             }
         }
-        
 
         return builderListRow;
     }

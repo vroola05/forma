@@ -1,5 +1,6 @@
 package org.commonground.formbuilder.mapper;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.commonground.formbuilder.database.dao.settings.TenantEntity;
@@ -18,7 +19,6 @@ public class TenantMapper {
         entity.setSlug(dto.getSlug());
         entity.setName(dto.getName());
         entity.setActive(dto.isActive());
-        entity.setLogo(dto.getLogo());
         entity.setHomePage(dto.getHomePage());
         entity.setEmail(dto.getEmail());
         
@@ -28,12 +28,20 @@ public class TenantMapper {
     public void updateEntityFromDto(Tenant dto, TenantEntity entity) {
         if (dto == null || entity == null) return;
 
-        entity.setSlug(dto.getSlug());
         entity.setName(dto.getName());
         entity.setActive(dto.isActive());
-        entity.setLogo(dto.getLogo());
         entity.setHomePage(dto.getHomePage());
         entity.setEmail(dto.getEmail());
+    }
+
+    public List<Tenant> toResponseDtoList(List<TenantEntity> tenantEntities) {
+        if (tenantEntities == null) {
+            return null;
+        }
+
+        return tenantEntities.stream()
+                .map(this::toResponseDto)
+                .toList();
     }
 
     public Tenant toResponseDto(TenantEntity tenantEntity) {
@@ -45,9 +53,9 @@ public class TenantMapper {
         dto.setId(tenantEntity.getId());
         dto.setSlug(tenantEntity.getSlug());
         dto.setName(tenantEntity.getName());
-        dto.setActive(tenantEntity.isActive());
-        dto.setLogo(tenantEntity.getLogo());
+        dto.setEmail(tenantEntity.getEmail());
         dto.setHomePage(tenantEntity.getHomePage());
+        dto.setActive(tenantEntity.isActive());
 
         return dto;
     }

@@ -194,7 +194,7 @@ export class BuilderPropertiesOptionsType {
                 props.value[index] = this.getOption(list[index]);
             }
 
-            EventService.callEventListener('value-changed', this.field, this.property);
+            EventService.emit('value-changed', this.field, this.property);
         };
 
         return column;
@@ -209,7 +209,7 @@ export class BuilderPropertiesOptionsType {
         });
 
         this.property.value = options;
-        EventService.callEventListener('value-changed', this.field, this.property);
+        EventService.emit('value-changed', this.field, this.property);
     }
 
     getOption(row) {

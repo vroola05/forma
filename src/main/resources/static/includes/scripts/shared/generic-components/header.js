@@ -3,11 +3,24 @@ import { EventService } from '../../shared/services/event-service.js';
 import { Lang } from '../../shared/services/lang.js';
 import { FormButton } from '../../shared/form-components/components/form-button.js';
 
+import { headerService } from '../services/header-service.js';
+
 export class Header {
     
     constructor() {
         this.createContent();
         
+        headerService.logoSubscribe((logoSrc) => {
+            if(logoSrc) {
+                this.headerLogo.src = logoSrc;
+            }
+            
+        });
+
+        EventService.addEventListener('change-logo', (logoSrc) => {
+            this.headerLogo.src = logoSrc;
+        });
+
         EventService.addEventListener('header-buttons-left', (formButtons) => {
             this.navbarNavLeft.innerHTML = '';
             for (const formButton of formButtons) {
@@ -34,6 +47,10 @@ export class Header {
         this.headerLogo = document.createElement('img');
         this.headerLogo.className = 'header-logo';
         this.headerLogo.src = '/includes/images/logo.svg';
+        this.headerLogo.onerror = () => {
+            console.warn('Failed to load header logo, using default');
+            this.headerLogo.src = '/includes/images/logo.svg';
+        };
         this.logoContainer.appendChild(this.headerLogo);
 
         this.navbar = document.createElement('nav');

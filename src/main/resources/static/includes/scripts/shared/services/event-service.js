@@ -9,7 +9,7 @@ export class EventService {
         EventService.#eventListeners[event].push(callback);
     }
 
-    static callEventListener(event, value) {
+    static emit(event, value) {
         if (event in EventService.#eventListeners) {
 
             EventService.#eventListeners[event].forEach(callback => {

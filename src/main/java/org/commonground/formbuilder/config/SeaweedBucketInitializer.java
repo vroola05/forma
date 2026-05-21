@@ -1,6 +1,9 @@
 package org.commonground.formbuilder.config;
 
 import io.awspring.cloud.s3.S3Template;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.BucketAlreadyExistsException;
 import software.amazon.awssdk.services.s3.model.BucketAlreadyOwnedByYouException;
@@ -11,6 +14,7 @@ import software.amazon.awssdk.services.s3.model.LifecycleRule;
 import software.amazon.awssdk.services.s3.model.LifecycleRuleFilter;
 import software.amazon.awssdk.services.s3.model.PutBucketLifecycleConfigurationRequest;
 
+import java.net.URI;
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +25,30 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SeaweedBucketInitializer {
 
+    @Value("${spring.cloud.aws.credentials.access-key}")
+    private String accessKey;
+
+    @Value("${spring.cloud.aws.credentials.secret-key}")
+    private String secretKey;
+
+    @Value("${spring.cloud.aws.s3.endpoint}")
+    private String s3Endpoint;
+
+    @Bean
+    public S3Client s3Client() {
+        AwsBasicCredentials credentials = AwsBasicCredentials.create(
+                accessKey, 
+                secretKey
+        );
+
+        return S3Client.builder()
+                .credentialsProvider(StaticCredentialsProvider.create(credentials))
+                .endpointOverride(URI.create(s3Endpoint))
+                .region(Region.US_EAST_1)
+                .forcePathStyle(true)
+                .build();
+    }
+    
     @Bean
     public CommandLineRunner initBucket(
 

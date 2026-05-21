@@ -33,7 +33,6 @@ export class Footer {
         this.buttonsContainerRight.innerHTML = '';
 
         if (buttons) {
-            console.log('aaa', buttons);
             if (buttons.left.length == 0 && buttons.right.length == 0) {
                 this.buttonsContainer.parentNode.classList.add('hidden');
             } else {

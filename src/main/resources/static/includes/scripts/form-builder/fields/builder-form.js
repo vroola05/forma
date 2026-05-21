@@ -62,7 +62,7 @@ export class BuilderForm extends BuilderFieldInterface {
         builderFormHeaderBarButtons.appendChild(builderFormBtnEdit);
         builderFormBtnEdit.addEventListener('click', (event) => {
             event.preventDefault();
-            EventService.callEventListener('properties-changed', this);
+            EventService.emit('properties-changed', this);
         });
 
         const tabLabel = this.createTabLabel();
@@ -116,7 +116,7 @@ export class BuilderForm extends BuilderFieldInterface {
                 this.builderChildFields.splice(droppedIndex, 0, draggedItem);
             }
 
-            EventService.callEventListener('field-changed', this);
+            EventService.emit('field-changed', this);
         };
 
         this.tabLabelCompontent.onActivateCallback = (tabLabelItem) => {
@@ -130,7 +130,7 @@ export class BuilderForm extends BuilderFieldInterface {
         };
 
         this.tabLabelCompontent.onDeleteCallback = (tabLabelItem) => {
-            EventService.callEventListener('properties-changed', null);
+            EventService.emit('properties-changed', null);
             const index = this.builderChildFields.findIndex(bf => bf.getTabLabelItem() === tabLabelItem);
             
             if (index !== -1) {
@@ -143,7 +143,7 @@ export class BuilderForm extends BuilderFieldInterface {
 
                 this.builderChildFields.splice(index, 1);
                 
-                EventService.callEventListener('field-deleted', this);
+                EventService.emit('field-deleted', this);
 
             }
         };

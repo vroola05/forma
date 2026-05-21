@@ -35,7 +35,7 @@ CREATE TABLE tenant (
 CREATE TABLE users (
     id UUID PRIMARY KEY,
     tenant_id UUID REFERENCES tenant(id),
-    name TEXT NOT NULL,
+    name TEXT,
     username TEXT NOT NULL,
     password TEXT NOT NULL,
     email TEXT NOT NULL,

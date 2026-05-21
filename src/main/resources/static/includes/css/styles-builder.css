@@ -326,6 +326,8 @@ Styles voor builder.js
             width: 100%;
             border-bottom: var(--border-grey) solid 1px;
 
+            cursor: pointer;
+
             .builder-list-column {
                 flex: 1;
 

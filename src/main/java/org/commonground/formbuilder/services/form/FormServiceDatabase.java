@@ -15,7 +15,8 @@ import org.commonground.formbuilder.model.form.FieldType;
 import org.commonground.formbuilder.model.form.Form;
 import org.commonground.formbuilder.model.form.Option;
 import org.commonground.formbuilder.model.form.TabPage;
-import org.commonground.formbuilder.model.settings.Tenant;
+import org.commonground.formbuilder.model.settings.UserRole;
+import org.commonground.formbuilder.services.SecurityService;
 import org.commonground.formbuilder.services.formConfig.FormConfigSuccessPageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -27,17 +28,19 @@ import jakarta.transaction.Transactional;
 public class FormServiceDatabase implements FormService {
     private final FormDefinitionRepository formDefinitionRepository;
     private final FormConfigSuccessPageService formConfigSuccessPageService;
-
+    private final SecurityService securityService;
     private final TabPageService tabPageService;
 
     public FormServiceDatabase(
             TabPageService tabPageService,
             FormConfigSuccessPageService formConfigSuccessPageService,
+            SecurityService securityService,
             FormDefinitionRepository formDefinitionRepository) {
 
         this.formDefinitionRepository = formDefinitionRepository;
         this.tabPageService = tabPageService;
         this.formConfigSuccessPageService = formConfigSuccessPageService;
+        this.securityService = securityService;
     }
 
     public FormDefinitionEntity getFormDefinitionById(UUID id) {
@@ -47,7 +50,10 @@ public class FormServiceDatabase implements FormService {
 
     @Override
     @Transactional
-    public String save(Tenant tenant, FormWrapper formWrapper) {
+    public FormWrapper save(UUID tenantId, FormWrapper formWrapper) {
+        if (!securityService.hasRole(UserRole.ROLE_GLOBAL_ADMIN)) {
+            securityService.validateAccessToTenant(tenantId);
+        }
 
         Form form = formWrapper.getForm();
         FormDefinitionEntity formDefinitionEntity = form.getId() == null
@@ -57,7 +63,7 @@ public class FormServiceDatabase implements FormService {
         if (form.getId() == null) {
             formDefinitionEntity.setId(UUID.randomUUID());
         }
-        formDefinitionEntity.setTenantId(tenant.getId());
+        formDefinitionEntity.setTenantId(tenantId);
         formDefinitionEntity.setName(form.getName());
         formDefinitionEntity.setLabel(form.getLabel());
         formDefinitionEntity.setClasses(form.getClasses());
@@ -78,7 +84,7 @@ public class FormServiceDatabase implements FormService {
         FormConfig formConfig = formWrapper.getFormConfig();
         if (formConfig != null) {
             if (formConfig.getFormConfigSuccessPage() != null) {
-                this.formConfigSuccessPageService.save(formDefinitionEntity, formConfig.getFormConfigSuccessPage());
+                this.formConfigSuccessPageService.save(resultEntity, formConfig.getFormConfigSuccessPage());
             }
         }
 
@@ -102,6 +108,7 @@ public class FormServiceDatabase implements FormService {
             formList.setId(formDefinitionEntity.getId());
             formList.setName(formDefinitionEntity.getName());
             formList.setLabel(formDefinitionEntity.getLabel());
+            formList.setActive(true);
             formLists.add(formList);
         });
 

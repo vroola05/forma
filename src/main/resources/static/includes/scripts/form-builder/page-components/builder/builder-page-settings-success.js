@@ -43,7 +43,7 @@ export class BuilderPageSettingsSuccess extends PageComponent {
         BuilderFormService.setFormWrapper(formWrapper);
 
 
-        EventService.callEventListener('settings-changed', data);
+        EventService.emit('settings-changed', data);
     }
 
     /**

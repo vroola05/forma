@@ -38,6 +38,7 @@
 
     "tenant.title": "Tenants",
     "tenant.new.title": "New tenant",
+    "tenant.edit.title": "Edit tenant",
     "tenant.field.name": "Tenant name",
     "tenant.field.slug": "Tenant url-name",
     "tenant.field.logo": "Logo",

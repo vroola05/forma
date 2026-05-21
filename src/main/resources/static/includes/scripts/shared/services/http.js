@@ -39,28 +39,39 @@ export class Http {
         return match ? decodeURIComponent(match[1]) : null;
     }
 
+    
     static #request(url, method, body = null, options = {}) {
         const isObject = body !== null && typeof body === 'object';
 
         let defaultContentType = 'application/json';
         if (body instanceof URLSearchParams) {
             defaultContentType = 'application/x-www-form-urlencoded';
+        } else if (body instanceof FormData) {
+            defaultContentType = null;
         }
 
         const headers = {
-            'Content-Type': defaultContentType,
             ...options.headers
         };
+
+        if (defaultContentType && !headers['Content-Type']) {
+            headers['Content-Type'] = defaultContentType;
+        }
+
+        if (body instanceof FormData) {
+            delete headers['Content-Type'];
+        }
 
         const fetchOptions = {
             method: method,
             headers: headers,
-            ...options
+            ...options,
+            body: body
         };
 
         if (method !== 'GET' && body !== null) {
-            fetchOptions.body = (isObject && !(body instanceof URLSearchParams)) 
-                ? JSON.stringify(body) 
+            fetchOptions.body = (isObject && !(body instanceof URLSearchParams || body instanceof FormData))
+                ? JSON.stringify(body)
                 : body;
         }
 
@@ -116,4 +127,8 @@ export class Http {
     static put(url, body, options = {}) {
         return this.#request(url, 'PUT', body, options);
     }
-}
+
+    static patch(url, body, options = {}) {
+        return this.#request(url, 'PATCH', body, options);
+    }
+}   

@@ -8,13 +8,13 @@ export class AdminHeader extends Header {
     
     constructor() {
         super();
-        EventService.callEventListener('header-buttons-left', [
-            new FormButton('Formulieren', null, '/admin/page/form'),
+        EventService.emit('header-buttons-left', [
+            new FormButton('Formulieren', null, '/admin/page/forms'),
             new FormButton('Tenants', null, '/admin/page/tenant')
 
         ]);
 
-        EventService.callEventListener('header-buttons-right', [
+        EventService.emit('header-buttons-right', [
             new FormButton('Instellingen', null, '/admin/page/form')
         ]);
     }

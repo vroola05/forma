@@ -112,7 +112,6 @@ export class Router {
             path = path.slice(Router.basePath.length) || "/";
         }
         
-        console.log('path', path, Router.#tenantSlug);
         if (!path.startsWith(`/${Router.#tenantSlug}`)) {
             path = `/${Router.#tenantSlug}${path}`;
         }

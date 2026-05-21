@@ -1,4 +1,4 @@
-export class ObservableState {
+export class Observable {
     #value = undefined;
     #subscribers = [];
 

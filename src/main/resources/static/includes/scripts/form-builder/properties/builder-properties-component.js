@@ -258,7 +258,7 @@ export class BuilderPropertyComponent {
                 }
             }
             
-            EventService.callEventListener('value-changed', this.field, property);
+            EventService.emit('value-changed', this.field, property);
         } catch(error) {
             // input.classList.add('is-invalid');
         }

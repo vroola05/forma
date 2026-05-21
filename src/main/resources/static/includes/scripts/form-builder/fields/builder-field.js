@@ -48,7 +48,7 @@ export class BuilderField extends BuilderFieldInterface {
         builderFieldHeaderBarButtons.appendChild(formItemProperties);
         formItemProperties.addEventListener('click', (event) => {
             event.preventDefault();
-            EventService.callEventListener('properties-changed', this);
+            EventService.emit('properties-changed', this);
         });
 
         const formItemClose = document.createElement('button');

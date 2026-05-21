@@ -2,10 +2,12 @@ package org.commonground.formbuilder.config;
 
 import java.util.List;
 
-public class SecurityConstants {
-    private SecurityConstants() {
+public class AppConstants {
+    private AppConstants() {
     }
 
+    public static final String SYSTEM_TENANT_SLUG = "system";
+    
     public static final List<String> PUBLIC_MATCHERS = List.of(
         "/",
         "/index.html",

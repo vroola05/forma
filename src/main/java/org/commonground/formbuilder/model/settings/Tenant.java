@@ -27,7 +27,6 @@ public class Tenant {
         message = "{validation.slug}"
     )
     private String slug;
-    private String logo;
     private String homePage;
 
     private boolean active;
