@@ -1,6 +1,7 @@
 import { Nucleus } from './nucleus.js';
 import { FormService } from '../../../form-viewer/services/form-service.js';
 import { Lang } from '../../services/lang.js';
+
 export const InputLayout = ['no-label', 'layout-row', 'layout-column'];
 
 export class InputNucleus extends Nucleus {
@@ -27,10 +28,10 @@ export class InputNucleus extends Nucleus {
         super(name, label);
     }
 
-    createInput(inputElement) {
+    createInput(inputElement = undefined) {
         this.content.className = ' ' + (!this.classes ? '' : this.classes);
         this.content.classList.add('field-wrapper');
-        this.setLayout(InputLayout[0])
+        this.setLayout(InputLayout[0]);
 
         // Label
         this.labelElement.className = 'col-form-label field-wrapper-label';
@@ -46,7 +47,10 @@ export class InputNucleus extends Nucleus {
 
         
 
-        this.inputWrapper.appendChild(inputElement);
+        if (inputElement) {
+            this.inputWrapper.appendChild(inputElement);
+        }
+
         this.inputWrapper.appendChild(this.feedbackElement);
         this.content.appendChild(this.labelElement);
         this.content.appendChild(this.inputWrapper);
@@ -228,10 +232,16 @@ export class InputNucleus extends Nucleus {
 
     setValidationState(valid) {
         if (valid == false) {
+            this.feedbackElement.classList.remove('is-valid');
+            this.feedbackElement.classList.add('is-invalid');
+
             this.inputElement.classList.remove('is-valid');
             this.inputElement.classList.add('is-invalid');
             this.feedbackElement.innerHTML = this.errors.join('<br />');
         } else {
+            this.feedbackElement.classList.remove('is-invalid');
+            this.feedbackElement.classList.add('is-valid');
+            
             this.inputElement.classList.remove('is-invalid');
             this.inputElement.classList.add('is-valid');
             this.feedbackElement.textContent = '';

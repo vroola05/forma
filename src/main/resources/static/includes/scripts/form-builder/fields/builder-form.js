@@ -17,10 +17,14 @@ export class BuilderForm extends BuilderFieldInterface {
             {type: 'list', id: 'confirmation', label: Lang.get('prop.summary.confirmation.label'), value: []}
         ]);
 
+
         this.createContent();
+        
     }
 
     init(properties) {
+        this.fieldProperties.setPropertyValueById('name', Lang.get('field.type.form.form').toLowerCase().replace(/\s+/g, '-'));
+        this.fieldProperties.setPropertyValueById('label', Lang.get('field.type.form.form'));
         if (properties) {
             this.initDefaultProperties(properties);
 
@@ -31,6 +35,7 @@ export class BuilderForm extends BuilderFieldInterface {
                 });
             }
         }
+        
     }
 
     createContent() {
@@ -50,7 +55,6 @@ export class BuilderForm extends BuilderFieldInterface {
         this.builderFormFieldHeaderBarLabel.className = 'builder-form-header-bar-label';
         builderFormHeaderBar.appendChild(this.builderFormFieldHeaderBarLabel);
         this.setLabel();
-
 
         const builderFormHeaderBarButtons = document.createElement('div');
         builderFormHeaderBarButtons.className = 'builder-form-header-bar-buttons';
@@ -81,6 +85,24 @@ export class BuilderForm extends BuilderFieldInterface {
         builderFormTabContainerInner.appendChild(this.builderFormTab);
     }
 
+    getUniqueName(label, property = 'name', cleanLabel = false, seperator = '-') {
+        let baseLabel = cleanLabel
+            ? label.toLowerCase().trim().replace(/\s+/g, '-')
+            : label;
+
+        const existingNames = this.builderChildFields.map(f => f.getPropertyValueById(property));
+
+        let index = 1;
+        let newName = `${baseLabel}${seperator}${index}`;
+
+        while (existingNames.includes(newName)) {
+            index++;
+            newName = `${baseLabel}${seperator}${index}`;
+        }
+
+        return newName;
+    }
+
     /**
      * Create thet tabComponents
      * @returns 
@@ -92,9 +114,12 @@ export class BuilderForm extends BuilderFieldInterface {
         this.tabLabelCompontent.onCreateCallback = (tabLabelItem) => {
             
             const tabPage = new BuilderTabPage('tab', tabLabelItem.getLabel());
-            
             tabLabelItem.setTabPage(tabPage);
             tabPage.setTabLabelItem(tabLabelItem);
+            tabPage.setPropertyValueById('name', this.getUniqueName(Lang.get('tab.new'), 'name', true));
+            const label = this.getUniqueName(Lang.get('tab.new'), 'label', false, ' ');
+            tabPage.setPropertyValueById('label', label);
+            tabLabelItem.setLabel(label);
 
             tabPage.onFieldChanged = (properties) => {
                 if (this.onPropertiesChangedCallback) {

@@ -7,7 +7,7 @@ import org.commonground.formbuilder.database.dao.definition.FormDefinitionEntity
 import org.commonground.formbuilder.database.dao.submission.FormSubmissionEntity;
 import org.commonground.formbuilder.database.repository.FormDefinitionRepository;
 import org.commonground.formbuilder.database.repository.FormSubmissionRepository;
-import org.commonground.formbuilder.model.form.Form;
+import org.commonground.formbuilder.model.form.fields.Form;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;

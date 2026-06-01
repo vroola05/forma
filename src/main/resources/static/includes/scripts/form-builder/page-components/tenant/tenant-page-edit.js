@@ -82,15 +82,16 @@ export class TenantPageEdit extends SettingsPage {
                                     "value": tenant?.homePage
                                 },
                                 {
-                                    "name": "active",
-                                    "label": Lang.get('generic.active'),
+                                    "name": "status",
+                                    "label": Lang.get('generic.status'),
                                     "type": "radio",
                                     "required": true,
                                     "options": [
-                                        { 'value': 'true', 'text': Lang.get('generic.yes') },
-                                        { 'value': 'false', 'text': Lang.get('generic.no') }
+                                        { 'value': 'ACTIVE', 'text': Lang.get('generic.status.active') },
+                                        { 'value': 'SUSPENDED', 'text': Lang.get('generic.status.suspended') },
+                                        { 'value': 'PENDING_DELETION', 'text': Lang.get('generic.status.pending.deletion') }
                                     ],
-                                    "value": tenant?.active ? 'true' : 'false'
+                                    "value": tenant?.status
                                 },
                                 {
                                     "name": "email",
@@ -103,7 +104,7 @@ export class TenantPageEdit extends SettingsPage {
                         }
                     ]
                 }
-            ]
+            ]   
         });
 
         this.append(
@@ -111,10 +112,6 @@ export class TenantPageEdit extends SettingsPage {
         );
     }
 
-    isActive(options) {
-        return options && options.find(o=>o.value === 'true') ? true : false;
-        
-    }
 
     postTenant() {
         if (!this.tenant && !this.tenant.id) {
@@ -133,7 +130,7 @@ export class TenantPageEdit extends SettingsPage {
         this.tenant.name = tenantGroup.getFieldValue('name');
         this.tenant.slug = tenantGroup.getFieldValue('slug');
         this.tenant.homePage = tenantGroup.getFieldValue('home-page');
-        this.tenant.active = this.isActive(tenantGroup.getFieldValue('active'));
+        this.tenant.status = tenantGroup.getFieldValue('status');
         this.tenant.email = tenantGroup.getFieldValue('email');
         console.log(this.tenant);
 

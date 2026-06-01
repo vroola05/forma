@@ -110,7 +110,7 @@ export class BuilderPropertyComponent {
         inputWrapper.appendChild(inputErrors);
 
         this.fieldPropertiesContainer.appendChild(wrapper);
-        this.validate(property, input);
+        // this.validate(property, input);
     }
 
     getPropertyDom(property) {
@@ -214,6 +214,7 @@ export class BuilderPropertyComponent {
         input.className = 'form-control';
 
         input.onchange = (event) => {
+            console.log('Property changed:', property, 'New value:', event.target.value);
             const prop = this.field.fieldProperties.properties[event.target.dataset.id];
             if (prop) {
                 prop.value = event.target.value;

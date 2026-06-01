@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.commonground.formbuilder.database.dao.definition.FormTabDefinitionEntity;
-import org.commonground.formbuilder.model.form.Field;
+import org.commonground.formbuilder.model.form.fields.Field;
 
 public interface FieldService {
     public List<Field> get(UUID tabPageId);

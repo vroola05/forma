@@ -31,7 +31,6 @@
                 <div class="loader-message">Even geduld...</div>
             </div>
         </div>
-
     </body>
 
     <script type="module">
@@ -41,9 +40,13 @@
         import { TenantPage } from '/includes/scripts/form-builder/page-components/tenant/tenant-page.js';
         import { TenantPageNew } from '/includes/scripts/form-builder/page-components/tenant/tenant-page-new.js';
         import { TenantPageEdit } from '/includes/scripts/form-builder/page-components/tenant/tenant-page-edit.js';
+
+        import { GroupPage } from '/includes/scripts/form-builder/page-components/group/group-page.js';
+        import { GroupPageNew } from '/includes/scripts/form-builder/page-components/group/group-page-new.js';
+        import { GroupPageEdit } from '/includes/scripts/form-builder/page-components/group/group-page-edit.js';
+
         import { FormDashboard } from '/includes/scripts/form-builder/page-components/builder/form-dashboard-page.js';
         import { FormPage } from '/includes/scripts/form-viewer/page-components/form-page.js';
-        import { RevisionPage } from '/includes/scripts/form-builder/page-components/revision.js';
         import { BuilderPage } from '/includes/scripts/form-builder/page-components/builder/builder-page.js';
         import { BuilderPageSettingsForm } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-form.js';
         import { BuilderPageSettingsGeneric } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-generic.js';
@@ -61,6 +64,9 @@
             {'path': '/admin/page/tenant', 'page': TenantPage},
             {'path': '/admin/page/tenant/new', 'page': TenantPageNew},
             {'path': '/admin/page/tenant/edit/:slug', 'page': TenantPageEdit},
+            {'path': '/admin/page/groups', 'page': GroupPage},
+            {'path': '/admin/page/groups/new', 'page': GroupPageNew},
+            {'path': '/admin/page/groups/edit/:id', 'page': GroupPageEdit},
             {'path': '/admin/page/forms', 'page': FormDashboard},
             {
                 'path': '/admin/page/form-builder/:formName', 'page': BuilderPage,

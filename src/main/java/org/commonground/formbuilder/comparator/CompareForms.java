@@ -4,16 +4,17 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import org.commonground.formbuilder.model.ComparatorForm;
-import org.commonground.formbuilder.model.ComparatorType;
-import org.commonground.formbuilder.model.form.CheckboxField;
-import org.commonground.formbuilder.model.form.Field;
-import org.commonground.formbuilder.model.form.FieldType;
-import org.commonground.formbuilder.model.form.Form;
-import org.commonground.formbuilder.model.form.FormGroup;
+
 import org.commonground.formbuilder.model.form.Option;
-import org.commonground.formbuilder.model.form.RepeatingGroup;
-import org.commonground.formbuilder.model.form.TabPage;
+import org.commonground.formbuilder.model.form.constants.FieldType;
+import org.commonground.formbuilder.model.form.fields.CheckboxField;
+import org.commonground.formbuilder.model.form.fields.Field;
+import org.commonground.formbuilder.model.form.fields.Form;
+import org.commonground.formbuilder.model.form.fields.FormGroup;
+import org.commonground.formbuilder.model.form.fields.RepeatingGroup;
+import org.commonground.formbuilder.model.form.fields.TabPage;
+import org.commonground.formbuilder.model.revisions.ComparatorForm;
+import org.commonground.formbuilder.model.revisions.ComparatorType;
 
 public class CompareForms {
     public static List<ComparatorForm> compare(Form current, Form revision) {

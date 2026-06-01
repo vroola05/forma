@@ -4,7 +4,7 @@ import { Header } from './shared/generic-components/header.js';
 import { Footer } from './shared/generic-components/footer.js';
 import { EventService } from './shared/services/event-service.js';
 
-import { Auth } from './auth.js';
+import { Auth } from './shared/services/auth.js';
 import { Lang } from './shared/services/lang.js';
 import { TenantService } from './shared/services/tenant-service.js';
 import { Http } from './shared/services/http.js';
@@ -45,13 +45,14 @@ export class Main {
         // const footerDom = document.getElementById('footer');
         // footerDom.appendChild(footer.getContent());
         if (Router.tenantSlug && Router.tenantSlug !== 'system') {
-            console.log('Setting header tenant logo', `${Router.tenantSlug}/api/tenant/logo`);
             headerService.setLogo(`${Router.tenantPath}/api/tenant/logo`);
         }
         headerService.setLogo(`${Router.tenantPath}/api/tenant/logo`);
 
         Lang.load().then(() => {
-            Http.get(`${Router.tenantPath}/api/authenticated`).then(a => {
+            Http.get(`${Router.tenantPath}/api/users/me`).then(user => {
+                Auth.setUser(user);
+                
                 this.setRoute();
             })
             .catch(() => {});

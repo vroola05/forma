@@ -317,7 +317,7 @@ Styles voor builder.js
 
     .builder-list-body {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
 
         width: 100%;
         .builder-list-row {

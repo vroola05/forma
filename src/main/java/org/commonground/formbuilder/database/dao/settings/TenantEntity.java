@@ -3,11 +3,15 @@ package org.commonground.formbuilder.database.dao.settings;
 import java.util.UUID;
 
 import org.commonground.formbuilder.database.dao.BaseEntity;
+import org.commonground.formbuilder.model.constants.TenantStatus;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -28,8 +32,9 @@ public class TenantEntity extends BaseEntity {
     private String logo;
     @Column(nullable = false)
     private String homePage;
-    @Column(nullable = false)
-    private boolean active;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    private TenantStatus status;
     @Column(nullable = false)
     private String email;
 }

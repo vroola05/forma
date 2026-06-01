@@ -7,9 +7,7 @@
     "generic.cancel": "Annuleren",
     "generic.save": "Opslaan",
 
-    "generic.role.global.admin": "Global admin",
-    "generic.role.tenant.admin": "Tenant admin",
-    "generic.role.tenant.user": "Tenant user",
+    "generic.permissions": "Permissies",
 
     "generic.validation.required": "Dit is een verplicht veld.",
     "generic.validation.email": "Dit is geen geldig e-mailadres.",
@@ -25,8 +23,13 @@
     "generic.yes": "Ja",
     "generic.no": "Nee",
 
-    "header.home": "Home",
+    "generic.status": "Status",
+    "generic.status.active": "Actief",
+    "generic.status.inactive": "Inactief",
+    "generic.status.suspended": "Opgeschort",
+    "generic.status.pending.deletion": "In afwachting van verwijdering",
 
+    "header.home": "Home",
 
     "login.title": "Aanmelden bij Forma",
     "login.header": "Aanmelden",
@@ -45,6 +48,11 @@
     "tenant.field.logo": "Logo",
     "tenant.field.home.page": "Homepage",
 
+    "group.title": "Gebruikersgroepen",
+    "group.new.title": "Groep aanmaken",
+    "group.edit.title": "Groep bewerken",
+    "group.name": "Groep naam",
+
     "user.title": "Gebruiker",
 
     "text.editor.table.create": "Maken",
@@ -59,8 +67,9 @@
     "form.dashboard.list.active": "Actief",
     "form.dashboard.list.last.modified": "Laatst Gewijzigd",
 
+    "form.title": "Formulieren",
     "form.name": "Naam formulier",
-    "tab.new": "Nieuwe tab ",
+    "tab.new": "Nieuwe tab",
 
     "page.settings.form": "Formulier",
     "page.settings.generic": "Generiek",
@@ -70,6 +79,7 @@
     "page.settings.registration": "Registratie",
     "page.settings.payment": "Betaling",
 
+    "field.type.form.form": "Formulier",
     "field.type.form.group": "Groep",
     "field.type.checkbox": "Checkboxveld",
     "field.type.text": "Tekstveld",

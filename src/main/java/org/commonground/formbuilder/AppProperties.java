@@ -1,17 +1,23 @@
 package org.commonground.formbuilder;
 
+import java.util.UUID;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Component
 @ConfigurationProperties(prefix = "app")
 public class AppProperties {
-    private String endpointBackend;
+    private AdminProperties admin = new AdminProperties();
+
+    @Data
+    public static class AdminProperties {
+        private String username;
+        private String email;
+        private String password;
+        private UUID globalAdminGroupId;
+    }
 }

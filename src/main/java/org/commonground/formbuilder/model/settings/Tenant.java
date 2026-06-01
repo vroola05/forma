@@ -2,6 +2,7 @@ package org.commonground.formbuilder.model.settings;
 
 import java.util.UUID;
 
+import org.commonground.formbuilder.model.constants.TenantStatus;
 import org.commonground.formbuilder.util.RegexConstants;
 
 import jakarta.validation.Valid;
@@ -29,7 +30,7 @@ public class Tenant {
     private String slug;
     private String homePage;
 
-    private boolean active;
+    private TenantStatus status;
 
     @Email(
         regexp = RegexConstants.EMAIL_REGEX, message = "{validation.email}"
@@ -37,6 +38,6 @@ public class Tenant {
     private String email;
 
     @Valid
-    private User tenantAdmin;
+    private UserRegisterRequest tenantAdmin;
 
 }

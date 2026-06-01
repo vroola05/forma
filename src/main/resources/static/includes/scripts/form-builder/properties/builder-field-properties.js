@@ -106,7 +106,6 @@ export class BuilderFieldProperties {
 
     #validatePattern (value, pattern, message, field = null) {
         if (pattern && !pattern.test(value)) {
-            console.warn('Validatie mislukt voor waarde:', "'" + value + "'", 'met patroon:', pattern, field);
 
             const fieldName = `${field ? field.getLabel() : ''} - ${this.getFieldIdentifier()}`;
             throw new ValidationError(fieldName, message).setField(field);
@@ -124,8 +123,13 @@ export class BuilderFieldProperties {
 
     setPropertyValueById(id, value) {
         if (this.properties[id]) {
-            this.properties[id].value = value;
+            this.properties[id].value = value ? value : '';
         }
+    }
+
+    getPropertyValueById(id) {
+        const prop = this.getPropertyById(id);
+        return prop === undefined ? undefined : prop.value;
     }
 
     getPropertyById(id) {

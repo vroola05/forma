@@ -10,6 +10,7 @@ import { DateField } from '../../shared/form-components/date-field.js';
 import { TextAreaField } from '../../shared/form-components/textarea-field.js';
 import { CheckboxField } from '../../shared/form-components/checkbox-field.js';
 import { FileUploadField } from '../../shared/form-components/upload-field.js';
+import { DualListboxField } from '../../shared/form-components/dual-listbox-field.js';
 
 import { FormGroup } from '../../shared/form-components/form-group.js';
 import { Form } from '../../shared/form-components/form.js';
@@ -320,6 +321,18 @@ export class FormRenderer {
                     .setValue(state ? state : fieldData.value)
                     .setShowConditions(fieldData.condition);
 
+            case 'dual-listbox':
+                return new DualListboxField(fieldData.name, fieldData.label, fieldData.classes)
+                    .setType(fieldData.type)
+                    .setMetadata(fieldData.metadata)
+                    .setData(fieldData.data)
+                    .setRequired(fieldData.required)
+                    .setClasses(fieldData.classes)
+                    .setPlaceholder(fieldData.placeholder)
+                    .addOptions(fieldData.options)
+                    .setReadonly(fieldData.readonly)
+                    .setValue(state ? state : fieldData.value)
+                    .setShowConditions(fieldData.condition);
             case 'form-group':
                 return new FormGroup(fieldData, state);
 

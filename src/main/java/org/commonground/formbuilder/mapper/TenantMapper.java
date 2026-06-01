@@ -18,7 +18,7 @@ public class TenantMapper {
 
         entity.setSlug(dto.getSlug());
         entity.setName(dto.getName());
-        entity.setActive(dto.isActive());
+        entity.setStatus(dto.getStatus());
         entity.setHomePage(dto.getHomePage());
         entity.setEmail(dto.getEmail());
         
@@ -29,7 +29,7 @@ public class TenantMapper {
         if (dto == null || entity == null) return;
 
         entity.setName(dto.getName());
-        entity.setActive(dto.isActive());
+        entity.setStatus(dto.getStatus());
         entity.setHomePage(dto.getHomePage());
         entity.setEmail(dto.getEmail());
     }
@@ -55,7 +55,7 @@ public class TenantMapper {
         dto.setName(tenantEntity.getName());
         dto.setEmail(tenantEntity.getEmail());
         dto.setHomePage(tenantEntity.getHomePage());
-        dto.setActive(tenantEntity.isActive());
+        dto.setStatus(tenantEntity.getStatus());
 
         return dto;
     }

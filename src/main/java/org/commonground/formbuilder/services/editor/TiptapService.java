@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.commonground.formbuilder.model.editor.TiptapNode;
-import org.commonground.formbuilder.model.form.Form;
+import org.commonground.formbuilder.model.form.fields.Form;
 import org.commonground.formbuilder.util.condition.JsonPathFinder;
 import org.springframework.stereotype.Service;
 

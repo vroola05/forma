@@ -3,13 +3,13 @@ package org.commonground.formbuilder.util.condition;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.commonground.formbuilder.model.form.Field;
-import org.commonground.formbuilder.model.form.FieldType;
-import org.commonground.formbuilder.model.form.Form;
 import org.commonground.formbuilder.model.form.condition.Condition;
 import org.commonground.formbuilder.model.form.condition.ConditionType;
 import org.commonground.formbuilder.model.form.condition.LogicalOperator;
 import org.commonground.formbuilder.model.form.condition.Operator;
+import org.commonground.formbuilder.model.form.constants.FieldType;
+import org.commonground.formbuilder.model.form.fields.Field;
+import org.commonground.formbuilder.model.form.fields.Form;
 
 /**
  * Ik gebruik een vereenvoudigde JSONPath-syntaxis om logica te definiëren binnen formulieren.

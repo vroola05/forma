@@ -1,3 +1,33 @@
+export const PERMISSIONS = Object.freeze({
+    TENANT_CREATE: 'tenant:create',
+    TENANT_READ: 'tenant:read',
+    TENANT_READ_INTERNAL: 'tenant:read:internal',
+    TENANT_UPDATE: 'tenant:update',
+    TENANT_UPDATE_INTERNAL: 'tenant:update:internal',
+    TENANT_DELETE: 'tenant:delete',
+
+    USER_CREATE: 'user:create',
+    USER_READ: 'user:read',
+    USER_UPDATE: 'user:update',
+    USER_DELETE: 'user:delete',
+
+    GROUP_CREATE: 'group:create',
+    GROUP_READ: 'group:read',
+    GROUP_UPDATE: 'group:update',
+    GROUP_DELETE: 'group:delete',
+
+    FORM_CREATE: 'form:create',
+    FORM_READ: 'form:read',
+    FORM_UPDATE: 'form:update',
+    FORM_DELETE: 'form:delete',
+
+    SUBMISSION_CREATE: 'submission:create',
+    SUBMISSION_READ: 'submission:read',
+    SUBMISSION_UPDATE: 'submission:update',
+    SUBMISSION_DELETE: 'submission:delete'
+});
+
+
 export class Tenant {
     constructor(data = {}) {
         this.id = data.id;
@@ -6,7 +36,7 @@ export class Tenant {
         this.logo = data.logo;
         this.homePage = data.homePage;
         this.email = data.email;
-        this.active = data.active;
+        this.status = data.status;
     }
 
     setTenantAdmin(user) {
@@ -20,7 +50,7 @@ export class User {
         this.username = data.username;
         this.password = data.password;
         this.email = data.email;
-        this.active = data.active;
+        this.status = data.status;
     }
 
     setAdminUser() {
@@ -30,7 +60,7 @@ export class User {
 
 export class FormWrapper {
     constructor(data = {}) {
-        this.active = data.active;
+        this.status = data.status;
         this.fileName = data.fileName;
         this.formConfig = new FormConfig(data.formConfig);
         this.form = new Form(data.form);

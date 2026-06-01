@@ -1,5 +1,6 @@
 package org.commonground.formbuilder.controller;
 
+import org.commonground.formbuilder.config.tenant.PreAuthorizeTenant;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping()
 public class AuthController {
 
+    @PreAuthorizeTenant
     @GetMapping("/{tenantSlug}/api/authenticated")
     public boolean isAuthenticated(Authentication authentication) {
         return authentication != null && authentication.isAuthenticated()

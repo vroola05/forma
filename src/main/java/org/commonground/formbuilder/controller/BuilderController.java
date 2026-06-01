@@ -3,12 +3,14 @@ package org.commonground.formbuilder.controller;
 import java.util.List;
 
 import org.commonground.formbuilder.FormBuilderValidator;
+import org.commonground.formbuilder.config.tenant.PreAuthorizeTenant;
 import org.commonground.formbuilder.config.tenant.TenantContext;
-import org.commonground.formbuilder.model.FormList;
-import org.commonground.formbuilder.model.FormWrapper;
+import org.commonground.formbuilder.model.form.FormList;
+import org.commonground.formbuilder.model.form.FormWrapper;
 import org.commonground.formbuilder.model.settings.Tenant;
 import org.commonground.formbuilder.services.form.FormService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,27 +29,34 @@ public class BuilderController {
         this.formService = formService;
     }
 
+    @PreAuthorize("hasAuthority(@Permissions.FORM_READ)")
+    @PreAuthorizeTenant
     @GetMapping()
     public List<FormList> getForms() {
         return formService.list();
     }
 
+    @PreAuthorize("hasAuthority(@Permissions.FORM_READ)")
+    @PreAuthorizeTenant
     @GetMapping("/{formName}")
     public FormWrapper getForm(@PathVariable String formName) {
         return formService.get(formName);
     }
 
+    @PreAuthorize("hasAuthority(@Permissions.FORM_CREATE)")
+    @PreAuthorizeTenant
     @PostMapping()
     public FormWrapper postBuilderForm(@RequestBody FormWrapper formWrapper) {
-        System.out.println("Start postBuilderForm");
         Tenant tenant = TenantContext.getTenant();
         if (tenant == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{tenant.error.not_found}");
         }
+
         FormBuilderValidator.validate(formWrapper);
-        System.out.println("postBuilderForm");
         try {
             return formService.save(tenant.getId(), formWrapper);
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Fout bij opslaan: " + e.getMessage());
         }

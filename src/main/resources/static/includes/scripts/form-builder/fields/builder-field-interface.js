@@ -52,12 +52,17 @@ export class BuilderFieldInterface {
         this.fieldProperties.setPropertyValueById(id, value);
     }
 
+    getPropertyValueById(id) {
+        return this.fieldProperties.getPropertyValueById(id);
+    }
+    
     initDefaultProperties(properties) {
         if (!properties) {
             return;
         }
         for (const key in properties) {
-            if (this.fieldProperties.hasProperty(key)) {
+            
+            if (this.fieldProperties.hasProperty(key) && (properties[key] !== undefined && properties[key] !== null)) {
                 this.fieldProperties.setPropertyValueById(key, properties[key]);
             }
         }

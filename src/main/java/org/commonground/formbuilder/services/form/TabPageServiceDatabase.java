@@ -9,9 +9,9 @@ import org.commonground.formbuilder.database.dao.definition.FormTabDefinitionEnt
 import org.commonground.formbuilder.database.dao.definition.FormTabInstanceDefinitionEntity;
 import org.commonground.formbuilder.database.repository.FormTabDefinitionEntityRepository;
 import org.commonground.formbuilder.database.repository.FormTabInstanceDefinitionRepository;
-import org.commonground.formbuilder.model.form.Field;
-import org.commonground.formbuilder.model.form.FieldType;
-import org.commonground.formbuilder.model.form.TabPage;
+import org.commonground.formbuilder.model.form.constants.FieldType;
+import org.commonground.formbuilder.model.form.fields.Field;
+import org.commonground.formbuilder.model.form.fields.TabPage;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;

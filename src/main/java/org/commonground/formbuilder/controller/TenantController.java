@@ -2,13 +2,14 @@ package org.commonground.formbuilder.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.commonground.formbuilder.config.tenant.TenantContext;
 import org.commonground.formbuilder.database.dao.settings.TenantEntity;
-import org.commonground.formbuilder.exceptions.FormValidationException;
+import org.commonground.formbuilder.model.constants.TenantStatus;
+import org.commonground.formbuilder.model.settings.Group;
 import org.commonground.formbuilder.model.settings.Tenant;
-import org.commonground.formbuilder.model.settings.User;
-import org.commonground.formbuilder.model.settings.UserRole;
+import org.commonground.formbuilder.services.GroupService;
 import org.commonground.formbuilder.services.StorageService;
 import org.commonground.formbuilder.services.TenantService;
 import org.commonground.formbuilder.services.UserService;
@@ -18,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,19 +37,22 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping()
 public class TenantController {
-    private TenantService tenantService;
-    private UserService userService;
+    private final TenantService tenantService;
+    private final UserService userService;
     private final StorageService storageService;
+    private final GroupService groupService;
 
     private static final List<String> ALLOWED_TYPES = List.of("image/png", "image/svg+xml");
 
     public TenantController(
             TenantService tenantService,
             UserService userService,
-            StorageService storageService) {
+            StorageService storageService,
+            GroupService groupService) {
         this.tenantService = tenantService;
         this.userService = userService;
         this.storageService = storageService;
+        this.groupService = groupService;
     }
 
     @GetMapping("/{tenantSlug}/api/tenant")
@@ -61,43 +64,56 @@ public class TenantController {
         return tenant;
     }
 
-    @PreAuthorize("hasRole('GLOBAL_ADMIN')")
+    @PreAuthorize("hasAuthority(@Permissions.TENANT_READ_INTERNAL)")
     @PostMapping("/{tenantSlug}/api/tenant/list")
     public List<Tenant> getTenants(@RequestBody Tenant tenant) {
         return this.tenantService.getAll();
     }
 
-    @PreAuthorize("hasRole('GLOBAL_ADMIN')")
+    @PreAuthorize("hasAuthority(@Permissions.TENANT_CREATE)")
     @PostMapping("/{tenantSlug}/api/tenant")
     public Tenant postTenant(@PathVariable() String tenantSlug, @Valid @RequestBody Tenant tenant) {
-        
-        try {
-            Tenant tenantDuplicate = this.tenantService.get(tenant.getSlug());
-            if (tenantDuplicate != null) {
-                throw new FormValidationException(List.of(new FieldError("slug", "slug", "{tenant.error.not_unique}")));
-            }
-        } catch (ResponseStatusException e) {
-        }
-        
-        Tenant tenantNew = this.tenantService.save(tenant);
-        
-        tenant.getTenantAdmin().setRole(UserRole.ROLE_TENANT_ADMIN);
-        User user = this.userService.save(tenantNew.getId(), tenant.getTenantAdmin());
 
-        tenantNew.setTenantAdmin(user);
+        if (tenant.getId() != null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{tenant.error.id_must_be_null}");
+        }
+
+        tenant.setStatus(TenantStatus.ACTIVE);
+        // Save the tenant
+        Tenant tenantNew = this.tenantService.save(tenant);
+        // Create admin group for the tenant
+        Group adminGroup = this.groupService.createTenantAdminGroup(tenantNew.getId());
+        tenant.getTenantAdmin().setGroups(Set.of(adminGroup));
+
+        // Save the tenant admin user
+        this.userService.createUser(tenantNew.getId(), tenant.getTenantAdmin());
+
         return tenantNew;
     }
 
-    @PreAuthorize("hasRole('GLOBAL_ADMIN')")
+    @PreAuthorize("hasAuthority(@Permissions.TENANT_UPDATE)")
     @PutMapping("/{tenantSlug}/api/tenant/{tenantId}")
     public Tenant putTenant(@PathVariable() String tenantSlug, @PathVariable() String tenantId, @Valid @RequestBody Tenant tenant) {
-        
+        if (tenantId == null || !tenantId.equals(tenant.getId().toString())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{tenant.error.no_id}");
+        }
+
         Tenant tenantNew = this.tenantService.save(tenant);
-        
         return tenantNew;
     }
 
+    @PreAuthorize("hasAuthority(@Permissions.TENANT_UPDATE_INTERNAL)")
+    @PutMapping("/{tenantSlug}/api/tenant/{tenantId}/internal")
+    public Tenant putTenantInternal(@PathVariable() String tenantSlug, @PathVariable() String tenantId, @Valid @RequestBody Tenant tenant) {
+        if (tenantId == null || !tenantId.equals(tenant.getId().toString())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{tenant.error.no_id}");
+        }
 
+        Tenant tenantNew = this.tenantService.save(tenant);
+        return tenantNew;
+    }
+
+    @PreAuthorize("hasAuthority(@Permissions.TENANT_UPDATE)")
     @PatchMapping("{tenantSlug}/api/tenant/logo")
     public ResponseEntity<String> uploadLogo(
             @PathVariable() String tenantSlug,
@@ -107,7 +123,7 @@ public class TenantController {
         Tenant tenant = TenantContext.getTenant();
 
         if (tenant == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tenant niet gevonend.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{tenant.error.not_found}");
         }
 
         if (file.isEmpty()) {
@@ -141,7 +157,7 @@ public class TenantController {
     public ResponseEntity<Resource> getTenantLogo(@PathVariable() String tenantSlug) {
 
         Tenant tenant = TenantContext.getTenant();
-        if (tenant == null) {
+        if (tenant == null || tenant.getId() == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "{tenant.error.not_found}");
         }
         TenantEntity tenantEntity =  this.tenantService.get(tenant.getId());

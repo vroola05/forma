@@ -3,8 +3,8 @@ package org.commonground.formbuilder.util.condition;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.commonground.formbuilder.model.form.Field;
-import org.commonground.formbuilder.model.form.FieldType;
+import org.commonground.formbuilder.model.form.constants.FieldType;
+import org.commonground.formbuilder.model.form.fields.Field;
 
 public class JsonPathFinder {
 

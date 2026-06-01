@@ -119,7 +119,7 @@ export class BuilderPage extends Page {
 
         try {
             BuilderFormService.getFormWrapper().form = BuilderFormService.getBuilderForm().getData();
-            console.log('Form wrapper updated', BuilderFormService.getFormWrapper());
+            
             Storage.setPageItem('form-wrapper', JSON.stringify(BuilderFormService.getFormWrapper()));
         } catch(error) {
             console.log(error);
@@ -147,7 +147,7 @@ export class BuilderPage extends Page {
             .catch(error => {
                 this.loader.classList.remove('active');
                 if (error instanceof ValidationError) {
-                    Toaster.error(Lang.get('error.check.fields'));
+                    Toaster.error(error.message ? error.message : Lang.get('error.check.fields'));
                 }
             });
     }
@@ -167,8 +167,11 @@ export class BuilderPage extends Page {
             })
             .catch(error => {
                 this.loader.classList.remove('active');
-                console.log(error);
-                if (error instanceof ValidationError) {
+                console.log(error.getFields());
+                const fields = error.getFields();
+                if (fields.has('message')) {
+                    Toaster.error(fields.get('message'));
+                } else {
                     Toaster.error(Lang.get('error.check.fields'));
                 }
             });

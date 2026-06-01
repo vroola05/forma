@@ -6,13 +6,12 @@ import java.util.Optional;
 
 import org.commonground.formbuilder.exceptions.FieldValidationException;
 import org.commonground.formbuilder.exceptions.FormValidationException;
-import org.commonground.formbuilder.model.form.Field;
-import org.commonground.formbuilder.model.form.FieldType;
-import org.commonground.formbuilder.model.form.Form;
-import org.commonground.formbuilder.model.form.FormGroup;
-
-import org.commonground.formbuilder.model.form.TabPage;
 import org.commonground.formbuilder.model.form.condition.Condition;
+import org.commonground.formbuilder.model.form.constants.FieldType;
+import org.commonground.formbuilder.model.form.fields.Field;
+import org.commonground.formbuilder.model.form.fields.Form;
+import org.commonground.formbuilder.model.form.fields.FormGroup;
+import org.commonground.formbuilder.model.form.fields.TabPage;
 import org.commonground.formbuilder.util.condition.ConditionParser;
 import org.springframework.validation.FieldError;
 

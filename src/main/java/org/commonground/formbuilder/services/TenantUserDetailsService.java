@@ -1,18 +1,22 @@
 package org.commonground.formbuilder.services;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
-import org.commonground.formbuilder.config.AppConstants;
 import org.commonground.formbuilder.config.tenant.TenantContext;
-import org.commonground.formbuilder.database.dao.settings.UserEntity;
-import org.commonground.formbuilder.database.repository.UserRepository;
-import org.commonground.formbuilder.model.UserDetailsExtended;
+import org.commonground.formbuilder.database.dao.settings.PermissionEntity;
+import org.commonground.formbuilder.database.dao.settings.GroupEntity;
+import org.commonground.formbuilder.database.dao.settings.TenantUserEntity;
+import org.commonground.formbuilder.database.repository.TenantUserRepository;
+import org.commonground.formbuilder.mapper.GroupMapper;
+import org.commonground.formbuilder.model.settings.Group;
 import org.commonground.formbuilder.model.settings.Tenant;
-import org.commonground.formbuilder.model.settings.UserRole;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.commonground.formbuilder.model.settings.UserDetailsExtended;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -28,12 +32,19 @@ import jakarta.servlet.http.HttpServletRequest;
 public class TenantUserDetailsService implements UserDetailsService {
 
     private final TenantService tenantService;
-    private final UserRepository userRepository;
+    private final TenantUserRepository userRepository;
+    private final GroupMapper groupMapper;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
-    public TenantUserDetailsService(TenantService tenantService, UserRepository userRepository) {
+    @Value("${app.admin.global-admin-group-id}")
+    private UUID globalAdminGroupId;
+
+    public TenantUserDetailsService(TenantService tenantService, TenantUserRepository userRepository,
+        GroupMapper groupMapper
+    ) {
         this.tenantService = tenantService;
         this.userRepository = userRepository;
+        this.groupMapper = groupMapper;
     }
 
 
@@ -56,15 +67,14 @@ public class TenantUserDetailsService implements UserDetailsService {
             
             
             String loginPattern = "/{tenantSlug}/api/login";
-            System.out.println("Request URI: " + path + " matches " + loginPattern + ": " + pathMatcher.match(loginPattern, path));
+            
             if (pathMatcher.match(loginPattern, path)) {
                 Map<String, String> variabelen = pathMatcher.extractUriTemplateVariables(loginPattern, path);
                 String tenantSlug = variabelen.get("tenantSlug");
-                System.out.println("Extracted tenantSlug: " + tenantSlug);
                 if (tenantSlug != null) {
-                    System.out.println("Setting tenant context for slug: " + tenantSlug);
+                    
                     TenantContext.setTenant(this.tenantService.get(tenantSlug));
-                    System.out.println("Current tenant in context: " + (TenantContext.getTenant() != null ? TenantContext.getTenant().getSlug() : "null"));
+                    
                     return;
                 }
             }
@@ -74,34 +84,50 @@ public class TenantUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("Loading user by username: " + username);
         setTenantSlug();
         Tenant currentTenant = TenantContext.getTenant();
 
-        System.out.println("Current tenant in loadUserByUsername: " + (currentTenant != null ? currentTenant.getSlug() : "null"));
-        UserEntity userEntity;
-        if (currentTenant == null) {
-            userEntity = userRepository.findByUsernameAndTenantIdIsNull(username)
+        TenantUserEntity userEntity;
+        if (currentTenant == null || currentTenant.getId() == null) {
+            userEntity = userRepository.findByUsernameAndTenantIdIsNullWithGroupsAndPermissions(username)
                     .orElseThrow(() -> new UsernameNotFoundException("{user.error.not_found}"));
-System.out.println("User found: " + userEntity.getUsername() + ", Role: " + userEntity.getRole());
-            if (!UserRole.ROLE_GLOBAL_ADMIN.equals(userEntity.getRole())) {
-                System.out.println("User is not a global admin, throwing exception");
+
+            // The global admin user must be part of the global admin group, otherwise they should not be able to log in
+            if (!userEntity.getGroups().stream().anyMatch(group -> group.getId().equals(globalAdminGroupId))) {
                 throw new UsernameNotFoundException("{user.error.not_found}");
             }
+                    
         } else {
             UUID tenantId = currentTenant.getId();
-            userEntity = userRepository.findByUsernameAndTenantId(username, tenantId)
+            userEntity = userRepository.findByUsernameAndTenantIdWithGroupsAndPermissions(username, tenantId)
                     .orElseThrow(() -> new UsernameNotFoundException("{user.error.not_found}"));
         }
+        
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        
+        Set<String> permissions = new HashSet<>();
+        Set<Group> groups = new HashSet<>();
 
-        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(userEntity.getRole().toString()));
+        for (GroupEntity group : userEntity.getGroups()) {
+            groups.add(groupMapper.toResponseDto(group));
 
+            for (PermissionEntity permission : group.getPermissions()) {
+                authorities.add(new SimpleGrantedAuthority(permission.getId()));
+                permissions.add(permission.getId());
+            }
+        }
+
+        System.out.println("User " + username + " has permissions: " + permissions);
+        
         UserDetailsExtended userDetails = new UserDetailsExtended(
                 userEntity.getUsername(),
                 userEntity.getPassword(),
                 authorities,
-                userEntity.getTenantId());
+                userEntity,
+                groups,
+                permissions);
 
+            System.out.println("Loaded user: " + userDetails.getUsername() + " with authorities: " );
         return userDetails;
     }
 }

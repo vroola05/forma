@@ -1,4 +1,6 @@
 import { Router } from '../../services/router.js';
+import { Auth } from '../../services/auth.js';
+
 export class FormButton {
     button = document.createElement('button');
     label = '';
@@ -7,17 +9,36 @@ export class FormButton {
     event = null;
     
 
-    constructor(label, classes, path, event, show = true) {
+    constructor(label, classes, path = null, event = null, show = true) {
         this.label = label;
         this.classes = 'form-btn' + (!classes ? '' : ' ' + classes);
         this.path = path;
         this.event = event;
         
         this.createContent();
+
         if (!show) {
             this.hide();
         } else {
             this.show();
+        }
+    }
+
+    setPermissions(...permissions) {
+        this.permissions = permissions.flat().filter(p => p != null);
+
+        this.#checkAccess();
+        return this;
+    }
+
+    #checkAccess() {
+        
+        if (this.permissions && this.permissions.length > 0 && !Auth.hasAnyPermission(...this.permissions)) {
+            this.hide();
+            return false;
+        } else {
+            this.show();
+            return true;
         }
     }
 
@@ -34,12 +55,22 @@ export class FormButton {
         this.button.innerText = this.label;
         if (this.path !== null) {
             this.button.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                if (!this.#checkAccess()) {
+                    return;
+                }
                 Router.route(this.path);
             });
         }
         if (this.event) {
             this.button.addEventListener('click', (e) => {
                 e.preventDefault();
+
+                if (!this.#checkAccess()) {
+                    return;
+                }
+
                 this.event();
             });
         }

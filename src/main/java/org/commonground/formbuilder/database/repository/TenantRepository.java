@@ -8,4 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TenantRepository extends JpaRepository<TenantEntity, UUID> {
     Optional<TenantEntity> findBySlug(String slug);
+
+    Optional<TenantEntity> findBySlugAndIdNot(String slug, UUID id);
+    
 }

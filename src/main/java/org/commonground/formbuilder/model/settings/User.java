@@ -1,9 +1,11 @@
 package org.commonground.formbuilder.model.settings;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
+import org.commonground.formbuilder.model.constants.UserStatus;
 import org.commonground.formbuilder.util.RegexConstants;
-import org.commonground.formbuilder.validator.ValidPassword;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -22,10 +24,6 @@ public class User {
 
     @NotBlank(message = "{validation.required}")
     private String username;
-    
-    @NotBlank(message = "{validation.required}")
-    @ValidPassword
-    private String password;
 
     @NotBlank(message = "{validation.required}")
     @Email(
@@ -33,7 +31,8 @@ public class User {
     )
     private String email;
 
-    private UserRole role;
+    private UserStatus status;
 
-    private boolean active;
+    private Set<Group> groups;
+    private Set<String> permissions;
 }

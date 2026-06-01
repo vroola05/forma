@@ -23,7 +23,7 @@ export class TenantPage extends SettingsPage {
         this.tenantList = new List(new ListDefinition([
             new Column('Name', 'text', 'name'),
             new Column('Slug', 'boolean', 'slug'),
-            new Column('Active', 'boolean', 'active')
+            new Column('Status', 'boolean', 'status')
         ]));
 
         this.tenantList.setOnClick((index, tenant) => {

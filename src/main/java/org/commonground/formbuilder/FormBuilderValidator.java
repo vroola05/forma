@@ -3,10 +3,10 @@ package org.commonground.formbuilder;
 import java.util.List;
 
 import org.commonground.formbuilder.exceptions.FormValidationException;
-import org.commonground.formbuilder.model.FormWrapper;
-import org.commonground.formbuilder.model.form.Field;
-import org.commonground.formbuilder.model.form.FieldType;
-import org.commonground.formbuilder.model.form.Form;
+import org.commonground.formbuilder.model.form.FormWrapper;
+import org.commonground.formbuilder.model.form.constants.FieldType;
+import org.commonground.formbuilder.model.form.fields.Field;
+import org.commonground.formbuilder.model.form.fields.Form;
 import org.springframework.validation.FieldError;
 
 public class FormBuilderValidator {

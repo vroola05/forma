@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.commonground.formbuilder.config.tenant.TenantContext;
 import org.commonground.formbuilder.database.dao.definition.FormDefinitionEntity;
 import org.commonground.formbuilder.database.repository.FormDefinitionRepository;
-import org.commonground.formbuilder.model.FormConfig;
-import org.commonground.formbuilder.model.FormList;
-import org.commonground.formbuilder.model.FormWrapper;
-import org.commonground.formbuilder.model.form.CheckboxField;
-import org.commonground.formbuilder.model.form.Field;
-import org.commonground.formbuilder.model.form.FieldType;
-import org.commonground.formbuilder.model.form.Form;
+import org.commonground.formbuilder.model.form.FormConfig;
+import org.commonground.formbuilder.model.form.FormList;
+import org.commonground.formbuilder.model.form.FormWrapper;
 import org.commonground.formbuilder.model.form.Option;
-import org.commonground.formbuilder.model.form.TabPage;
-import org.commonground.formbuilder.model.settings.UserRole;
-import org.commonground.formbuilder.services.SecurityService;
+import org.commonground.formbuilder.model.form.constants.FieldType;
+import org.commonground.formbuilder.model.form.fields.CheckboxField;
+import org.commonground.formbuilder.model.form.fields.Field;
+import org.commonground.formbuilder.model.form.fields.Form;
+import org.commonground.formbuilder.model.form.fields.TabPage;
+import org.commonground.formbuilder.model.settings.Tenant;
 import org.commonground.formbuilder.services.formConfig.FormConfigSuccessPageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,19 +28,17 @@ import jakarta.transaction.Transactional;
 public class FormServiceDatabase implements FormService {
     private final FormDefinitionRepository formDefinitionRepository;
     private final FormConfigSuccessPageService formConfigSuccessPageService;
-    private final SecurityService securityService;
     private final TabPageService tabPageService;
 
     public FormServiceDatabase(
             TabPageService tabPageService,
             FormConfigSuccessPageService formConfigSuccessPageService,
-            SecurityService securityService,
             FormDefinitionRepository formDefinitionRepository) {
 
         this.formDefinitionRepository = formDefinitionRepository;
         this.tabPageService = tabPageService;
         this.formConfigSuccessPageService = formConfigSuccessPageService;
-        this.securityService = securityService;
+
     }
 
     public FormDefinitionEntity getFormDefinitionById(UUID id) {
@@ -51,11 +49,17 @@ public class FormServiceDatabase implements FormService {
     @Override
     @Transactional
     public FormWrapper save(UUID tenantId, FormWrapper formWrapper) {
-        if (!securityService.hasRole(UserRole.ROLE_GLOBAL_ADMIN)) {
-            securityService.validateAccessToTenant(tenantId);
-        }
 
         Form form = formWrapper.getForm();
+
+        this.formDefinitionRepository.findByNameAndTenantId(form.getName(), tenantId).ifPresent(existingForm -> {
+            System.out.println("Checking for existing form with name: " + form.getName() + " and tenantId: " + tenantId);
+            System.out.println("Existing form found with name: " + existingForm.getName() + " and tenantId: " + tenantId);
+            if (form.getId() == null || !existingForm.getId().equals(form.getId())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{form.definition.error.not_unique}");
+            }
+        });
+
         FormDefinitionEntity formDefinitionEntity = form.getId() == null
                 ? new FormDefinitionEntity()
                 : this.getFormDefinitionById(form.getId());
@@ -101,8 +105,9 @@ public class FormServiceDatabase implements FormService {
 
     @Override
     public List<FormList> list() {
+        Tenant tenant = TenantContext.getTenant();
         List<FormList> formLists = new ArrayList<>();
-        List<FormDefinitionEntity> formDefinitionEntities = this.formDefinitionRepository.findAll();
+        List<FormDefinitionEntity> formDefinitionEntities = this.formDefinitionRepository.findByTenantId(tenant.getId());
         formDefinitionEntities.stream().forEach(formDefinitionEntity -> {
             FormList formList = new FormList();
             formList.setId(formDefinitionEntity.getId());

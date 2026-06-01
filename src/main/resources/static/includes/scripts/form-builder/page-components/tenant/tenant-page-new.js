@@ -66,13 +66,14 @@ export class TenantPageNew extends SettingsPage {
                                     "type": "text",
                                 },
                                 {
-                                    "name": "active",
-                                    "label": Lang.get('generic.active'),
+                                    "name": "status",
+                                    "label": Lang.get('generic.status'),
                                     "type": "radio",
                                     "required": true,
                                     "options": [
-                                        { 'value': 'true', 'text': Lang.get('generic.yes') },
-                                        { 'value': 'false', 'text': Lang.get('generic.no') }
+                                        { 'value': 'ACTIVE', 'text': Lang.get('generic.status.active') },
+                                        { 'value': 'SUSPENDED', 'text': Lang.get('generic.status.suspended') },
+                                        { 'value': 'PENDING_DELETION', 'text': Lang.get('generic.status.pending.deletion') }
                                     ]
                                 },
                                 {
@@ -125,10 +126,6 @@ export class TenantPageNew extends SettingsPage {
         );
     }
 
-    isActive(options) {
-        return options && options.find(o=>o.value === 'true') ? true : false;
-        
-    }
     postTenant() {
         // if (!this.tenantForm.validate()) {
         //     return;
@@ -143,7 +140,7 @@ export class TenantPageNew extends SettingsPage {
             name: tenantGroup.getFieldValue('name'),
             slug: tenantGroup.getFieldValue('slug'),
             homePage: tenantGroup.getFieldValue('home-page'),
-            active: this.isActive(tenantGroup.getFieldValue('active')),
+            status: tenantGroup.getFieldValue('status'),
             email: tenantGroup.getFieldValue('email')
         });
 

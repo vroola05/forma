@@ -12,7 +12,7 @@ export class BuilderTabLabelItem {
 
         this.builderTabLabelItem = document.createElement('div');
         this.builderTabLabelItem.className = 'builder-tab-label-item';
-        this.builderTabLabelItem.textContent = Lang.get('tab.new') + tabAmount;
+        // this.builderTabLabelItem.textContent = Lang.get('tab.new') + tabAmount;
         this.builderTabLabelItem.addEventListener('click', (event) => {
             if (this.onActivateCallback) {
                 this.onActivateCallback(this);

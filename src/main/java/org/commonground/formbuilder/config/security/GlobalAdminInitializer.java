@@ -2,9 +2,10 @@ package org.commonground.formbuilder.config.security;
 
 import java.util.UUID;
 
-import org.commonground.formbuilder.database.dao.settings.UserEntity;
-import org.commonground.formbuilder.database.repository.UserRepository;
-import org.commonground.formbuilder.model.settings.UserRole;
+import org.commonground.formbuilder.database.dao.settings.TenantUserEntity;
+import org.commonground.formbuilder.database.repository.GroupRepository;
+import org.commonground.formbuilder.database.repository.TenantUserRepository;
+import org.commonground.formbuilder.model.constants.UserStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,8 +13,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class GlobalAdminInitializer implements CommandLineRunner {
-    private final UserRepository userRepository;
+    private final TenantUserRepository userRepository;
+    private final GroupRepository groupRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Value("${app.admin.global-admin-group-id}")
+    private UUID globalAdminGroupId;
 
     @Value("${app.admin.username}")
     private String adminUsername;
@@ -24,21 +29,31 @@ public class GlobalAdminInitializer implements CommandLineRunner {
     @Value("${app.admin.password}")
     private String adminPassword;
 
-    public GlobalAdminInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public GlobalAdminInitializer(TenantUserRepository userRepository, GroupRepository groupRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.groupRepository = groupRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) {
         if (userRepository.findByUsernameAndTenantId(adminUsername, null).isEmpty()) {
-            UserEntity admin = new UserEntity();
+            TenantUserEntity admin = new TenantUserEntity();
             admin.setId(UUID.randomUUID());
             admin.setUsername(adminUsername);
             admin.setEmail(adminEmail);
             admin.setPassword(passwordEncoder.encode(adminPassword));
-            admin.setRole(UserRole.ROLE_GLOBAL_ADMIN);
+            admin.setName("Global Admin");
+            admin.setStatus(UserStatus.ACTIVE);
             admin.setTenantId(null);
+
+            this.groupRepository.findById(globalAdminGroupId).ifPresentOrElse(group -> {
+                admin.getGroups().add(group);
+            }, () -> {
+                throw new RuntimeException("Global admin group not found");
+            });
+            // 
+            
             
             userRepository.save(admin);
             System.out.println("Global admin aangemaakt met gebruikersnaam: " + adminUsername);

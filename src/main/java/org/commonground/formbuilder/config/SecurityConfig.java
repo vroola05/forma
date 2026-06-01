@@ -1,5 +1,6 @@
 package org.commonground.formbuilder.config;
 
+import org.commonground.formbuilder.model.settings.constants.Permissions;
 // import org.commonground.formbuilder.config.tenant.SecurityTenantFilter;
 import org.commonground.formbuilder.services.TenantUserDetailsService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,7 +14,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
@@ -64,7 +64,7 @@ public class SecurityConfig {
                     "/system/api/tenant",
                     "/system/api/language/nl"
                 ).permitAll()
-                .anyRequest().hasRole("GLOBAL_ADMIN")
+                .anyRequest().hasAuthority(Permissions.TENANT_READ_INTERNAL)
             )
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint(
@@ -104,8 +104,8 @@ public class SecurityConfig {
                     "/{tenantSlug}/api/language/nl").permitAll()
                 .requestMatchers(
                     "/{tenantSlug}/admin/**",
-                    "/{tenantSlug}/api/**").hasAnyRole("GLOBAL_ADMIN", "TENANT_ADMIN", "TENANT_USER")
-                
+                    "/{tenantSlug}/api/**")
+                    .authenticated()
                 .anyRequest().denyAll()
             )
             .exceptionHandling(exception -> exception

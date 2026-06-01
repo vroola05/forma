@@ -1,24 +1,21 @@
 package org.commonground.formbuilder.controller;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.commonground.formbuilder.FormValidator;
 import org.commonground.formbuilder.database.dao.definition.FormConfigSuccessPageEntity;
 import org.commonground.formbuilder.database.dao.definition.FormDefinitionEntity;
 import org.commonground.formbuilder.database.dao.submission.FormSubmissionEntity;
-import org.commonground.formbuilder.model.FormConfigSuccessPage;
-import org.commonground.formbuilder.model.FormList;
-import org.commonground.formbuilder.model.FormSubmission;
-import org.commonground.formbuilder.model.FormWrapper;
-import org.commonground.formbuilder.model.form.Form;
+import org.commonground.formbuilder.model.form.FormConfigSuccessPage;
+import org.commonground.formbuilder.model.form.FormWrapper;
+import org.commonground.formbuilder.model.form.fields.Form;
+import org.commonground.formbuilder.model.submission.FormSubmission;
 import org.commonground.formbuilder.services.form.FormService;
 import org.commonground.formbuilder.services.form.FormServiceDatabase;
 import org.commonground.formbuilder.services.formConfig.FormConfigSuccessPageService;
 import org.commonground.formbuilder.services.formConfig.FormConfigSuccessPageServiceDatabase;
 
 import org.commonground.formbuilder.services.submission.FormSubmissionService;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,12 +40,6 @@ public class FormController {
         this.formConfigSuccessPageService = formConfigSuccessPageService;
         this.formSubmissionService = formSubmissionService;
     }
-
-    @GetMapping()
-    public List<FormList> getForms() {
-        return this.formService.list();
-    }
-
 
     @GetMapping("/{formName}")
     public FormWrapper getForm(@PathVariable String formName) {
@@ -76,7 +67,7 @@ public class FormController {
     }
 
     @PostMapping()
-    public FormSubmission postForm(@RequestBody Form form) {
+    public FormSubmission submitForm(@RequestBody Form form) {
         FormWrapper formWrapperDefinition = this.formService.get(form.getName());
         FormValidator.validate(form, formWrapperDefinition.getForm());
 

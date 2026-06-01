@@ -7,9 +7,7 @@
     "generic.cancel": "Cancel",
     "generic.save": "Save",
 
-    "generic.role.global.admin": "Global admin",
-    "generic.role.tenant.admin": "Tenant admin",
-    "generic.role.tenant.user": "Tenant user",
+    "generic.permissions": "Permissions",
 
     "generic.validation.required": "This field is required.",
     "generic.validation.email": "This email is not valid.",
@@ -24,6 +22,12 @@
 
     "generic.yes": "Yes",
     "generic.no": "No",
+
+    "generic.status": "Status",
+    "generic.status.active": "Active",
+    "generic.status.inactive": "Inactive",
+    "generic.status.suspended": "Suspended",
+    "generic.status.pending.deletion": "Pending Deletion",
 
     "header.home": "Home",
 
@@ -44,6 +48,11 @@
     "tenant.field.logo": "Logo",
     "tenant.field.home.page": "Homepage",
 
+    "group.title": "User groups",
+    "group.new.title": "Create Group",
+    "group.edit.title": "Edit Group",
+    "group.name": "Group Name",
+
     "user.title": "User",
 
     "form.dashboard.title": "Form dashboad",
@@ -63,6 +72,7 @@
     "page.settings.registration": "Registration",
     "page.settings.payment": "Payment",
 
+    "field.type.form.form": "Form",
     "field.type.form.group": "Group",
     "field.type.checkbox": "Checkboxfield",
     "field.type.text": "Textfield",

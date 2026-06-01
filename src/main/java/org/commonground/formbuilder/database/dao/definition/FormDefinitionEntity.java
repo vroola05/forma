@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.commonground.formbuilder.database.dao.BaseEntity;
+import org.commonground.formbuilder.model.constants.FormStatus;
 import org.commonground.formbuilder.model.form.condition.Condition;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -16,6 +17,8 @@ import lombok.Setter;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -51,6 +54,10 @@ public class FormDefinitionEntity extends BaseEntity {
     @Column(columnDefinition = "jsonb")
     private Condition condition;
     private boolean show;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    private FormStatus status;
 
     @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FormTabInstanceDefinitionEntity> tabs = new ArrayList<>();

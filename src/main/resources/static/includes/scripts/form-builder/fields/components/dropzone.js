@@ -24,7 +24,7 @@ export class Dropzone {
      */
     constructor(field, domElement, onAddCallback, onMoveCallback, onPropertiesChangedCallback) {
         this.field = field;
-        
+
         this.domElement = domElement;
 
         this.onAddCallback = onAddCallback;
@@ -35,7 +35,7 @@ export class Dropzone {
 
         this.domElement.addEventListener("dragover", (event) => {
             event.preventDefault();
-            
+
             this.domElement.classList.add('drag-over');
 
             const fieldDraggable = event.target.closest('.draggable-item');
@@ -118,7 +118,7 @@ export class Dropzone {
     changeExistingItem(type, droppedDom) {
         const builderChildFields = this.field.getFields();
         if (builderChildFields != null) {
-            
+
             if (Dropzone.currentDraggedDom === droppedDom) {
                 return;
             }
@@ -180,8 +180,29 @@ export class Dropzone {
         this.draw();
     }
 
+    getUniqueName(label, property = 'name', cleanLabel = false, seperator = '-') {
+        let baseLabel = cleanLabel
+            ? label.toLowerCase().trim().replace(/\s+/g, '-')
+            : label;
+
+        const existingNames = this.field.getFields().map(f => f.getPropertyValueById(property));
+
+        let index = 1;
+        let newName = `${baseLabel}${seperator}${index}`;
+
+        while (existingNames.includes(newName)) {
+            index++;
+            newName = `${baseLabel}${seperator}${index}`;
+        }
+
+        return newName;
+    }
+
     addNewItem(type, label, droppedOnformItem) {
         const field = this.getField(type);
+        field.setPropertyValueById('name', this.getUniqueName(field.getLabel(), 'name', true));
+        field.setPropertyValueById('label', this.getUniqueName(field.getLabel(), 'label', false, ' '));
+
         this.bindFieldEvents(field);
 
         const builderChildFields = this.field.getFields();
@@ -202,7 +223,7 @@ export class Dropzone {
     }
 
     bindFieldEvents(field) {
-        
+
         field.onDragStart = (event) => {
             event.stopPropagation();
 
@@ -227,7 +248,7 @@ export class Dropzone {
     }
 
     getField(type) {
-        switch(type) {
+        switch (type) {
             case 'form-group':
                 return new BuilderFormGroup(type, Lang.get('field.type.form.group'))
                     .setParent(this.field);

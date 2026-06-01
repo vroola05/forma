@@ -24,11 +24,12 @@ CREATE TABLE tenant (
     logo TEXT NULL,
     home_page TEXT NULL,
     
-    active BOOLEAN DEFAULT true NOT NULL,
     email TEXT NOT NULL,
     
+    status TEXT NOT NULL DEFAULT 'ACTIVE',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    
     version BIGINT DEFAULT 0 NOT NULL
 );
 
@@ -39,23 +40,24 @@ CREATE TABLE users (
     username TEXT NOT NULL,
     password TEXT NOT NULL,
     email TEXT NOT NULL,
-    role TEXT NOT NULL,
     auth_provider TEXT DEFAULT 'LOCAL',
     external_id TEXT NULL,
-    active BOOLEAN DEFAULT true NOT NULL,
-    
+
+    status TEXT NOT NULL DEFAULT 'ACTIVE',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    version BIGINT DEFAULT 0 NOT NULL
+    version BIGINT DEFAULT 0 NOT NULL,
+    CONSTRAINT unique_user_username UNIQUE (tenant_id, username)
 );
 
-CREATE TABLE tenant_groups (
+CREATE TABLE groups (
     id UUID PRIMARY KEY,
     tenant_id UUID REFERENCES tenant(id),
     name TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    version BIGINT DEFAULT 0 NOT NULL
+    version BIGINT DEFAULT 0 NOT NULL,
+    CONSTRAINT unique_group_name UNIQUE (tenant_id, name)
 );
 
 CREATE TABLE permissions (
@@ -63,17 +65,16 @@ CREATE TABLE permissions (
 );
 
 CREATE TABLE group_permissions (
-    group_id UUID REFERENCES tenant_groups(id),
+    group_id UUID REFERENCES groups(id),
     permission_id TEXT REFERENCES permissions(id),
     PRIMARY KEY (group_id, permission_id)
 );
 
 CREATE TABLE user_groups (
     user_id UUID REFERENCES users(id),
-    group_id UUID REFERENCES tenant_groups(id),
+    group_id UUID REFERENCES groups(id),
     PRIMARY KEY (user_id, group_id)
 );
-
 
 CREATE TABLE form_definition (
     id UUID PRIMARY KEY,
@@ -85,11 +86,12 @@ CREATE TABLE form_definition (
     summary_confirmation TEXT[] NULL,
     condition JSONB NULL,
     show boolean NOT NULL DEFAULT TRUE,
-    active BOOLEAN NOT NULL DEFAULT TRUE,
+
+    status TEXT NOT NULL DEFAULT 'ACTIVE',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     version BIGINT DEFAULT 0 NOT NULL,
-    UNIQUE (name, tenant_id)
+    CONSTRAINT unique_form_name UNIQUE (name, tenant_id)
 );
 
 CREATE TABLE form_tab_definition (

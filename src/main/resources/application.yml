@@ -63,6 +63,7 @@ app:
     username: ${ADMIN_USER:admin}
     email: ${ADMIN_EMAIL:admin@admin.com}
     password: ${ADMIN_PASS:USE_CONFIGURATION}
+    global-admin-group-id: 00000000-0000-0000-0000-000000000001
 
 storage:
   bucket-temp: "form-uploads-temp"
