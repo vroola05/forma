@@ -17,7 +17,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -34,7 +33,7 @@ public class SecurityConfig {
             TenantUserDetailsService tenantUserDetailsService,
             PasswordEncoder passwordEncoder) {
 
-        this.resolver =  resolver;
+        this.resolver = resolver;
         // this.securityTenantFilter = securityTenantFilter;
         this.tenantUserDetailsService = tenantUserDetailsService;
         this.passwordEncoder = passwordEncoder;
@@ -47,42 +46,43 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(this.passwordEncoder);
         return authProvider;
     }
-    
+
     @Bean
     @Order(1)
     public SecurityFilterChain globalAdminFilterChain(HttpSecurity http) throws Exception {
         http
-            .securityMatcher("/system/**")
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authz -> authz
-                .requestMatchers(AppConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
-                .requestMatchers(
-                    "/system/page/**",
-                    "/system/admin",
-                    "/system/admin/page/**",
-                    "/system/api/login",
-                    "/system/api/tenant",
-                    "/system/api/language/nl"
-                ).permitAll()
-                .anyRequest().hasAuthority(Permissions.TENANT_READ_INTERNAL)
-            )
-            .exceptionHandling(exception -> exception
-                .authenticationEntryPoint(
-                    (req, res, authException) -> 
-                        resolver.resolveException(req, res, null, new ResponseStatusException(
-                                HttpStatus.UNAUTHORIZED, "{login.failure}")
-                    ))
-            )
-            .formLogin(form -> form
-                .loginPage("/system/admin/page/login")
-                .loginProcessingUrl("/system/api/login")
-                .successHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
-                .failureHandler((req, res, authException) -> 
-                        resolver.resolveException(req, res, null, new ResponseStatusException(
-                                HttpStatus.UNAUTHORIZED, "{login.failure}")
-                ))
-                .permitAll()
-            );
+                .securityMatcher("/system/**")
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers(AppConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
+                        .requestMatchers(
+                                "/system/page/**",
+                                "/system/admin",
+                                "/system/admin/page/**",
+                                "/system/api/login",
+                                "/system/api/tenant",
+                                "/system/api/language/nl")
+                        .permitAll()
+                        .anyRequest().hasAuthority(Permissions.TENANT_READ_INTERNAL))
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(
+                                (req, res, authException) -> resolver.resolveException(req, res, null,
+                                        new ResponseStatusException(
+                                                HttpStatus.UNAUTHORIZED, "{login.failure}"))))
+                .formLogin(form -> form
+                        .loginPage("/system/admin/page/login")
+                        .loginProcessingUrl("/system/api/login")
+                        .successHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
+                        .failureHandler((req, res, authException) -> resolver.resolveException(req, res, null,
+                                new ResponseStatusException(
+                                        HttpStatus.UNAUTHORIZED, "{login.failure}")))
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/system/api/logout")
+                        .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
+
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID"));
 
         return http.build();
     }
@@ -92,38 +92,41 @@ public class SecurityConfig {
     public SecurityFilterChain tenantAndPublicFilterChain(HttpSecurity http) throws Exception {
         System.out.println("Configuring tenant and public security filter chain");
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authz -> authz
-                .requestMatchers(AppConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
-                .requestMatchers(
-                    "/{tenantSlug}/public/**",
-                    "/{tenantSlug}/page/**",
-                    "/{tenantSlug}/admin",
-                    "/{tenantSlug}/admin/page/**",
-                    "/{tenantSlug}/api/tenant",
-                    "/{tenantSlug}/api/language/nl").permitAll()
-                .requestMatchers(
-                    "/{tenantSlug}/admin/**",
-                    "/{tenantSlug}/api/**")
-                    .authenticated()
-                .anyRequest().denyAll()
-            )
-            .exceptionHandling(exception -> exception
-                .authenticationEntryPoint((req, res, authException) -> 
-                        resolver.resolveException(req, res, null, new ResponseStatusException(
-                                HttpStatus.UNAUTHORIZED, "{login.failure}"))
-            ))
-            // .addFilterBefore(this.securityTenantFilter, UsernamePasswordAuthenticationFilter.class)
-            .formLogin(form -> form
-                .loginPage("/{tenantSlug}/admin/page/login")
-                .loginProcessingUrl("/{tenantSlug}/api/login")
-                .successHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
-                .failureHandler((req, res, authException) -> 
-                        resolver.resolveException(req, res, null, new ResponseStatusException(
-                                HttpStatus.UNAUTHORIZED, "{login.failure}")
-                ))
-                .permitAll()
-            );
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers(AppConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
+                        .requestMatchers(
+                                "/{tenantSlug}/public/**",
+                                "/{tenantSlug}/page/**",
+                                "/{tenantSlug}/admin",
+                                "/{tenantSlug}/admin/page/**",
+                                "/{tenantSlug}/api/tenant",
+                                "/{tenantSlug}/api/tenant/logo",
+                                "/{tenantSlug}/api/language/nl")
+                        .permitAll()
+                        .requestMatchers(
+                                "/{tenantSlug}/admin/**",
+                                "/{tenantSlug}/api/**")
+                        .authenticated()
+                        .anyRequest().denyAll())
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((req, res, authException) -> resolver.resolveException(req, res, null,
+                                new ResponseStatusException(
+                                        HttpStatus.UNAUTHORIZED, "{login.failure}"))))
+                .formLogin(form -> form
+                        .loginPage("/{tenantSlug}/admin/page/login")
+                        .loginProcessingUrl("/{tenantSlug}/api/login")
+                        .successHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
+                        .failureHandler((req, res, authException) -> resolver.resolveException(req, res, null,
+                                new ResponseStatusException(
+                                        HttpStatus.UNAUTHORIZED, "{login.failure}")))
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/{tenantSlug}/api/logout")
+                        .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
+
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID"));
 
         return http.build();
     }

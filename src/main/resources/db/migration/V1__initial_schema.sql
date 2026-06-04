@@ -25,7 +25,8 @@ CREATE TABLE tenant (
     home_page TEXT NULL,
     
     email TEXT NOT NULL,
-    
+    primary_color TEXT NULL,
+    secondary_color TEXT NULL,
     status TEXT NOT NULL DEFAULT 'ACTIVE',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

@@ -1,5 +1,5 @@
 INSERT INTO permissions (id) VALUES 
-    ('tenant:create'),
+    ('tenant:create:internal'),
     ('tenant:read'),
     ('tenant:read:internal'),
     ('tenant:update'),
@@ -11,6 +11,7 @@ INSERT INTO permissions (id) VALUES
     ('user:delete'),
     ('group:create'),
     ('group:read'),
+    ('group:read:internal'),
     ('group:update'),
     ('group:delete'),
     ('form:create'),
@@ -27,7 +28,7 @@ INSERT INTO groups (id, tenant_id, name) VALUES
     ('00000000-0000-0000-0000-000000000001', NULL, 'Global Administrators');
 
 INSERT INTO group_permissions (group_id, permission_id) VALUES 
-    ('00000000-0000-0000-0000-000000000001', 'tenant:create'),
+    ('00000000-0000-0000-0000-000000000001', 'tenant:create:internal'),
     ('00000000-0000-0000-0000-000000000001', 'tenant:read'),
     ('00000000-0000-0000-0000-000000000001', 'tenant:read:internal'),
     ('00000000-0000-0000-0000-000000000001', 'tenant:update'),
@@ -38,6 +39,6 @@ INSERT INTO group_permissions (group_id, permission_id) VALUES
     ('00000000-0000-0000-0000-000000000001', 'user:update'),
     ('00000000-0000-0000-0000-000000000001', 'user:delete'),
     ('00000000-0000-0000-0000-000000000001', 'group:create'),
-    ('00000000-0000-0000-0000-000000000001', 'group:read'),
+    ('00000000-0000-0000-0000-000000000001', 'group:read:internal'),
     ('00000000-0000-0000-0000-000000000001', 'group:update'),
     ('00000000-0000-0000-0000-000000000001', 'group:delete');

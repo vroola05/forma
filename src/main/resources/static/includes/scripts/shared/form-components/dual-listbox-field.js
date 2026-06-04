@@ -77,11 +77,17 @@ export class DualListboxField extends InputNucleus {
 
     #deselectOptions(selectedOptions) {
         this.inputElementDeselected.append(...selectedOptions);
+        
+        this.#orderList(this.inputElementDeselected);
+
         this.#setSelectedValues();
     }
 
     #selectOptions(selectedOptions) {
         this.inputElement.append(...selectedOptions);
+
+        this.#orderList(this.inputElement);
+
         this.#setSelectedValues();
     }
 
@@ -102,10 +108,21 @@ export class DualListboxField extends InputNucleus {
         if (!this.inputElementDeselected) {
             throw new Error('Input element is not created yet. Call createElement() first.');
         }
+
         options.forEach(option => {
             this.addOption(option.value, option.text);
         });
+
+        this.#orderList(this.inputElementDeselected);
+
         return this;
+    }
+
+    #orderList(element) {
+        const sortedChildren = Array.from(element.children)
+            .sort((a, b) => a.textContent.localeCompare(b.textContent));
+
+        element.append(...sortedChildren);
     }
 
     getOptions() {
@@ -128,8 +145,11 @@ export class DualListboxField extends InputNucleus {
                 optionsToSelect.push(option);
             }
         });
+
         this.inputElement.append(...optionsToSelect);
-        
+
+        this.#orderList(this.inputElement);
+
         this.#setSelectedValues();
 
         return this;

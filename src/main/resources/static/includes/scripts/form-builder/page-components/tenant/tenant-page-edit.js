@@ -12,7 +12,7 @@ import { AdminHeader } from '../../component/admin-header.js';
 import { EventService } from '../../../shared/services/event-service.js';
 
 import { footerService } from '../../../shared/services/footer-service.js';
-import { Tenant, User } from '../../../shared/model/form-data.js';
+import { Tenant, User, TENANT_STATUS } from '../../../shared/model/form-data.js';
 import { RadioField } from '../../../shared/form-components/radio-field.js';
 import { FileUploadField } from '../../../shared/form-components/upload-field.js';
 import { FormRenderer } from '../../../form-viewer/components/form-renderer.js';
@@ -23,7 +23,6 @@ export class TenantPageEdit extends SettingsPage {
         super(Lang.get('tenant.edit.title'));
 
         const slug = Router.getUrlParameter('slug');
-        console.log(slug);
 
         Http.get(`${Router.basePath}/${slug}/api/tenant`)
         .then((tenant) => {
@@ -76,6 +75,18 @@ export class TenantPageEdit extends SettingsPage {
                                     "type": "file",
                                 },
                                 {
+                                    "name": "primary-color",
+                                    "label": Lang.get('generic.primary.color'),
+                                    "type": "color-field",
+                                    "value": tenant?.primaryColor
+                                },
+                                {
+                                    "name": "secondary-color",
+                                    "label": Lang.get('generic.secondary.color'),
+                                    "type": "color-field",
+                                    "value": tenant?.secondaryColor
+                                },
+                                {
                                     "name": "home-page",
                                     "label": Lang.get('tenant.field.home.page'),
                                     "type": "text",
@@ -86,11 +97,7 @@ export class TenantPageEdit extends SettingsPage {
                                     "label": Lang.get('generic.status'),
                                     "type": "radio",
                                     "required": true,
-                                    "options": [
-                                        { 'value': 'ACTIVE', 'text': Lang.get('generic.status.active') },
-                                        { 'value': 'SUSPENDED', 'text': Lang.get('generic.status.suspended') },
-                                        { 'value': 'PENDING_DELETION', 'text': Lang.get('generic.status.pending.deletion') }
-                                    ],
+                                    "options": Object.entries(TENANT_STATUS).map(([key, val_fnc]) => ({value: key, text: val_fnc()})),
                                     "value": tenant?.status
                                 },
                                 {
@@ -113,26 +120,27 @@ export class TenantPageEdit extends SettingsPage {
     }
 
 
-    postTenant() {
-        if (!this.tenant && !this.tenant.id) {
+    putTenant() {
+        if (!this.tenant || !this.tenant.id) {
             return;
         }
 
-        // if (!this.tenantForm.validate()) {
-        //     return;
-        // }
+        if (!this.tenantForm.validate()) {
+            return;
+        }
 
         const tenantGroup = this.tenantForm.getTabField('tenant-tab', 'tenant-group');
         const userGroup = this.tenantForm.getTabField('tenant-tab', 'user-group');
 
-        
+        const tenantStatus = tenantGroup.getFieldValue('status');
         
         this.tenant.name = tenantGroup.getFieldValue('name');
         this.tenant.slug = tenantGroup.getFieldValue('slug');
         this.tenant.homePage = tenantGroup.getFieldValue('home-page');
-        this.tenant.status = tenantGroup.getFieldValue('status');
+        this.tenant.primaryColor = tenantGroup.getFieldValue('primary-color');
+        this.tenant.secondaryColor = tenantGroup.getFieldValue('secondary-color');
+        this.tenant.status = tenantStatus[0].value;
         this.tenant.email = tenantGroup.getFieldValue('email');
-        console.log(this.tenant);
 
         Http.put(`${Router.tenantSlug}/api/tenant/${this.tenant.id}`, this.tenant, {})
             .then((tendantNew) => {
@@ -151,18 +159,15 @@ export class TenantPageEdit extends SettingsPage {
                     userGroup.setBackendErrors(fieldErrors.get('tenantAdmin'));
                 }
             });
-
     }
 
     upload(logoFileInput) {
-        console.log('a', logoFileInput);
         if (!logoFileInput || logoFileInput.length === 0) {
             return;
         }
 
         const formData = new FormData();
         formData.append('file', logoFileInput[0]);
-        console.log('c');
         Http.patch(`${Router.basePath}/${this.tenant.slug}/api/tenant/logo`, formData, {})
             .then((tendantNew) => {
                 console.log(tendantNew);
@@ -175,7 +180,7 @@ export class TenantPageEdit extends SettingsPage {
     afterInit() {
         footerService.addButtonRight(new FormButton(Lang.get('generic.cancel'), 'footer-btn btn-secondary cancel', null, () => { }));
         footerService.addButtonRight(new FormButton(Lang.get('generic.save'), 'footer-btn btn-primary save', null, () => {
-            this.postTenant();
+            this.putTenant();
         }));
     }
 }

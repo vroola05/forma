@@ -21,12 +21,11 @@ export class GroupPage extends SettingsPage {
 
     createContent() {
         this.groupList = new List(new ListDefinition([
-            new Column('Name', 'text', 'name'),
-            new Column('Status', 'boolean', 'status')
+            new Column(Lang.get('generic.name'), 'text', 'name')
         ]));
 
         this.groupList.setOnClick((index, group) => {
-            Router.route(`/admin/page/groups/edit/${group.id}`);
+            Router.route(`/admin/page/groups/${group.id}`);
         });
         this.append(this.groupList.getContent());
 

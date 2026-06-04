@@ -25,7 +25,7 @@ export class TextField extends InputNucleus {
         
         
         this.inputElement.addEventListener('change', (e) => {
-            this.setValue(e.target.value);
+            this.setValue(e.target.value, false, true);
         });
 
         this.createInput(this.inputElement);

@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
-import org.commonground.formbuilder.database.dao.settings.TenantUserEntity;
+import org.commonground.formbuilder.database.dao.settings.UserEntity;
 import org.commonground.formbuilder.model.constants.UserStatus;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,15 +19,15 @@ public class UserDetailsExtended extends org.springframework.security.core.userd
     private UserStatus status;
 
     public UserDetailsExtended(String username, @Nullable String password, Collection<? extends GrantedAuthority> authorities,
-        TenantUserEntity tenantUserEntity, Set<Group> groups, Set<String> permissions) {
+        UserEntity userEntity, Set<Group> groups, Set<String> permissions) {
 
         super(username, password, authorities);
-        this.tenantId = tenantUserEntity.getTenantId();
-        this.email = tenantUserEntity.getEmail();
-        this.name = tenantUserEntity.getName();
+        this.tenantId = userEntity.getTenantId();
+        this.email = userEntity.getEmail();
+        this.name = userEntity.getName();
         this.groups = groups;
         this.permissions = permissions;
-        this.status = tenantUserEntity.getStatus();
+        this.status = userEntity.getStatus();
     }
 
     public UUID getTenantId() {

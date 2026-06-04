@@ -5,6 +5,7 @@ import { Lang } from '../../../shared/services/lang.js';
 import { SettingsPage } from '../settings-page.js';
 import { Column, List, ListDefinition } from '../../../shared/generic-components/list.js';
 import { FormButton } from '../../../shared/form-components/components/form-button.js';
+import { FORM_STATUS } from '../../../shared/model/form-data.js';
 
 export class FormDashboard extends SettingsPage {
     searchtimeout = null;
@@ -48,9 +49,9 @@ export class FormDashboard extends SettingsPage {
         formDashboardItemsWrapper.append(this.formDashboardItems);
 
         this.formList = new List(new ListDefinition([
-            new Column('Name', 'text', 'label'),
-            new Column('Slug', 'boolean', 'name'),
-            new Column('Active', 'boolean', 'active')
+            new Column(Lang.get('generic.name'), 'text', 'label'),
+            new Column(Lang.get('generic.slug'), 'boolean', 'name'),
+            new Column(Lang.get('generic.status'), 'text', 'status')
         ]));
 
         this.formList.setOnClick((index, form) => {
@@ -62,7 +63,7 @@ export class FormDashboard extends SettingsPage {
 
     afterInit() {
         Http.get(`${Router.tenantPath}/api/form-builder/form`, {}).then((forms) => {
-            this.formList.setData(forms);
+            this.formList.setData(forms.map(f => ({label: f.label, name: f.name, status: !f.status ? '' : FORM_STATUS[f.status]()})));
             // this.parseOverviewItems();
             // this.addSearchListener();
         });

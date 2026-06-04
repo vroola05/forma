@@ -33,7 +33,7 @@ public class TenantServiceDatabase implements TenantService {
 
     @Override
     public List<Tenant> getAll() {
-        List<TenantEntity> tenantEntities = this.tenantRepository.findAll();
+        List<TenantEntity> tenantEntities = this.tenantRepository.findAllByOrderByNameAsc();
         return tenantMapper.toResponseDtoList(tenantEntities);
     }
 

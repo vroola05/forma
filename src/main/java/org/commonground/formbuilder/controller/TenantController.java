@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.commonground.formbuilder.config.tenant.TenantContext;
 import org.commonground.formbuilder.database.dao.settings.TenantEntity;
+import org.commonground.formbuilder.mapper.TenantMapper;
 import org.commonground.formbuilder.model.constants.TenantStatus;
 import org.commonground.formbuilder.model.settings.Group;
 import org.commonground.formbuilder.model.settings.Tenant;
@@ -41,6 +42,7 @@ public class TenantController {
     private final UserService userService;
     private final StorageService storageService;
     private final GroupService groupService;
+    private final TenantMapper tenantMapper;
 
     private static final List<String> ALLOWED_TYPES = List.of("image/png", "image/svg+xml");
 
@@ -48,11 +50,13 @@ public class TenantController {
             TenantService tenantService,
             UserService userService,
             StorageService storageService,
-            GroupService groupService) {
+            GroupService groupService,
+            TenantMapper tenantMapper) {
         this.tenantService = tenantService;
         this.userService = userService;
         this.storageService = storageService;
         this.groupService = groupService;
+        this.tenantMapper = tenantMapper;
     }
 
     @GetMapping("/{tenantSlug}/api/tenant")
@@ -70,7 +74,7 @@ public class TenantController {
         return this.tenantService.getAll();
     }
 
-    @PreAuthorize("hasAuthority(@Permissions.TENANT_CREATE)")
+    @PreAuthorize("hasAuthority(@Permissions.TENANT_CREATE_INTERNAL)")
     @PostMapping("/{tenantSlug}/api/tenant")
     public Tenant postTenant(@PathVariable() String tenantSlug, @Valid @RequestBody Tenant tenant) {
 
@@ -92,6 +96,17 @@ public class TenantController {
     }
 
     @PreAuthorize("hasAuthority(@Permissions.TENANT_UPDATE)")
+    @PutMapping("/{tenantSlug}/api/tenant/{tenantId}/customise")
+    public Tenant putTenantCustomise(@PathVariable() String tenantSlug, @PathVariable() String tenantId, @Valid @RequestBody Tenant tenant) {
+        if (tenantId == null || !tenantId.equals(tenant.getId().toString())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{tenant.error.no_id}");
+        }
+
+        Tenant tenantNew = this.tenantService.save(tenant);
+        return tenantNew;
+    }
+
+    @PreAuthorize("hasAuthority(@Permissions.TENANT_UPDATE_INTERNAL)")
     @PutMapping("/{tenantSlug}/api/tenant/{tenantId}")
     public Tenant putTenant(@PathVariable() String tenantSlug, @PathVariable() String tenantId, @Valid @RequestBody Tenant tenant) {
         if (tenantId == null || !tenantId.equals(tenant.getId().toString())) {
@@ -115,11 +130,10 @@ public class TenantController {
 
     @PreAuthorize("hasAuthority(@Permissions.TENANT_UPDATE)")
     @PatchMapping("{tenantSlug}/api/tenant/logo")
-    public ResponseEntity<String> uploadLogo(
+    public Tenant uploadLogo(
             @PathVariable() String tenantSlug,
             @RequestParam("file") MultipartFile file) {
 
-                System.out.println("Uploading logo for tenant: " + tenantSlug);
         Tenant tenant = TenantContext.getTenant();
 
         if (tenant == null) {
@@ -144,9 +158,8 @@ public class TenantController {
             
             TenantEntity tenantEntity =  this.tenantService.get(tenant.getId());
             tenantEntity.setLogo(logoKey);
-            this.tenantService.save(tenantEntity);
-
-            return ResponseEntity.ok("Logo succesvol geüpload.");
+            
+            return this.tenantMapper.toResponseDto(this.tenantService.save(tenantEntity));
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Fout tijdens het opslaan van het logo.");
@@ -161,6 +174,10 @@ public class TenantController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "{tenant.error.not_found}");
         }
         TenantEntity tenantEntity =  this.tenantService.get(tenant.getId());
+
+        if (tenantEntity.getLogo() == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "{tenant.error.logo_not_found}");
+        }
 
         S3Resource resource = storageService.downloadPublicAsset(tenantEntity.getLogo());
 

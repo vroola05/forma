@@ -32,7 +32,7 @@ export class BuilderPage extends Page {
     constructor() {
         super();
 
-        this.setTitle('Ontwerp formulier');
+        this.setTitle(Lang.get('form.title'));
 
         this.adminHeader = new AdminHeader();
 
@@ -163,7 +163,7 @@ export class BuilderPage extends Page {
                     console.error('No fields found in the project details');
                     return;
                 }
-                Router.route('/');
+                Router.route(Router.tenantPath + '/admin/page/forms');
             })
             .catch(error => {
                 this.loader.classList.remove('active');

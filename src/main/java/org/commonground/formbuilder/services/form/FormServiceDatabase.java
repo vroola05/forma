@@ -7,12 +7,10 @@ import java.util.UUID;
 import org.commonground.formbuilder.config.tenant.TenantContext;
 import org.commonground.formbuilder.database.dao.definition.FormDefinitionEntity;
 import org.commonground.formbuilder.database.repository.FormDefinitionRepository;
+import org.commonground.formbuilder.mapper.FormMapper;
 import org.commonground.formbuilder.model.form.FormConfig;
 import org.commonground.formbuilder.model.form.FormList;
 import org.commonground.formbuilder.model.form.FormWrapper;
-import org.commonground.formbuilder.model.form.Option;
-import org.commonground.formbuilder.model.form.constants.FieldType;
-import org.commonground.formbuilder.model.form.fields.CheckboxField;
 import org.commonground.formbuilder.model.form.fields.Field;
 import org.commonground.formbuilder.model.form.fields.Form;
 import org.commonground.formbuilder.model.form.fields.TabPage;
@@ -23,18 +21,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class FormServiceDatabase implements FormService {
+    private final FormMapper formMapper;
     private final FormDefinitionRepository formDefinitionRepository;
     private final FormConfigSuccessPageService formConfigSuccessPageService;
     private final TabPageService tabPageService;
 
     public FormServiceDatabase(
+            FormMapper formMapper,
             TabPageService tabPageService,
             FormConfigSuccessPageService formConfigSuccessPageService,
             FormDefinitionRepository formDefinitionRepository) {
 
+        this.formMapper = formMapper;
         this.formDefinitionRepository = formDefinitionRepository;
         this.tabPageService = tabPageService;
         this.formConfigSuccessPageService = formConfigSuccessPageService;
@@ -47,63 +50,6 @@ public class FormServiceDatabase implements FormService {
     }
 
     @Override
-    @Transactional
-    public FormWrapper save(UUID tenantId, FormWrapper formWrapper) {
-
-        Form form = formWrapper.getForm();
-
-        this.formDefinitionRepository.findByNameAndTenantId(form.getName(), tenantId).ifPresent(existingForm -> {
-            System.out.println("Checking for existing form with name: " + form.getName() + " and tenantId: " + tenantId);
-            System.out.println("Existing form found with name: " + existingForm.getName() + " and tenantId: " + tenantId);
-            if (form.getId() == null || !existingForm.getId().equals(form.getId())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{form.definition.error.not_unique}");
-            }
-        });
-
-        FormDefinitionEntity formDefinitionEntity = form.getId() == null
-                ? new FormDefinitionEntity()
-                : this.getFormDefinitionById(form.getId());
-
-        if (form.getId() == null) {
-            formDefinitionEntity.setId(UUID.randomUUID());
-        }
-        formDefinitionEntity.setTenantId(tenantId);
-        formDefinitionEntity.setName(form.getName());
-        formDefinitionEntity.setLabel(form.getLabel());
-        formDefinitionEntity.setClasses(form.getClasses());
-        formDefinitionEntity.setMetadata(form.getMetadata());
-        formDefinitionEntity.setConfirmation(form.getConfirmation());
-        formDefinitionEntity.setCondition(form.getCondition());
-        formDefinitionEntity.setShow(form.isShow());
-
-        FormDefinitionEntity resultEntity = this.formDefinitionRepository.save(formDefinitionEntity);
-
-        int sortOrderTab = 0;
-        for (Field field : form.getFields()) {
-            TabPage tabPage = (TabPage) field;
-            this.tabPageService.save(resultEntity, tabPage, sortOrderTab++);
-        }
-        ;
-
-        FormConfig formConfig = formWrapper.getFormConfig();
-        if (formConfig != null) {
-            if (formConfig.getFormConfigSuccessPage() != null) {
-                this.formConfigSuccessPageService.save(resultEntity, formConfig.getFormConfigSuccessPage());
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    public FormWrapper get(String formName) {
-        FormDefinitionEntity formDefinitionEntity = this.formDefinitionRepository.findByName(formName)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.definition.error.not_found}"));
-
-        return transform(formDefinitionEntity);
-    }
-
-    @Override
     public List<FormList> list() {
         Tenant tenant = TenantContext.getTenant();
         List<FormList> formLists = new ArrayList<>();
@@ -113,7 +59,7 @@ public class FormServiceDatabase implements FormService {
             formList.setId(formDefinitionEntity.getId());
             formList.setName(formDefinitionEntity.getName());
             formList.setLabel(formDefinitionEntity.getLabel());
-            formList.setActive(true);
+            formList.setStatus(formDefinitionEntity.getStatus());
             formLists.add(formList);
         });
 
@@ -121,35 +67,13 @@ public class FormServiceDatabase implements FormService {
     }
 
     @Override
-    public FormWrapper transform(FormDefinitionEntity formDefinitionEntity) {
+    public FormWrapper get(String formName) {
+        FormDefinitionEntity formDefinitionEntity = this.formDefinitionRepository.findByName(formName)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.definition.error.not_found}"));
+
         FormWrapper formWrapper = new FormWrapper();
         
-        Form form = new Form();
-        form.setId(formDefinitionEntity.getId());
-        form.setType(FieldType.FORM);
-        form.setName(formDefinitionEntity.getName());
-        form.setLabel(formDefinitionEntity.getLabel());
-        form.setClasses(formDefinitionEntity.getClasses());
-        form.setMetadata(formDefinitionEntity.getMetadata());
-        form.setConfirmation(formDefinitionEntity.getConfirmation());
-        if (formDefinitionEntity.getConfirmation() != null) {
-            for (int i = 0; i < formDefinitionEntity.getConfirmation().size(); i++) {
-                CheckboxField check = new CheckboxField();
-                check.setType(FieldType.CHECKBOX);
-
-                check.setName("confirmation-" + (i + 1));
-                check.setLabel("");
-                check.setRequired(true);
-                check.setOptions(new ArrayList<>());
-                check.getOptions().add(new Option(formDefinitionEntity.getConfirmation().get(i),
-                        formDefinitionEntity.getConfirmation().get(i), false));
-                form.getConfirmationCheck().add(check);
-            }
-
-        }
-
-        form.setCondition(formDefinitionEntity.getCondition());
-        form.setShow(formDefinitionEntity.isShow());
+        Form form = formMapper.toResponseDto(formDefinitionEntity);
 
         form.setFields(tabPageService.get(formDefinitionEntity.getId()));
 
@@ -162,4 +86,47 @@ public class FormServiceDatabase implements FormService {
         return formWrapper;
     }
 
+    @Override
+    @Transactional
+    public FormWrapper save(UUID tenantId, FormWrapper formWrapper) {
+        Form form = formWrapper.getForm();
+
+        boolean isNewForm = (form.getId() == null);
+        boolean isNotUnique;
+
+        if (isNewForm) {
+            isNotUnique = this.formDefinitionRepository.existsByNameAndTenantId(form.getName(), tenantId);
+        } else {
+            isNotUnique = this.formDefinitionRepository.existsByNameAndTenantIdAndIdNot(form.getName(), tenantId, form.getId());
+        }
+
+        if (isNotUnique) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{form.definition.error.not_unique}");
+        }
+
+        FormDefinitionEntity formDefinitionEntity;
+        if (form.getId() == null) {
+            formDefinitionEntity = this.formMapper.toNewEntity(form, tenantId);
+        } else {
+            formDefinitionEntity = this.getFormDefinitionById(form.getId());
+            this.formMapper.updateEntityFromDto(formDefinitionEntity, form, tenantId);
+        }
+
+        FormDefinitionEntity resultEntity = this.formDefinitionRepository.save(formDefinitionEntity);
+
+        int sortOrderTab = 0;
+        for (Field field : form.getFields()) {
+            TabPage tabPage = (TabPage) field;
+            this.tabPageService.save(resultEntity, tabPage, sortOrderTab++);
+        }
+
+        FormConfig formConfig = formWrapper.getFormConfig();
+        if (formConfig != null) {
+            if (formConfig.getFormConfigSuccessPage() != null) {
+                this.formConfigSuccessPageService.save(resultEntity, formConfig.getFormConfigSuccessPage());
+            }
+        }
+
+        return null;
+    }
 }

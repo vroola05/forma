@@ -4,8 +4,9 @@
     --secondary-color: #85aaca;
     --secondary-color-light: color-mix(in srgb, var(--secondary-color), white 40%);
 
-    --default-space: 10px;
+    --default-space-quarter: calc(var(--default-space) / 4);
     --default-space-half: calc(var(--default-space) / 2);
+    --default-space: 10px;
     --default-space-double: calc(var(--default-space) * 2);
     --default-space-triple: calc(var(--default-space) * 3);
     /* #fbfbfb */
@@ -123,7 +124,7 @@ html, body {
     width: 100%;
     height: 100%;
 
-    background-color: #659197;
+    background-color: var(--primary-color);
     
     .login-inner-container {
         display: flex;

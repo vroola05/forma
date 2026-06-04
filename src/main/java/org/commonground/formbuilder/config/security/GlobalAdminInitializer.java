@@ -2,7 +2,7 @@ package org.commonground.formbuilder.config.security;
 
 import java.util.UUID;
 
-import org.commonground.formbuilder.database.dao.settings.TenantUserEntity;
+import org.commonground.formbuilder.database.dao.settings.UserEntity;
 import org.commonground.formbuilder.database.repository.GroupRepository;
 import org.commonground.formbuilder.database.repository.TenantUserRepository;
 import org.commonground.formbuilder.model.constants.UserStatus;
@@ -38,7 +38,7 @@ public class GlobalAdminInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (userRepository.findByUsernameAndTenantId(adminUsername, null).isEmpty()) {
-            TenantUserEntity admin = new TenantUserEntity();
+            UserEntity admin = new UserEntity();
             admin.setId(UUID.randomUUID());
             admin.setUsername(adminUsername);
             admin.setEmail(adminEmail);

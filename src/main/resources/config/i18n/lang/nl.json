@@ -2,6 +2,9 @@
     "generic.lang": "Nederlands",
     "generic.title": "Forma",
     "generic.search": "Zoeken...",
+    "generic.slug": "URL-naam",
+    "generic.primary.color": "Primaire kleur",
+    "generic.secondary.color": "Secundaire kleur",
 
     "generic.not.logged.in": "Niet ingelogd",
     "generic.cancel": "Annuleren",
@@ -18,16 +21,23 @@
     "generic.username": "Gebruikersnaam",
     "generic.password": "Wachtwoord",
     "generic.email": "E-mailadres",
+    "generic.groups": "Groepen",
     "generic.active": "Actief",
 
     "generic.yes": "Ja",
     "generic.no": "Nee",
 
     "generic.status": "Status",
+    "generic.status.invited": "Uitgenodigd",
     "generic.status.active": "Actief",
     "generic.status.inactive": "Inactief",
     "generic.status.suspended": "Opgeschort",
     "generic.status.pending.deletion": "In afwachting van verwijdering",
+    "generic.status.blocked": "Geblokkeerd",
+
+    "generic.status.draft": "Concept",
+    "generic.status.published": "Gepubliceerd",
+    "generic.status.archived": "Gearchiveerd",
 
     "header.home": "Home",
 
@@ -51,9 +61,11 @@
     "group.title": "Gebruikersgroepen",
     "group.new.title": "Groep aanmaken",
     "group.edit.title": "Groep bewerken",
-    "group.name": "Groep naam",
+    "group.name": "Naam van de groep",
 
-    "user.title": "Gebruiker",
+    "user.title": "Gebruikers",
+    "user.new.title": "Nieuwe gebruiker aanmaken",
+    "user.edit.title": "Gebruiker wijzigen",
 
     "text.editor.table.create": "Maken",
     "text.editor.table.row.add": "Rij toevoegen",
@@ -61,14 +73,16 @@
     "text.editor.table.col.add": "Kolom toevoegen",
     "text.editor.table.col.delete": "Kolom verwijderen",
 
-    "form.dashboard.title": "Formulieren dashboad",
+    "form.dashboard.title": "Formulieren overzicht",
     "form.dashboard.list.name": "Naam",
     "form.dashboard.list.title": "Titel",
     "form.dashboard.list.active": "Actief",
     "form.dashboard.list.last.modified": "Laatst Gewijzigd",
 
-    "form.title": "Formulieren",
+    "forms.title": "Formulieren",
+    "form.title": "Ontwerp een formulier",
     "form.name": "Naam formulier",
+
     "tab.new": "Nieuwe tab",
 
     "page.settings.form": "Formulier",
@@ -97,6 +111,7 @@
     "prop.header": "Eigenschappen",
     "prop.unknown.field": "Onbekend veld",
 
+    "prop.select.placeholder": "Selecteer",
     "prop.name.label": "Naam",
     "prop.label.label": "Label",
     "prop.class.label": "Css class",

@@ -32,7 +32,7 @@ public class GroupEntity extends BaseEntity {
     private String name;
 
     @ManyToMany(mappedBy = "groups")
-    private Set<TenantUserEntity> users = new HashSet<>();
+    private Set<UserEntity> users = new HashSet<>();
 
     @ManyToMany
     @JoinTable(

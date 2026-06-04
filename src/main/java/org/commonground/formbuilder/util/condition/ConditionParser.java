@@ -7,8 +7,6 @@ import org.commonground.formbuilder.model.form.condition.Condition;
 import org.commonground.formbuilder.model.form.condition.ConditionType;
 import org.commonground.formbuilder.model.form.condition.LogicalOperator;
 import org.commonground.formbuilder.model.form.condition.Operator;
-import org.commonground.formbuilder.model.form.constants.FieldType;
-import org.commonground.formbuilder.model.form.fields.Field;
 import org.commonground.formbuilder.model.form.fields.Form;
 
 /**

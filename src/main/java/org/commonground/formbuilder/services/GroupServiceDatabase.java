@@ -2,13 +2,14 @@ package org.commonground.formbuilder.services;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import org.commonground.formbuilder.database.dao.settings.PermissionEntity;
 import org.commonground.formbuilder.database.dao.settings.GroupEntity;
-import org.commonground.formbuilder.database.repository.PermissionsRepository;
+import org.commonground.formbuilder.database.dao.settings.PermissionEntity;
 import org.commonground.formbuilder.database.repository.GroupRepository;
+import org.commonground.formbuilder.database.repository.PermissionsRepository;
 import org.commonground.formbuilder.mapper.GroupMapper;
 import org.commonground.formbuilder.model.settings.Group;
 import org.commonground.formbuilder.model.settings.GroupRegisterRequest;
@@ -35,11 +36,9 @@ public class GroupServiceDatabase implements GroupService {
         this.permissionsRepository = permissionsRepository;
     }
 
-    
-
     @Override
     public List<Group> getAll(UUID tenantId) {
-        return this.groupRepository.findAllByTenantId(tenantId).stream().map(this.groupMapper::toResponseDto).collect(java.util.stream.Collectors.toList());
+        return this.groupRepository.findAllByTenantIdOrderByNameAsc(tenantId).stream().map(this.groupMapper::toResponseDto).collect(java.util.stream.Collectors.toList());
     }
 
     @Override
@@ -49,6 +48,7 @@ public class GroupServiceDatabase implements GroupService {
         return this.groupMapper.toRegisterRequest(groupEntity);
     }
 
+    @Override
     @Transactional
     public Group createGroup(UUID tenantId, GroupRegisterRequest groupRegisterRequest) {
         if (this.groupRepository.existsByNameAndTenantId(groupRegisterRequest.getName(), tenantId)) {
@@ -58,8 +58,32 @@ public class GroupServiceDatabase implements GroupService {
         GroupEntity groupEntity = this.groupMapper.toNewEntity(groupRegisterRequest);
         groupEntity.setTenantId(tenantId);
 
-        List<PermissionEntity> permissions = this.permissionsRepository.findAllById(groupRegisterRequest.getPermissions());
-        permissions.forEach(permission -> groupEntity.getPermissions().add(permission));
+        List<PermissionEntity> permissionEntities = this.permissionsRepository.findAllById(groupRegisterRequest.getPermissions());
+        groupEntity.getPermissions().addAll(permissionEntities);
+        
+        GroupEntity savedGroupEntity = this.groupRepository.save(groupEntity);
+        return groupMapper.toResponseDto(savedGroupEntity);
+    }
+
+    
+    @Override
+    @Transactional
+    public Group updateGroup(UUID tenantId, GroupRegisterRequest groupRegisterRequest) {
+        GroupEntity groupEntity = this.groupRepository.findByTenantIdAndId(tenantId, groupRegisterRequest.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "{group.error.not_found}"));
+
+        if (!groupEntity.getName().equalsIgnoreCase(groupRegisterRequest.getName())) {
+            if (this.groupRepository.existsByNameAndTenantId(groupRegisterRequest.getName(), tenantId)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{group.error.name_exists}");
+            }
+        }
+
+        groupMapper.updateEntityFromDto(groupEntity, groupRegisterRequest);
+
+        List<PermissionEntity> permissionEntities = this.permissionsRepository.findAllById(groupRegisterRequest.getPermissions());
+
+        groupEntity.getPermissions().clear();
+        groupEntity.getPermissions().addAll(permissionEntities);
 
         GroupEntity savedGroupEntity = this.groupRepository.save(groupEntity);
         return groupMapper.toResponseDto(savedGroupEntity);
@@ -77,6 +101,8 @@ public class GroupServiceDatabase implements GroupService {
         groupRequest.setName("Administrators");
 
         Set<String> adminPermissions = new HashSet<>( List.of(
+            Permissions.TENANT_READ,
+            Permissions.TENANT_UPDATE,
             Permissions.USER_CREATE,
             Permissions.USER_READ,
             Permissions.USER_UPDATE,

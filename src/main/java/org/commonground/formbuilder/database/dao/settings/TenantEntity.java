@@ -37,4 +37,8 @@ public class TenantEntity extends BaseEntity {
     private TenantStatus status;
     @Column(nullable = false)
     private String email;
+    @Column
+    private String primaryColor;
+    @Column
+    private String secondaryColor;
 }

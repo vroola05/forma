@@ -10,7 +10,7 @@ import java.util.UUID;
 import org.commonground.formbuilder.config.tenant.TenantContext;
 import org.commonground.formbuilder.database.dao.settings.PermissionEntity;
 import org.commonground.formbuilder.database.dao.settings.GroupEntity;
-import org.commonground.formbuilder.database.dao.settings.TenantUserEntity;
+import org.commonground.formbuilder.database.dao.settings.UserEntity;
 import org.commonground.formbuilder.database.repository.TenantUserRepository;
 import org.commonground.formbuilder.mapper.GroupMapper;
 import org.commonground.formbuilder.model.settings.Group;
@@ -87,7 +87,7 @@ public class TenantUserDetailsService implements UserDetailsService {
         setTenantSlug();
         Tenant currentTenant = TenantContext.getTenant();
 
-        TenantUserEntity userEntity;
+        UserEntity userEntity;
         if (currentTenant == null || currentTenant.getId() == null) {
             userEntity = userRepository.findByUsernameAndTenantIdIsNullWithGroupsAndPermissions(username)
                     .orElseThrow(() -> new UsernameNotFoundException("{user.error.not_found}"));

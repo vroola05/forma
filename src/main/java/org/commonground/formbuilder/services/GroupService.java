@@ -11,5 +11,6 @@ public interface GroupService {
     public GroupRegisterRequest get(UUID tenantId, UUID groupId);
     Group createGroup(UUID tenantId, GroupRegisterRequest groupRegisterRequest);
     Group createTenantAdminGroup(UUID tenantId);
+    Group updateGroup(UUID tenantId, GroupRegisterRequest groupRegisterRequest);
     void deleteGroup(UUID tenantId, UUID groupId);
 }

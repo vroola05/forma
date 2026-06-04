@@ -26,7 +26,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class TenantUserEntity extends BaseEntity {
+public class UserEntity extends BaseEntity {
     @Id
     private UUID id;
     private UUID tenantId;

@@ -1,6 +1,7 @@
 package org.commonground.formbuilder.config;
 
-import io.awspring.cloud.s3.S3Template;
+import lombok.extern.slf4j.Slf4j;
+
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -22,6 +23,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@Slf4j
 @Configuration
 public class SeaweedBucketInitializer {
 
@@ -64,16 +66,15 @@ public class SeaweedBucketInitializer {
         };
     }
 
+
     private boolean bucketExists(S3Client s3Client, String bucketName) {
         return s3Client.listBuckets().buckets().stream()
                 .anyMatch(b -> {
-                    System.out.println("--- " + b.name() + " | " + bucketName + " ---");
                     return b.name().equals(bucketName);
                 });
     }
 
     private void createBucket(S3Client s3Client, String bucketName, Integer daysToKeep) {
-        System.out.println("/////////////////" + bucketName + "//////////////////");
         if (!bucketExists(s3Client, bucketName)) {
             try {
                 s3Client.createBucket(b -> b.bucket(bucketName));
@@ -96,12 +97,13 @@ public class SeaweedBucketInitializer {
                             .build();
 
                     s3Client.putBucketLifecycleConfiguration(request);
-                    System.out.println("Bucket '" + bucketName + "' aangemaakt met een TTL van " + daysToKeep + " dagen.");
+                    log.info("SeaweedBucket bucket {} has been created with a lifecycle of {}.", bucketName, daysToKeep);
+                } else {
+                    log.info("SeaweedBucket bucket {} has been created.", bucketName);
                 }
+                
             } catch (BucketAlreadyExistsException | BucketAlreadyOwnedByYouException e) {
                 // Als SeaweedFS zegt dat hij al bestaat, negeren we de fout en gaan we door
-                System.out.println(
-                        "-> Opgevangen: Bucket '" + bucketName + "' bestond al op de Filer-schijf. We gaan door.");
             }
         }
     }

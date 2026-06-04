@@ -172,8 +172,13 @@ export class BuilderPropertyComponent {
     getPropertySelectDom(property) {
         const input = document.createElement('select');
         input.id = `field-property-${property.id}`;
-        input.value = property.value;
+        
         input.className = 'form-control';
+
+        const optionElement = document.createElement('option');
+        optionElement.value = -1;
+        optionElement.textContent = `${Lang.get('prop.select.placeholder')} ${property.label}`;
+        input.appendChild(optionElement);
 
         if (property.options) {
             property.options.forEach(option => {
@@ -183,12 +188,17 @@ export class BuilderPropertyComponent {
                 input.appendChild(optionElement);
             });
         }
+
+        input.value = property.value;
+
         input.onchange = (event) => {
-            if (this.field.fieldProperties.properties[event.target.dataset.id]) {
-                this.field.fieldProperties.properties[event.target.dataset.id].value = event.target.value;
+            const prop= this.field.fieldProperties.properties[event.target.dataset.id];
+            if (prop) {
+                prop.value = event.target.value === -1 ? '' : event.target.value;
             }
-            this.onPropertyChanged(event.target, property);
+            this.onPropertyChanged(event.target, prop);
         };
+
 
         return input;
     }
@@ -223,9 +233,6 @@ export class BuilderPropertyComponent {
                 // if (!this.validate(prop, event.target, event.target.value)) {
                 //     // return;
                 // }
-
-                
-                
             }
         };
 

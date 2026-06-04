@@ -11,6 +11,7 @@ import { TextAreaField } from '../../shared/form-components/textarea-field.js';
 import { CheckboxField } from '../../shared/form-components/checkbox-field.js';
 import { FileUploadField } from '../../shared/form-components/upload-field.js';
 import { DualListboxField } from '../../shared/form-components/dual-listbox-field.js';
+import { ColorField } from '../../shared/form-components/color-field.js';
 
 import { FormGroup } from '../../shared/form-components/form-group.js';
 import { Form } from '../../shared/form-components/form.js';
@@ -251,6 +252,19 @@ export class FormRenderer {
                     .setClasses(fieldData.classes)
                     .setMinLength(fieldData.minlength)
                     .setMaxLength(fieldData.maxlength)
+                    .setLabel(fieldData.label)
+                    .setPlaceholder(fieldData.placeholder)
+                    .setReadonly(fieldData.readonly)
+                    .setValue(state ? state : fieldData.value, true)
+                    .setShowConditions(fieldData.condition);
+    
+            case 'color-field':
+                return new ColorField(fieldData.name, fieldData.label)
+                    .setType('color-field')
+                    .setMetadata(fieldData.metadata)
+                    .setData(fieldData.data)
+                    .setRequired(fieldData.required)
+                    .setClasses(fieldData.classes)
                     .setLabel(fieldData.label)
                     .setPlaceholder(fieldData.placeholder)
                     .setReadonly(fieldData.readonly)

@@ -2,6 +2,9 @@
     "generic.lang": "English",
     "generic.title": "Form Builder",
     "generic.search": "Search...",
+    "generic.slug": "URL Name",
+    "generic.primary.color": "Primairy color",
+    "generic.secondary.color": "Secondairy color",
 
     "generic.not.logged.in": "Logged out",
     "generic.cancel": "Cancel",
@@ -29,16 +32,20 @@
     "generic.status.suspended": "Suspended",
     "generic.status.pending.deletion": "Pending Deletion",
 
+    "generic.status.draft": "Concept",
+    "generic.status.published": "Gepubliceerd",
+    "generic.status.archived": "Gearchiveerd",
+
     "header.home": "Home",
 
     "login.title": "Login to Forma",
     "login.header": "Login",
-    "login.text": "Welcom to Forma. Login to manage your forms and submissions.",
+    "login.text": "Welcome to Forma. Login to manage your forms and submissions.",
     "login.username": "Username",
     "login.password": "Password",
     "login.submit": "Login",
 
-    "dashboad.title": "Dashboad",
+    "dashboad.title": "Dashboard",
 
     "tenant.title": "Tenants",
     "tenant.new.title": "New tenant",
@@ -55,13 +62,21 @@
 
     "user.title": "User",
 
-    "form.dashboard.title": "Form dashboad",
+    "text.editor.table.create": "Create",
+    "text.editor.table.row.add": "Add Row",
+    "text.editor.table.row.delete": "Delete Row",
+    "text.editor.table.col.add": "Add Column",
+    "text.editor.table.col.delete": "Delete Column",
+
+    "form.dashboard.title": "Form dashboard",
     "form.dashboard.list.name": "Name",
     "form.dashboard.list.title": "Title",
     "form.dashboard.list.active": "Active",
     "form.dashboard.list.last.modified": "Last Modified",
 
+    "form.title": "Forms",
     "form.name": "Formname",
+
     "tab.new": "New tab",
 
     "page.settings.form": "Form",
@@ -90,6 +105,7 @@
     "prop.header": "Properties",
     "prop.unknown.field": "Unknown field",
 
+    "prop.select.placeholder": "Select",
     "prop.name.label": "Name",
     "prop.label.label": "Label",
     "prop.class.label": "Css class",

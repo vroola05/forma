@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.commonground.formbuilder.exceptions.FieldValidationException;
+import org.commonground.formbuilder.model.constants.FormStatus;
 import org.commonground.formbuilder.model.form.Option;
 import org.commonground.formbuilder.model.form.condition.Condition;
 import org.commonground.formbuilder.model.form.constants.FieldType;
@@ -29,6 +30,7 @@ public class Form implements Field {
     private String name;
     private String label;
     private String classes;
+    private FormStatus status;
 
     private List<String> metadata;
     private List<String> confirmation;

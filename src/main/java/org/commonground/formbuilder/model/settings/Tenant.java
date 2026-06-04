@@ -30,6 +30,20 @@ public class Tenant {
     private String slug;
     private String homePage;
 
+
+    @Pattern(
+        regexp = RegexConstants.COLOR_REGEX,
+        message = "{validation.color}"
+    )
+    private String primaryColor;
+
+    @Pattern(
+        regexp = RegexConstants.COLOR_REGEX,
+        message = "{validation.color}"
+    )
+    private String secondaryColor;
+
+    private Boolean hasLogo;
     private TenantStatus status;
 
     @Email(

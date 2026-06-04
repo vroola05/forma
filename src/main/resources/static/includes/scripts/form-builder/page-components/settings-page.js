@@ -2,9 +2,11 @@ import { Page } from '../../shared/page-components/page.js';
 import { AdminHeader } from '../component/admin-header.js';
 import { Footer } from '../../shared/generic-components/footer.js';
 export class SettingsPage extends Page {
+    pageTitle = document.createElement('h1');
 
     constructor(title) {
         super();
+        
         this.setTitle(title);
 
         this.adminHeader = new AdminHeader();
@@ -20,15 +22,22 @@ export class SettingsPage extends Page {
         pageTitleContainer.className = 'settings-page-title-container';
         this.contentInner.append(pageTitleContainer);
 
-        const pageTitle = document.createElement('h1');
-        pageTitle.className = 'settings-page-title';
-        pageTitle.innerHTML = title;
-        pageTitleContainer.append(pageTitle);
+        this.pageTitle.className = 'settings-page-title';
+        this.pageTitle.textContent = title;
+        pageTitleContainer.append(this.pageTitle);
 
         this.titleButtonContainer = document.createElement('div');
         this.titleButtonContainer.className = 'settings-page-title-button-container';
         
         pageTitleContainer.append(this.titleButtonContainer);
+
+        
+    }
+
+    setTitle(title) {
+        super.setTitle(title);
+        console.log('sss');
+        this.pageTitle.textContent = title;
     }
 
     addTitleButton(formButton) {

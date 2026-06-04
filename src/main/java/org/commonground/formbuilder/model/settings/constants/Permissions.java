@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 @Component("Permissions")
 public class Permissions {
 
-    public static final String TENANT_CREATE = "tenant:create";
+    public static final String TENANT_CREATE_INTERNAL = "tenant:create:internal";
     public static final String TENANT_READ = "tenant:read";
     public static final String TENANT_READ_INTERNAL = "tenant:read:internal";
     public static final String TENANT_UPDATE = "tenant:update";
@@ -20,6 +20,7 @@ public class Permissions {
     
     public static final String GROUP_CREATE = "group:create";
     public static final String GROUP_READ = "group:read";
+    public static final String GROUP_READ_INTERNAL = "group:read:internal";
     public static final String GROUP_UPDATE = "group:update";
     public static final String GROUP_DELETE = "group:delete";
     

@@ -61,8 +61,8 @@ export class BuilderFieldInterface {
             return;
         }
         for (const key in properties) {
-            
             if (this.fieldProperties.hasProperty(key) && (properties[key] !== undefined && properties[key] !== null)) {
+                
                 this.fieldProperties.setPropertyValueById(key, properties[key]);
             }
         }

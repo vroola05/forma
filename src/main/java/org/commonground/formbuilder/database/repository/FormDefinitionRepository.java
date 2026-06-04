@@ -11,4 +11,8 @@ public interface FormDefinitionRepository extends JpaRepository<FormDefinitionEn
     Optional<FormDefinitionEntity> findByName(String name);
     List<FormDefinitionEntity> findByTenantId(UUID tenantId);
     Optional<FormDefinitionEntity> findByNameAndTenantId(String name, UUID tenantId);
+
+    boolean existsByNameAndTenantIdAndIdNot(String name, UUID tenantId, UUID id);
+
+    boolean existsByNameAndTenantId(String name, UUID tenantId);
 }

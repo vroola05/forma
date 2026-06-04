@@ -58,9 +58,9 @@ public class FormController {
             formConfigSuccessPage.setShowSummary(formConfigSuccessPageEntity.isShowSummary());
             formConfigSuccessPage.setName(formConfigSuccessPageEntity.getTemplateName());
             formConfigSuccessPage.setTitle(formConfigSuccessPageEntity.getTemplateTitle());
-            formConfigSuccessPage.setContent(
-                this.formConfigSuccessPageService.transform(
-                    this.formService.transform(formDefinitionEntity), formSubmissionEntity.getData()));
+            // formConfigSuccessPage.setContent(
+            //     this.formConfigSuccessPageService.transform(
+                    // this.formService.transform(formDefinitionEntity), formSubmissionEntity.getData()));
         }
 
         return formConfigSuccessPage;

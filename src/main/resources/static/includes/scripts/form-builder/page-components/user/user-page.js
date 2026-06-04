@@ -8,35 +8,36 @@ import { FormButton } from '../../../shared/form-components/components/form-butt
 import { AdminHeader } from '../../component/admin-header.js';
 import { Column, List, ListDefinition } from '../../../shared/generic-components/list.js';
 import { EventService } from '../../../shared/services/event-service.js';
+import { USER_STATUS } from '../../../shared/model/form-data.js';
 
-export class TenantPage extends SettingsPage {
+export class UserPage extends SettingsPage {
 
     constructor() {
-        super(Lang.get('tenant.title'));
+        super(Lang.get('user.title'));
         
         this.createContent();
 
-        this.addTitleButton(new FormButton('','icon icon-plus-lg','/admin/page/tenant/new'))
+        this.addTitleButton(new FormButton('','icon icon-plus-lg','/admin/page/users/new'))
     }
 
     createContent() {
-        this.tenantList = new List(new ListDefinition([
+        this.usersList = new List(new ListDefinition([
             new Column(Lang.get('generic.name'), 'text', 'name'),
-            new Column(Lang.get('generic.slug'), 'boolean', 'slug'),
-            new Column(Lang.get('generic.status'), 'boolean', 'status')
+            new Column(Lang.get('generic.email'), 'text', 'email'),
+            new Column(Lang.get('generic.status'), 'text', 'status')
         ]));
 
-        this.tenantList.setOnClick((index, tenant) => {
-            Router.route(`/admin/page/tenant/edit/${tenant.slug}`);
+        this.usersList.setOnClick((index, user) => {
+            Router.route(`/admin/page/users/${user.id}`);
         });
-        this.append(this.tenantList.getContent());
+        this.append(this.usersList.getContent());
 
     }
 
     afterInit() {
-        Http.post(`${Router.tenantPath}/api/tenant/list`, {})
-        .then((tenants) => {
-            this.tenantList.setData(tenants);
+        Http.get(`${Router.tenantPath}/api/users/list`, {})
+        .then((users) => {
+            this.usersList.setData(users.map(u => ({name: u.name, email: u.email, status: !u.status ? '' : USER_STATUS[u.status]()})));
         })
         .catch((error) => {
             console.error(error);

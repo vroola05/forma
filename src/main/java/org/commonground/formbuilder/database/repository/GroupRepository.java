@@ -10,8 +10,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface GroupRepository extends JpaRepository<GroupEntity, UUID> {
     boolean existsByNameAndTenantId(String name, UUID tenantId);
 
-    List<GroupEntity> findAllByTenantId(UUID tenantId);
+    List<GroupEntity> findAllByTenantIdOrderByNameAsc(UUID tenantId);
     Optional<GroupEntity> findByTenantIdAndId(UUID tenantId, UUID id);
-    List<GroupEntity> findByTenantIdAndIdIn(UUID tenantId, Collection<UUID> ids);
+
+    boolean existsByNameAndTenantIdAndIdNot(String name, UUID tenantId, UUID id);
+    List<GroupEntity> findByTenantIdAndIdInOrderByNameAsc(UUID tenantId, Collection<UUID> ids);
 
 }

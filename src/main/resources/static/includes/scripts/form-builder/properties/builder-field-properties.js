@@ -7,6 +7,7 @@ export class BuilderFieldProperties {
     properties = {};
     onPropertyLabelChanged = [];
     field
+    
     constructor(field) {
         this.field = field;
     }

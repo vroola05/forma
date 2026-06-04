@@ -53,7 +53,7 @@ export class GroupPageNew extends SettingsPage {
                             "fields": [
                                 {
                                     "name": "name",
-                                    "label": Lang.get('group.field.name'),
+                                    "label": Lang.get('group.name'),
                                     "type": "text",
                                     "required": true
                                 },
@@ -82,9 +82,7 @@ export class GroupPageNew extends SettingsPage {
     }
 
 
-    postGroup() {
-        
-
+    save() {
         if (!this.groupForm.validate()) {
             return;
         }
@@ -94,16 +92,16 @@ export class GroupPageNew extends SettingsPage {
         console.log(group.getFieldValue('name'));
         console.log(group.getField('permissions').getOptions());
 
-        // Http.put(`${Router.basePath}/api/group/${this.group.id}`, this.group, {})
-        //     .then((groupNew) => {
+        Http.put(`${Router.basePath}/api/group/${this.group.id}`, this.group, {})
+            .then((groupNew) => {
                 
-        //     })
-        //     .catch((error) => {
+            })
+            .catch((error) => {
 
-        //         const fieldErrors = error.getFields();
-        //         console.log(fieldErrors);
-        //         group.setBackendErrors(fieldErrors);
-        //     });
+                const fieldErrors = error.getFields();
+                console.log(fieldErrors);
+                group.setBackendErrors(fieldErrors);
+            });
 
     }
 
@@ -111,7 +109,7 @@ export class GroupPageNew extends SettingsPage {
     afterInit() {
         footerService.addButtonRight(new FormButton(Lang.get('generic.cancel'), 'footer-btn btn-secondary cancel', null, () => { }));
         footerService.addButtonRight(new FormButton(Lang.get('generic.save'), 'footer-btn btn-primary save', null, () => {
-            this.postGroup();
+            this.save();
         }));
     }
 }

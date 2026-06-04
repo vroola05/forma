@@ -15,9 +15,9 @@ public class StorageService {
     private final String bucketPublic;
 
     public StorageService(S3Template s3Template, 
-        @Value("${storage.bucket-temp}") String bucketTemp,
-                          @Value("${storage.bucket-stored}") String bucketStored,
-                          @Value("${storage.bucket-public}") String bucketPublic
+            @Value("${storage.bucket-temp}") String bucketTemp,
+            @Value("${storage.bucket-stored}") String bucketStored,
+            @Value("${storage.bucket-public}") String bucketPublic
     ) {
         this.s3Template = s3Template;
         this.bucketTemp = bucketTemp;
@@ -27,14 +27,6 @@ public class StorageService {
 
     private void upload(String bucket, String key, InputStream inputStream) {
         s3Template.upload(bucket, key, inputStream);
-    }
-
-    private S3Resource download(String bucket, String key) {
-        return s3Template.download(bucket, key);
-    }
-
-    private void delete(String bucket, String key) {
-        s3Template.deleteObject(bucket, key);
     }
 
     public void uploadTempFile(String key, InputStream inputStream) {
@@ -49,17 +41,21 @@ public class StorageService {
         s3Template.deleteObject(this.bucketTemp, key);
     }
 
+
+
     public void uploadPublicAsset(String key, InputStream inputStream) {
-        this.upload(this.bucketTemp, key, inputStream);
+        this.upload(this.bucketPublic, key, inputStream);
     }
 
     public S3Resource downloadPublicAsset(String key) {
-        return s3Template.download(this.bucketTemp, key);
+        return s3Template.download(this.bucketPublic, key);
     }
 
     public void deletePublicAsset(String key) {
-        s3Template.deleteObject(this.bucketTemp, key);
+        s3Template.deleteObject(this.bucketPublic, key);
     }
+
+
 
     public void uploadStoredFile(String key, InputStream inputStream) {
         this.upload(this.bucketStored, key, inputStream);

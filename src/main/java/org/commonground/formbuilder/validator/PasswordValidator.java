@@ -10,8 +10,8 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
 
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
-        if (password == null) {
-            return false;
+        if (password == null || password.isEmpty()) {
+            return true;
         }
 
         List<String> errors = new ArrayList<>();

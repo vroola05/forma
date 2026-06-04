@@ -12,7 +12,6 @@ import { headerService } from './shared/services/header-service.js';
 
 
 export class Main {
-    // auth = new Auth();
     #routes = [];
 
     constructor(routes = [], baseAddition = undefined, homeUrl = undefined, loginUrl = undefined) {
@@ -37,17 +36,13 @@ export class Main {
             Router.registerRoute(route.path, route.page, route.routes);
         }
 
-        // const header = new Header();
-        // const headerDom = document.getElementById('header');
-        // headerDom.appendChild(header.getContent());
-
-        // const footer = new Footer();
-        // const footerDom = document.getElementById('footer');
-        // footerDom.appendChild(footer.getContent());
-        if (Router.tenantSlug && Router.tenantSlug !== 'system') {
-            headerService.setLogo(`${Router.tenantPath}/api/tenant/logo`);
+        if (Router.tenantSlug && tenant.hasLogo) {
+            if ( Router.tenantSlug !== 'system') {
+                headerService.setLogo(`${Router.tenantPath}/api/tenant/logo`);
+            } else {
+                // headerService.setLogo(`${Router.tenantPath}/api/tenant/logo`);
+            }
         }
-        headerService.setLogo(`${Router.tenantPath}/api/tenant/logo`);
 
         Lang.load().then(() => {
             Http.get(`${Router.tenantPath}/api/users/me`).then(user => {

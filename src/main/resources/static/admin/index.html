@@ -40,10 +40,13 @@
         import { TenantPage } from '/includes/scripts/form-builder/page-components/tenant/tenant-page.js';
         import { TenantPageNew } from '/includes/scripts/form-builder/page-components/tenant/tenant-page-new.js';
         import { TenantPageEdit } from '/includes/scripts/form-builder/page-components/tenant/tenant-page-edit.js';
+        import { TenantPageCustomise } from '/includes/scripts/form-builder/page-components/tenant/tenant-page-customise.js';
 
         import { GroupPage } from '/includes/scripts/form-builder/page-components/group/group-page.js';
-        import { GroupPageNew } from '/includes/scripts/form-builder/page-components/group/group-page-new.js';
         import { GroupPageEdit } from '/includes/scripts/form-builder/page-components/group/group-page-edit.js';
+
+        import { UserPage } from '/includes/scripts/form-builder/page-components/user/user-page.js';
+        import { UserPageEdit } from '/includes/scripts/form-builder/page-components/user/user-page-edit.js';
 
         import { FormDashboard } from '/includes/scripts/form-builder/page-components/builder/form-dashboard-page.js';
         import { FormPage } from '/includes/scripts/form-viewer/page-components/form-page.js';
@@ -54,7 +57,7 @@
         import { BuilderPageSettingsMail } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-mail.js';
         import { BuilderPageSettingsPayment } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-payment.js';
         import { BuilderPageSettingsRegistration } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-registration.js';
-        import { BuilderPageSettingsSuccess } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-success.js';
+        // import { BuilderPageSettingsSuccess } from '/includes/scripts/form-builder/page-components/builder/builder-page-settings-success.js';
         
         
         new Main([
@@ -62,11 +65,13 @@
             
             {'path': '/admin/page/login', 'page': LoginPage},
             {'path': '/admin/page/tenant', 'page': TenantPage},
+            {'path': '/admin/page/tenant/customise', 'page': TenantPageCustomise},
             {'path': '/admin/page/tenant/new', 'page': TenantPageNew},
             {'path': '/admin/page/tenant/edit/:slug', 'page': TenantPageEdit},
             {'path': '/admin/page/groups', 'page': GroupPage},
-            {'path': '/admin/page/groups/new', 'page': GroupPageNew},
-            {'path': '/admin/page/groups/edit/:id', 'page': GroupPageEdit},
+            {'path': '/admin/page/groups/:id', 'page': GroupPageEdit},
+            {'path': '/admin/page/users', 'page': UserPage},
+            {'path': '/admin/page/users/:id', 'page': UserPageEdit},
             {'path': '/admin/page/forms', 'page': FormDashboard},
             {
                 'path': '/admin/page/form-builder/:formName', 'page': BuilderPage,
@@ -75,7 +80,7 @@
                     {'path': '/settings-generic', 'page': BuilderPageSettingsGeneric},
                     {'path': '/settings-login', 'page': BuilderPageSettingsLogin},
                     {'path': '/settings-mail', 'page': BuilderPageSettingsMail},
-                    {'path': '/settings-success', 'page': BuilderPageSettingsSuccess},
+                    // {'path': '/settings-success', 'page': BuilderPageSettingsSuccess},
                     {'path': '/settings-registration', 'page': BuilderPageSettingsRegistration},
                     {'path': '/settings-payment', 'page': BuilderPageSettingsPayment},
                 ]

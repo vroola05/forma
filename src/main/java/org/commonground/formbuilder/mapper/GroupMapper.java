@@ -1,6 +1,8 @@
 package org.commonground.formbuilder.mapper;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.commonground.formbuilder.database.dao.settings.GroupEntity;
 import org.commonground.formbuilder.model.settings.Group;
@@ -17,6 +19,10 @@ public class GroupMapper {
         entity.setId(UUID.randomUUID());
         entity.setName(dto.getName());
         return entity;
+    }
+
+    public void updateEntityFromDto(GroupEntity entity, GroupRegisterRequest dto) {
+        entity.setName(dto.getName());
     }
 
     public GroupEntity toNewEntity(Group dto) {
@@ -38,6 +44,16 @@ public class GroupMapper {
         dto.setName(entity.getName());
 
         return dto;
+    }
+
+    public Set<Group> toResponseDtoList(Set<GroupEntity> entities) {
+        if (entities == null) {
+            return null;
+        }
+
+        return entities.stream()
+                .map(this::toResponseDto)
+                .collect(Collectors.toSet());
     }
 
     public GroupRegisterRequest toRegisterRequest(GroupEntity entity) {

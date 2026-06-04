@@ -6,6 +6,7 @@ import { Auth } from '../../../shared/services/auth.js';
 import { TextField } from '../../../shared/form-components/text-field.js';
 import { PasswordField } from '../../../shared/form-components/password-field.js';
 import { FormButton } from '../../../shared/form-components/components/form-button.js';
+import { TenantService } from '../../../shared/services/tenant-service.js';
 
 export class LoginPage extends Page {
 
@@ -51,7 +52,12 @@ export class LoginPage extends Page {
 
         const loginLogo = document.createElement('img');
         loginLogo.className = 'login-logo';
-        loginLogo.src = 'includes/images/logo.svg';
+        if (Router.tenantSlug && TenantService.tenant.hasLogo && Router.tenantSlug !== 'system') {
+            loginLogo.src = `${Router.tenantPath}/api/tenant/logo`;
+        } else {
+            loginLogo.src = 'includes/images/logo.svg';
+        }
+        
         loginLogoContainer.appendChild(loginLogo);
         
         const loginContentContainer = document.createElement('div');

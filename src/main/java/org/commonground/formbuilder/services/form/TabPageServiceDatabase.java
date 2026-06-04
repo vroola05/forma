@@ -9,7 +9,7 @@ import org.commonground.formbuilder.database.dao.definition.FormTabDefinitionEnt
 import org.commonground.formbuilder.database.dao.definition.FormTabInstanceDefinitionEntity;
 import org.commonground.formbuilder.database.repository.FormTabDefinitionEntityRepository;
 import org.commonground.formbuilder.database.repository.FormTabInstanceDefinitionRepository;
-import org.commonground.formbuilder.model.form.constants.FieldType;
+import org.commonground.formbuilder.mapper.TabPageMapper;
 import org.commonground.formbuilder.model.form.fields.Field;
 import org.commonground.formbuilder.model.form.fields.TabPage;
 import org.springframework.http.HttpStatus;
@@ -20,16 +20,18 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class TabPageServiceDatabase implements TabPageService {
+    private final TabPageMapper tabPageMapper;
     private final FieldService fieldService;
     private final FormTabDefinitionEntityRepository formTabDefinitionEntityRepository;
     private final FormTabInstanceDefinitionRepository formTabInstanceDefinitionRepository;
 
     public TabPageServiceDatabase(
+            TabPageMapper tabPageMapper,
             FieldService fieldService,
             FormTabDefinitionEntityRepository formTabDefinitionEntityRepository,
             FormTabInstanceDefinitionRepository formTabInstanceDefinitionRepository
 ) {
-
+        this.tabPageMapper = tabPageMapper;
         this.fieldService = fieldService;
         this.formTabDefinitionEntityRepository = formTabDefinitionEntityRepository;
         this.formTabInstanceDefinitionRepository = formTabInstanceDefinitionRepository;
@@ -45,19 +47,11 @@ public class TabPageServiceDatabase implements TabPageService {
         List<FormTabInstanceDefinitionEntity> formTabInstanceDefinitionEntities = this.formTabInstanceDefinitionRepository.findAllByFormIdOrderBySortOrderAsc(formId);
         for (FormTabInstanceDefinitionEntity formTabInstanceDefinitionEntity : formTabInstanceDefinitionEntities) {
             FormTabDefinitionEntity formTabDefinitionEntity = formTabInstanceDefinitionEntity.getTab();
-            TabPage tabPage = new TabPage();
-            tabPage.setType(FieldType.TAB);
-            tabPage.setId(formTabDefinitionEntity.getId());
-            tabPage.setName(formTabDefinitionEntity.getName());
-            tabPage.setLabel(formTabDefinitionEntity.getLabel());
-            tabPage.setClasses(formTabDefinitionEntity.getClasses());
-            tabPage.setSharedTab(formTabDefinitionEntity.isSharedTab());
-            tabPage.setMetadata(formTabDefinitionEntity.getMetadata());
-            tabPage.setCondition(formTabDefinitionEntity.getCondition());
-            tabPage.setShow(formTabDefinitionEntity.isShow());
+            TabPage tabPage = this.tabPageMapper.toResponseDto(formTabDefinitionEntity);
+
             tabPages.add(tabPage);
 
-            tabPage.setFields(fieldService.get(formTabDefinitionEntity.getId()));
+            tabPage.setFields(this.fieldService.get(formTabDefinitionEntity.getId()));
         }
         return tabPages;
     }
@@ -75,18 +69,13 @@ public class TabPageServiceDatabase implements TabPageService {
         formTabInstanceDefinitionEntity.setSortOrder(index);
         formTabInstanceDefinitionEntity.setForm(formDefinitionEntity);
 
-        FormTabDefinitionEntity formTabDefinitionEntity = tabPage.getId() == null ? new FormTabDefinitionEntity() : getFormTabDefinitionById(tabPage.getId());
+        FormTabDefinitionEntity formTabDefinitionEntity;
         if (tabPage.getId() == null) {
-            formTabDefinitionEntity.setId(UUID.randomUUID());
+            formTabDefinitionEntity = this.tabPageMapper.toNewEntity(tabPage);
+        } else {
+            formTabDefinitionEntity = getFormTabDefinitionById(tabPage.getId());
+            this.tabPageMapper.updateEntityFromDto(formTabDefinitionEntity, tabPage);
         }
-
-        formTabDefinitionEntity.setName(tabPage.getName());
-        formTabDefinitionEntity.setLabel(tabPage.getLabel());
-        formTabDefinitionEntity.setClasses(tabPage.getClasses());
-        formTabDefinitionEntity.setSharedTab(tabPage.isSharedTab());
-        formTabDefinitionEntity.setMetadata(tabPage.getMetadata());
-        formTabDefinitionEntity.setCondition(tabPage.getCondition());
-        formTabDefinitionEntity.setShow(tabPage.isShow());
 
         this.formTabDefinitionEntityRepository.save(formTabDefinitionEntity);
 

@@ -1,8 +1,10 @@
 package org.commonground.formbuilder.mapper;
 
+import java.util.List;
 import java.util.UUID;
 
-import org.commonground.formbuilder.database.dao.settings.TenantUserEntity;
+import org.commonground.formbuilder.database.dao.settings.UserEntity;
+import org.commonground.formbuilder.model.settings.Tenant;
 import org.commonground.formbuilder.model.settings.User;
 import org.commonground.formbuilder.model.settings.UserRegisterRequest;
 import org.springframework.stereotype.Component;
@@ -10,10 +12,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserMapper {
 
-    public TenantUserEntity toNewEntity(UserRegisterRequest dto) {
+    public UserEntity toNewEntity(UserRegisterRequest dto) {
         if (dto == null) return null;
 
-        TenantUserEntity entity = new TenantUserEntity();
+        UserEntity entity = new UserEntity();
         entity.setName(dto.getName());
         entity.setUsername(dto.getUsername());
         entity.setEmail(dto.getEmail());
@@ -21,10 +23,10 @@ public class UserMapper {
         return entity;
     }
 
-    public TenantUserEntity toNewEntity(User dto) {
+    public UserEntity toNewEntity(User dto) {
         if (dto == null) return null;
 
-        TenantUserEntity entity = new TenantUserEntity();
+        UserEntity entity = new UserEntity();
         entity.setId(UUID.randomUUID());
         entity.setName(dto.getName());
         entity.setUsername(dto.getUsername());
@@ -33,7 +35,7 @@ public class UserMapper {
         return entity;
     }
 
-    public void updateEntityFromDto(User dto, TenantUserEntity entity) {
+    public void updateEntityFromDto(User dto, UserEntity entity) {
         if (dto == null || entity == null) return;
 
         entity.setName(dto.getName());
@@ -42,7 +44,7 @@ public class UserMapper {
         entity.setStatus(dto.getStatus());
     }
 
-    public User toResponseDto(TenantUserEntity entity) {
+    public User toResponseDto(UserEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -54,9 +56,17 @@ public class UserMapper {
         dto.setEmail(entity.getEmail());
         dto.setStatus(entity.getStatus());
 
-        
-
         return dto;
+    }
+
+    public List<User> toResponseDtoList(List<UserEntity> entities) {
+        if (entities == null) {
+            return null;
+        }
+
+        return entities.stream()
+                .map(this::toResponseDto)
+                .toList();
     }
 
 }

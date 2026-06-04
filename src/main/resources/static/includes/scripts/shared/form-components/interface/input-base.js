@@ -76,9 +76,13 @@ export class InputNucleus extends Nucleus {
         return this.value ? this.value : '';
     }
 
-    setValue(value, noCallback = false) {
+    setValue(value, noCallback = false, fromUi = false) {
         this.value = value ?? '';
-        this.inputElement.value = this.value;
+
+        if (!fromUi) {
+            this.inputElement.value = this.value;
+        }
+
         this.valueChanged(noCallback);
         return this;
     }

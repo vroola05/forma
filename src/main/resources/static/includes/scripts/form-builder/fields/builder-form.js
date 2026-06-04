@@ -3,6 +3,7 @@ import { BuilderTabPage } from './builder-tab-page.js';
 import { BuilderTabLabel } from './components/builder-tab-label.js'; 
 import { EventService } from '../../shared/services/event-service.js';
 import { Lang } from '../../shared/services/lang.js'
+import { FORM_STATUS } from '../../shared/model/form-data.js'
 
 export class BuilderForm extends BuilderFieldInterface {
     dropzone = null;
@@ -14,12 +15,13 @@ export class BuilderForm extends BuilderFieldInterface {
         super('form', '');
 
         this.fieldProperties.addProperties([
-            {type: 'list', id: 'confirmation', label: Lang.get('prop.summary.confirmation.label'), value: []}
+            {type: 'list', id: 'confirmation', label: Lang.get('prop.summary.confirmation.label'), value: []},
+            {type: 'select', id: 'status', label: Lang.get('generic.status'), value: [], 
+                options: Object.entries(FORM_STATUS).map(([key, val_fnc]) => ({value: key, text: val_fnc()}))
+            }
         ]);
 
-
         this.createContent();
-        
     }
 
     init(properties) {

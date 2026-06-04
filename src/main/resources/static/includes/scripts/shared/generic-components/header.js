@@ -2,7 +2,7 @@ import { Router } from '../../shared/services/router.js';
 import { EventService } from '../../shared/services/event-service.js';
 import { Lang } from '../../shared/services/lang.js';
 import { FormButton } from '../../shared/form-components/components/form-button.js';
-
+import { Auth } from '../services/auth.js';
 import { headerService } from '../services/header-service.js';
 
 export class Header {
@@ -29,9 +29,9 @@ export class Header {
         });
 
         EventService.addEventListener('header-buttons-right', (formButtons) => {
-            this.navbarNavRight.innerHTML = '';
+            this.headerUserMenu.innerHTML = '';
             for (const formButton of formButtons) {
-                this.navbarNavRight.appendChild(this.getNavBarItem(formButton));
+                this.headerUserMenu.appendChild(this.getNavBarItem(formButton));
             }
         });
     }
@@ -79,35 +79,66 @@ export class Header {
         this.navbarNavLeft.className = 'header-navbar-left ';
         this.navbar.appendChild(this.navbarNavLeft);
         
-        this.navbarNavRight = document.createElement('ul');
-        this.navbarNavRight.className = 'header-navbar-right';
-        this.navbar.appendChild(this.navbarNavRight);
+
+        this.#createUserMenu();
     }
 
+    #createUserMenu() {
+        const userMenuContainer = document.createElement('div');
+        userMenuContainer.className = 'header-navbar-right header-user-menu-container';
+        this.navbar.appendChild(userMenuContainer);
+
+        const userMenuBtn = document.createElement('button');
+        userMenuBtn.setAttribute('aria-haspopup', 'true');
+        userMenuBtn.setAttribute('aria-expanded', 'false');
+        userMenuBtn.className = 'header-user-menu-btn icon icon-user';
+        userMenuContainer.appendChild(userMenuBtn);
+        userMenuBtn.addEventListener('click', () => {
+            const expanded = userMenuBtn.getAttribute('aria-expanded') === 'true';
+            userMenuBtn.setAttribute('aria-expanded', String(!expanded));
+
+            this.#userMenuOpen();
+        });
+
+        const userMenuBtnName = document.createElement('span');
+        userMenuBtnName.className = 'header-username';
+        userMenuBtnName.innerText = Auth.getUser().name;
+        userMenuBtn.appendChild(userMenuBtnName);
+
+        const userMenuBtnChevron = document.createElement('span');
+        userMenuBtnChevron.className = 'header-icon';
+        userMenuBtnChevron.innerHTML = '&#9662;';
+        userMenuBtn.appendChild(userMenuBtnChevron);
+
+        this.headerUserMenu = document.createElement('ul');
+        this.headerUserMenu.className = 'header-user-menu';
+        userMenuContainer.appendChild(this.headerUserMenu);
+    }
+
+    #userMenuClickOutside(event) {
+        if (!this.headerUserMenu.contains(event.target) && !event.target.closest('.header-user-menu-btn')) {
+            this.#userMenuClose();
+        }
+    }
+
+    #userMenuOpen() {
+        const expanded = this.headerUserMenu.classList.contains('active');
+        this.headerUserMenu.classList.toggle('active', !expanded);
+
+        setTimeout(() => {
+            document.addEventListener('click', this.#userMenuClickOutside.bind(this));
+        }, 0);
+    }
+
+    #userMenuClose() {
+        this.headerUserMenu.classList.remove('active');
+        document.removeEventListener('click', this.#userMenuClickOutside.bind(this));
+    }
 
     getNavBarItem(formButton) {
         const navItem = document.createElement('li');
         navItem.className = 'nav-item';
 
-        // const navLink = document.createElement('a');
-
-        // navLink.className = 'nav-link' + (!formButton?.classes ? '' : ' ' + formButton?.classes);
-        // navLink.innerText = formButton.label;
-
-        // if (formButton.path !== null) {
-            
-        //     navLink.addEventListener('click', (e) => {
-        //         e.preventDefault();
-        //         Router.route(formButton.path);
-        //     });
-        // }
-
-        // if (formButton.event) {
-        //     navLink.addEventListener('click', (e) => {
-        //         e.preventDefault();
-        //         formButton.event();
-        //     });
-        // }
         navItem.appendChild(formButton.getContent());
         return navItem;
     }

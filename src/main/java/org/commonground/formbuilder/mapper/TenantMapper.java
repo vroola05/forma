@@ -20,8 +20,9 @@ public class TenantMapper {
         entity.setName(dto.getName());
         entity.setStatus(dto.getStatus());
         entity.setHomePage(dto.getHomePage());
+        entity.setPrimaryColor(dto.getPrimaryColor());
+        entity.setSecondaryColor(dto.getSecondaryColor());
         entity.setEmail(dto.getEmail());
-        
         return entity;
     }
 
@@ -31,15 +32,17 @@ public class TenantMapper {
         entity.setName(dto.getName());
         entity.setStatus(dto.getStatus());
         entity.setHomePage(dto.getHomePage());
+        entity.setPrimaryColor(dto.getPrimaryColor());
+        entity.setSecondaryColor(dto.getSecondaryColor());
         entity.setEmail(dto.getEmail());
     }
 
-    public List<Tenant> toResponseDtoList(List<TenantEntity> tenantEntities) {
-        if (tenantEntities == null) {
+    public List<Tenant> toResponseDtoList(List<TenantEntity> entities) {
+        if (entities == null) {
             return null;
         }
 
-        return tenantEntities.stream()
+        return entities.stream()
                 .map(this::toResponseDto)
                 .toList();
     }
@@ -53,9 +56,12 @@ public class TenantMapper {
         dto.setId(tenantEntity.getId());
         dto.setSlug(tenantEntity.getSlug());
         dto.setName(tenantEntity.getName());
+        dto.setHasLogo(tenantEntity.getLogo() != null && !tenantEntity.getLogo().isEmpty());
         dto.setEmail(tenantEntity.getEmail());
         dto.setHomePage(tenantEntity.getHomePage());
         dto.setStatus(tenantEntity.getStatus());
+        dto.setPrimaryColor(tenantEntity.getPrimaryColor());
+        dto.setSecondaryColor(tenantEntity.getSecondaryColor());
 
         return dto;
     }

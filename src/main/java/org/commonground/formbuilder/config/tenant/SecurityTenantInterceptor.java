@@ -38,7 +38,6 @@ public class SecurityTenantInterceptor implements HandlerInterceptor {
         Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(
                 HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
-                System.out.println("SecurityTenantInterceptor: preHandle called with path variables: " + pathVariables);
         TenantContext.setTenant(new Tenant());
         if (pathVariables != null && pathVariables.containsKey("tenantSlug")) {
             String tenantSlug = pathVariables.get("tenantSlug");
@@ -46,16 +45,14 @@ public class SecurityTenantInterceptor implements HandlerInterceptor {
                 TenantContext.setTenant(this.tenantService.get(tenantSlug));
             }
         }
-        System.out.println("Tenant set in context: " + TenantContext.getTenant().getSlug());
+
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
-            
 
             // Check if the method or its declaring class is annotated with @PreAuthorizeTenant
             if (handlerMethod.hasMethodAnnotation(PreAuthorizeTenant.class) || 
                 handlerMethod.getBeanType().isAnnotationPresent(PreAuthorizeTenant.class)) {
                 // Validate that the tenant in the context is valid and accessible
-                System.out.println("aaaaaaaaaaaaaa = Validating tenant access for handler: " + handlerMethod.getMethod().getName());
                 securityService.validateAccessToTenant();
             }
         }

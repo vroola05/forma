@@ -2,6 +2,8 @@ package org.commonground.formbuilder.model.form;
 
 import java.util.UUID;
 
+import org.commonground.formbuilder.model.constants.FormStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,5 +19,5 @@ public class FormList {
     UUID id;
     String name;
     String label;
-    boolean active;
+    FormStatus status;
 }
