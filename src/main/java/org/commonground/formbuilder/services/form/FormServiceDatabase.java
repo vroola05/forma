@@ -18,13 +18,14 @@ import org.commonground.formbuilder.model.settings.Tenant;
 import org.commonground.formbuilder.services.formConfig.FormConfigSuccessPageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 public class FormServiceDatabase implements FormService {
     private final FormMapper formMapper;
     private final FormDefinitionRepository formDefinitionRepository;
@@ -91,7 +92,7 @@ public class FormServiceDatabase implements FormService {
     public FormWrapper save(UUID tenantId, FormWrapper formWrapper) {
         Form form = formWrapper.getForm();
 
-        boolean isNewForm = (form.getId() == null);
+        boolean isNewForm = form.getId() == null;
         boolean isNotUnique;
 
         if (isNewForm) {
@@ -105,7 +106,7 @@ public class FormServiceDatabase implements FormService {
         }
 
         FormDefinitionEntity formDefinitionEntity;
-        if (form.getId() == null) {
+        if (isNewForm) {
             formDefinitionEntity = this.formMapper.toNewEntity(form, tenantId);
         } else {
             formDefinitionEntity = this.getFormDefinitionById(form.getId());

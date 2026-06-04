@@ -25,14 +25,13 @@ public class FormMapper {
         entity.setStatus(dto.getStatus());
         entity.setMetadata(dto.getMetadata());
         entity.setConfirmation(dto.getConfirmation());
-        entity.setCondition(dto.getCondition());
+        entity.setCondition(dto.getCondition() == null || dto.getCondition().isEmpty() ? null : dto.getCondition());
         entity.setShow(dto.isShow());
 
         return entity;
     }
 
     public void updateEntityFromDto(FormDefinitionEntity entity, Form dto, UUID tenantId) {
-        entity.setId(UUID.randomUUID());
         entity.setTenantId(tenantId);
         entity.setName(dto.getName());
         entity.setLabel(dto.getLabel());
@@ -40,7 +39,7 @@ public class FormMapper {
         entity.setStatus(dto.getStatus());
         entity.setMetadata(dto.getMetadata());
         entity.setConfirmation(dto.getConfirmation());
-        entity.setCondition(dto.getCondition());
+        entity.setCondition(dto.getCondition() == null || dto.getCondition().isEmpty() ? null : dto.getCondition());
         entity.setShow(dto.isShow());
     }
 

@@ -105,6 +105,9 @@ export class DualListboxField extends InputNucleus {
     }
 
     addOptions(options) {
+        if (!options)
+            return this;
+
         if (!this.inputElementDeselected) {
             throw new Error('Input element is not created yet. Call createElement() first.');
         }

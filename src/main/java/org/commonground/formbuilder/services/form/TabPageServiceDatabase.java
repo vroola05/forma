@@ -14,11 +14,11 @@ import org.commonground.formbuilder.model.form.fields.Field;
 import org.commonground.formbuilder.model.form.fields.TabPage;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import jakarta.transaction.Transactional;
-
 @Service
+@Transactional(readOnly = true)
 public class TabPageServiceDatabase implements TabPageService {
     private final TabPageMapper tabPageMapper;
     private final FieldService fieldService;

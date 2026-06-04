@@ -36,7 +36,6 @@ export class SettingsPage extends Page {
 
     setTitle(title) {
         super.setTitle(title);
-        console.log('sss');
         this.pageTitle.textContent = title;
     }
 

@@ -2,6 +2,8 @@ package org.commonground.formbuilder.model.form.condition;
 
 import java.util.List;
 
+import org.springframework.util.ObjectUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -28,5 +30,12 @@ public class Condition {
 
     public ConditionType getConditionType() {
         return conditions != null && !conditions.isEmpty() ? ConditionType.COMPOSITE : ConditionType.SIMPLE;
+    }
+
+    public boolean isEmpty() {
+        return ObjectUtils.isEmpty(var1) 
+            && ObjectUtils.isEmpty(var2) 
+            && operator == null 
+            && ObjectUtils.isEmpty(conditions);
     }
 }

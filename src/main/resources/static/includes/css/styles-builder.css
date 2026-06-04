@@ -259,6 +259,12 @@ Styles voor builder.js
 
             border: #dee2e6 1px solid;
             border-radius: var(--default-space-half);
+
+            .form-container {
+                margin: 0;
+                border-radius: 0;
+                border: none;
+            }
         }
 
         .builder-page-menu-right-container {}

@@ -36,6 +36,7 @@ export class BuilderPageSettingsForm extends PageComponent {
      * 
      */
     afterInit() {
+        console.log('After init f');
         this.#builderLayout.setCenterContent(BuilderFormService.getBuilderForm().getContent());
         this.#builderLayout.setRightContent(this.#builderPropertiesComponent.getContent());
     }

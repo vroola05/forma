@@ -10,7 +10,7 @@ export class Form {
         this.type = form.type;
         this.id = form.id;
         this.singlePage = !form.singlePage ? false : form.singlePage;
-        console.log('c', this.singlePage);
+
         this.classes = !form?.classes ? '' : form?.classes;
         this.metadata = form?.metadata || [];
         this.confirmation = form?.confirmation || [];

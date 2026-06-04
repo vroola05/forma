@@ -78,6 +78,7 @@ export class BuilderPage extends Page {
      * 
      */
     afterInit() {
+        console.log('After init c');
         EventService.addEventListener('value-changed', (a, b) => {
             this.updateForm();
         });

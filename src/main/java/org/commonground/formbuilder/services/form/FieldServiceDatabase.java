@@ -16,11 +16,11 @@ import org.commonground.formbuilder.model.form.fields.SelectField;
 import org.commonground.formbuilder.model.form.fields.TextField;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import jakarta.transaction.Transactional;
-
 @Service
+@Transactional(readOnly = true)
 public class FieldServiceDatabase implements FieldService {
     private final FormFieldDefinitionRepository formFieldDefinitionRepository;
 
@@ -142,6 +142,7 @@ public class FieldServiceDatabase implements FieldService {
         saveStructure(formTabDefinitionEntity, null, field, index);
     }
 
+    @Transactional
     private void saveStructure(FormTabDefinitionEntity formTabDefinitionEntity, FormFieldDefinitionEntity parentFieldDefinition, Field field, int index) {
         FormFieldDefinitionEntity formFieldDefinitionEntity = (field.getId() == null) ? new FormFieldDefinitionEntity() : getFormFieldDefinitionById(field.getId());
 
@@ -176,7 +177,6 @@ public class FieldServiceDatabase implements FieldService {
         
             this.formFieldDefinitionRepository.save(formFieldDefinitionEntity);
         }
-
     }
 
     private void setFormFieldDefinitionEntityProperties(FormFieldDefinitionEntity formFieldDefinitionEntity, Field field) {
@@ -224,5 +224,4 @@ public class FieldServiceDatabase implements FieldService {
             || fieldType == FieldType.DATE
             || fieldType == FieldType.HIDDEN;
     }
-
 }

@@ -5,7 +5,7 @@
 
 ALTER TABLE public.tenant DISABLE TRIGGER ALL;
 
-INSERT INTO public.tenant (id, slug, name, logo, home_page, email, primary_color, secondary_color, status, created_at, updated_at, version) VALUES ('d640827b-026d-4fbd-a6ff-014f0a6d686d', 'kip', 'Kip', 'tenants/d640827b-026d-4fbd-a6ff-014f0a6d686d/assets/logo.png', '', 'markvrooland1@gmail.com', '#931a1a', '#c38e32', 'ACTIVE', '2026-06-02 12:34:42.555185+00', '2026-06-02 12:40:45.808584+00', 0);
+INSERT INTO public.tenant (id, slug, name, logo, home_page, email, primary_color, secondary_color, status, created_at, updated_at, version) VALUES ('d640827b-026d-4fbd-a6ff-014f0a6d686d', 'kip', 'Kip', 'tenants/d640827b-026d-4fbd-a6ff-014f0a6d686d/assets/logo.png', '', 'test@testing.net', '#931a1a', '#c38e32', 'ACTIVE', '2026-06-02 12:34:42.555185+00', '2026-06-02 12:40:45.808584+00', 0);
 
 
 ALTER TABLE public.tenant ENABLE TRIGGER ALL;
@@ -141,7 +141,7 @@ ALTER TABLE public.group_permissions ENABLE TRIGGER ALL;
 ALTER TABLE public.users DISABLE TRIGGER ALL;
 
 INSERT INTO public.users (id, tenant_id, name, username, password, email, auth_provider, external_id, status, created_at, updated_at, version) VALUES ('d525ed43-0326-4eef-bfa1-1b4ea2c6bb05', NULL, 'Global Admin', 'admin', '$argon2id$v=19$m=16384,t=2,p=1$Y8GgCab6mz/UbI5dczCMqQ$ruvq6g/0ggIkKChMwDy6V1OTInBMoiG1jlPqhoNKeC0', 'admin@admin.com', NULL, NULL, 'ACTIVE', '2026-06-02 12:29:43.232205+00', '2026-06-02 12:29:43.232205+00', 0);
-INSERT INTO public.users (id, tenant_id, name, username, password, email, auth_provider, external_id, status, created_at, updated_at, version) VALUES ('f30aec0c-361a-4481-bab5-1ca3b89f965c', 'd640827b-026d-4fbd-a6ff-014f0a6d686d', 'Mark', 'admin', '$argon2id$v=19$m=16384,t=2,p=1$tUXblJ85VkXsigO/Jawb2g$WP/yswDMDzlxglKmCP0YZHvNC3jPIqo2e6IRGdBLPLI', 'mark@vrooland.net', NULL, NULL, 'INVITED', '2026-06-02 12:34:42.718312+00', '2026-06-02 12:34:42.718312+00', 0);
+INSERT INTO public.users (id, tenant_id, name, username, password, email, auth_provider, external_id, status, created_at, updated_at, version) VALUES ('f30aec0c-361a-4481-bab5-1ca3b89f965c', 'd640827b-026d-4fbd-a6ff-014f0a6d686d', 'Mark', 'admin', '$argon2id$v=19$m=16384,t=2,p=1$tUXblJ85VkXsigO/Jawb2g$WP/yswDMDzlxglKmCP0YZHvNC3jPIqo2e6IRGdBLPLI', 'test@testing.net', NULL, NULL, 'INVITED', '2026-06-02 12:34:42.718312+00', '2026-06-02 12:34:42.718312+00', 0);
 
 
 ALTER TABLE public.users ENABLE TRIGGER ALL;

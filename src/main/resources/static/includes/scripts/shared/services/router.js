@@ -128,6 +128,7 @@ export class Router {
                     Router.#currentRoute.pageComponent = new currentRoute.parent.pageComponentDefinition();
                     Router.#routerOutlet.innerHTML = '';
                     Router.#routerOutlet.append(Router.#currentRoute.pageComponent.getContent());
+                    console.log('lalal');
                     Router.#currentRoute.pageComponent.afterInit();
                 } else {
                     const pageComponent = Router.#currentRoute.pageComponent;
@@ -137,9 +138,8 @@ export class Router {
 
                 const page = new Router.#currentRoute.pageComponentDefinition();
                 Router.#currentRoute.pageComponent.renderSubView(page);
+                // page.afterInit();
                 
-                page.afterInit();
-
 
             } else if (currentRoute.pageComponentDefinition !== Router.#currentRoute?.pageComponentDefinition) {
                 Router.#currentRoute = currentRoute;

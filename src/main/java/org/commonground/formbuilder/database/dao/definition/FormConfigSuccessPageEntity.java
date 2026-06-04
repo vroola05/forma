@@ -30,7 +30,6 @@ public class FormConfigSuccessPageEntity extends BaseEntity {
     private UUID id;
 
     @OneToOne
-    
     @MapsId
     @JoinColumn(name = "id")
     private FormDefinitionEntity form;

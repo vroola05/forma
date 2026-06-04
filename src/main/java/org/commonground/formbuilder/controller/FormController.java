@@ -60,7 +60,7 @@ public class FormController {
             formConfigSuccessPage.setTitle(formConfigSuccessPageEntity.getTemplateTitle());
             // formConfigSuccessPage.setContent(
             //     this.formConfigSuccessPageService.transform(
-                    // this.formService.transform(formDefinitionEntity), formSubmissionEntity.getData()));
+            //         this.formService.transform(formDefinitionEntity), formSubmissionEntity.getData()));
         }
 
         return formConfigSuccessPage;

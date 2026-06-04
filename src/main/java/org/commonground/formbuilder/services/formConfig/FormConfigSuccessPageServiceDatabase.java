@@ -12,9 +12,11 @@ import org.commonground.formbuilder.services.editor.TiptapService;
 import org.commonground.formbuilder.services.submission.FormSubmissionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@Transactional(readOnly = true)
 public class FormConfigSuccessPageServiceDatabase implements FormConfigSuccessPageService {
     private final FormConfigSuccessPageRepository formConfigSuccessPageRepository;
     private final TiptapService tiptapService;
@@ -44,15 +46,16 @@ public class FormConfigSuccessPageServiceDatabase implements FormConfigSuccessPa
         return formConfigSuccessPage;
     }
     
-    private FormConfigSuccessPageEntity getFormConfigSuccessPageById(UUID id) {
-        return this.formConfigSuccessPageRepository.findById(id).orElse(new FormConfigSuccessPageEntity());
+    private FormConfigSuccessPageEntity getFormConfigSuccessPageById(FormDefinitionEntity formDefinitionEntity) {
+        return this.formConfigSuccessPageRepository.findByForm(formDefinitionEntity).orElse(new FormConfigSuccessPageEntity());
     }
 
     @Override
+    @Transactional
     public String save(FormDefinitionEntity formDefinitionEntity, FormConfigSuccessPage formConfigSuccessPage) {
-        FormConfigSuccessPageEntity formConfigSuccessPageEntity = getFormConfigSuccessPageById(formDefinitionEntity.getId());
+        FormConfigSuccessPageEntity formConfigSuccessPageEntity = getFormConfigSuccessPageById(formDefinitionEntity);
 
-
+        System.out.println("Hahahahhahahah:" + formConfigSuccessPageEntity.getId() + " lala " + formDefinitionEntity.getId());
         formConfigSuccessPageEntity.setForm(formDefinitionEntity);
         formConfigSuccessPageEntity.setTemplateName(formConfigSuccessPage.getName());
         formConfigSuccessPageEntity.setTemplateTitle(formConfigSuccessPage.getTitle());

@@ -37,7 +37,7 @@ export class UserPage extends SettingsPage {
     afterInit() {
         Http.get(`${Router.tenantPath}/api/users/list`, {})
         .then((users) => {
-            this.usersList.setData(users.map(u => ({name: u.name, email: u.email, status: !u.status ? '' : USER_STATUS[u.status]()})));
+            this.usersList.setData(users.map(u => ({id: u.id, name: u.name, email: u.email, status: !u.status ? '' : USER_STATUS[u.status]()})));
         })
         .catch((error) => {
             console.error(error);

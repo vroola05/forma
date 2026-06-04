@@ -83,6 +83,9 @@ export class CheckboxField extends InputNucleus {
      * @returns 
      */
     addOptions(options) {
+        if (!options)
+            return this;
+        
         options.forEach(option => {
             this.addOption(option.value, option.text, option.selected);
         });
