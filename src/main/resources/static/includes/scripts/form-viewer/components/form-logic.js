@@ -15,12 +15,15 @@ export class FormLogic {
         this.previousBtn = new FormButton('Vorige', 'footer-btn btn-secondary previous', null, () => {
             this.form.setTabPrevious();
         }, false);
+
         this.nextBtn = new FormButton('Volgende', 'footer-btn btn-primary next', null, () => {
             this.form.setTabNext();
         }, false);
+
         this.summaryBtn = new FormButton('Overzicht', 'footer-btn btn-primary next', null, () => {
             this.form.setTab(`summary`);
         }, false);
+
         this.submitBtn = new FormButton('Verzenden', 'footer-btn btn-primary submit', null, () => {
             if (!this.form.validate()) {
                 return;

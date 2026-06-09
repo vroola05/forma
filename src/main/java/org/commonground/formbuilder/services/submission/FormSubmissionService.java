@@ -7,5 +7,5 @@ import org.commonground.formbuilder.model.form.fields.Form;
 
 public interface FormSubmissionService {
     public FormSubmissionEntity getFormSubmissionEntity(UUID id);
-    public UUID save(Form form);
+    public UUID save(UUID tenantId, Form form);
 }

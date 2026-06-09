@@ -28,6 +28,10 @@ import lombok.NoArgsConstructor;
 public class FormSubmissionEntity {
     @Id
     private UUID id;
+
+    @Column(nullable = false)
+    private UUID tenantId;
+    
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
     private OffsetDateTime createdAt;

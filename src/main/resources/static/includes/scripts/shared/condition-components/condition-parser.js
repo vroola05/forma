@@ -21,6 +21,7 @@ export class ConditionParser {
      */
     eval() {
         if (this.func && this.condition && !Object.values(this.condition).every(waarde => !waarde)) {
+            
             this.func(this.checkLogic(this.condition));
         }
     }
@@ -30,7 +31,7 @@ export class ConditionParser {
     }
 
     getConditionType(condition) {
-        return !condition.conditions ? ConditionType.SIMPLE : ConditionType.COMPOSITE;
+        return !condition.conditions || condition.conditions.length == 0 ? ConditionType.SIMPLE : ConditionType.COMPOSITE;
     }
 
     #bindFieldToConditions(condition, form) {
@@ -66,6 +67,7 @@ export class ConditionParser {
 
     checkLogic(condition) {
         if (this.getConditionType(condition) == ConditionType.COMPOSITE) {
+            
             if( condition.logicalOperator == null) {
                 throw new Error("Composite conditions must have a logical operator.");
             }
@@ -91,9 +93,11 @@ export class ConditionParser {
             }
             
         } else {
+            
             if(!condition.operator) {
                 throw new Error('Simple conditions must have an operator.');
             }
+            
             return this.#evaluateCondition(condition);
         }
     }

@@ -34,11 +34,18 @@ public class FormSubmissionDatabaseService implements FormSubmissionService {
 
     @Override
     @Transactional
-    public UUID save(Form form) {
+    public UUID save(UUID tenantId, Form form) {
         FormDefinitionEntity formDefinitionEntity = this.formDefinitionRepository.findById(form.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.definition.error.not_found}"));
-        
+        if (!formDefinitionEntity.getTenantId().equals(tenantId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "{tenant.error.not_found}");
+        }
+
         FormSubmissionEntity formSubmissionEntity = new FormSubmissionEntity();
+
+        
         formSubmissionEntity.setId(UUID.randomUUID());
+        formSubmissionEntity.setTenantId(tenantId);
+
         formSubmissionEntity.setModifiedAt(OffsetDateTime.now());
         
         formSubmissionEntity.setFormDefinitionId(formDefinitionEntity.getId());

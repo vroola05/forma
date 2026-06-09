@@ -8,6 +8,8 @@ import { Http, ValidationError } from '../../shared/services/http.js';
 import { Toaster } from '../../shared/generic-components/toaster.js'
 import { FormLogic } from '../components/form-logic.js';
 import { FormService } from '../services/form-service.js'
+import { Header } from '../../shared/generic-components/header.js';
+import { Footer } from '../../shared/generic-components/footer.js';
 
 export class FormPage extends Page {
     content = document.createElement('div');
@@ -36,7 +38,21 @@ export class FormPage extends Page {
             this.createContent();
 
             this.setTitle('Formulier');
+
+            this.header = new Header();
+            this.footer = new Footer();
         }
+    }
+
+    getContent() {
+
+        const fragment = document.createDocumentFragment();
+        fragment.append(
+            this.header.getContent(),
+            this.content,
+            this.footer.getContent());
+
+        return fragment;
     }
 
     createContent() {
@@ -61,6 +77,7 @@ export class FormPage extends Page {
         Http.get(`${Router.tenantPath}/api/forms/${formName}`, {})
             .then(formWrapper => {
                 this.loader.classList.remove('active');
+                
                 if (!formWrapper) {
                     console.error('No fields found in the project details');
                     return;
@@ -76,6 +93,7 @@ export class FormPage extends Page {
 
                 const fields = this.formService.getNucleus();
 
+                
                 // Logic that needs to be initialized after the form is loaded.
                 // For example the showconditions
                 for (let i=0; i < fields.length; i++) {

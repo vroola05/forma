@@ -28,7 +28,6 @@ export class Footer {
     }
 
     render(buttons) {
-        
         this.buttonsContainerLeft.innerHTML = '';
         this.buttonsContainerRight.innerHTML = '';
 

@@ -3,12 +3,14 @@ package org.commonground.formbuilder.controller;
 import java.util.UUID;
 
 import org.commonground.formbuilder.FormValidator;
+import org.commonground.formbuilder.config.tenant.TenantContext;
 import org.commonground.formbuilder.database.dao.definition.FormConfigSuccessPageEntity;
 import org.commonground.formbuilder.database.dao.definition.FormDefinitionEntity;
 import org.commonground.formbuilder.database.dao.submission.FormSubmissionEntity;
 import org.commonground.formbuilder.model.form.FormConfigSuccessPage;
 import org.commonground.formbuilder.model.form.FormWrapper;
 import org.commonground.formbuilder.model.form.fields.Form;
+import org.commonground.formbuilder.model.settings.Tenant;
 import org.commonground.formbuilder.model.submission.FormSubmission;
 import org.commonground.formbuilder.services.form.FormService;
 import org.commonground.formbuilder.services.form.FormServiceDatabase;
@@ -16,12 +18,14 @@ import org.commonground.formbuilder.services.formConfig.FormConfigSuccessPageSer
 import org.commonground.formbuilder.services.formConfig.FormConfigSuccessPageServiceDatabase;
 
 import org.commonground.formbuilder.services.submission.FormSubmissionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/{tenantSlug}/api/forms")
@@ -68,11 +72,15 @@ public class FormController {
 
     @PostMapping()
     public FormSubmission submitForm(@RequestBody Form form) {
+        Tenant tenant = TenantContext.getTenant();
+        if (tenant == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{tenant.error.not_found}");
+        }
         FormWrapper formWrapperDefinition = this.formService.get(form.getName());
         FormValidator.validate(form, formWrapperDefinition.getForm());
 
 
-        UUID submissionId = this.formSubmissionService.save(form);
+        UUID submissionId = this.formSubmissionService.save(tenant.getId(), form);
         FormSubmission formSubmission = new FormSubmission();
         formSubmission.setSubmissionId(submissionId);
         return formSubmission;
