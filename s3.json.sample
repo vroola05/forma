@@ -4,8 +4,8 @@
       "name": "spring-app-user",
       "credentials": [
         {
-          "accessKey": "1dskj34SDFg_dsfdslkjds-sdfksbSd374",
-          "secretKey": "alkdjsfer_ggfhgfdgfaASfddsfds_DFDGYTLuSyhVR"
+          "accessKey": "PLACE_YOUR_ACCESSKEY_HERE",
+          "secretKey": "PLACE_YOUR_SECRET_KEY_HERE_IT_MUST_BE_SECRET"
         }
       ],
       "actions": ["Admin", "Read", "Write", "List", "Tagging"]
