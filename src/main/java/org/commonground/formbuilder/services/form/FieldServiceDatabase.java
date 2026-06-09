@@ -152,7 +152,7 @@ public class FieldServiceDatabase implements FieldService {
         formFieldDefinitionEntity.setType(field.getType().name());
         formFieldDefinitionEntity.setClasses(field.getClasses());
         formFieldDefinitionEntity.setMetadata(field.getMetadata());
-        formFieldDefinitionEntity.setCondition(field.getCondition());
+        formFieldDefinitionEntity.setCondition(field.getCondition() == null || field.getCondition().isEmpty() ? null : field.getCondition());
         formFieldDefinitionEntity.setShow(field.isShow());
         formFieldDefinitionEntity.setSortOrder(index);
 

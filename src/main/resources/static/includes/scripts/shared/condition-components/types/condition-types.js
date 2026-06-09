@@ -5,6 +5,19 @@ class Condition {
     conditions;
     logicalOperator;
 
+    constructor(data = {}) {
+        this.var1 = data?.var1;
+        this.operator = data?.operator;
+        this.var2 = data?.var2;
+        this.logicalOperator = data?.logicalOperator;
+
+        this.conditions = [];
+        if (data?.conditions) {
+            this.conditions = data.conditions.map(con => new Condition(con));
+        }
+        
+    }
+
     getConditionType() {
         return !this.conditions ? ConditionType.SIMPLE : ConditionType.COMPOSITE;
     }

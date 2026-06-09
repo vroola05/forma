@@ -142,15 +142,13 @@ export class Dropzone {
         }
 
         const draggedIndex = draggedItem.getParent().getFields().findIndex(bf => bf.getContent() === Dropzone.currentDraggedDom);
-        // const draggedIndex = draggedItem.getParent().objectArray.findIndex(bf => bf.getContent() === Dropzone.currentDraggedDom);
+        
         if (draggedIndex === -1) {
             return;
         }
 
         draggedItem.getParent().getFields().splice(draggedIndex, 1);
         draggedItem.getParent().dropzone.draw();
-        // draggedItem.getParent().objectArray.splice(draggedIndex, 1);
-        // draggedItem.getParent().draw();
 
         draggedItem.setParent(this.field);
         this.bindFieldEvents(draggedItem);

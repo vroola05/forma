@@ -90,7 +90,6 @@ export class BuilderPageSettingsGeneric extends PageComponent {
      * 
      */
     afterInit() {
-console.log('After init a');
     }
 
     getContent() {

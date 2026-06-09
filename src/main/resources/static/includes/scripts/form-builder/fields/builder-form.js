@@ -9,7 +9,7 @@ export class BuilderForm extends BuilderFieldInterface {
     dropzone = null;
     acceptedTypes = ['tab'];
 
-    builderChildFields = [];
+    fields = [];
 
     constructor() {
         super('form', '');
@@ -92,7 +92,7 @@ export class BuilderForm extends BuilderFieldInterface {
             ? label.toLowerCase().trim().replace(/\s+/g, '-')
             : label;
 
-        const existingNames = this.builderChildFields.map(f => f.getPropertyValueById(property));
+        const existingNames = this.fields.map(f => f.getPropertyValueById(property));
 
         let index = 1;
         let newName = `${baseLabel}${seperator}${index}`;
@@ -116,6 +116,7 @@ export class BuilderForm extends BuilderFieldInterface {
         this.tabLabelCompontent.onCreateCallback = (tabLabelItem) => {
             
             const tabPage = new BuilderTabPage('tab', tabLabelItem.getLabel());
+            tabPage.setParent(this);
             tabLabelItem.setTabPage(tabPage);
             tabPage.setTabLabelItem(tabLabelItem);
             tabPage.setPropertyValueById('name', this.getUniqueName(Lang.get('tab.new'), 'name', true));
@@ -130,24 +131,24 @@ export class BuilderForm extends BuilderFieldInterface {
             };
 
             this.builderFormTab.appendChild(tabPage.getContent());
-            this.builderChildFields.push(tabPage);
+            this.fields.push(tabPage);
             this.tabLabelCompontent.setActive(tabLabelItem);
         };
 
         this.tabLabelCompontent.onMoveCallback = (draggedIndex, droppedIndex) => {
-            const [draggedItem] = this.builderChildFields.splice(draggedIndex, 1);
+            const [draggedItem] = this.fields.splice(draggedIndex, 1);
 
             if (droppedIndex == null) {
-                this.builderChildFields.push(draggedItem);
+                this.fields.push(draggedItem);
             } else {
-                this.builderChildFields.splice(droppedIndex, 0, draggedItem);
+                this.fields.splice(droppedIndex, 0, draggedItem);
             }
 
             EventService.emit('field-changed', this);
         };
 
         this.tabLabelCompontent.onActivateCallback = (tabLabelItem) => {
-            for (const builderField of this.builderChildFields) {
+            for (const builderField of this.fields) {
                 if (builderField.getTabLabelItem() == tabLabelItem) {
                     builderField.getTabLabelItem().setActive(true);
                 } else {
@@ -158,17 +159,17 @@ export class BuilderForm extends BuilderFieldInterface {
 
         this.tabLabelCompontent.onDeleteCallback = (tabLabelItem) => {
             EventService.emit('properties-changed', null);
-            const index = this.builderChildFields.findIndex(bf => bf.getTabLabelItem() === tabLabelItem);
+            const index = this.fields.findIndex(bf => bf.getTabLabelItem() === tabLabelItem);
             
             if (index !== -1) {
-                if (this.builderChildFields.length > 1 && this.builderChildFields[index].isActive()) {
+                if (this.fields.length > 1 && this.fields[index].isActive()) {
                     const newIndex = index > 0 ? index - 1 : index + 1;
-                    this.tabLabelCompontent.setActive(this.builderChildFields[newIndex].getTabLabelItem());
+                    this.tabLabelCompontent.setActive(this.fields[newIndex].getTabLabelItem());
                 }
 
-                this.builderFormTab.removeChild(this.builderChildFields[index].getContent());
+                this.builderFormTab.removeChild(this.fields[index].getContent());
 
-                this.builderChildFields.splice(index, 1);
+                this.fields.splice(index, 1);
                 
                 EventService.emit('field-deleted', this);
 
@@ -196,10 +197,15 @@ export class BuilderForm extends BuilderFieldInterface {
     updateTab() {
     }
 
+    getFields() {
+        return this.fields;
+    }
+
     validate() {
+
         this.fieldProperties.validateAll(this);
         
-        for (const field of this.builderChildFields) {
+        for (const field of this.fields) {
             field.validate();
         }
     }
@@ -208,7 +214,7 @@ export class BuilderForm extends BuilderFieldInterface {
         return {
             ...this.fieldProperties.getProperties(),
             type: this.type,
-            fields: this.builderChildFields.map(f => f.getData())
+            fields: this.fields.map(f => f.getData())
         };
     }
 }

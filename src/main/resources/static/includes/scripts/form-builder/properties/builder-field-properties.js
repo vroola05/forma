@@ -5,7 +5,8 @@ import { ValidationError } from '../../shared/errors/validation-error.js'
 
 export class BuilderFieldProperties {
     properties = {};
-    onPropertyLabelChanged = [];
+    onPropertyChanged = new Map();
+
     field
     
     constructor(field) {
@@ -66,7 +67,7 @@ export class BuilderFieldProperties {
         // It only checks in the group the field is in
         if (property.value && property.unique && this.field.getParent()) {
             const parentProperties = this.field.getParent().getChildFieldsPropertieById(property.id, property.value);
-
+            
             if (parentProperties && parentProperties.length > 1) {
                 const fieldName = `${field ? field.getLabel() : ''} - ${this.getFieldIdentifier()}`;
                 throw new ValidationError(fieldName, `Het veld is niet uniek.`).setField(field);
@@ -83,8 +84,10 @@ export class BuilderFieldProperties {
         } else if (property.type == 'condition') {
             this.#validateCondition (property.value, field);
         } else {
+            
             this.#validatePattern(property.value, property.pattern, property.message, field);
         }
+        
     }
 
     #validateCondition (condition, field = null) {
@@ -113,13 +116,11 @@ export class BuilderFieldProperties {
         }
     }
     
-    addLabelChangedListener(callback) {
-        if (typeof callback !== 'function') {
-            throw new Error('callback moet een functie zijn');
+    addPropertyChangedListener(propName, callback) {
+        if (!this.onPropertyChanged.has(propName)) {
+            this.onPropertyChanged.set(propName, []);
         }
-
-        this.onPropertyLabelChanged.push(callback);
-        return this;
+        this.onPropertyChanged.get(propName).push(callback);
     }
 
     setPropertyValueById(id, value) {

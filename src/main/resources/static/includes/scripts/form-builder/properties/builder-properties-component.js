@@ -11,7 +11,6 @@ export class BuilderPropertyComponent {
     content = document.createElement('div');
     fieldLabelContainer = document.createElement('div');
     fieldPropertiesContainer = document.createElement('div');
-    onPropertyLabelChanged = null;
     
     constructor() {
         this.createContent();
@@ -224,11 +223,11 @@ export class BuilderPropertyComponent {
         input.className = 'form-control';
 
         input.onchange = (event) => {
-            console.log('Property changed:', property, 'New value:', event.target.value);
             const prop = this.field.fieldProperties.properties[event.target.dataset.id];
             if (prop) {
+                const valueOld = this.field.getPath(); //prop.value;
                 prop.value = event.target.value;
-                this.onPropertyChanged(event.target, prop);
+                this.onPropertyChanged(event.target, prop, valueOld);
                 this.validate(prop, event.target);
                 // if (!this.validate(prop, event.target, event.target.value)) {
                 //     // return;
@@ -254,18 +253,16 @@ export class BuilderPropertyComponent {
     }
     
 
-    onPropertyChanged(input, property) {
+    onPropertyChanged(input, property, valueOld = undefined) {
         // input.classList.remove('is-invalid');
         try {
-            // this.field.fieldProperties.validate(property);
-            if (property.id == 'label') {
-                if (this.field.fieldProperties.onPropertyLabelChanged) {
-                    this.field.fieldProperties.onPropertyLabelChanged.forEach(changed => {
-                        changed(property.value);
-                    });
-                }
-            }
             
+
+            // Place all onProperyChanged before the value-changed
+            // so the changes will be saved
+            this.field?.fieldProperties?.onPropertyChanged
+                    .get(property.id)?.forEach(callback => callback(property.value, valueOld));
+
             EventService.emit('value-changed', this.field, property);
         } catch(error) {
             // input.classList.add('is-invalid');

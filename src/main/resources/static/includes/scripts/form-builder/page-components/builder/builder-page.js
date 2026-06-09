@@ -24,8 +24,7 @@ export class BuilderPage extends Page {
 
     loader = document.querySelector('.loader');
     isLoaded = false;
-    builderChildFields = [];
-
+    
     dropzone = null;
     acceptedTypes = ['tab'];
 

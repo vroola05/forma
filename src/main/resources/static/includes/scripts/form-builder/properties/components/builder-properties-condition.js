@@ -25,6 +25,7 @@ export class BuilderPropertiesCondition {
     createContent(conditionData) {
         this.content.className = 'builder-condition';
 
+        
         const builderConditionTypeContainer = document.createElement('div');
         builderConditionTypeContainer.className = 'builder-properties-condition-type-container';
         this.content.appendChild(builderConditionTypeContainer);
@@ -109,6 +110,7 @@ export class BuilderPropertiesCondition {
             this.var2SimpleTextfield.setValue(conditionData.var2);
             this.operatorSimpleSelect.setValue(''+conditionData.operator);
         }
+
     }
 
     createCompositeCondition(conditionData) {

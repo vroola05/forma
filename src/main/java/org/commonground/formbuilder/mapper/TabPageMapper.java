@@ -20,7 +20,7 @@ public class TabPageMapper {
         entity.setClasses(dto.getClasses());
         entity.setSharedTab(dto.isSharedTab());
         entity.setMetadata(dto.getMetadata());
-        entity.setCondition(dto.getCondition());
+        entity.setCondition(dto.getCondition() == null || dto.getCondition().isEmpty() ? null : dto.getCondition());
         entity.setShow(dto.isShow());
 
         return entity;
@@ -32,7 +32,7 @@ public class TabPageMapper {
         entity.setClasses(dto.getClasses());
         entity.setSharedTab(dto.isSharedTab());
         entity.setMetadata(dto.getMetadata());
-        entity.setCondition(dto.getCondition());
+        entity.setCondition(dto.getCondition() == null || dto.getCondition().isEmpty() ? null : dto.getCondition());
         entity.setShow(dto.isShow());
     }
 

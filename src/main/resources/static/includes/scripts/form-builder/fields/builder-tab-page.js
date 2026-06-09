@@ -9,7 +9,7 @@ export class BuilderTabPage extends BuilderFieldInterface {
     tabLabelItem = null;
     active = false;
 
-    builderChildFields = [];
+    fields = [];
 
     constructor(type, label) {
         super(type, label);
@@ -96,7 +96,7 @@ export class BuilderTabPage extends BuilderFieldInterface {
     }
 
     getFields() {
-        return this.builderChildFields;
+        return this.fields;
     }
 
     getContent() {
@@ -126,14 +126,14 @@ export class BuilderTabPage extends BuilderFieldInterface {
         return {
             ...this.fieldProperties.getProperties(),
             type: this.type,
-            fields: this.builderChildFields.map(f => f.getData())
+            fields: this.fields.map(f => f.getData())
         };
     }
     
     validate() {
         this.fieldProperties.validateAll(this);
 
-        for (const field of this.builderChildFields) {
+        for (const field of this.fields) {
             field.validate();
         }
     }

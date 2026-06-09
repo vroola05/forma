@@ -120,7 +120,7 @@ export class BuilderConditionsAutocompleteField extends InputNucleus {
 
                 tokens[tokens.length - 1] = field.fieldProperties.getPropertyById('name').value;
 
-                if (field.builderChildFields && field.builderChildFields.length > 0) {
+                if (field.fields && field.fields.length > 0) {
                     tokens.push('');
                 
                     const value = tokens.join('.');
@@ -187,7 +187,7 @@ export class BuilderConditionsAutocompleteField extends InputNucleus {
                 return undefined;
             }
 
-            fields = field.builderChildFields || [];
+            fields = field.fields || [];
             if (fields.length === 0) {
                 console.warn('No builder fields found for field:', field);
                 return undefined;

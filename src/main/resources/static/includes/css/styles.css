@@ -464,9 +464,10 @@ option:disabled {
 .field-wrapper {
     display:flex;
     flex-direction: row;
-
+    
     padding: calc(var(--default-space) / 2);
 
+    
     .field-wrapper-label {
         width: calc(100% / 3);
 
@@ -484,6 +485,17 @@ option:disabled {
 
     .field-wrapper-input {
         width: calc(100% / 3 * 2);
+    }
+
+    &.layout-column {
+        flex-direction: column;
+
+        .field-wrapper-label {
+            width: 100%;
+        }
+        .field-wrapper-input {
+            width: 100%;
+        }
     }
 
     .radio-input-wrapper {
@@ -577,6 +589,7 @@ option:disabled {
         display: block;
     }
 }
+
 
 /**
 Styles voor de form-group

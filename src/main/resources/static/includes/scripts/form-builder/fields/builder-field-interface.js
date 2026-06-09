@@ -1,6 +1,8 @@
-import { BuilderFieldProperties } from "../properties/builder-field-properties.js";
-import { Lang } from '../../shared/services/lang.js'
 
+import { BuilderFieldProperties } from '../properties/builder-field-properties.js';
+import { Lang } from '../../shared/services/lang.js'
+import { BuilderCondition } from '../../shared/model/form-data.js';
+import { ContitionService } from '../../shared/services/condition-service.js'
 export class BuilderFieldInterface {
     fieldProperties = new BuilderFieldProperties(this);
     /**
@@ -15,6 +17,7 @@ export class BuilderFieldInterface {
     constructor(type, label) {
         this.type = type;
         this.label = label;
+        this.name = '';
 
         this.fieldProperties.addProperties([
             {type: 'hidden', id: 'id', label: 'ID', value: ''},
@@ -25,9 +28,16 @@ export class BuilderFieldInterface {
             {type: 'condition', id: 'condition', label: 'Show condities', value: {}}
         ]);
 
-        this.fieldProperties.addLabelChangedListener((value) => {
+
+        this.fieldProperties.addPropertyChangedListener('label', (value) => {
             this.setLabel(this.fieldProperties.getFieldIdentifier());
         });
+
+        this.fieldProperties.addPropertyChangedListener('name', (value, pathOld) => {
+            console.log('name', value, pathOld, this.getPath());
+            ContitionService.notify(pathOld, this.getPath());
+        });
+        
 
     }
 
@@ -60,16 +70,29 @@ export class BuilderFieldInterface {
         if (!properties) {
             return;
         }
+
+        if (properties['condition']) {
+            properties['condition'] = new BuilderCondition(properties['condition']);
+        }
+
         for (const key in properties) {
             if (this.fieldProperties.hasProperty(key) && (properties[key] !== undefined && properties[key] !== null)) {
-                
                 this.fieldProperties.setPropertyValueById(key, properties[key]);
+
             }
         }
 
-        this.fieldProperties.onPropertyLabelChanged.forEach(changed => {
-            changed(properties.label);
-        });
+        // this.field?.fieldProperties?.onPropertyChanged
+        //             .get('label')?.forEach(callback => callback(property.value));
+        // this.fieldProperties.onPropertyLabelChanged.forEach(changed => {
+        //     changed(properties.label);
+        // });
+    }
+
+    getPath() {
+        return !this.parent ? `$.${this.getPropertyValueById('name')}`
+                : `${this.parent.getPath()}.${this.getPropertyValueById('name')}`;
+
     }
 
     /**

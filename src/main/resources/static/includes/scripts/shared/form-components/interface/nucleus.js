@@ -101,12 +101,12 @@ export class Nucleus {
             return this;
         }
 
-        const condition = new Condition();
-        condition.var1 = showCondition.var1;
-        condition.operator = showCondition.operator;
-        condition.var2 = showCondition.var2;
-        condition.conditions = showCondition.conditions;
-        condition.logicalOperator = showCondition.logicalOperator;
+        const condition = new Condition(showCondition);
+        // condition.var1 = showCondition.var1;
+        // condition.operator = showCondition.operator;
+        // condition.var2 = showCondition.var2;
+        // condition.conditions = showCondition.conditions;
+        // condition.logicalOperator = showCondition.logicalOperator;
 
         this.showCondition = new ConditionParser(condition, (hasCondition) => {
             this.setShow(hasCondition);

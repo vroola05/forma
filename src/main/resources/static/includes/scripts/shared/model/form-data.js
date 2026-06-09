@@ -1,3 +1,5 @@
+import { ContitionService } from '../services/condition-service.js';
+
 import { Lang } from '../services/lang.js';
 
 export const PERMISSIONS = Object.freeze({
@@ -143,5 +145,39 @@ export class FormConfigSuccessPage {
 export class FormSubmission {
     constructor (data = {}) {
         this.submissionId = data.submissionId;
+    }
+}
+
+/**
+ * When an object has been created, all the variables that are bound toe fields are registered.
+ * This is used for when a fieldname receives an update.
+ */
+export class BuilderCondition {
+    constructor(data = {}) {
+        this.var1 = data?.var1;
+        this.operator = data?.operator;
+        this.var2 = data?.var2;
+        this.logicalOperator = data?.logicalOperator;
+        this.conditionType = data?.conditionType;
+        
+        this.conditions = [];
+        if (data?.conditions) {
+            this.conditions = data.conditions.map(con => new BuilderCondition(con));
+        }
+
+        this.registerVariables();
+    }
+
+    registerVariables() {
+        if (this.isField(this.var1)) {
+            ContitionService.addCondition(this.var1, this);
+        }
+        if (this.isField(this.var2)) {
+            ContitionService.addCondition(this.var2, this);
+        }
+    }
+
+    isField(input) {
+        return input && input.startsWith('$.')
     }
 }
