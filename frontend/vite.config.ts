@@ -17,12 +17,12 @@ export default defineConfig({
             return next();
           }
 
-          if (/^\/[^\/]+\/admin(\/.*)?$/.test(url)) {
+          if (/^\/[^/]+\/admin(\/.*)?$/.test(url)) {
             req.url = '/admin/index.html';
             return next();
           }
 
-          if (/^\/[^\/]+\/?$/.test(url)) {
+          if (/^\/[^/]+\/?$/.test(url)) {
             req.url = '/index.html';
             return next();
           }
@@ -62,11 +62,15 @@ export default defineConfig({
     },
     
     proxy: {
-      '^.*/api': {
+      '^/[a-zA-Z0-9_-]+/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,
-        secure: false
-
+        secure: false,
+        // configure: (proxy) => {
+        //   proxy.on('proxyReq', (proxyReq, req) => {
+        //     console.log(' [Vite Proxy] Forwarding:', req.method, req.url);
+        //   });
+        // }
       }
     }
   }

@@ -1,8 +1,6 @@
 package org.commonground.forma.services;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +29,6 @@ import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
-import software.amazon.awssdk.services.s3.model.ObjectNotInActiveTierErrorException;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @Service
@@ -40,7 +37,9 @@ public class FileService {
     private final StorageService storageService;
     private final S3Client s3Client;
 
-    private final List<String> BLOCKED_FILE_EXTENSIONS = List.of(
+    private static final String UPLOAD_BASE = "uploads/";
+
+    private static final List<String> BLOCKED_FILE_EXTENSIONS = List.of(
         "php", "phtml", "php3", "php4", "php5", "php7", "php8", "phps", "phar",
             "jsp", "jspx", "jsw", "jsv", "jspf", "wss", "do", "action", "asp",
             "aspx", "ashx", "asmx", "axd", "asax", "ascx", "master", "config",
@@ -76,8 +75,8 @@ public class FileService {
         }
 
         try {
-            String tempFileLocation = "uploads/" + tenant.getId() + "/" + clientSessionId + "/" + storedFilename;
-            String storedFileLocation = "uploads/" + tenant.getId() + "/" + submissionId + "/" + storedFilename;
+            String tempFileLocation = UPLOAD_BASE + tenant.getId() + "/" + clientSessionId + "/" + storedFilename;
+            String storedFileLocation = UPLOAD_BASE + tenant.getId() + "/" + submissionId + "/" + storedFilename;
 
             if (storageService.existsStoredFile(storedFileLocation)) {
                 return true;
@@ -115,15 +114,8 @@ public class FileService {
             formSubmissionFileEntity.setFileContentType(headResponse.contentType());
             
             return true;
-        } catch (ObjectNotInActiveTierErrorException e) {
-            System.err.println(e.getMessage());
-            e.printStackTrace();
-        } catch (S3Exception e) {
-            System.err.println(e.getMessage());
-            e.printStackTrace();
-        } catch (SdkClientException e) {
-            System.err.println(e.getMessage());
-            e.printStackTrace();
+        } catch ( S3Exception | SdkClientException _) {
+            // 
         }
 
         return false;
@@ -168,7 +160,7 @@ public class FileService {
         String extension = this.validateFile(file, allowedExtensions);
 
         String storedFilename = UUID.randomUUID().toString()+ "." + extension;
-        String fileLocation = "uploads/" + tenant.getId() + "/" + clientSessionId + "/" + storedFilename;
+        String fileLocation = UPLOAD_BASE + tenant.getId() + "/" + clientSessionId + "/" + storedFilename;
 
         try {
             storageService.uploadTempFile(fileLocation, file.getInputStream());
@@ -179,8 +171,7 @@ public class FileService {
             result.put("storedFilename", storedFilename);
             
             return result;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException _) {
             throw new FieldValidationException("{form.validation.file.error}", file.getOriginalFilename());
         }
     }
@@ -226,7 +217,7 @@ public class FileService {
             }
             
             return extension;
-        } catch (IOException | MimeTypeException e) {
+        } catch (IOException | MimeTypeException _) {
             throw new FieldValidationException("{form.validation.file.error}", file.getOriginalFilename());
         }
     }

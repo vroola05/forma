@@ -97,7 +97,7 @@ public class SelectField implements Field {
 
     @Override
     public Boolean isShow() {
-        return this.show != null ? this.show : true;
+        return this.show == null || this.show;
     }
 
     @Override

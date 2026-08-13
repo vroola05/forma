@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 import org.commonground.forma.exceptions.FieldValidationException;
 import org.commonground.forma.model.form.Option;
@@ -55,12 +54,14 @@ public class ColorField implements Field {
     }
 
     @Override
+    @SuppressWarnings("java:S1168")
     public List<Option> getValues() {
         return null;
     }
 
     @Override
     public void setValues(List<Option> values) {
+        // Not implemented
     }
 
     @Override
@@ -88,10 +89,11 @@ public class ColorField implements Field {
 
     @Override
     public Boolean isShow() {
-        return this.show != null ? this.show : true;
+        return this.show == null || this.show;
     }
     
     @Override
+    @SuppressWarnings("java:S1168")
     public List<Field> getFields() {
         return null;
     }

@@ -69,9 +69,7 @@ public class CheckboxField implements Field {
     public List<Option> cloneOptions(List<Option> options) {
         List<Option> result = new ArrayList<>();
         if (options != null) {
-            options.forEach(opt -> {
-                result.add(opt.clone());
-            });
+            options.forEach(opt -> result.add(opt.clone()));
         }
         return result;
     }
@@ -90,6 +88,7 @@ public class CheckboxField implements Field {
     }
 
     @Override
+    @SuppressWarnings("java:S1168")
     public List<Field> getFields() {
         return null;
     }
@@ -101,6 +100,7 @@ public class CheckboxField implements Field {
     
     @Override
     public void validate(Object value) throws FieldValidationException {
+        // Needs to be implemented
     }
 
     @Override
@@ -110,6 +110,6 @@ public class CheckboxField implements Field {
 
     @Override
     public Boolean isShow() {
-        return this.show != null ? this.show : true;
+        return this.show == null || this.show;
     }
 }

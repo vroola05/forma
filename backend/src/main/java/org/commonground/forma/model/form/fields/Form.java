@@ -85,6 +85,7 @@ public class Form implements Field {
     }
 
     @Override
+    @SuppressWarnings("java:S1168")
     public List<Option> getValues() {
         return null;
     }
@@ -99,11 +100,13 @@ public class Form implements Field {
     }
 
     @Override
+    @SuppressWarnings("java:S1168")
     public Map<String, String> getData() {
         return null;
     }
 
     @Override
+
     public void setData(Map<String, String> data) {
         
     }
@@ -115,7 +118,7 @@ public class Form implements Field {
 
     @Override
     public Boolean isShow() {
-        return this.show == null ? true : this.show;
+        return this.show == null || this.show;
     }
 
     @Override

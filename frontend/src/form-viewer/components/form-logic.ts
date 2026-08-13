@@ -58,7 +58,7 @@ export class FormLogic {
         // This allows the page to load with the correct tab based on the URL
         const tabNameUrlParam = Router.getUrlParameter('tabName');
 
-        this.currentTab = tabNameUrlParam ? tabNameUrlParam : this.form.fields[0].name;
+        this.currentTab = tabNameUrlParam ?? this.form.fields[0].name;
         
         this.form.setTab(this.currentTab);
     }

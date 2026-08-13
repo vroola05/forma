@@ -3,9 +3,14 @@
         "source.fixAll.eslint": "explicit",
         "source.organizeImports": "explicit"
     },
-
     "eslint.validate": [
         "javascript",
         "typescript"
-    ]
+    ],
+    "[typescript]": {
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true
+    },
+    "sonarlint.analysisExcludesStandalone": "**/*.{ts,js,json,html}"
+    
 }
