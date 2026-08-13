@@ -66,12 +66,11 @@ export default defineConfig({
         target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
-        configure: (proxy) => {
-          // 💡 TIP: Dit logt lokaal in je terminal exact welke url's hij doorstuurt!
-          proxy.on('proxyReq', (proxyReq, req) => {
-            console.log(' [Vite Proxy] Forwarding:', req.method, req.url);
-          });
-        }
+        // configure: (proxy) => {
+        //   proxy.on('proxyReq', (proxyReq, req) => {
+        //     console.log(' [Vite Proxy] Forwarding:', req.method, req.url);
+        //   });
+        // }
       }
     }
   }
