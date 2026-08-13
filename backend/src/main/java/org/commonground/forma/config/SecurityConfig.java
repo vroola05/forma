@@ -1,7 +1,8 @@
 package org.commonground.forma.config;
 
+import java.io.IOException;
+
 import org.commonground.forma.model.settings.constants.Permissions;
-// import org.commonground.forma.config.tenant.SecurityTenantFilter;
 import org.commonground.forma.services.TenantUserDetailsService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +15,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
@@ -50,9 +60,16 @@ public class SecurityConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain globalAdminFilterChain(HttpSecurity http) throws Exception {
+        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+        
         http
                 .securityMatcher("/system/**")
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf
+                
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRequestHandler(requestHandler)
+            )
+            .addFilterAfter(new CsrfCookieFilter(), org.springframework.security.web.csrf.CsrfFilter.class)
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(AppConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
                         .requestMatchers(
@@ -90,8 +107,16 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain tenantAndPublicFilterChain(HttpSecurity http) throws Exception {
+        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+
         http
-                .csrf(csrf -> csrf.disable())
+        .csrf(csrf -> csrf
+                
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRequestHandler(requestHandler)
+            )
+            .addFilterAfter(new CsrfCookieFilter(), org.springframework.security.web.csrf.CsrfFilter.class)
+                
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(AppConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
                         .requestMatchers(
@@ -132,4 +157,15 @@ public class SecurityConfig {
         return http.build();
     }
 
+    private static final class CsrfCookieFilter extends OncePerRequestFilter {
+        @Override
+        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+                throws ServletException, IOException {
+            CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+            if (csrfToken != null) {
+                csrfToken.getToken(); // Dit forceert het laden en aanmaken van de cookie
+            }
+            filterChain.doFilter(request, response);
+        }
+    }
 }

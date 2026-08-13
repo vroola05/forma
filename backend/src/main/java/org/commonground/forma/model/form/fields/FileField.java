@@ -93,10 +93,11 @@ public class FileField implements Field {
 
     @Override
     public Boolean isShow() {
-        return this.show != null ? this.show : true;
+        return this.show == null || this.show;
     }
     
     @Override
+    @SuppressWarnings("java:S1168")
     public List<Field> getFields() {
         return null;
     }

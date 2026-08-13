@@ -90,6 +90,7 @@ public class DualListboxField implements Field {
     }
 
     @Override
+    @SuppressWarnings("java:S1168")
     public List<Field> getFields() {
         return null;
     }
@@ -101,6 +102,7 @@ public class DualListboxField implements Field {
     
     @Override
     public void validate(Object value) throws FieldValidationException {
+        // Needs to be implemented
     }
 
     @Override
@@ -110,6 +112,6 @@ public class DualListboxField implements Field {
 
     @Override
     public Boolean isShow() {
-        return this.show != null ? this.show : true;
+        return this.show == null || this.show;
     }
 }

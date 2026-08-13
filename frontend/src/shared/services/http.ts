@@ -69,6 +69,13 @@ export class Http {
             ...options.headers
         };
 
+        if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+            const csrfToken = this.getCsrfToken();
+            if (csrfToken) {
+                headers['X-XSRF-TOKEN'] = csrfToken;
+            }
+        }
+
         if (defaultContentType && !headers['Content-Type']) {
             headers['Content-Type'] = defaultContentType;
         }
@@ -80,6 +87,7 @@ export class Http {
         const fetchOptions = {
             method: method,
             headers: headers,
+            credentials: 'same-origin',
             ...options,
             body: body
         };
@@ -170,13 +178,9 @@ export class Http {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.open('POST', url);
+            
+            xhr.withCredentials = true;
 
-            // if (options.abort) {
-            //     options.abort.abort = () => {
-            //         xhr.abort();
-            //         reject(new Error('UPLOAD_CANCELLED'));
-            //     };
-            // }
             const csrfToken = this.getCsrfToken();
             if (csrfToken) {
                 xhr.setRequestHeader('X-XSRF-TOKEN', csrfToken);

@@ -43,7 +43,7 @@ public class TabPage implements Field {
     }
        
     public Boolean isSharedTab() {
-        return this.sharedTab == null ? false : this.sharedTab;
+        return this.sharedTab == null && this.sharedTab;
     }
 
     @Override
@@ -72,11 +72,13 @@ public class TabPage implements Field {
     }
 
     @Override
+    @SuppressWarnings("java:S1168")
     public String getValue() {
        return null;
     }
 
     @Override
+    @SuppressWarnings("java:S1168")
     public List<Option> getValues() {
         return null;
     }
@@ -91,6 +93,7 @@ public class TabPage implements Field {
     }
 
     @Override
+    @SuppressWarnings("java:S1168")
     public Map<String, String> getData() {
         return null;
     }
@@ -107,7 +110,7 @@ public class TabPage implements Field {
 
     @Override
     public Boolean isShow() {
-        return this.show == null ? true : this.show;
+        return this.show == null || this.show;
     }
 
     @Override
@@ -117,7 +120,7 @@ public class TabPage implements Field {
 
     @Override
     public List<Field> getFields() {
-        return this.fields.stream().map(field -> (Field)field).toList();
+        return this.fields.stream().map(field -> field).toList();
     }
 
     @Override

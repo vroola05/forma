@@ -55,12 +55,14 @@ public class TextField implements Field {
     }
 
     @Override
+    @SuppressWarnings("java:S1168")
     public List<Option> getValues() {
         return null;
     }
 
     @Override
     public void setValues(List<Option> values) {
+        // Only needed in option fields
     }
 
     @Override
@@ -88,10 +90,11 @@ public class TextField implements Field {
 
     @Override
     public Boolean isShow() {
-        return this.show != null ? this.show : true;
+        return this.show == null || this.show;
     }
     
     @Override
+    @SuppressWarnings("java:S1168")
     public List<Field> getFields() {
         return null;
     }
