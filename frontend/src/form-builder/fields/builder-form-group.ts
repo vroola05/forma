@@ -1,9 +1,9 @@
+import { BaseFieldDto } from "../../shared/model/types";
+import { EventService } from '../../shared/services/event-service';
+import { BuilderPropertiesService } from '../services/builder-properties-service';
+import { FIELD_TYPE } from '../types';
 import { BuilderFieldInterface } from "./builder-field-interface";
 import { Dropzone } from './components/dropzone';
-import { BuilderPropertiesService } from '../services/builder-properties-service';
-import { FIELD_TYPE } from '../types'
-import { EventService } from '../../shared/services/event-service';
-import { BaseFieldDto } from "../../shared/model/types";
 
 export class BuilderFormGroup extends BuilderFieldInterface {
     builderFormGroup = document.createElement('div');

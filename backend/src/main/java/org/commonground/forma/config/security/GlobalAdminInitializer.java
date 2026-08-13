@@ -56,7 +56,6 @@ public class GlobalAdminInitializer implements CommandLineRunner {
             
             
             userRepository.save(admin);
-            System.out.println("Global admin aangemaakt met gebruikersnaam: " + adminUsername);
         }
     }
 }

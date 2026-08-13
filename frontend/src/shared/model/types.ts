@@ -1,5 +1,4 @@
 import { InputNucleus } from '../form-components/interface/input-base';
-import { Nucleus } from '../form-components/interface/nucleus';
 import { ContitionService } from '../services/condition-service';
 
 import { Lang } from '../services/lang';
@@ -161,10 +160,8 @@ export interface FileOptionFieldDto extends OptionFieldDto {
     maxFileSize?: number;
 }
 
-export interface GroupFieldDto extends BaseFieldDto {
-}
 
-export type FieldDto = InputFieldDto | OptionFieldDto | GroupFieldDto;
+export type FieldDto = BaseFieldDto | InputFieldDto | OptionFieldDto;
 
 export interface FormConfig {
     formConfigSuccessPage?: FormConfigSuccessPage;
@@ -201,7 +198,6 @@ export enum LogicalOperator {
 }
 
 export function getLogicalOperatorType(type: string | undefined): LogicalOperator {
-
     const isValidType = Object.values(LogicalOperator).includes(type as any);
     if (isValidType) {
         return type as LogicalOperator;

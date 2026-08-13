@@ -1,6 +1,6 @@
-import { Router } from '../../services/router';
-import { Auth } from '../../services/auth';
 import { PERMISSION } from '../../model/types';
+import { Auth } from '../../services/auth';
+import { Router } from '../../services/router';
 
 export class FormButton {
     button: HTMLButtonElement = document.createElement('button');

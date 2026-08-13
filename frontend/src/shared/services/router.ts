@@ -1,5 +1,5 @@
-import { Auth } from './auth';
 import { Page } from '../page-components/page';
+import { Auth } from './auth';
 
 export interface Route {
     path: string;
@@ -72,7 +72,7 @@ export class Router {
 
         const segments = path.split('/');
 
-        if (!segments[0] || segments[0].length == 0) {
+        if (!segments[0] || segments[0].length === 0) {
             throw new Error('No tenant in path');
         }
 
@@ -158,11 +158,6 @@ export class Router {
         if (!path) {
             return;
         }
-
-        const isObject = dataParams !== null && typeof dataParams === 'object';
-        const params = dataParams instanceof Map
-            ? dataParams
-            : new Map(!isObject ? [] : Object.entries(dataParams ?? {}))
 
         if (path.startsWith(Router.basePath)) {
             path = path.slice(Router.basePath.length) || "/";
@@ -309,7 +304,7 @@ export class Router {
     }
 
     static isLogin(path: string) {
-        return window.location.pathname == Router.tenantPath + Router.#loginUrl;
+        return window.location.pathname === Router.tenantPath + Router.#loginUrl;
     }
 
     static login() {

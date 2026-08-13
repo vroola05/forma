@@ -1,7 +1,6 @@
 import { OptionDto } from '../model/types';
 import { InputNucleus } from './interface/input-base';
 
-
 /**
  * CheckboxField
  */
@@ -132,7 +131,7 @@ export class CheckboxField extends InputNucleus<HTMLDivElement> {
      */
     removeInputValue(opt: OptionDto, noCallback = false) {
         const index = this.value.findIndex(o => o.value === opt.value);
-        if (index == -1) 
+        if (index === -1) 
             return this;
 
         this.value.splice(index, 1);
@@ -163,7 +162,7 @@ export class CheckboxField extends InputNucleus<HTMLDivElement> {
         });
 
         this.valueChanged(noCallback, this.value);
-        console.log('this.value',this.value);
+
         return this;
     }
 

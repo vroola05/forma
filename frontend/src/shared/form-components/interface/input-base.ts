@@ -1,7 +1,7 @@
-import { Nucleus } from './nucleus';
-import { Lang } from '../../services/lang';
-import { FieldService } from '../../services/field-service';
 import { OptionDto } from '../../model/types';
+import { FieldService } from '../../services/field-service';
+import { Lang } from '../../services/lang';
+import { Nucleus } from './nucleus';
 
 export const InputLayout = ['no-label', 'layout-row', 'layout-column'];
 
@@ -223,7 +223,7 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
     }
 
     setValidationState(valid: boolean) {
-        if (valid == false) {
+        if (valid === false) {
             this.feedbackElement.classList.remove('is-valid');
             this.feedbackElement.classList.add('is-invalid');
 

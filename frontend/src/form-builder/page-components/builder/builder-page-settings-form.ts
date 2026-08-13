@@ -1,11 +1,11 @@
-import { BuilderFormService } from '../../services/builder-form-service';
-import { BuilderPropertyComponent } from '../../properties/builder-properties-component';
-import { BuilderLayout } from './components/builder-layout';
-import { BuilderFieldItems } from './components/builder-field-items';
-import { Lang } from '../../../shared/services/lang';
-import { BuilderPropertiesService } from '../../services/builder-properties-service';
 import { Page } from '../../../shared/page-components/page';
+import { Lang } from '../../../shared/services/lang';
+import { BuilderPropertyComponent } from '../../properties/builder-properties-component';
+import { BuilderFormService } from '../../services/builder-form-service';
+import { BuilderPropertiesService } from '../../services/builder-properties-service';
 import { FIELD_TYPE } from '../../types';
+import { BuilderFieldItems } from './components/builder-field-items';
+import { BuilderLayout } from './components/builder-layout';
 
 export class BuilderPageSettingsForm extends Page {
     #builderLayout: BuilderLayout = new BuilderLayout();

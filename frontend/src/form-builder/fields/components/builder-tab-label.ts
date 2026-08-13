@@ -27,7 +27,7 @@ export class BuilderTabLabel {
         this.builderTabLabelItemContainer.appendChild(builderTabLabelItemBtnClose);
 
         builderTabLabelItemBtnClose.addEventListener('click', (event) => {
-            if (this.onDeleteCallback != null) {
+            if (this.onDeleteCallback !== null) {
                 this.onDeleteCallback(this);
             }
         });

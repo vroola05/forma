@@ -59,7 +59,7 @@ export class BuilderTextEditorToolbar {
                 const commandKey = btn.cmd as keyof ChainedCommands;
                 
                 if (typeof chain[commandKey] === 'function') {
-                    button.onclick = () => (chain[commandKey] as Function|any)(btn.options || {}).run();
+                    button.onclick = () => (chain[commandKey] as any)(btn.options || {}).run();
                 }
 
                 this.content.appendChild(button);

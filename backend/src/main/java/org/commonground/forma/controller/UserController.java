@@ -40,7 +40,6 @@ public class UserController {
     @GetMapping("/me")
     public User getAuthenticatedUser(Authentication authentication) {
         return this.securityService.getCurrentUser().map(user -> {
-            System.out.println("Authenticated user: " + user.getUsername());
             User dto = new User();
             dto.setUsername(user.getUsername());
             dto.setEmail(user.getEmail());

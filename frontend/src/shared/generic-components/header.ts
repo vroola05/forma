@@ -1,7 +1,7 @@
-import { Router } from '../../shared/services/router';
+import { FormButton } from '../../shared/form-components/components/form-button';
 import { EventService } from '../../shared/services/event-service';
 import { Lang } from '../../shared/services/lang';
-import { FormButton } from '../../shared/form-components/components/form-button';
+import { Router } from '../../shared/services/router';
 import { Auth } from '../services/auth';
 import { headerService } from '../services/header-service';
 

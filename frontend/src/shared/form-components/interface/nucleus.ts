@@ -1,4 +1,4 @@
-import { FormService } from '../../../form-viewer/services/form-service'
+import { FormService } from '../../../form-viewer/services/form-service';
 import { ConditionParser } from '../../condition-components/condition-parser';
 import { Condition } from '../../model/types';
 import { ValidationBase } from './validation-base';

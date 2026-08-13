@@ -1,6 +1,6 @@
 
 import { Http } from './http';
-import { Router } from './router'; 
+import { Router } from './router';
 
 export class Lang {
     static translation: Map<string, string> = new Map();
@@ -10,7 +10,7 @@ export class Lang {
 
     static load() {
         return new Promise<void>((resolve, reject) => {
-        let language = navigator.language || navigator.language;
+        const language = navigator.language || navigator.language;
 
         Http.get(`${Router.tenantPath}/api/language/${language}`, {})
             .then(translation => {

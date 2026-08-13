@@ -1,7 +1,7 @@
-import Mention, { MentionNodeAttrs } from '@tiptap/extension-mention';
+import Mention from '@tiptap/extension-mention';
 
-import { BuilderConditionsAutocompleteField } from '../../properties/components/builder-conditions-autocomplete-field';
 import { SuggestionKeyDownProps, SuggestionProps } from '@tiptap/suggestion';
+import { BuilderConditionsAutocompleteField } from '../../properties/components/builder-conditions-autocomplete-field';
 
 export class DollarMenu {
     popup: HTMLElement | null = null;

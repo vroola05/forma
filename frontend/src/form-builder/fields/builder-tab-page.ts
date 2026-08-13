@@ -1,10 +1,10 @@
-import { BuilderFieldInterface } from "./builder-field-interface";
-import { Dropzone } from './components/dropzone';
+import { BaseFieldDto } from "../../shared/model/types";
 import { EventService } from '../../shared/services/event-service';
 import { BuilderPropertiesService } from '../services/builder-properties-service';
 import { FIELD_TYPE } from '../types';
-import { BaseFieldDto } from "../../shared/model/types";
+import { BuilderFieldInterface } from "./builder-field-interface";
 import { BuilderTabLabel } from "./components/builder-tab-label";
+import { Dropzone } from './components/dropzone';
 
 
 export class BuilderTabPage extends BuilderFieldInterface {

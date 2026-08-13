@@ -1,5 +1,5 @@
-import { footerService } from "../services/footer-service";
 import { FormButton } from "../form-components/components/form-button";
+import { footerService } from "../services/footer-service";
 
 export class Footer {
     footerContainer: HTMLElement = document.createElement('footer');
@@ -32,7 +32,7 @@ export class Footer {
         this.buttonsContainerRight.innerHTML = '';
 
         if (buttons) {
-            if (buttons.left.length == 0 && buttons.right.length == 0) {
+            if (buttons.left.length === 0 && buttons.right.length === 0) {
                 this.buttonsContainer?.parentElement?.classList.add('hidden');
             } else {
                 this.buttonsContainer?.parentElement?.classList.remove('hidden');

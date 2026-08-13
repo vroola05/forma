@@ -1,7 +1,7 @@
 import { FormButton } from '../../../../shared/form-components/components/form-button';
 import { BuilderPageFormEditorBtns } from './builder-page-form-editor-btn';
 
-import {BuilderSpacer} from './builder-spacer';
+import { BuilderSpacer } from './builder-spacer';
 
 export class BuilderLayout {
     #content = document.createElement('div');

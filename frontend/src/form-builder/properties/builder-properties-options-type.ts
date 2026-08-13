@@ -1,4 +1,4 @@
-import { EventService } from '../../shared/services/event-service'
+import { EventService } from '../../shared/services/event-service';
 import { BuilderFieldInterface } from '../fields/builder-field-interface';
 import { FIELD_TYPE, FieldProperty, FieldPropertyOption } from '../types';
 import { BuilderPropertiesFooter } from './components/builder-properties-footer';
@@ -89,7 +89,7 @@ export class BuilderPropertiesOptionsType {
             event.preventDefault();
 
             this.builderPropertyOptionsContainer.classList.remove('drag-over');
-            if (this.draggedItem == null) {
+            if (this.draggedItem === null) {
                 return;
             }
 
@@ -114,13 +114,13 @@ export class BuilderPropertiesOptionsType {
         const list = Array.from(this.builderPropertyOptionsContainer.children);
         if (draggedItem === droppedItem) return;
 
-        let draggedIndex = list.findIndex(tabLabel => tabLabel === draggedItem);
-        let droppedIndex = null;
+        const draggedIndex = list.findIndex(tabLabel => tabLabel === draggedItem);
         
-        if (droppedItem == null) {
+        
+        if (droppedItem === null) {
             this.builderPropertyOptionsContainer.appendChild(draggedItem);
         } else {
-            droppedIndex = list.findIndex(tabLabel => tabLabel === droppedItem);
+            const droppedIndex = list.findIndex(tabLabel => tabLabel === droppedItem);
             if (draggedIndex < droppedIndex) {
                 this.builderPropertyOptionsContainer.insertBefore(draggedItem, droppedItem.nextSibling);
             } else {
@@ -134,7 +134,7 @@ export class BuilderPropertiesOptionsType {
     addRowNew() {
         const index = this.property.value.length;
 
-        const value  = this.optionDefinition.length == 1 ? '' : this.optionDefinition.reduce((obj: Record<string, string | boolean>, def) => {
+        const value  = this.optionDefinition.length === 1 ? '' : this.optionDefinition.reduce((obj: Record<string, string | boolean>, def) => {
             obj[def.value] = def.type === 'checkbox' ? false : '';
             return obj;
         }, {});
@@ -159,7 +159,7 @@ export class BuilderPropertiesOptionsType {
                 this.optionDefinition[i].type,
                 this.optionDefinition[i].label,
                 this.optionDefinition[i].value,
-                this.optionDefinition.length == 1 ? this.property.value[index] : this.property.value[index][this.optionDefinition[i].value],
+                this.optionDefinition.length === 1 ? this.property.value[index] : this.property.value[index][this.optionDefinition[i].value],
                 this.optionDefinition[i].type !== 'checkbox'));
         }
 
@@ -173,7 +173,7 @@ export class BuilderPropertiesOptionsType {
         builderPropertyOptionItemDeleteContainer.appendChild(builderPropertyOptionItemDelete);
         builderPropertyOptionItemDeleteContainer.onclick = (event) => {
             const target = event.target as HTMLElement;
-            let rowContainer = target.closest('.builder-property-option-item');
+            const rowContainer = target.closest('.builder-property-option-item');
             if (rowContainer) {
                 this.builderPropertyOptionsContainer.removeChild(rowContainer);
                 this.setOptions();
@@ -196,7 +196,7 @@ export class BuilderPropertiesOptionsType {
 
         input.onchange = (event) => {
             const target = event.target as HTMLElement;
-            let rowContainer = target.closest('.builder-property-option-item') as HTMLElement;
+            const rowContainer = target.closest('.builder-property-option-item') as HTMLElement;
             if (rowContainer) {
                 const list = Array.from(this.builderPropertyOptionsContainer.children);
                 const id: string | undefined = rowContainer?.dataset?.id;
@@ -231,7 +231,7 @@ export class BuilderPropertiesOptionsType {
     }
 
     getOption(row: Element): Record<string, string | boolean> {
-        let value: Record<string, string | boolean> = {};
+        const value: Record<string, string | boolean> = {};
         this.optionDefinition.forEach(def => {
             const input = row.querySelector('input[name="' + def.value + '"]') as HTMLInputElement;
             value[def.value] = input ? def.type === 'checkbox' ? input.checked : input.value : '';

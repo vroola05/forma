@@ -1,5 +1,5 @@
-import { Nucleus } from '../../shared/form-components/interface/nucleus';
 import { Form } from '../../shared/form-components/form';
+import { Nucleus } from '../../shared/form-components/interface/nucleus';
 
 export class FormService {
     static instance: FormService | null = null;
@@ -17,7 +17,7 @@ export class FormService {
     }
 
     static getInstance() {
-        if (FormService.instance == null) {
+        if (FormService.instance === null) {
             FormService.instance = new FormService();
         }
         return FormService.instance;

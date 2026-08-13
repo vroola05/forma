@@ -1,7 +1,6 @@
-import { Form } from '../form-components/form';
 import { InputNucleus } from '../form-components/interface/input-base';
 import { Nucleus } from '../form-components/interface/nucleus';
-import {JsonPathTokenizer } from './json-path-tokenizer';
+import { JsonPathTokenizer } from './json-path-tokenizer';
 
 export class JsonPathFinder {
 
@@ -14,7 +13,7 @@ export class JsonPathFinder {
     
     static evaluateRecursive(tokens: string[], tokenIndex: number, currentField: Nucleus, results: Nucleus[]) {
         if (tokenIndex >= tokens.length - 1) {
-            if (tokens[tokens.length - 1] == currentField.getName()) {
+            if (tokens[tokens.length - 1] === currentField.getName()) {
                 results.push(currentField);
             }
             return;
@@ -22,12 +21,12 @@ export class JsonPathFinder {
 
         const token = tokens[tokenIndex];
 
-        if ('$' == token) {
+        if ('$' === token) {
            JsonPathFinder.evaluateRecursive(tokens, tokenIndex + 1, currentField, results);
             return;
         }
 
-        if ('..' == token) {
+        if ('..' === token) {
             if (tokenIndex + 1 >= tokens.length) {
                 throw new Error('Pad mag niet eindigen met ..');
             }
@@ -71,11 +70,11 @@ export class JsonPathFinder {
             return;
         }
 
-        if (token == currentField.name) {
+        if (token === currentField.name) {
             // Als de huidige token matcht met de huidige field-naam,
             // gaan we naar de volgende token met de kinderen van dit veld.
             const children = currentField.getFields();
-            if (children != null) {
+            if (children !== null) {
                 for (const child of children) {
                    JsonPathFinder.evaluateRecursive(tokens, tokenIndex + 1, child, results);
                 }
@@ -86,12 +85,12 @@ export class JsonPathFinder {
     }
 
     static searchDeep(root: Nucleus, targetName: string, tokens: string[], nextTokenIdx: number, results: Nucleus[]) {
-        if (targetName == root.name) {
+        if (targetName === root.name) {
            JsonPathFinder.evaluateRecursive(tokens, nextTokenIdx, root, results);
         }
 
         const children = root.getFields();
-        if (children != null) {
+        if (children !== null) {
             for (const child of children) {
                JsonPathFinder.searchDeep(child, targetName, tokens, nextTokenIdx, results);
             }

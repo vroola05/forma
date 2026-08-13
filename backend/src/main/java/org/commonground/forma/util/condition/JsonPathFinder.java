@@ -25,7 +25,6 @@ public class JsonPathFinder {
                 FieldType.CHECKBOX.equals(field.getType())
                 || FieldType.SELECT.equals(field.getType())
                 || FieldType.RADIO.equals(field.getType())) {
-                System.out.println("getFieldValues: " + field.getName());
             } else {
                 output.add(field.getValue());
             }

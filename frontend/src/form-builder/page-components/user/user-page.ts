@@ -1,14 +1,10 @@
-import { SettingsPage } from '../settings-page';
-import { Http } from '../../../shared/services/http';
-import { Router } from '../../../shared/services/router';
-import { Lang } from '../../../shared/services/lang';
-import { TextField } from '../../../shared/form-components/text-field';
-import { PasswordField } from '../../../shared/form-components/password-field';
 import { FormButton } from '../../../shared/form-components/components/form-button';
-import { AdminHeader } from '../../component/admin-header';
 import { Column, List, ListDefinition } from '../../../shared/generic-components/list';
-import { EventService } from '../../../shared/services/event-service';
 import { USER_STATUS } from '../../../shared/model/types';
+import { Http } from '../../../shared/services/http';
+import { Lang } from '../../../shared/services/lang';
+import { Router } from '../../../shared/services/router';
+import { SettingsPage } from '../settings-page';
 
 export class UserPage extends SettingsPage {
     usersList: List;

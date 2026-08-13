@@ -1,5 +1,5 @@
-import { Nucleus } from './interface/nucleus';
 import { InputNucleus } from './interface/input-base';
+import { Nucleus } from './interface/nucleus';
 
 import { TabLabel } from './components/tab-label';
 

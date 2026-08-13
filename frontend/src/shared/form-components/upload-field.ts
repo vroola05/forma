@@ -1,8 +1,8 @@
-import { InputNucleus } from './interface/input-base';
-import { FormButton } from './components/form-button';
+import { OptionDto } from '../model/types';
 import { Http } from '../services/http';
 import { Lang } from '../services/lang';
-import { OptionDto } from '../model/types';
+import { FormButton } from './components/form-button';
+import { InputNucleus } from './interface/input-base';
 
 export interface FileUploadOption {
     value: string;
@@ -142,10 +142,9 @@ export class FileUploadField extends InputNucleus<HTMLInputElement> {
         Promise.all(uploadPromises)
             .then(() => {
                 this.value = this.fileUploads.map(fileUpload => fileUpload.getValue());
-                console.log('amount', this.fileUploads.length);
                 this.isMaxFiles(this.fileUploads.length);
                 this.valueChanged();
-            });
+            }).catch(() => {});
     }
 
     createUpload(fileName: string, file: File | undefined = undefined) {
@@ -161,7 +160,7 @@ export class FileUploadField extends InputNucleus<HTMLInputElement> {
         });
 
         this.#uploadFileContainer.append(fileUpload.getContent());
-        console.log('test file added');
+
         return fileUpload;
     }
 
@@ -308,7 +307,7 @@ export class FileUploadField extends InputNucleus<HTMLInputElement> {
         if (valid && filesValue) {
             const optionsExtended: FileUploadOption[] = Array.isArray(filesValue) ? filesValue : [filesValue];
 
-            for (let option of optionsExtended) {
+            for (const option of optionsExtended) {
                 if (!option.text || !option.value) {
                     this.errors.push(Lang.get('field.upload.error.invalid'));
                     valid = false;
@@ -465,7 +464,7 @@ class FileUpload {
     setProgres(progres: number) {
         this.bar.style.width = `${progres}%`;
 
-        if (progres == 100) {
+        if (progres === 100) {
             this.barLabelProgres.innerHTML = `<span class='success icon icon-check2'><span>`;
         } else {
             this.barLabelProgres.textContent = `${progres}%`;

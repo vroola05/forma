@@ -1,10 +1,9 @@
 import type { Tab } from './tab';
 
-import { BaseFieldDto, FormDto } from '../model/types';
-import { CheckboxField } from './checkbox-field';
-import { Nucleus } from './interface/nucleus';
-import { Lang } from '../services/lang';
 import { FormSummaryRenderer } from '../../form-viewer/components/form-summary-renderer';
+import { BaseFieldDto, FormDto } from '../model/types';
+import { Lang } from '../services/lang';
+import { Nucleus } from './interface/nucleus';
 
 export interface FormOptions {
     showSummary: boolean
@@ -78,14 +77,14 @@ export class Form extends Nucleus {
             return;
         }
         this.confirmationCheck = [];
-        for (const f of form?.confirmationCheck) {
+        // for (const f of form?.confirmationCheck) {
             // const confirmation = FormRenderer.createField(f) as CheckboxField;
 
             // confirmation.setId(confirmation.getName());
             // confirmation.setLayout('layout-column');
 
             // this.confirmationCheck.push(confirmation);
-        }
+        // }
     }
 
     /**
@@ -128,11 +127,9 @@ export class Form extends Nucleus {
                 const summaryRenderer = new FormSummaryRenderer();
                 tab.setFormSummary(summaryRenderer);
 
-            });
+            }).catch(() => {});
         }
-        
     }
-
 
     async createTab(tabDto: BaseFieldDto, Tab: any) {
         const tab = new Tab(tabDto, (tabName: string) => {

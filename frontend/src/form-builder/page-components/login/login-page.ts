@@ -1,13 +1,13 @@
-import { Page } from '../../../shared/page-components/page';
-import { Http } from '../../../shared/services/http';
-import { Router } from '../../../shared/services/router';
-import { Lang } from '../../../shared/services/lang';
-import { Auth } from '../../../shared/services/auth';
-import { TextField } from '../../../shared/form-components/text-field';
-import { PasswordField } from '../../../shared/form-components/password-field';
 import { FormButton } from '../../../shared/form-components/components/form-button';
-import { TenantService } from '../../../shared/services/tenant-service';
+import { PasswordField } from '../../../shared/form-components/password-field';
+import { TextField } from '../../../shared/form-components/text-field';
+import { Page } from '../../../shared/page-components/page';
+import { Auth } from '../../../shared/services/auth';
+import { Http } from '../../../shared/services/http';
+import { Lang } from '../../../shared/services/lang';
 import { Loader } from '../../../shared/services/loader';
+import { Router } from '../../../shared/services/router';
+import { TenantService } from '../../../shared/services/tenant-service';
 
 export class LoginPage extends Page {
     loginErrorContainer = document.createElement('div');

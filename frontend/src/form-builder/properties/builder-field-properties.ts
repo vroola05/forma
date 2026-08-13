@@ -1,9 +1,9 @@
 
-import { Lang } from '../../shared/services/lang';
-import { ValidationError } from '../../shared/errors/validation-error'
-import { FieldProperty } from '../types';
-import { BuilderFieldInterface } from '../fields/builder-field-interface';
+import { ValidationError } from '../../shared/errors/validation-error';
 import { BuilderCondition, LogicalOperator, Operator } from '../../shared/model/types';
+import { Lang } from '../../shared/services/lang';
+import { BuilderFieldInterface } from '../fields/builder-field-interface';
+import { FieldProperty } from '../types';
 
 export class BuilderFieldProperties {
     properties: Map<string, FieldProperty> = new Map();
@@ -76,14 +76,15 @@ export class BuilderFieldProperties {
             }
         }
 
-        if (property.type == 'options') {
-        } else if (property.type == 'list') {
+        if (property.type === 'options') {
+            console.warn('Not yet implemented')
+        } else if (property.type === 'list') {
             if (property.value) {
                 for (const item of property.value) {
                     this.#validatePattern(item, property.pattern, property.message, field);
                 }
             }
-        } else if (property.type == 'condition') {
+        } else if (property.type === 'condition') {
             this.#validateCondition (property.value, field);
         } else {
             
@@ -98,7 +99,6 @@ export class BuilderFieldProperties {
         
         const fieldName = `${field ? field.getLabel() : ''} - ${this.getFieldIdentifier()}`;
         if (condition.conditions && condition.conditions.length > 0) {
-            console.log('aaa', condition.logicalOperator)
             if (condition.logicalOperator === undefined || !Object.values(LogicalOperator).includes(condition.logicalOperator)) {
                 throw new ValidationError(fieldName, "Fout in de logische operator van de conditie.").setField(field);
             }

@@ -1,6 +1,6 @@
-import { InputNucleus } from './interface/input-base';
-import { FormButton } from './components/form-button';
 import { OptionDto } from '../model/types';
+import { FormButton } from './components/form-button';
+import { InputNucleus } from './interface/input-base';
 
 /**
  * Dual Listbox

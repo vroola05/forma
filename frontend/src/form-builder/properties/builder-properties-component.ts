@@ -1,11 +1,11 @@
-import { BuilderPropertiesOptionsType } from './builder-properties-options-type';
-import { BuilderPropertiesConditionType } from './builder-properties-condition-type';
 import { EventService } from '../../shared/services/event-service';
 import { Lang } from '../../shared/services/lang';
 import { WindowFrame } from '../component/window-frame';
-import { BuilderPropertiesService } from '../services/builder-properties-service';
 import { BuilderFieldInterface } from '../fields/builder-field-interface';
+import { BuilderPropertiesService } from '../services/builder-properties-service';
 import { FIELD_TYPE, FieldProperty } from '../types';
+import { BuilderPropertiesConditionType } from './builder-properties-condition-type';
+import { BuilderPropertiesOptionsType } from './builder-properties-options-type';
 
 /**
  * 
@@ -98,7 +98,7 @@ export class BuilderPropertyComponent {
         })
         .forEach(([id, property]) => {
             switch (property.type) {
-                case 'options':
+                case 'options': {
                     const builderPropertiesOptionsType = new BuilderPropertiesOptionsType(field, property, [
                             {label: Lang.get('prop.option.value'), value: 'value', type: FIELD_TYPE.TEXT},
                             {label: Lang.get('prop.option.text'), value: 'text', type: FIELD_TYPE.TEXT},
@@ -106,21 +106,25 @@ export class BuilderPropertyComponent {
                         ]);
                     this.fieldPropertiesContainer.appendChild(builderPropertiesOptionsType.getContent());
                     break;
-                case 'list':
+                }
+                case 'list': {
                     const builderPropertiesListType = new BuilderPropertiesOptionsType(field, property, [
                             {label: Lang.get('prop.list.text'), value: 'value', type: FIELD_TYPE.TEXT}
                         ]);
                     this.fieldPropertiesContainer.appendChild(builderPropertiesListType.getContent());
                     break;
-                case 'condition':
+                }
+                case 'condition': {
                     const builderPropertiesConditionType = new BuilderPropertiesConditionType(field, property, [
                             {label: Lang.get('prop.list.text'), value: 'value', type: FIELD_TYPE.TEXT}
                         ],
                         (dom: HTMLElement, property: FieldProperty) => {
                             this.onPropertyChanged(dom, property);
                         });
+
                     this.fieldPropertiesContainer.appendChild(builderPropertiesConditionType.getContent());
                     break;
+                }
                 default:
                     this.getDefaultProperty(property);
                     break;

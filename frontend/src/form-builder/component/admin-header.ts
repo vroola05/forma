@@ -1,11 +1,9 @@
-import { Router } from '../../shared/services/router';
-import { Http } from '../../shared/services/http';
-import { EventService } from '../../shared/services/event-service';
-import { Lang } from '../../shared/services/lang';
 import { FormButton } from '../../shared/form-components/components/form-button';
 import { Header } from '../../shared/generic-components/header';
-import { PERMISSION } from '../../shared/model/types'
+import { PERMISSION } from '../../shared/model/types';
 import { Auth } from '../../shared/services/auth';
+import { EventService } from '../../shared/services/event-service';
+import { Lang } from '../../shared/services/lang';
 
 export class AdminHeader extends Header {
     

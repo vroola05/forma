@@ -1,11 +1,11 @@
+import { BaseFieldDto, FORM_STATUS } from '../../shared/model/types';
+import { EventService } from '../../shared/services/event-service';
+import { Lang } from '../../shared/services/lang';
+import { BuilderPropertiesService } from '../services/builder-properties-service';
+import { FIELD_TYPE, PROPERTY_TYPE } from '../types';
 import { BuilderFieldInterface } from './builder-field-interface';
 import { BuilderTabPage } from './builder-tab-page';
-import { BuilderTabComponent } from './components/builder-tab-component'; 
-import { EventService } from '../../shared/services/event-service';
-import { BuilderPropertiesService } from '../services/builder-properties-service';
-import { Lang } from '../../shared/services/lang'
-import { BaseFieldDto, FORM_STATUS } from '../../shared/model/types'
-import { FIELD_TYPE, FieldProperty, PROPERTY_TYPE } from '../types';
+import { BuilderTabComponent } from './components/builder-tab-component';
 
 export class BuilderForm extends BuilderFieldInterface {
     content = document.createElement('div');

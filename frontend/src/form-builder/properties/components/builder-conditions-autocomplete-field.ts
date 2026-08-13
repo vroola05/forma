@@ -68,7 +68,7 @@ export class BuilderConditionsAutocompleteField extends InputNucleus<HTMLInputEl
     }
 
     toggle() {
-        if (this.hasFocus == true) {
+        if (this.hasFocus === true) {
             this.cancelBlur = true;
         }
         if (this.autocompleteMenuElement.classList.contains('hidden')) {
@@ -250,7 +250,7 @@ export class BuilderConditionsAutocompleteField extends InputNucleus<HTMLInputEl
                 this.errors.push(`Minimaal ${this.minLength} tekens vereist.`);
                 valid = false;
             }
-            if (this.maxLength && this.maxLength != null && this.getValue().length > this.maxLength) {
+            if (this.maxLength && this.maxLength !== null && this.getValue().length > this.maxLength) {
                 this.errors.push(`Maximaal ${this.maxLength} tekens toegestaan.`);
                 valid = false;
             }
@@ -354,6 +354,7 @@ export class BuilderConditionsAutocompleteField extends InputNucleus<HTMLInputEl
                         }
                     }
                     this.selectedAutocompleteIndex = -1;
+                    break;
                 case 'Enter':
                     e.preventDefault();
                     if (this.selectedAutocompleteIndex >= 0 && this.selectedAutocompleteIndex < this.autocompleteMenuElement.children.length) {

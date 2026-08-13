@@ -45,8 +45,11 @@ export class List {
         const builderListHeader = document.createElement('div');
         builderListHeader.className = 'builder-list-header';
 
-        for (const column of this.tableDefinition?.columns) {
-            builderListHeader.append(this.createHeaderColumn(column));
+        const collumns = this.tableDefinition?.columns;
+        if (collumns) {
+            for (const column of collumns) {
+                builderListHeader.append(this.createHeaderColumn(column));
+            }
         }
 
         return builderListHeader;
