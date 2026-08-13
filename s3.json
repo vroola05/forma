@@ -1,0 +1,14 @@
+{
+  "identities": [
+    {
+      "name": "spring-app-user",
+      "credentials": [
+        {
+          "accessKey": "1dskj34SDFg_dsfdslkjds-sdfksbSd374",
+          "secretKey": "alkdjsfer_ggfhgfdgfaASfddsfds_DFDGYTLuSyhVR"
+        }
+      ],
+      "actions": ["Admin", "Read", "Write", "List", "Tagging"]
+    }
+  ]
+}

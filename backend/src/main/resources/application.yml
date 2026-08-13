@@ -1,0 +1,82 @@
+environment:
+  name: dev
+
+logging:
+  level:
+    org:
+      flywaydb: INFO
+      springframework:
+        boot:
+          autoconfigure:
+            flyway: INFO
+        security: INFO
+
+spring:
+  lifecycle: 
+    timeout-per-shutdown-phase: 30s
+  
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+  config:
+    import: "optional:file:../.env[.properties],optional:file:.env[.properties]"
+
+  jackson:
+    default-property-inclusion: non_null
+
+  cloud:
+    aws:
+      s3:
+        endpoint: http://localhost:8333
+        path-style-access-enabled: true
+      credentials:
+        access-key: ${AWS_ACCESS_KEY:any_key}
+        secret-key: ${AWS_SECRET_KEY:any_secret}
+      region:
+        static: eu-west-1
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/FormaDB 
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  # Database management
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  messages:
+    basename: i18n/errors,i18n/admin
+    encoding: UTF-8
+    fallback-to-system-locale: false
+
+server:
+  address: 0.0.0.0
+  forward-headers-strategy: native
+  shutdown: graceful
+  tomcat:
+    max-swallow-size: 60MB
+
+file:
+  storage:
+    path: forms
+
+app:
+  admin:
+    username: ${ADMIN_USER:admin}
+    email: ${ADMIN_EMAIL:admin@admin.com}
+    password: ${ADMIN_PASS:USE_CONFIGURATION}
+    global-admin-group-id: 00000000-0000-0000-0000-000000000001
+
+storage:
+  bucket-temp: "form-uploads-temp"
+  bucket-stored: "form-uploads-stored"
+  bucket-public: "public-assets"

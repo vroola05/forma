@@ -1,0 +1,127 @@
+package org.commonground.forma.services;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import org.commonground.forma.database.dao.settings.GroupEntity;
+import org.commonground.forma.database.dao.settings.PermissionEntity;
+import org.commonground.forma.database.repository.GroupRepository;
+import org.commonground.forma.database.repository.PermissionsRepository;
+import org.commonground.forma.mapper.GroupMapper;
+import org.commonground.forma.model.settings.Group;
+import org.commonground.forma.model.settings.GroupRegisterRequest;
+import org.commonground.forma.model.settings.constants.Permissions;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+@Service
+@Transactional(readOnly = true)
+public class GroupServiceDatabase implements GroupService {
+
+    private final GroupMapper groupMapper;
+    private final GroupRepository groupRepository;
+    private final PermissionsRepository permissionsRepository;
+
+    public GroupServiceDatabase(
+            GroupMapper groupMapper, 
+            GroupRepository groupRepository,
+            PermissionsRepository permissionsRepository) {
+        this.groupMapper = groupMapper;
+        this.groupRepository = groupRepository;
+        this.permissionsRepository = permissionsRepository;
+    }
+
+    @Override
+    public List<Group> getAll(UUID tenantId) {
+        return this.groupRepository.findAllByTenantIdOrderByNameAsc(tenantId).stream().map(this.groupMapper::toResponseDto).collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
+    public GroupRegisterRequest get(UUID tenantId, UUID groupId) {
+        GroupEntity groupEntity = this.groupRepository.findByTenantIdAndId(tenantId, groupId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{group.error.not_found}"));
+        return this.groupMapper.toRegisterRequest(groupEntity);
+    }
+
+    @Override
+    @Transactional
+    public Group createGroup(UUID tenantId, GroupRegisterRequest groupRegisterRequest) {
+        if (this.groupRepository.existsByNameAndTenantId(groupRegisterRequest.getName(), tenantId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{group.error.name_exists}");
+        }
+
+        GroupEntity groupEntity = this.groupMapper.toNewEntity(groupRegisterRequest);
+        groupEntity.setTenantId(tenantId);
+
+        List<PermissionEntity> permissionEntities = this.permissionsRepository.findAllById(groupRegisterRequest.getPermissions());
+        groupEntity.getPermissions().addAll(permissionEntities);
+        
+        GroupEntity savedGroupEntity = this.groupRepository.save(groupEntity);
+        return groupMapper.toResponseDto(savedGroupEntity);
+    }
+
+    
+    @Override
+    @Transactional
+    public Group updateGroup(UUID tenantId, GroupRegisterRequest groupRegisterRequest) {
+        GroupEntity groupEntity = this.groupRepository.findByTenantIdAndId(tenantId, groupRegisterRequest.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "{group.error.not_found}"));
+
+        if (!groupEntity.getName().equalsIgnoreCase(groupRegisterRequest.getName())) {
+            if (this.groupRepository.existsByNameAndTenantId(groupRegisterRequest.getName(), tenantId)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{group.error.name_exists}");
+            }
+        }
+
+        groupMapper.updateEntityFromDto(groupEntity, groupRegisterRequest);
+
+        List<PermissionEntity> permissionEntities = this.permissionsRepository.findAllById(groupRegisterRequest.getPermissions());
+
+        groupEntity.getPermissions().clear();
+        groupEntity.getPermissions().addAll(permissionEntities);
+
+        GroupEntity savedGroupEntity = this.groupRepository.save(groupEntity);
+        return groupMapper.toResponseDto(savedGroupEntity);
+    }
+
+    @Transactional
+    public void deleteGroup(UUID tenantId, UUID groupId) {
+        this.groupRepository.deleteById(groupId);
+    }
+
+    @Override
+    @Transactional
+    public Group createTenantAdminGroup(UUID tenantId) {
+        GroupRegisterRequest groupRequest = new GroupRegisterRequest();
+        groupRequest.setName("Administrators");
+
+        Set<String> adminPermissions = new HashSet<>( List.of(
+            Permissions.TENANT_READ,
+            Permissions.TENANT_UPDATE,
+            Permissions.USER_CREATE,
+            Permissions.USER_READ,
+            Permissions.USER_UPDATE,
+            Permissions.USER_DELETE,
+            Permissions.GROUP_CREATE,
+            Permissions.GROUP_READ,
+            Permissions.GROUP_UPDATE,
+            Permissions.GROUP_DELETE,
+            Permissions.FORM_CREATE,
+            Permissions.FORM_READ,
+            Permissions.FORM_UPDATE,
+            Permissions.FORM_DELETE,
+            Permissions.SUBMISSION_CREATE,
+            Permissions.SUBMISSION_READ,
+            Permissions.SUBMISSION_UPDATE,
+            Permissions.SUBMISSION_DELETE
+        ));
+        groupRequest.setPermissions(adminPermissions);
+
+        return this.createGroup(tenantId, groupRequest);
+    }
+
+}

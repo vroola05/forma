@@ -1,0 +1,75 @@
+
+networks:
+  forma-network:
+    driver: bridge
+
+services:
+  db:
+    image: postgres:16
+    container_name: forma-database
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    networks:
+      - forma-network
+
+  sw_master:
+    image: chrislusf/seaweedfs:latest
+    container_name: app_sw_master
+    command: "master -ip=sw_master"
+    ports:
+      - "9333:9333" # Beheer/Status dashboard
+    networks:
+      - forma-network
+
+  sw_volume:
+    image: chrislusf/seaweedfs:latest
+    container_name: app_sw_volume
+    command: "volume -mserver=sw_master:9333 -port=8080 -ip=sw_volume"
+    depends_on:
+      - sw_master
+    volumes:
+      - seaweed_data:/data
+    networks:
+      - forma-network
+
+  sw_filer:
+    image: chrislusf/seaweedfs:latest
+    container_name: app_sw_filer
+    command: "filer -master=sw_master:9333 -ip.bind=0.0.0.0"
+    ports:
+      - "8888:8888" # Filer Web UI
+    depends_on:
+      - sw_master
+      - sw_volume
+    networks:
+      - forma-network
+
+  sw_s3:
+    image: chrislusf/seaweedfs:latest
+    container_name: app_sw_s3
+    command: "s3 -filer=sw_filer:8888 -ip.bind=0.0.0.0 -port=8333 -config=/etc/seaweedfs/s3.json"
+    ports:
+      - "8333:8333" # S3 API-poort voor Spring Boot
+    depends_on:
+      - sw_filer
+    volumes:
+      - ./s3.json:/etc/seaweedfs/s3.json:ro
+    networks:
+      - forma-network
+
+
+volumes:
+  postgres_data:
+  seaweed_data:

@@ -1,0 +1,166 @@
+{
+    "generic.lang": "Nederlands",
+    "generic.title": "Forma",
+    "generic.search": "Zoeken...",
+    "generic.slug": "URL-naam",
+    "generic.primary.color": "Primaire kleur",
+    "generic.secondary.color": "Secundaire kleur",
+
+    "generic.not.logged.in": "Niet ingelogd",
+
+    "generic.btn.cancel": "Annuleren",
+    "generic.btn.save": "Opslaan",
+    "generic.btn.send": "Versturen",
+    "generic.btn.previous": "Vorige",
+    "generic.btn.next": "Volgende",
+    "generic.btn.summary": "Overzicht",
+
+    "generic.permissions": "Permissies",
+
+    "generic.validation.required": "Dit is een verplicht veld.",
+    "generic.validation.email": "Dit is geen geldig e-mailadres.",
+    "generic.validation.number": "Dit is geen geldig nummer.",
+    "generic.validation.date": "Dit is geen geldige datum.",
+
+    "generic.name": "Naam",
+    "generic.username": "Gebruikersnaam",
+    "generic.password": "Wachtwoord",
+    "generic.email": "E-mailadres",
+    "generic.groups": "Groepen",
+    "generic.active": "Actief",
+
+    "generic.yes": "Ja",
+    "generic.no": "Nee",
+
+    "generic.status": "Status",
+    "generic.status.invited": "Uitgenodigd",
+    "generic.status.active": "Actief",
+    "generic.status.inactive": "Inactief",
+    "generic.status.suspended": "Opgeschort",
+    "generic.status.pending.deletion": "In afwachting van verwijdering",
+    "generic.status.blocked": "Geblokkeerd",
+
+    "generic.status.draft": "Concept",
+    "generic.status.published": "Gepubliceerd",
+    "generic.status.archived": "Gearchiveerd",
+
+    "generic.role.tenant.admin": "Tenant admin",
+    
+    "header.home": "Home",
+
+    "login.title": "Aanmelden bij Forma",
+    "login.header": "Aanmelden",
+    "login.text": "Welkom bij Forma. Log in om uw formulieren en inzendingen te beheren.",
+    "login.username": "Gebruikersnaam",
+    "login.password": "Wachtwoord",
+    "login.submit": "Aanmelden",
+
+    "dashboad.title": "Dashboad",
+
+    "tenant.title": "Tenants",
+    "tenant.new.title": "Nieuwe tenant",
+    "tenant.edit.title": "Tenant bewerken",
+    "tenant.field.name": "Tenant naam",
+    "tenant.field.slug": "Tenant url-naam",
+    "tenant.field.logo": "Logo",
+    "tenant.field.home.page": "Homepage",
+
+    "group.title": "Gebruikersgroepen",
+    "group.new.title": "Groep aanmaken",
+    "group.edit.title": "Groep bewerken",
+    "group.name": "Naam van de groep",
+
+    "user.title": "Gebruikers",
+    "user.new.title": "Nieuwe gebruiker aanmaken",
+    "user.edit.title": "Gebruiker wijzigen",
+
+    "text.editor.table.create": "Maken",
+    "text.editor.table.row.add": "Rij toevoegen",
+    "text.editor.table.row.delete": "Rij verwijderen",
+    "text.editor.table.col.add": "Kolom toevoegen",
+    "text.editor.table.col.delete": "Kolom verwijderen",
+
+    "form.dashboard.title": "Formulieren overzicht",
+    "form.dashboard.list.name": "Naam",
+    "form.dashboard.list.title": "Titel",
+    "form.dashboard.list.active": "Actief",
+    "form.dashboard.list.last.modified": "Laatst Gewijzigd",
+
+    "builder.forms.title": "Formulieren",
+    "builder.form.title": "Ontwerp een formulier",
+    "builder.form.name": "Naam formulier",
+    
+    "form.summary": "Overzichtspagina",
+
+    "tab.new": "Nieuwe tab",
+
+    "page.settings.form": "Formulier",
+    "page.settings.generic": "Algemeen",
+    "page.settings.login": "Login",
+    "page.settings.mail": "Email",
+    "page.settings.successpage": "Dankpagina",
+    "page.settings.registration": "Registratie",
+    "page.settings.payment": "Betaling",
+
+    "field.type.form.form": "Formulier",
+    "field.type.form.group": "Groep",
+    "field.type.checkbox": "Checkbox veld",
+    "field.type.text": "Tekst veld",
+    "field.type.number": "Nummer veld",
+    "field.type.select": "Select veld",
+    "field.type.radio": "Radio veld",
+    "field.type.dual.list": "Dubbele lijst",
+    "field.type.date": "Datum veld",
+    "field.type.valuta": "Valuta veld",
+    "field.type.color": "Kleur veld",
+    "field.type.repeating.group": "Herhalende groep",
+    "field.type.password": "Wachtwoord veld",
+    "field.type.label": "Label veld",
+    "field.type.hidden": "Verborgen veld",
+    "field.type.file": "Bestand",
+    
+    "field.upload.helper.text": "Sleep uw bestanden hierheen of klik op de knop om bestanden toe te voegen.",
+    "field.upload.error.size": "Het {} bestand is te groot. U kunt maximaal {}MB uploaden",
+    "field.upload.error.extension": "Het bestand {} heeft een ongeldige extensie. Alleen de volgende extensies zijn geldig {}.",
+    "field.upload.error.max.files": "Het maximale aantal bestanden dat u kunt uploaden is {}.",
+
+    "prop.option.value": "Waarde",
+    "prop.option.text": "Tekst",
+    "prop.list.text": "Waarde",
+
+    "prop.header": "Eigenschappen",
+    "prop.unknown.field": "Onbekend veld",
+
+    "prop.select.placeholder": "Selecteer",
+    "prop.name.label": "Naam",
+    "prop.label.label": "Label",
+    "prop.class.label": "Css class",
+    "prop.metadata.label": "Metadata",
+
+    "prop.placeholder.label": "Placeholder",
+    "prop.readonly.label": "Alleen lezen",
+    "prop.required.label": "Verplicht",
+    "prop.minLength.label": "Minimale lengte",
+    "prop.maxLength.label": "Maximale lengte",
+    "prop.value.label": "Standaard waarde",
+    "prop.options.label": "Opties",
+
+    "prop.multiple.files.label": "Meerdere bestanden toestaan",
+    "prop.max.file.size.label": "Maximale grootte in MB",
+    "prop.allowed.extensions.label": "Toegestane extensies",
+
+    "prop.summary.confirmation.label": "Bevestiging overzichtspagina",
+
+    "prop.minSize.label": "Minimaal aantal rijen",
+    "prop.maxSize.label": "Maximaal aantal rijen",
+    "prop.layout.label": "Layout",
+    "prop.layout.label.list": "Lijst",
+    "prop.layout.label.table": "Tabel",
+
+    "prop.name.message": "Het veld Naam heeft de volgende specificaties:<br> - Het veld is verplicht<br /> - Maximaal 200 tekens.<br /> - Het Het veld Id mag de volgende tekens bevatten (a-z 0-9 of _ -).",
+    "prop.label.message": "Het veld Label heeft een maximum van 200 tekens.",
+    "prop.class.message": "Ongeldig formaat: maximaal 200 tekens en class-namen mogen niet met een cijfer beginnen.",
+    "prop.metadata.message": "Het veld Metadata heeft een maximum van 200 tekens.",
+
+    "error.check.fields": "Er is iets fout gegaan. Controleer of alle velden goed zijn ingevuld."
+}
