@@ -1,11 +1,10 @@
-import { Router } from '../../shared/services/router';
+import { FormSubmission } from '../../shared/model/types';
 import { Page } from '../../shared/page-components/page';
 import { Http } from '../../shared/services/http';
-import { FormGroup } from '../../shared/form-components/form-group';
-import { FormConfigSuccessPage, FormSubmission } from '../../shared/model/types';
+import { Router } from '../../shared/services/router';
 
-import { FormService } from '../services/form-service'
 import { Storage } from '../../shared/services/storage-service';
+import { FormService } from '../services/form-service';
 
 export class SuccessPage extends Page {
     content = document.createElement('div');
@@ -69,7 +68,7 @@ export class SuccessPage extends Page {
                     this.formContainer.innerHTML = formConfigSuccessPage.content;
                 }
                 
-            });
+            }).catch(() => {});
     }
 
     

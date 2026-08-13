@@ -8,13 +8,13 @@ class ConditionNode {
     }
 
     #setItem(pathList: string[], item: any) {
-        if (pathList.length == 0)
+        if (pathList.length === 0)
             return;
 
         const fieldName = pathList.shift();
 
         // If the end of the list is reached put the item in the map
-        if (pathList.length == 0) {
+        if (pathList.length === 0) {
             if (!this.conditions.has(fieldName)) {
                 this.conditions.set(fieldName, []);
             }
@@ -34,7 +34,7 @@ class ConditionNode {
 
     #getItem(pathList: string[]) {
         const fieldName = pathList.shift();
-        if (pathList.length == 0) {
+        if (pathList.length === 0) {
             return this.conditions.get(fieldName);
         }
 
@@ -110,7 +110,7 @@ class ConditionNode {
      */
     #deleteItem(pathList: string[], item: any = undefined) {
         const fieldName = pathList.shift();
-        if (pathList.length == 0) {
+        if (pathList.length === 0) {
             
             // If the conditions has the fieldName return the field
             if (this.conditions.has(fieldName)) {
@@ -118,7 +118,7 @@ class ConditionNode {
                 if (item && conditions) {
                     conditions.splice(0, conditions.length, ...conditions.filter((c: any) => c !== item));
                     
-                    if (conditions.length == 0) {
+                    if (conditions.length === 0) {
                         this.conditions.delete(fieldName)
                     }
                 } else {
@@ -154,12 +154,12 @@ class ConditionNode {
      * @returns 
      */
     #setConditionNodeItem(pathList: string[], conditionNode: ConditionNode) {
-        if (pathList.length == 0)
+        if (pathList.length === 0)
             return;
 
         const fieldName = pathList.shift();
 
-        if (pathList.length == 0) {
+        if (pathList.length === 0) {
             if (!this.children.has(fieldName)) {
                 this.children.set(fieldName, conditionNode);
             } else {

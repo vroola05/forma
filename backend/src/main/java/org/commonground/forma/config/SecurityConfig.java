@@ -90,7 +90,6 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain tenantAndPublicFilterChain(HttpSecurity http) throws Exception {
-        System.out.println("Configuring tenant and public security filter chain");
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz

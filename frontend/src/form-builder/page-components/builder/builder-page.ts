@@ -1,23 +1,22 @@
-import { Page } from '../../../shared/page-components/page';
-import { BuilderForm } from '../../fields/builder-form';
-import { AdminHeader } from '../../component/admin-header';
 import { Footer } from '../../../shared/generic-components/footer';
+import { Page } from '../../../shared/page-components/page';
 import { EventService } from '../../../shared/services/event-service';
-
 import { Storage } from '../../../shared/services/storage-service';
+import { AdminHeader } from '../../component/admin-header';
+import { BuilderForm } from '../../fields/builder-form';
 
+import { ValidationError } from '../../../shared/errors/validation-error';
 import { FormButton } from '../../../shared/form-components/components/form-button';
 import { footerService } from '../../../shared/services/footer-service';
-import { ToastService } from '../../../shared/services/toast-service';
-import { ValidationError } from '../../../shared/errors/validation-error';
-import { ErrorType, ApiError, Http } from '../../../shared/services/http';
+import { ApiError, ErrorType, Http } from '../../../shared/services/http';
 import { Lang } from '../../../shared/services/lang';
 import { Router } from '../../../shared/services/router';
+import { ToastService } from '../../../shared/services/toast-service';
 
-import { BuilderFormService } from '../../services/builder-form-service';
 import { BaseFieldDto, FormWrapper } from '../../../shared/model/types';
-import { BuilderPropertiesService } from '../../services/builder-properties-service';
 import { Loader } from '../../../shared/services/loader';
+import { BuilderFormService } from '../../services/builder-form-service';
+import { BuilderPropertiesService } from '../../services/builder-properties-service';
 
 
 export class BuilderPage extends Page {
@@ -136,7 +135,7 @@ export class BuilderPage extends Page {
 
             Storage.setPageItem('form-wrapper', JSON.stringify(BuilderFormService.getFormWrapper()));
         } catch(error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

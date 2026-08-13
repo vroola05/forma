@@ -1,6 +1,6 @@
 import { BuilderFieldInterface } from '../fields/builder-field-interface';
 import { FieldProperty } from '../types';
-import { BuilderPropertiesCondition } from './components/builder-properties-condition'
+import { BuilderPropertiesCondition } from './components/builder-properties-condition';
 import { BuilderPropertiesFooter } from './components/builder-properties-footer';
 
 /**

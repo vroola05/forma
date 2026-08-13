@@ -1,10 +1,10 @@
+import { BaseFieldDto } from "../../shared/model/types";
+import { EventService } from '../../shared/services/event-service';
+import { Lang } from '../../shared/services/lang';
+import { BuilderPropertiesService } from '../services/builder-properties-service';
+import { FIELD_TYPE, PROPERTY_TYPE } from '../types';
 import { BuilderFieldInterface } from "./builder-field-interface";
 import { Dropzone } from './components/dropzone';
-import { EventService } from '../../shared/services/event-service';
-import { FIELD_TYPE, PROPERTY_TYPE } from '../types'
-import { Lang } from '../../shared/services/lang'
-import { BuilderPropertiesService } from '../services/builder-properties-service';
-import { BaseFieldDto } from "../../shared/model/types";
 
 export class BuilderRepeatingGroup extends BuilderFieldInterface {
     builderFormGroup = document.createElement('div');
@@ -148,14 +148,14 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
                 this.fieldProperties.validateAll(this);
             } catch (error) {
                 if ( error instanceof Error) {
-                    throw new Error(`${this.fieldProperties.getFieldIdentifier()} - ${error.message}`);
+                    throw new Error(`${this.fieldProperties.getFieldIdentifier()} - ${error.message}`, { cause: error });
                 } else {
-                    throw new Error(`${this.fieldProperties.getFieldIdentifier()} - ${error}`);
+                    throw new Error(`${this.fieldProperties.getFieldIdentifier()} - ${error}`, { cause: error });
                 }
             }
 
-            let minSize = this.fieldProperties.getPropertyValueById('minSize');
-            let maxSize = this.fieldProperties.getPropertyValueById('maxSize');
+            const minSize = this.fieldProperties.getPropertyValueById('minSize');
+            const maxSize = this.fieldProperties.getPropertyValueById('maxSize');
             if (minSize !== null && isNaN(minSize)) {
                 throw new Error(`${this.fieldProperties.getFieldIdentifier()} - Minimaal aantal rijen moet een geldig getal zijn.`);
             }

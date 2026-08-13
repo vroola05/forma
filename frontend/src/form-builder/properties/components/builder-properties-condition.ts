@@ -1,14 +1,14 @@
 import { SelectField } from '../../../shared/form-components/select-field';
-import { BuilderConditionsAutocompleteField } from './builder-conditions-autocomplete-field';
 import {
-    Operator,
+    BuilderCondition,
     ConditionType,
     LogicalOperator,
-    BuilderCondition,
+    Operator,
     OptionDto,
     getLogicalOperatorType,
     getOperatorType
- } from '../../../shared/model/types';
+} from '../../../shared/model/types';
+import { BuilderConditionsAutocompleteField } from './builder-conditions-autocomplete-field';
 import { BuilderPropertiesFooter } from './builder-properties-footer';
 
 export class BuilderPropertiesCondition {
@@ -194,7 +194,7 @@ export class BuilderPropertiesCondition {
         this.compositeConditionDropareaDom.addEventListener("dragover", (event) => {
             event.stopPropagation();
             event.preventDefault();
-            if (this.draggedItem == null || (this.draggedItem != null && this.draggedItem.dataset.guid !== this.guid)) {
+            if (this.draggedItem === null || (this.draggedItem !== null && this.draggedItem.dataset.guid !== this.guid)) {
                 return;
             }
             
@@ -205,7 +205,7 @@ export class BuilderPropertiesCondition {
             event.stopPropagation();
             event.preventDefault();
 
-            if (this.draggedItem != null && this.draggedItem.dataset.guid !== this.guid) {
+            if (this.draggedItem !== null && this.draggedItem.dataset.guid !== this.guid) {
                 return;
             }
 
@@ -217,11 +217,11 @@ export class BuilderPropertiesCondition {
             event.preventDefault();
             
             this.compositeConditionDropareaDom.classList.remove('drag-over');
-            if (this.draggedItem == null) {
+            if (this.draggedItem === null) {
                 return;
             }
             
-            if (this.draggedItem == null || (this.draggedItem != null && this.draggedItem.dataset.guid !== this.guid)) {
+            if (this.draggedItem === null || (this.draggedItem !== null && this.draggedItem.dataset.guid !== this.guid)) {
                 return;
             }
 
@@ -245,13 +245,13 @@ export class BuilderPropertiesCondition {
         const list = Array.from(this.compositeConditionDropareaDom.children);
         if (draggedItem === droppedItem) return;
 
-        let draggedIndex = list.findIndex(tabLabel => tabLabel === draggedItem);
-        let droppedIndex = null;
+        const draggedIndex = list.findIndex(tabLabel => tabLabel === draggedItem);
         
-        if (droppedItem == null) {
+        
+        if (droppedItem === null) {
             this.compositeConditionDropareaDom.appendChild(draggedItem);
         } else {
-            droppedIndex = list.findIndex(tabLabel => tabLabel === droppedItem);
+            const droppedIndex = list.findIndex(tabLabel => tabLabel === droppedItem);
             if (draggedIndex < droppedIndex) {
                 this.compositeConditionDropareaDom.insertBefore(draggedItem, droppedItem.nextSibling);
             } else {
@@ -261,7 +261,7 @@ export class BuilderPropertiesCondition {
 
         const [movedCondition] = this.conditions.splice(draggedIndex, 1);
 
-        if (droppedItem == null) {
+        if (droppedItem === null) {
             this.conditions.push(movedCondition);
         } else {
 
@@ -336,7 +336,6 @@ export class BuilderPropertiesCondition {
 
             const logicalOperator = this.operatorCompositeSelect.getValue();
             if (logicalOperator && logicalOperator.length === 1) {
-                console.log(logicalOperator[0].value);
                 result.logicalOperator = getLogicalOperatorType(logicalOperator[0].value);
             }
 

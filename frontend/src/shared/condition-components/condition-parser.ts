@@ -1,9 +1,9 @@
-import { JsonPathFinder } from './json-path-finder';
 import { FormService } from '../../form-viewer/services/form-service';
-import { InputNucleus } from '../form-components/interface/input-base';
-import { Condition, ConditionType, LogicalOperator, Operator } from '../model/types';
 import { Form } from '../form-components/form';
+import { InputNucleus } from '../form-components/interface/input-base';
 import { FormRenderer } from '../generic-components/form-renderer';
+import { Condition, ConditionType, LogicalOperator, Operator } from '../model/types';
+import { JsonPathFinder } from './json-path-finder';
 
 export class ConditionParser {
     condition;
@@ -34,12 +34,12 @@ export class ConditionParser {
     }
 
     getConditionType(condition: Condition) {
-        return !condition.conditions || condition.conditions.length == 0 ? ConditionType.SIMPLE : ConditionType.COMPOSITE;
+        return !condition.conditions || condition.conditions.length === 0 ? ConditionType.SIMPLE : ConditionType.COMPOSITE;
     }
 
     #bindFieldToConditions(condition: Condition, form: Form) {
         if (condition && form) {
-            if (this.getConditionType(condition) == ConditionType.COMPOSITE) {
+            if (this.getConditionType(condition) === ConditionType.COMPOSITE) {
                 if (condition.conditions) {
                     for (let i = 0; i < condition.conditions.length; i++) {
                         this.#bindFieldToConditions(condition.conditions[i], form);
@@ -72,16 +72,16 @@ export class ConditionParser {
     }
 
     checkLogic(condition: Condition): boolean {
-        if (this.getConditionType(condition) == ConditionType.COMPOSITE) {
+        if (this.getConditionType(condition) === ConditionType.COMPOSITE) {
             
-            if( condition.logicalOperator == null) {
+            if( condition.logicalOperator === null) {
                 throw new Error("Composite conditions must have a logical operator.");
             }
             if( !condition.conditions || condition.conditions.length === 0) {
                 return true;
             }
 
-            if (condition.logicalOperator == LogicalOperator.AND) {
+            if (condition.logicalOperator === LogicalOperator.AND) {
                 for(const subCondition of condition.conditions) {
                     if (!this.checkLogic(subCondition)) {
                         return false;
@@ -89,7 +89,7 @@ export class ConditionParser {
                 }
                 return true;
             }
-            if (condition.logicalOperator == LogicalOperator.OR) {
+            if (condition.logicalOperator === LogicalOperator.OR) {
                 for(const subCondition of condition.conditions) {
                     if (this.checkLogic(subCondition)) {
                         return true;
@@ -108,8 +108,8 @@ export class ConditionParser {
             throw new Error('Simple conditions must have an operator.');
         }
 
-        let var1List = condition.var1Fields ? this.#getFieldValues(condition.var1Fields) : [condition.var1];
-        let var2List = condition.var2Fields ? this.#getFieldValues(condition.var2Fields) : [condition.var2];
+        const var1List = condition.var1Fields ? this.#getFieldValues(condition.var1Fields) : [condition.var1];
+        const var2List = condition.var2Fields ? this.#getFieldValues(condition.var2Fields) : [condition.var2];
         for (const var1 of var1List) {
             for (const var2 of var2List) {
                 if (!this.#evaluateConditionType(var1, condition.operator, var2)) {
@@ -163,13 +163,13 @@ export class ConditionParser {
     #checkValue(var1: string, operator: Operator, var2: string) {
         switch (operator) {
             case Operator.EQI:
-                return (!var1 ? var1 : var1.toLowerCase()) == (!var2 ? var2 : var2.toLowerCase());
+                return (!var1 ? var1 : var1.toLowerCase()) === (!var2 ? var2 : var2.toLowerCase());
             case Operator.NEQI:
-                return (!var1 ? var1 : var1.toLowerCase()) != (!var2 ? var2 : var2.toLowerCase());
+                return (!var1 ? var1 : var1.toLowerCase()) !== (!var2 ? var2 : var2.toLowerCase());
             case Operator.EQ:
-                return var1 == var2;
+                return var1 === var2;
             case Operator.NEQ:
-                return var1 != var2;
+                return var1 !== var2;
             case Operator.GT:
                 return this.#getNumber(var1) > this.#getNumber(var2);
             case Operator.LT:

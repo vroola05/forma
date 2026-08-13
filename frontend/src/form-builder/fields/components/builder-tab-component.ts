@@ -3,7 +3,7 @@ import { Lang } from '../../../shared/services/lang';
 import { FIELD_TYPE } from '../../types';
 import { BuilderForm } from '../builder-form';
 import { BuilderTabPage } from '../builder-tab-page';
-import {BuilderTabLabel} from './builder-tab-label';
+import { BuilderTabLabel } from './builder-tab-label';
 
 export class BuilderTabComponent {
     builderTab = document.createElement('div');
@@ -63,7 +63,7 @@ export class BuilderTabComponent {
             event.preventDefault();
 
             this.builderTabLabelBtnTabContainer.classList.remove('drag-over');
-            if (this.draggedItem == null) {
+            if (this.draggedItem === null) {
                 return;
             }
             if (!this.draggedItem.classList.contains('builder-tab-label-item-container')) {
@@ -82,8 +82,8 @@ export class BuilderTabComponent {
         });
 
         const resizeObserver = new ResizeObserver((entries) => {
-            let outerRect = this.builderTabLabelBtnTabContainer.getBoundingClientRect();
-            let innerRect = this.builderTabLabelBtnTabContainerInner.getBoundingClientRect();
+            const outerRect = this.builderTabLabelBtnTabContainer.getBoundingClientRect();
+            const innerRect = this.builderTabLabelBtnTabContainerInner.getBoundingClientRect();
 
             if (outerRect.width < innerRect.width) {
                 // this.focusTab(this.tabLabel);
@@ -125,10 +125,10 @@ export class BuilderTabComponent {
         const list = Array.from(this.builderTabLabelBtnTabContainerInner.children);
         if (draggedDomItem === droppedDomItem) return;
 
-        let draggedIndex = list.findIndex(tabLabel => tabLabel === draggedDomItem);
+        const draggedIndex = list.findIndex(tabLabel => tabLabel === draggedDomItem);
         let droppedIndex = null;
         
-        if (droppedDomItem == null) {
+        if (droppedDomItem === null) {
             this.builderTabLabelBtnTabContainerInner.appendChild(draggedDomItem);
         } else {
             droppedIndex = list.findIndex(tabLabel => tabLabel === droppedDomItem);
@@ -142,7 +142,7 @@ export class BuilderTabComponent {
         //////////////////
         //////////////////
         const [draggedItem] = this.tabs.splice(draggedIndex, 1);
-        if (droppedIndex == null) {
+        if (droppedIndex === null) {
             this.tabs.push(draggedItem);
         } else {
             this.tabs.splice(droppedIndex, 0, draggedItem);
@@ -218,7 +218,7 @@ export class BuilderTabComponent {
         //////////////
         //////////////
 
-        if (this.onCreateCallback != null) {
+        if (this.onCreateCallback !== null) {
             this.onCreateCallback(tab);
         }
 
@@ -227,7 +227,7 @@ export class BuilderTabComponent {
     }
 
     getUniqueName(label: string, property: string = 'name', cleanLabel = false, seperator = '-') {
-        let baseLabel = cleanLabel
+        const baseLabel = cleanLabel
             ? label.toLowerCase().trim().replace(/\s+/g, '-')
             : label;
 
@@ -253,14 +253,14 @@ export class BuilderTabComponent {
                 return;
 
             
-            if (builderField.getTabLabel() == tabLabel) {
+            if (builderField.getTabLabel() === tabLabel) {
                 tabLabelItem.setActive(true);
             } else {
                 tabLabelItem.setActive(false);
             }
         }
 
-        if (this.onActivateCallback != null) {
+        if (this.onActivateCallback !== null) {
             this.onActivateCallback(tabLabel);
         }
     }
@@ -270,7 +270,7 @@ export class BuilderTabComponent {
             return;
         }
 
-        let containerWidth = this.builderTabLabelBtnTabContainer.getBoundingClientRect().width;
+        const containerWidth = this.builderTabLabelBtnTabContainer.getBoundingClientRect().width;
         const tabLabelContent = tabLabel.getContent();
         
         const length =  this.getTabPositionInWidth(tabLabelContent);
@@ -304,7 +304,7 @@ export class BuilderTabComponent {
         for (const child of this.builderTabLabelBtnTabContainerInner.children) {
             const childWidth = child.getBoundingClientRect().width;
             
-            if (tabLabelContent == child) {
+            if (tabLabelContent === child) {
                 return [totalWith, totalWith+childWidth];
             }
 
@@ -314,8 +314,8 @@ export class BuilderTabComponent {
     }
 
     moveScrollbar(right: boolean) {
-        let outerRect = this.builderTabLabelBtnTabContainer.getBoundingClientRect();
-        let innerRect = this.builderTabLabelBtnTabContainerInner.getBoundingClientRect();
+        const outerRect = this.builderTabLabelBtnTabContainer.getBoundingClientRect();
+        const innerRect = this.builderTabLabelBtnTabContainerInner.getBoundingClientRect();
         const scrollWithCurrent = this.builderTabLabelBtnTabContainer.scrollLeft;
 
         let scrollWith = 0;
@@ -334,7 +334,6 @@ export class BuilderTabComponent {
     }
 
     getTabs() {
-        console.log(this.tabs);
         return this.tabs;
     }
 

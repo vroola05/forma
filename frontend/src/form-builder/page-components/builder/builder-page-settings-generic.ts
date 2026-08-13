@@ -1,10 +1,10 @@
-import { BuilderLayout } from './components/builder-layout';
-import { BuilderFormService } from '../../services/builder-form-service'
-import { Lang } from '../../../shared/services/lang';
 import { Form } from '../../../shared/form-components/form';
 import { FORM_STATUS, FormDto, FormWrapper, OptionDto } from '../../../shared/model/types';
-import { EventService } from '../../../shared/services/event-service';
 import { Page } from '../../../shared/page-components/page';
+import { EventService } from '../../../shared/services/event-service';
+import { Lang } from '../../../shared/services/lang';
+import { BuilderFormService } from '../../services/builder-form-service';
+import { BuilderLayout } from './components/builder-layout';
 
 export class BuilderPageSettingsGeneric extends Page {
     #builderLayout: BuilderLayout = new BuilderLayout();
@@ -77,7 +77,7 @@ export class BuilderPageSettingsGeneric extends Page {
             this.form = form;
 
             this.#builderLayout?.setCenterContent(this.form.getContent(), true);
-        });
+        }).catch(() => {});
     }
 
     /**

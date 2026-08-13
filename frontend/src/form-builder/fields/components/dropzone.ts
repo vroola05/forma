@@ -1,10 +1,10 @@
-import { BuilderFormGroup } from '../builder-form-group';
-import { BuilderField, BuilderFieldText, BuilderFieldFile, BuilderFieldLabel, BuilderFieldHidden, BuilderFieldOptions } from '../builder-field';
-import { BuilderRepeatingGroup } from '../builder-repeating-group';
 import { EventService } from '../../../shared/services/event-service';
 import { Lang } from '../../../shared/services/lang';
-import { BuilderFieldInterface } from '../builder-field-interface';
 import { FIELD_TYPE } from '../../types';
+import { BuilderField, BuilderFieldFile, BuilderFieldHidden, BuilderFieldLabel, BuilderFieldOptions, BuilderFieldText } from '../builder-field';
+import { BuilderFieldInterface } from '../builder-field-interface';
+import { BuilderFormGroup } from '../builder-form-group';
+import { BuilderRepeatingGroup } from '../builder-repeating-group';
 
 export type DropzoneEvent = (type: FIELD_TYPE, label: string | undefined, dragged: HTMLElement | null, droppedOnFormItem: HTMLElement | null) => void;
 /**
@@ -78,7 +78,7 @@ export class Dropzone {
     onDrop(event: DragEvent) {
         this.domElement.classList.remove('drag-over');
 
-        if (Dropzone.currentDraggedDom == null) {
+        if (Dropzone.currentDraggedDom === null) {
             return;
         }
 
@@ -94,7 +94,7 @@ export class Dropzone {
         // It is posible that the drop event is fired by a child element, 
         // so we need to check if the dropzone is the target or one of its children
         const dropzone = event.target.closest('.dropzone')
-        if (this.domElement != dropzone) {
+        if (this.domElement !== dropzone) {
             return;
         }
 
@@ -143,10 +143,8 @@ export class Dropzone {
      * @returns 
      */
     changeExistingItem(type: FIELD_TYPE, droppedDom: HTMLElement | null) {
-        console.log('1');
         const builderChildFields = this.field.getFields();
-        if (builderChildFields != null) {
-            console.log('2');
+        if (builderChildFields !== null) {
             if (Dropzone.currentDraggedDom === droppedDom) {
                 return;
             }
@@ -154,7 +152,6 @@ export class Dropzone {
             const draggedIndex = builderChildFields.findIndex(bf => bf.getContent() === Dropzone.currentDraggedDom);
             // Cant't find element in current Dropzone
             if (draggedIndex === -1) {
-                console.log('3');
                 this.moveToOtherDropzone(droppedDom, Dropzone.currentDraggedItem);
 
             } else {
@@ -168,19 +165,17 @@ export class Dropzone {
     }
 
     moveToOtherDropzone(droppedDom: HTMLElement | null, draggedItem: BuilderFieldInterface | null) {
-        console.log('4');
         if (!draggedItem) {
             return;
         }
 
         
         const draggedIndex = draggedItem?.getParent()?.getFields()?.findIndex(bf => bf.getContent() === Dropzone.currentDraggedDom);
-        console.log('5', draggedIndex);
         if (draggedIndex === undefined || draggedIndex === -1) {
             return;
         }
 
-        console.log('6', draggedIndex);
+
         draggedItem?.getParent()?.getFields()?.splice(draggedIndex, 1);
         draggedItem?.getParent()?.getDropZone()?.draw();
 
@@ -188,8 +183,7 @@ export class Dropzone {
         this.bindFieldEvents(draggedItem);
         const builderChildFields = this.field.getFields();
         if (builderChildFields) {
-            console.log('7');
-            if (droppedDom == null) {
+            if (droppedDom === null) {
                 builderChildFields.push(draggedItem);
             } else {
                 const droppedIndex = builderChildFields.findIndex(bf => bf.getContent() === droppedDom);
@@ -202,7 +196,7 @@ export class Dropzone {
     moveInCurrentDropzone(draggedIndex: number, droppedDom: HTMLElement | null) {
         const builderChildFields = this.field.getFields();
         if (builderChildFields) {
-            if (droppedDom == null) {
+            if (droppedDom === null) {
                 const [draggedItem] = builderChildFields.splice(draggedIndex, 1);
                 builderChildFields.push(draggedItem);
             } else {
@@ -217,7 +211,7 @@ export class Dropzone {
     }
 
     getUniqueName(label: string, property: string = 'name', cleanLabel: boolean = false, seperator: string = '-') {
-        let baseLabel = cleanLabel
+        const baseLabel = cleanLabel
             ? label.toLowerCase().trim().replace(/\s+/g, '-')
             : label;
 
@@ -245,7 +239,7 @@ export class Dropzone {
         const builderChildFields = this.field.getFields();
 
         if (builderChildFields) {
-            if (droppedOnFormItem == null) {
+            if (droppedOnFormItem === null) {
                 this.domElement.appendChild(field.getContent());
                 builderChildFields.push(field);
             } else {
@@ -271,11 +265,6 @@ export class Dropzone {
             }
         };
 
-        // field.onFieldChanged = (properties) => {
-        //     if (this.onPropertiesChangedCallback) {
-        //         this.onPropertiesChangedCallback();
-        //     }
-        // };
         field.onDeleteCallback = (field: BuilderFieldInterface) => {
             const builderChildFields = this.field.getFields();
             if (builderChildFields) {
@@ -360,14 +349,14 @@ export class Dropzone {
     }
 
     isAcceptedTypes(type: FIELD_TYPE) {
-        return !this.acceptedTypes || this.acceptedTypes.length == 0 ? true : this.acceptedTypes.includes(type);
+        return !this.acceptedTypes || this.acceptedTypes.length === 0 ? true : this.acceptedTypes.includes(type);
     }
 
     draw() {
         this.domElement.innerHTML = '';
         this.field?.getFields()?.forEach(bf => {
             const content = bf.getContent();
-            if (content != null) {
+            if (content !== null) {
                 this.domElement.appendChild(content);
             }
             

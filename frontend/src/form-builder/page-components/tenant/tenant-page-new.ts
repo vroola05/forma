@@ -1,15 +1,15 @@
-import { SettingsPage } from '../settings-page';
 import { Http } from '../../../shared/services/http';
-import { Router } from '../../../shared/services/router';
 import { Lang } from '../../../shared/services/lang';
+import { Router } from '../../../shared/services/router';
+import { SettingsPage } from '../settings-page';
 
 import { FormButton } from '../../../shared/form-components/components/form-button';
 
-import { footerService } from '../../../shared/services/footer-service';
 import { Form } from '../../../shared/form-components/form';
 import { FormGroup } from '../../../shared/form-components/form-group';
-import { FormDto, TenantDto } from '../../../shared/model/types';
 import { FileUploadField } from '../../../shared/form-components/upload-field';
+import { FormDto, TenantDto } from '../../../shared/model/types';
+import { footerService } from '../../../shared/services/footer-service';
 
 export class TenantPageNew extends SettingsPage {
     form: Form | undefined;
@@ -128,7 +128,7 @@ export class TenantPageNew extends SettingsPage {
             this.form = form;
 
             this.append(this.form.getContent());
-        });
+        }).catch(() => {});
     }
 
     postTenant() {

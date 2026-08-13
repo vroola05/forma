@@ -67,7 +67,7 @@ export class PasswordField extends InputNucleus<HTMLInputElement> {
                 this.errors.push(`Minimaal ${this.minLength} tekens vereist.`);
                 valid = false;
             }
-            if (this.maxLength && this.maxLength != null && this.getValue().length > this.maxLength) {
+            if (this.maxLength && this.maxLength !== null && this.getValue().length > this.maxLength) {
                 this.errors.push(`Maximaal ${this.maxLength} tekens toegestaan.`);
                 valid = false;
             }

@@ -1,9 +1,8 @@
 import { FormRenderer } from '../generic-components/form-renderer';
 
-import { InputNucleus } from './interface/input-base';
-// import { RepeatingGroup } from './repeating-group';
-import { Nucleus } from './interface/nucleus';
 import { BaseFieldDto, FieldDto } from '../model/types';
+import { InputNucleus } from './interface/input-base';
+import { Nucleus } from './interface/nucleus';
 
 export class FormGroup extends Nucleus {
     content = document.createElement('div');
@@ -41,7 +40,7 @@ export class FormGroup extends Nucleus {
         this.content.id = this.getId() + '-form-group';
         this.content.className = `form-group ${classes}`;
 
-        if (label != '') {
+        if (label !== '') {
             this.formGroupTitleDom.className = 'form-group-title pt-4 pb-2';
             this.formGroupTitleDom.innerHTML = `<h2>${label}</h2>`;
             this.content.append(this.formGroupTitleDom);

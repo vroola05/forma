@@ -1,12 +1,12 @@
-import { Route, Router } from './shared/services/router';
 import { Environment } from './environment';
 import { Toast } from './shared/generic-components/toast';
-import { Auth } from './shared/services/auth';
-import { Lang } from './shared/services/lang';
-import { TenantService } from './shared/services/tenant-service';
-import { Http } from './shared/services/http';
-import { headerService } from './shared/services/header-service';
 import { TenantDto } from './shared/model/types';
+import { Auth } from './shared/services/auth';
+import { headerService } from './shared/services/header-service';
+import { Http } from './shared/services/http';
+import { Lang } from './shared/services/lang';
+import { Route, Router } from './shared/services/router';
+import { TenantService } from './shared/services/tenant-service';
 
 export interface FormaOptions {
     routes: Route[];
@@ -67,7 +67,7 @@ export class Forma {
             .finally(() => {
                 this.setRoute();
             });
-        });
+        }).catch(() => {});
     }
 
     setBase(baseAddition: string | undefined) {

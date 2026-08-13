@@ -4,10 +4,8 @@
 
 
 import { Form, FormOptions } from '../form-components/form';
-import { FormSummaryRenderer } from '../../form-viewer/components/form-summary-renderer';
-// import { RepeatingGroup } from '../../shared/form-components/repeating-group.ts.old';
-import { Nucleus } from '../form-components/interface/nucleus';
 import { InputNucleus } from '../form-components/interface/input-base';
+import { Nucleus } from '../form-components/interface/nucleus';
 import { FieldDto, FileOptionFieldDto, FormDto, InputFieldDto, InputFieldType, OptionFieldDto, OptionFieldType } from '../model/types';
 
 
@@ -60,7 +58,7 @@ export class FormRenderer {
     }
 
     static #getField(field: InputNucleus): any {
-        if (field.type == 'repeating-group') {
+        if (field.type === 'repeating-group') {
             // return {
             //     name: field.name,
             //     type: field.type,
@@ -79,7 +77,7 @@ export class FormRenderer {
             //         })
             //     })
             // };
-        } else if (field.type == 'file') {
+        } else if (field.type === 'file') {
             return {
                 name: field.name,
                 type: field.type,
@@ -161,12 +159,12 @@ export class FormRenderer {
             switch (fieldDto.type) {
                 
             
-                case 'form-group':
+                case 'form-group': {
                     const { FormGroup } = await import( '../form-components/form-group');
                     const formGroup = new FormGroup(fieldDto, fieldDto.id);
                     await formGroup.init(fieldDto);
                     return formGroup;
-
+                }
                 case 'repeating-group':
                     // return new RepeatingGroup(fieldDto.name, fieldDto.label, fieldDto.classes, fieldDto.layout, dataField.id)
                     //     .setType(fieldDto.type)
@@ -189,17 +187,18 @@ export class FormRenderer {
         const { TextField } = await import( '../form-components/text-field');
         let nucleus: InputNucleus;
         switch (fieldDto.type) {
-            case 'hidden':
+            case 'hidden': {
                 const { HiddenField } = await import( '../form-components/hidden-field');
                 nucleus = new HiddenField(fieldDto.name, fieldDto.label, fieldDto.id)
                     .setValue(fieldDto.value, true);
                 break;
-            case 'label':
+            }
+            case 'label': {
                 const { LabelField } = await import( '../form-components/label-field');
                 nucleus = new LabelField(fieldDto.name, fieldDto.label, fieldDto.id)
                     .setRequired(fieldDto.required)
-                    
                 break;
+            }
             case 'text':
                 
                 nucleus = new TextField(fieldDto.name, fieldDto.label, fieldDto.id)
@@ -216,7 +215,7 @@ export class FormRenderer {
                     .setMaxLength(fieldDto.maxlength)
                     .addValueChangedListener(fieldDto.change);
                 break;
-            case 'valuta':
+            case 'valuta': {
                 const { ValutaField } = await import( '../form-components/valuta-field');
                 nucleus = new ValutaField(fieldDto.name, fieldDto.label, fieldDto.id)
                     .setType('text')
@@ -225,7 +224,8 @@ export class FormRenderer {
                     .setMaxLength(fieldDto.maxlength)
                     .addValueChangedListener(fieldDto.change);
                 break;
-            case 'date':
+            }
+            case 'date': {
                 const { DateField } = await import( '../form-components/date-field');
                 nucleus = new DateField(fieldDto.name, fieldDto.label, fieldDto.id)
                     .setType('date')
@@ -234,7 +234,8 @@ export class FormRenderer {
                     .setMaxLength(fieldDto.maxlength)
                     .addValueChangedListener(fieldDto.change);
                 break;
-            case 'textarea':
+            }
+            case 'textarea': {
                 const { TextAreaField } = await import( '../form-components/textarea-field');
                 nucleus = new TextAreaField(fieldDto.name, fieldDto.label, fieldDto.id)
                     .setType('textarea')
@@ -243,6 +244,7 @@ export class FormRenderer {
                     .setMaxLength(fieldDto.maxlength)
                     .addValueChangedListener(fieldDto.change);
                 break;
+            }
             case 'email':
                 nucleus = new TextField(fieldDto.name, fieldDto.label, fieldDto.id)
                     .setType('email')
@@ -251,7 +253,7 @@ export class FormRenderer {
                     .setMaxLength(fieldDto.maxlength)
                     .addValueChangedListener(fieldDto.change);
                 break;
-            case 'password':
+            case 'password': {
                 const { PasswordField } = await import( '../form-components/password-field');
                 nucleus = new PasswordField(fieldDto.name, fieldDto.label, fieldDto.id)
                     .setType('password')
@@ -260,7 +262,8 @@ export class FormRenderer {
                     .setMaxLength(fieldDto.maxlength)
                     .addValueChangedListener(fieldDto.change);
                 break;
-            case 'color':
+            }
+            case 'color': {
                 const { ColorField } = await import( '../form-components/color-field');
                 nucleus = new ColorField(fieldDto.name, fieldDto.label, fieldDto.id)
                     .setType('color')
@@ -268,6 +271,7 @@ export class FormRenderer {
                     .setValue(fieldDto.value, true)
                     .addValueChangedListener(fieldDto.change);
                 break;
+            }
             default:
                 console.warn(`Unknown field type: ${fieldDto.type}`);
                 throw new Error('Field is not implemented yet');
@@ -285,7 +289,7 @@ export class FormRenderer {
     static async createOptionField(fieldDto: OptionFieldDto): Promise<Nucleus> {
         let nucleus: InputNucleus;
         switch (fieldDto.type) {
-            case 'file':
+            case 'file': {
                 const fileOptionFieldDto =  fieldDto as FileOptionFieldDto;
                 const { FileUploadField } = await import( '../form-components/upload-field');
                 nucleus =  new FileUploadField(fieldDto.name, fieldDto.label, fieldDto.id)
@@ -296,7 +300,8 @@ export class FormRenderer {
                     .setMaxFileSize(fileOptionFieldDto.maxFileSize)
                     .addValueChangedListener(fileOptionFieldDto.change);
                 break;
-            case 'radio':
+            }
+            case 'radio': {
                 const { RadioField } = await import( '../form-components/radio-field');
                 nucleus = new RadioField(fieldDto.name, fieldDto.label, fieldDto?.classes || '', fieldDto.id)
                     .addOptions(fieldDto.options)
@@ -304,14 +309,16 @@ export class FormRenderer {
                     .setValue(fieldDto.value, true)
                     .addValueChangedListener(fieldDto.change);
                 break;
-            case 'checkbox':
+            }
+            case 'checkbox': {
                 const { CheckboxField } = await import( '../form-components/checkbox-field');
                 nucleus = new CheckboxField(fieldDto.name, fieldDto.label, fieldDto?.classes || '', fieldDto.id)
                     .addOptions(fieldDto.options)
                     .setValue(fieldDto.value, true)
                     .addValueChangedListener(fieldDto.change);
                 break;
-            case 'select':
+            }
+            case 'select': {
                 const { SelectField } = await import( '../form-components/select-field');
                 const selectField = new SelectField(fieldDto.name, fieldDto.label, fieldDto?.classes || '', fieldDto.id)
                     .addOptions(fieldDto.options);
@@ -321,13 +328,15 @@ export class FormRenderer {
                     .addValueChangedListener(fieldDto.change);
                 nucleus = selectField;
                 break;
-            case 'dual-listbox':
+            }
+            case 'dual-listbox': {
                 const { DualListboxField } = await import( '../form-components/dual-listbox-field');
                 nucleus = new DualListboxField(fieldDto.name, fieldDto.label, fieldDto?.classes || '', fieldDto.id)
                     .addOptions(fieldDto.options)
                     .setValue(fieldDto.value, true)
                     .addValueChangedListener(fieldDto.change);
                 break;
+            }
         }
 
         nucleus

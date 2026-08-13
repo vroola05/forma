@@ -1,10 +1,10 @@
-import { Http } from '../../../shared/services/http';
-import { Router } from '../../../shared/services/router';
-import { Lang } from '../../../shared/services/lang';
-import { SettingsPage } from '../settings-page';
-import { Column, List, ListDefinition } from '../../../shared/generic-components/list';
 import { FormButton } from '../../../shared/form-components/components/form-button';
+import { Column, List, ListDefinition } from '../../../shared/generic-components/list';
 import { FORM_STATUS } from '../../../shared/model/types';
+import { Http } from '../../../shared/services/http';
+import { Lang } from '../../../shared/services/lang';
+import { Router } from '../../../shared/services/router';
+import { SettingsPage } from '../settings-page';
 
 export class FormDashboard extends SettingsPage {
     searchInput = document.createElement('input');
@@ -65,7 +65,7 @@ export class FormDashboard extends SettingsPage {
                 status: !form.status ? '' : FORM_STATUS[form.status as keyof typeof FORM_STATUS]()})));
             
             // this.addSearchListener();
-        });
+        }).catch(() => {});
     }
 
 

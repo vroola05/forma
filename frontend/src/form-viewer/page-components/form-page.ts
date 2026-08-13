@@ -1,18 +1,18 @@
-import { Router } from '../../shared/services/router';
+import { FormRenderer } from '../../shared/generic-components/form-renderer';
 import { Page } from '../../shared/page-components/page';
-import { FormRenderer } from '../../shared/generic-components/form-renderer'
+import { Router } from '../../shared/services/router';
 
-import { Http, ApiError } from '../../shared/services/http';
-import { Lang } from '../../shared/services/lang';
-import { ToastService } from '../../shared/services/toast-service'
-import { FormLogic } from '../components/form-logic';
-import { FormService } from '../services/form-service'
-import { Header } from '../../shared/generic-components/header';
-import { Footer } from '../../shared/generic-components/footer';
-import { FormWrapper } from '../../shared/model/types';
 import { Form } from '../../shared/form-components/form';
 import { FileUploadField } from '../../shared/form-components/upload-field';
+import { Footer } from '../../shared/generic-components/footer';
+import { Header } from '../../shared/generic-components/header';
+import { FormWrapper } from '../../shared/model/types';
+import { ApiError, Http } from '../../shared/services/http';
+import { Lang } from '../../shared/services/lang';
 import { Loader } from '../../shared/services/loader';
+import { ToastService } from '../../shared/services/toast-service';
+import { FormLogic } from '../components/form-logic';
+import { FormService } from '../services/form-service';
 
 export class FormPage extends Page {
     content = document.createElement('div');
@@ -29,7 +29,6 @@ export class FormPage extends Page {
 
     formWrapper: FormWrapper | undefined = undefined;
     form: Form | undefined;
-    
 
     constructor() {
         super();
@@ -121,14 +120,14 @@ export class FormPage extends Page {
 
             new FormLogic(this.form);
 
-            const fileInputs = fields.filter(field => field.getType() == 'file') as FileUploadField[];
+            const fileInputs = fields.filter(field => field.getType() === 'file') as FileUploadField[];
             for (const fileInput of fileInputs) {
                 fileInput
                     .setClientSessionId(this.parameters?.clientSessionId)
                     .setUploadUrl(`${Router.tenantPath}/api/forms/${this.formName}/upload`)
                     .setDeleteUrl(`${Router.tenantPath}/api/forms/${this.formName}/delete`);
             }
-        });
+        }).catch(() => {});
         
         
     }

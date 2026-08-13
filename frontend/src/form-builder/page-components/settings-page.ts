@@ -1,7 +1,7 @@
+import { FormButton } from '../../shared/form-components/components/form-button';
+import { Footer } from '../../shared/generic-components/footer';
 import { Page } from '../../shared/page-components/page';
 import { AdminHeader } from '../component/admin-header';
-import { Footer } from '../../shared/generic-components/footer';
-import { FormButton } from '../../shared/form-components/components/form-button';
 export class SettingsPage extends Page {
     contentInner = document.createElement('div');
     titleButtonContainer = document.createElement('div');

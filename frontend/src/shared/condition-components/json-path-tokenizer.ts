@@ -5,10 +5,10 @@ export class JsonPathTokenizer {
     // (\*|\d+|\d*:\d+) : match either '*' OR one or more digits OR optional digits followed by ':' and digits
     // $            : end of the string
     static regexInArray = RegExp(/^(\*|\d+|\d*:\d+)$/);
-    static regexNameCharacters = RegExp(/^[a-zA-Z0-9_\-\$]$/);
+    static regexNameCharacters = RegExp(/^[a-zA-Z0-9_\-$]$/);
 
     static tokenize(input: string) {
-        let output = [];
+        const output = [];
         let bracketLevel = 0;
 
         let token = '';
@@ -31,24 +31,24 @@ export class JsonPathTokenizer {
                     throw new Error(`Syntax fout: Ongeldige index of slice ${token} op positie ${i}`);
                 }
             } else {
-                if (c == '.') {
+                if (c === '.') {
                     // Check of we een veldnaam afsluiten
                     token = JsonPathTokenizer.handlePendingToken(token, output, i);
 
                     // Check op ".." (Deep Scan)
-                    if (i + 1 < input.length && input[i + 1] == '.') {
+                    if (i + 1 < input.length && input[i + 1] === '.') {
                         output.push('..');
                         i++; // Sla de tweede punt over
                     }
-                } else if (c == '[') {
+                } else if (c === '[') {
                     // Check of de veldnaam voor de '[' niet ongeldig eindigt, bijv. "veld-"
                     token =JsonPathTokenizer.handlePendingToken(token, output, i);
                     bracketLevel++;
-                } else if (c == ']') {
+                } else if (c === ']') {
                     throw new Error(`Syntax fout: Sluitende haak ']' zonder opening op positie ${i}`);
                 } else if (JsonPathTokenizer.regexNameCharacters.test(c)) {
                     token += c;
-                } else if (c == ' ') {
+                } else if (c === ' ') {
                     // Sla spaties over of gooi een error afhankelijk van je voorkeur
                 } else {
                     throw new Error(`Syntax fout: Karakter '${c}' niet toegestaan in veldnaam op positie  ${i}`);
@@ -64,7 +64,7 @@ export class JsonPathTokenizer {
             throw new Error(`Syntax fout: Niet alle haken zijn gesloten.`);
         }
 
-        token = JsonPathTokenizer.handlePendingToken(token, output, input.length);
+        JsonPathTokenizer.handlePendingToken(token, output, input.length);
 
         return output;
     }

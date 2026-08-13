@@ -1,12 +1,12 @@
-import { Router } from '../../shared/services/router';
 import { FormButton } from '../../shared/form-components/components/form-button';
-import { FormRenderer } from '../../shared/generic-components/form-renderer';
-import { Http, ErrorType } from '../../shared/services/http';
-import { FormSubmission } from '../../shared/model/types';
-import { footerService } from "../../shared/services/footer-service";
-import { Lang } from '../../shared/services/lang';
 import { Form } from '../../shared/form-components/form';
 import { Tab } from '../../shared/form-components/tab';
+import { FormRenderer } from '../../shared/generic-components/form-renderer';
+import { FormSubmission } from '../../shared/model/types';
+import { footerService } from "../../shared/services/footer-service";
+import { ErrorType, Http } from '../../shared/services/http';
+import { Lang } from '../../shared/services/lang';
+import { Router } from '../../shared/services/router';
 
 export class FormLogic {
     form: Form;
@@ -77,10 +77,10 @@ export class FormLogic {
         if (index <= size - 3) {
             this.nextBtn.show();
         }
-        else if (index == size - 2) {
+        else if (index === size - 2) {
             this.summaryBtn.show();
         }
-        else if (index == size - 1) {
+        else if (index === size - 1) {
             this.submitBtn.show();
         }
     }

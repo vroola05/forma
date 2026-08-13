@@ -108,7 +108,6 @@ public class TabPageServiceDatabase implements TabPageService {
 
         formTabDefinitionEntity.getFields().removeIf(
                 existingField -> {
-                    System.out.println("Mooi: " + existingField.getId() != null && !incomingIds.contains(existingField.getId()));
                     return existingField.getId() != null && !incomingIds.contains(existingField.getId());
         });
     }

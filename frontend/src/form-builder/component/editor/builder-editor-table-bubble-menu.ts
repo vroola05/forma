@@ -1,4 +1,4 @@
-import { BubbleMenuPlugin, BubbleMenu } from '@tiptap/extension-bubble-menu'
+import { BubbleMenu, BubbleMenuPlugin } from '@tiptap/extension-bubble-menu';
 
 import { Lang } from '../../../shared/services/lang';
 

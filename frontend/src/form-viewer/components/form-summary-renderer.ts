@@ -1,4 +1,3 @@
-import { CheckboxField } from '../../shared/form-components/checkbox-field';
 import { Form } from '../../shared/form-components/form';
 import { InputNucleus } from '../../shared/form-components/interface/input-base';
 import { Nucleus } from '../../shared/form-components/interface/nucleus';
@@ -20,7 +19,6 @@ export class FormSummaryRenderer {
     createElement() {
         this.content = document.createElement('div');
         this.content.className = 'form-summary-renderer';
-
     }
 
     getContent() {
@@ -60,7 +58,7 @@ export class FormSummaryRenderer {
             tabWrapperInner.className = 'summary-tab-wrapper-inner';
             this.tabWrapper.appendChild(tabWrapperInner);
             
-            if (label != undefined) {
+            if (label !== undefined) {
                 tabWrapperInner.appendChild(document.createElement('h2')).innerText = label;
             }
 
@@ -89,7 +87,6 @@ export class FormSummaryRenderer {
 
         const label = formGroup.getLabel();
         if (label) {
-
             formGroupWrapper.appendChild(document.createElement('h3')).innerText = label;
         }
 
@@ -98,8 +95,8 @@ export class FormSummaryRenderer {
         formGroupWrapper.appendChild(groupWrapper);
 
         const fields = formGroup.getFields();
-        if (fields == null) {
-            return ;
+        if (fields === null) {
+            return;
         }
 
         for (const field of fields) {

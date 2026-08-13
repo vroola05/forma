@@ -1,7 +1,7 @@
+import { UserDto } from '../model/types';
+import { Http } from './http';
 import { Observable } from './observable';
 import { Router } from './router';
-import { Http } from './http';
-import { UserDto } from '../model/types';
 
 class AuthService {
     #userObservable = new Observable<UserDto | null>(null);
@@ -44,7 +44,7 @@ class AuthService {
             sessionStorage.clear();
         
             Router.login();
-        });
+        }).catch(() => {});
         this.clear();
     }
 }

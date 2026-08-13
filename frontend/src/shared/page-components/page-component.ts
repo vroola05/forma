@@ -1,5 +1,3 @@
-import { footerService } from '../services/footer-service';
-
 export class PageComponent {
     #subViewContainer: HTMLElement | null = null;
     #subView: PageComponent | null = null;

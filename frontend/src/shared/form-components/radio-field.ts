@@ -127,7 +127,7 @@ export class RadioField extends InputNucleus {
             let found = false;
 
             this.inputElements.forEach(input => {
-                const isMatch = input.radio.value == targetValue;
+                const isMatch = input.radio.value === targetValue;
                 input.radio.checked = isMatch;
                 
                 if (isMatch) {

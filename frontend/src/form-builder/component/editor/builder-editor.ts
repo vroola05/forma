@@ -1,13 +1,12 @@
 import { Editor, Extension } from '@tiptap/core';
-import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/starter-kit';
 import { Table } from '@tiptap/extension-table';
-import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
+import { TableRow } from '@tiptap/extension-table-row';
+import { default as StarterKit, default as Underline } from '@tiptap/starter-kit';
 
 import { DollarMenuMention } from './builder-dollar-menu';
-import { BuilderEditorTableBubbleMenu } from './builder-editor-table-bubble-menu' ;
+import { BuilderEditorTableBubbleMenu } from './builder-editor-table-bubble-menu';
 import { BuilderTextEditorToolbar } from './builder-editor-toolbar';
 
 declare module '@tiptap/core' {
@@ -84,10 +83,6 @@ export class BuilderEditor  {
 
         this.#content.appendChild(this.#toolbar.getContent());
         this.#content.appendChild(this.#editorElement);
-    }
-
-    #createEditor() {
-        
     }
 
     addDataContent(jsonData: any) {

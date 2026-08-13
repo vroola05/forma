@@ -1,13 +1,13 @@
-import { SettingsPage } from '../settings-page';
 import { Http } from '../../../shared/services/http';
-import { Router } from '../../../shared/services/router';
 import { Lang } from '../../../shared/services/lang';
+import { Router } from '../../../shared/services/router';
+import { SettingsPage } from '../settings-page';
 
 
 import { FormButton } from '../../../shared/form-components/components/form-button';
 
+import { FormDto, GroupRegisterRequestDto, OptionDto, USER_STATUS, UserRegisterRequestDto } from '../../../shared/model/types';
 import { footerService } from '../../../shared/services/footer-service';
-import { UserRegisterRequestDto, USER_STATUS, GroupFieldDto, GroupRegisterRequestDto, OptionDto, FormDto } from '../../../shared/model/types';
 
 import { Form } from '../../../shared/form-components/form';
 import { FormGroup } from '../../../shared/form-components/form-group';
@@ -149,7 +149,7 @@ export class UserPageEdit extends SettingsPage {
         Form.create(formDto).then(form => {
             this.form = form;
             this.append(this.form.getContent());
-        });
+        }).catch(() => {});
     }
 
 
@@ -177,7 +177,6 @@ export class UserPageEdit extends SettingsPage {
             this.user.groups = this.groups.filter(g => g.id && groups.includes(g.id));
         }
 
-        console.log(this.user);
         if (this.isNew) {
             this.post(userFormGroup);
         } else {

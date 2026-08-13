@@ -1,9 +1,9 @@
-import { BuilderLayout } from './components/builder-layout';
-import { BuilderEditor } from '../../component/editor/builder-editor';
-import { EventService } from '../../../shared/services/event-service';
-import { BuilderFormService } from '../../services/builder-form-service';
 import { FormConfigSuccessPage } from '../../../shared/model/types';
 import { Page } from '../../../shared/page-components/page';
+import { EventService } from '../../../shared/services/event-service';
+import { BuilderEditor } from '../../component/editor/builder-editor';
+import { BuilderFormService } from '../../services/builder-form-service';
+import { BuilderLayout } from './components/builder-layout';
 
 export class BuilderPageSettingsSuccess extends Page {
     #builderLayout = new BuilderLayout();

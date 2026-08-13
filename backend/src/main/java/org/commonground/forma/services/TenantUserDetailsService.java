@@ -117,17 +117,12 @@ public class TenantUserDetailsService implements UserDetailsService {
             }
         }
 
-        System.out.println("User " + username + " has permissions: " + permissions);
-        
-        UserDetailsExtended userDetails = new UserDetailsExtended(
+        return new UserDetailsExtended(
                 userEntity.getUsername(),
                 userEntity.getPassword(),
                 authorities,
                 userEntity,
                 groups,
                 permissions);
-
-            System.out.println("Loaded user: " + userDetails.getUsername() + " with authorities: " );
-        return userDetails;
     }
 }
