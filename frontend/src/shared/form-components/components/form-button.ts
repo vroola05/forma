@@ -9,9 +9,9 @@ export class FormButton {
     path: string | null = null;
     permissions: PERMISSION[] | null = null;
     
-    event: (() => void) | null = null;
+    event: ((e?: PointerEvent | undefined) => void) | null = null;
 
-    constructor(label: string, classes: string | null, path: string | null = null, event: (() => void) | null = null, show: boolean = true) {
+    constructor(label: string, classes: string | null, path: string | null = null, event: ((e?: PointerEvent | undefined) => void) | null = null, show: boolean = true) {
         this.label = label;
         this.classes = 'form-btn' + (!classes ? '' : ' ' + classes);
         this.path = path;
@@ -55,7 +55,7 @@ export class FormButton {
         return this;
     }
 
-    setEvent(event: (() => void) | null = null) {
+    setEvent(event: ((e?: PointerEvent | undefined) => void) | null = null) {
         if (this.event) {
             this.button.removeEventListener('click', this.event);
         }
@@ -71,7 +71,7 @@ export class FormButton {
                 }
 
                 if (this.event) {
-                    this.event();
+                    this.event(e);
                 }
             });
         }

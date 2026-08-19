@@ -1,6 +1,6 @@
 import './src/assets/css/fonts/icons.css';
 import './src/assets/css/styles.css';
-import './src/assets/css/styles-builder.css';
+import './src/assets/css/styles-viewer.css';
 
 
 import 'bootstrap/dist/css/bootstrap.min.css';

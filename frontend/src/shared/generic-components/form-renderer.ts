@@ -6,9 +6,7 @@
 import { Form, FormOptions } from '../form-components/form';
 import { InputNucleus } from '../form-components/interface/input-base';
 import { Nucleus } from '../form-components/interface/nucleus';
-import { FieldDto, FileOptionFieldDto, FormDto, InputFieldDto, InputFieldType, OptionFieldDto, OptionFieldType } from '../model/types';
-
-
+import { FieldDto, FileOptionFieldDto, FormDto, InputFieldDto, InputFieldType, OptionFieldDto, OptionFieldType, RepeatingGroupDto } from '../model/types';
 
 /**
  * Uses dynamic imports to prevent endless loops
@@ -41,6 +39,9 @@ export class FormRenderer {
         return fields.map(child => {
             if (child.hasChildren()) {
                 return FormRenderer.#getFieldChildren(child);
+            } else if (child.hasSets()) {
+                console.log('aaaaaaaaaaaaaaaaa');
+                return FormRenderer.#getFieldSets(child);
             } else {
                 return FormRenderer.#getField(child as InputNucleus);
             }
@@ -57,27 +58,22 @@ export class FormRenderer {
         }
     }
 
+    static #getFieldSets(child: Nucleus): any {
+        return {
+            name: child.name,
+            label: child.label,
+            type: child.type,
+            id: child.id,
+            sets: child.getSets().map(childSet => {
+                return childSet.map(childField => {
+                    return FormRenderer.#getField(childField as InputNucleus);
+                })
+            })
+        };
+    }
+
     static #getField(field: InputNucleus): any {
-        if (field.type === 'repeating-group') {
-            // return {
-            //     name: field.name,
-            //     type: field.type,
-            //     label: field.label,
-            //     sets: field.groupInputSets.map(set: any[] => {
-            //         return set.map(repField: any[] => {
-            //             return {
-            //                 name: repField.name,
-            //                 type: repField.type,
-            //                 value: !repField.hasOptions() ? repField.getValue() : '',
-            //                 values: repField.hasOptions() ? repField.getOptions() : undefined,
-            //                 label: repField.label,
-            //                 classes: field.classes,
-            //                 readonly: repField.readonly
-            //             }
-            //         })
-            //     })
-            // };
-        } else if (field.type === 'file') {
+        if (field.type === 'file') {
             return {
                 name: field.name,
                 type: field.type,
@@ -149,11 +145,11 @@ export class FormRenderer {
      * @param fieldDto 
      * @returns 
      */
-    static async createField(fieldDto: FieldDto): Promise<Nucleus> {
+    static async createField(fieldDto: FieldDto, prefix: string | undefined = undefined): Promise<Nucleus> {
         if (this.isInputType(fieldDto.type)) {
-            return await this.createInputField(fieldDto as InputFieldDto);
+            return await this.createInputField(fieldDto as InputFieldDto, prefix);
         } else if (this.isOptionType(fieldDto.type)) {
-            return await this.createOptionField(fieldDto as OptionFieldDto);
+            return await this.createOptionField(fieldDto as OptionFieldDto, prefix);
         } else {
         
             switch (fieldDto.type) {
@@ -165,17 +161,19 @@ export class FormRenderer {
                     await formGroup.init(fieldDto);
                     return formGroup;
                 }
-                case 'repeating-group':
-                    // return new RepeatingGroup(fieldDto.name, fieldDto.label, fieldDto.classes, fieldDto.layout, dataField.id)
-                    //     .setType(fieldDto.type)
-                    //     
-                    //     .setMinLength(fieldDto.minSize)
-                    //     .setMaxLength(fieldDto.maxSize)
-                    //     .registerSet(FormRenderer.createFields(fieldDto.fields))
-                    //     .addSet(FormRenderer.#createRepeatingSets(fieldDto.sets))
-                
+                case 'repeating-group': {
+                    const { RepeatingGroup } = await import( '../form-components/repeating-group');
+                    
+                    const repeatingGroup = new RepeatingGroup((fieldDto as RepeatingGroupDto), fieldDto.id)
+                    await repeatingGroup.init(fieldDto);
+                    return repeatingGroup;
+                        
+                        // .setMinLength(fieldDto.minSize)
+                        // .setMaxLength(fieldDto.maxSize)
+                        // .registerSet(FormRenderer.createFields(fieldDto.fields))
+                        // .addSet(FormRenderer.#createRepeatingSets(fieldDto.sets))
+                }
                 // Add more cases for other field types as needed
-                    throw new Error('Repeating group is not implemented yet');
                 default:
                     console.warn(`Unknown field type: ${fieldDto.type}`);
                     throw new Error('Repeating group is not implemented yet');
@@ -183,7 +181,7 @@ export class FormRenderer {
         }
     }
 
-    static async createInputField(fieldDto: InputFieldDto): Promise<Nucleus> {
+    static async createInputField(fieldDto: InputFieldDto, prefix: string | undefined = undefined): Promise<Nucleus> {
         const { TextField } = await import( '../form-components/text-field');
         let nucleus: InputNucleus;
         switch (fieldDto.type) {
@@ -201,18 +199,18 @@ export class FormRenderer {
             }
             case 'text':
                 
-                nucleus = new TextField(fieldDto.name, fieldDto.label, fieldDto.id)
+                nucleus = new TextField(fieldDto.name, fieldDto.label, fieldDto.id, prefix)
                     .setRequired(fieldDto.required)
-                    .setMinLength(fieldDto.minlength)
-                    .setMaxLength(fieldDto.maxlength)
+                    .setMinLength(fieldDto.minLength)
+                    .setMaxLength(fieldDto.maxLength)
                     .addValueChangedListener(fieldDto.change);
                 break;
             case 'number':
-                nucleus = new TextField(fieldDto.name, fieldDto.label, fieldDto.id)
+                nucleus = new TextField(fieldDto.name, fieldDto.label, fieldDto.id, prefix)
                     .setType('number')
                     .setRequired(fieldDto.required)
-                    .setMinLength(fieldDto.minlength)
-                    .setMaxLength(fieldDto.maxlength)
+                    .setMinLength(fieldDto.minLength)
+                    .setMaxLength(fieldDto.maxLength)
                     .addValueChangedListener(fieldDto.change);
                 break;
             case 'valuta': {
@@ -220,8 +218,8 @@ export class FormRenderer {
                 nucleus = new ValutaField(fieldDto.name, fieldDto.label, fieldDto.id)
                     .setType('text')
                     .setRequired(fieldDto.required)
-                    .setMinLength(fieldDto.minlength)
-                    .setMaxLength(fieldDto.maxlength)
+                    .setMinLength(fieldDto.minLength)
+                    .setMaxLength(fieldDto.maxLength)
                     .addValueChangedListener(fieldDto.change);
                 break;
             }
@@ -230,8 +228,8 @@ export class FormRenderer {
                 nucleus = new DateField(fieldDto.name, fieldDto.label, fieldDto.id)
                     .setType('date')
                     .setRequired(fieldDto.required)
-                    .setMinLength(fieldDto.minlength)
-                    .setMaxLength(fieldDto.maxlength)
+                    .setMinLength(fieldDto.minLength)
+                    .setMaxLength(fieldDto.maxLength)
                     .addValueChangedListener(fieldDto.change);
                 break;
             }
@@ -240,17 +238,17 @@ export class FormRenderer {
                 nucleus = new TextAreaField(fieldDto.name, fieldDto.label, fieldDto.id)
                     .setType('textarea')
                     .setRequired(fieldDto.required)
-                    .setMinLength(fieldDto.minlength)
-                    .setMaxLength(fieldDto.maxlength)
+                    .setMinLength(fieldDto.minLength)
+                    .setMaxLength(fieldDto.maxLength)
                     .addValueChangedListener(fieldDto.change);
                 break;
             }
             case 'email':
-                nucleus = new TextField(fieldDto.name, fieldDto.label, fieldDto.id)
+                nucleus = new TextField(fieldDto.name, fieldDto.label, fieldDto.id, prefix)
                     .setType('email')
                     .setRequired(fieldDto.required)
-                    .setMinLength(fieldDto.minlength)
-                    .setMaxLength(fieldDto.maxlength)
+                    .setMinLength(fieldDto.minLength)
+                    .setMaxLength(fieldDto.maxLength)
                     .addValueChangedListener(fieldDto.change);
                 break;
             case 'password': {
@@ -258,8 +256,8 @@ export class FormRenderer {
                 nucleus = new PasswordField(fieldDto.name, fieldDto.label, fieldDto.id)
                     .setType('password')
                     .setRequired(fieldDto.required)
-                    .setMinLength(fieldDto.minlength)
-                    .setMaxLength(fieldDto.maxlength)
+                    .setMinLength(fieldDto.minLength)
+                    .setMaxLength(fieldDto.maxLength)
                     .addValueChangedListener(fieldDto.change);
                 break;
             }
@@ -286,7 +284,7 @@ export class FormRenderer {
         return nucleus;
     }
 
-    static async createOptionField(fieldDto: OptionFieldDto): Promise<Nucleus> {
+    static async createOptionField(fieldDto: OptionFieldDto, prefix: string | undefined = undefined): Promise<Nucleus> {
         let nucleus: InputNucleus;
         switch (fieldDto.type) {
             case 'file': {

@@ -10,7 +10,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
   visible = true
 )
 @JsonSubTypes({
-  @JsonSubTypes.Type(value = FileFieldProperties.class, name = "file")
+  @JsonSubTypes.Type(value = FileFieldProperties.class, name = "file"),
+  @JsonSubTypes.Type(value = RepeatingGroupProperties.class, name = "repeating-group")
 })
 public interface FieldProperties {
   String getType();

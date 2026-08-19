@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.commonground.forma.database.dao.definition.FormFieldDefinitionEntity;
 import org.commonground.forma.database.dao.definition.properties.FieldProperties;
 import org.commonground.forma.database.dao.definition.properties.FileFieldProperties;
+import org.commonground.forma.database.dao.definition.properties.RepeatingGroupProperties;
 import org.commonground.forma.model.form.constants.FieldType;
 import org.commonground.forma.model.form.fields.CheckboxField;
 import org.commonground.forma.model.form.fields.ColorField;
@@ -14,6 +15,7 @@ import org.commonground.forma.model.form.fields.Field;
 import org.commonground.forma.model.form.fields.FileField;
 import org.commonground.forma.model.form.fields.FormGroup;
 import org.commonground.forma.model.form.fields.RadioField;
+import org.commonground.forma.model.form.fields.RepeatingGroup;
 import org.commonground.forma.model.form.fields.SelectField;
 import org.commonground.forma.model.form.fields.TextField;
 import org.springframework.http.HttpStatus;
@@ -97,6 +99,18 @@ public class FieldMapper {
                     fileField.getMaxFileSize(),
                     fileField.getAllowedExtensions());
             entity.setProperties(fieldProperties);
+        } else if (dto.getType() == FieldType.REPEATING_GROUP) {
+            RepeatingGroup repeatingGroup = (RepeatingGroup) dto;
+            entity.setValue(repeatingGroup.getValue());
+            entity.setMinLength(repeatingGroup.getMinLength());
+            entity.setMaxLength(repeatingGroup.getMaxLength());
+
+            System.out.println("A: " + repeatingGroup.getMinLength() + " | " + repeatingGroup.getMaxLength());
+
+            RepeatingGroupProperties fieldProperties = new RepeatingGroupProperties(
+                    repeatingGroup.getType().getValue(),
+                    repeatingGroup.getLayout());
+            entity.setProperties(fieldProperties);
         }
     }
 
@@ -118,8 +132,30 @@ public class FieldMapper {
             formGroup.setFields(toResponseDtoList(entity.getChildren()));
 
             field = formGroup;
-        } else 
-        if (isTextField(fieldType)) {
+        } else if (fieldType == FieldType.REPEATING_GROUP) {
+            RepeatingGroup repeatingGroup = new RepeatingGroup();
+            repeatingGroup.setId(entity.getId());
+            repeatingGroup.setName(entity.getName());
+            repeatingGroup.setLabel(entity.getLabel());
+            repeatingGroup.setClasses(entity.getClasses());
+            repeatingGroup.setType(FieldType.FORM_GROUP);
+            repeatingGroup.setMetadata(entity.getMetadata());
+            repeatingGroup.setCondition(entity.getCondition());
+            repeatingGroup.setShow(entity.getShow());
+
+            repeatingGroup.setMinLength(entity.getMinLength());
+            repeatingGroup.setMaxLength(entity.getMaxLength());
+
+            System.out.println(entity.getMinLength() + " | " + entity.getMaxLength());
+
+            RepeatingGroupProperties fieldProperties = (RepeatingGroupProperties)entity.getProperties();
+            if (fieldProperties != null) {
+                repeatingGroup.setLayout(fieldProperties.layout());
+            }
+            repeatingGroup.setFields(toResponseDtoList(entity.getChildren()));
+
+            field = repeatingGroup;
+        } else if (isTextField(fieldType)) {
             TextField textField = new TextField();
             textField.setPlaceholder(entity.getPlaceholder());
             textField.setValue(entity.getValue());
@@ -136,11 +172,12 @@ public class FieldMapper {
             fileField.setRequired(entity.getRequired());
             
             FileFieldProperties fieldProperties = (FileFieldProperties)entity.getProperties();
-            fileField.setAllowedExtensions(fieldProperties.allowedExtensions());
-            fileField.setIsMultiple(fieldProperties.isMultiple());
-            fileField.setMaxFiles(fieldProperties.maxFiles());
-            fileField.setMaxFileSize(fieldProperties.maxFileSize());
-
+            if (fieldProperties != null) {
+                fileField.setAllowedExtensions(fieldProperties.allowedExtensions());
+                fileField.setIsMultiple(fieldProperties.isMultiple());
+                fileField.setMaxFiles(fieldProperties.maxFiles());
+                fileField.setMaxFileSize(fieldProperties.maxFileSize());
+            }
             field = fileField;
         } else if (fieldType == FieldType.COLOR) {
             ColorField colorField = new ColorField();

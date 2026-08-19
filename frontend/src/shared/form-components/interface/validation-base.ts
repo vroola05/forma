@@ -31,6 +31,10 @@ export class ValidationBase {
         return null;
     }
 
+    getSets(): Nucleus[][] {
+        return [];
+    }
+
     setBackendErrorsField(valid: boolean, errors: any) {
     }   
 }

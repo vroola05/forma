@@ -104,6 +104,7 @@ export class FormPage extends Page {
         if (this.formWrapper?.form?.label) {
             this.setTitle(this.formWrapper?.form?.label);
         }
+
         FormRenderer.createForm(this.formWrapper.form, this.parameters?.clientSessionId, {showSummary: true}).then(form => {
             this.form = form;
 

@@ -17,16 +17,16 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
 
     fields: BuilderFieldInterface[] = [];
 
-    onDeleteCallback = null;
+    onDeleteCallback: ((field: BuilderFieldInterface) => void) | null = null;
 
     constructor(type: FIELD_TYPE, label: string) {
         super(type, label);
 
         this.fieldProperties.addProperties([
-            {type: PROPERTY_TYPE.NUMBER, id: 'minSize', label: Lang.get('prop.minSize.label')},
-            {type: PROPERTY_TYPE.NUMBER, id: 'maxSize', label: Lang.get('prop.maxSize.label')},
+            {type: PROPERTY_TYPE.NUMBER, id: 'minLength', label: Lang.get('prop.minSize.label')},
+            {type: PROPERTY_TYPE.NUMBER, id: 'maxLength', label: Lang.get('prop.maxSize.label')},
             {type: PROPERTY_TYPE.SELECT, id: 'layout', label: Lang.get('prop.layout.label'), value: 'table', options: [
-                {value: 'list', text: Lang.get('prop.layout.label.list')},
+                {value: 'default', text: Lang.get('prop.layout.label.default')},
                 {value: 'table', text: Lang.get('prop.layout.label.table')}
             ]}
         ]);
@@ -35,7 +35,6 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
     }
 
     createContent(type: FIELD_TYPE, label: string) {
-        
         this.builderFormGroup.className = 'builder-repeating-group draggable-item';
         this.builderFormGroup.draggable = true;
         this.builderFormGroup.setAttribute('data-type', type);
@@ -59,7 +58,7 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
         builderFormGroupHeaderBar.appendChild(builderFormGroupHeaderBarButtons);
 
         const builderFormGroupBtnEdit = document.createElement('button');
-        builderFormGroupBtnEdit.className = 'builder-repeating-group-btn-edit';
+        builderFormGroupBtnEdit.className = 'builder-btn-icon icon icon-three-dots-vertical';
         builderFormGroupHeaderBarButtons.appendChild(builderFormGroupBtnEdit);
         builderFormGroupBtnEdit.addEventListener('click', (event) => {
             event.preventDefault();
@@ -67,12 +66,12 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
         });
 
         const builderFormGroupBtnClose = document.createElement('button');
-        builderFormGroupBtnClose.className = 'builder-repeating-group-btn-close';
+        builderFormGroupBtnClose.className = 'builder-btn-icon icon icon-x-lg';
         builderFormGroupHeaderBarButtons.appendChild(builderFormGroupBtnClose);
         builderFormGroupBtnClose.addEventListener('click', (event) => {
-            // if (this.onDeleteCallback) {
-            //     this.onDeleteCallback(this);
-            // }
+            if (this.onDeleteCallback) {
+                this.onDeleteCallback(this);
+            }
         });
         
         const builderFormGroupFieldContainer = document.createElement('div');
@@ -93,6 +92,7 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
                 this.updateFormGroup();
             }).setAcceptedTypes(this.acceptedTypes);
     }
+
 
     setLabel(value: string | undefined = undefined) {
         if (value) {
@@ -154,17 +154,17 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
                 }
             }
 
-            const minSize = this.fieldProperties.getPropertyValueById('minSize');
-            const maxSize = this.fieldProperties.getPropertyValueById('maxSize');
-            if (minSize !== null && isNaN(minSize)) {
+            const minLength = this.fieldProperties.getPropertyValueById('minLength');
+            const maxLength = this.fieldProperties.getPropertyValueById('maxLength');
+            if (minLength !== null && isNaN(minLength)) {
                 throw new Error(`${this.fieldProperties.getFieldIdentifier()} - Minimaal aantal rijen moet een geldig getal zijn.`);
             }
-            if (maxSize !== null && isNaN(maxSize)) {
+            if (maxLength !== null && isNaN(maxLength)) {
                 throw new Error(`${this.fieldProperties.getFieldIdentifier()} - Maximaal aantal rijen moet een geldig getal zijn.`);
             }
 
-            if (minSize !== null && maxSize !== null && minSize > maxSize) {
-                throw new Error(`${this.fieldProperties.getFieldIdentifier()} - Het veld Minimaal aantal rijen (${minSize}) mag niet groter zijn dan maximaal aantal rijen (${maxSize}).`);
+            if (minLength !== null && maxLength !== null && minLength > maxLength) {
+                throw new Error(`${this.fieldProperties.getFieldIdentifier()} - Het veld Minimaal aantal rijen (${minLength}) mag niet groter zijn dan maximaal aantal rijen (${maxLength}).`);
             }
         }
 

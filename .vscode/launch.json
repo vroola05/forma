@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-FormApplication<forma>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "org.commonground.forma.FormApplication",
+            "projectName": "forma",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

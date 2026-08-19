@@ -154,7 +154,7 @@
     "prop.minSize.label": "Minimaal aantal rijen",
     "prop.maxSize.label": "Maximaal aantal rijen",
     "prop.layout.label": "Layout",
-    "prop.layout.label.list": "Lijst",
+    "prop.layout.label.default": "Standaard",
     "prop.layout.label.table": "Tabel",
 
     "prop.name.message": "Het veld Naam heeft de volgende specificaties:<br> - Het veld is verplicht<br /> - Maximaal 200 tekens.<br /> - Het Het veld Id mag de volgende tekens bevatten (a-z 0-9 of _ -).",

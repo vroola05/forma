@@ -28,8 +28,8 @@ public class RepeatingGroup implements Field {
     private String classes;
     private String layout;
     private FieldType type;
-    private Integer minlength;
-    private Integer maxlength;
+    private Integer minLength;
+    private Integer maxLength;
 
     private List<String> metadata;
     private List<Field> fields;
