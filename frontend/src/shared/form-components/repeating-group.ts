@@ -145,6 +145,7 @@ export class RepeatingGroup extends Nucleus {
             }
 
         });
+
         this.sets[index].deleteBtn = deleteBtn;
 
         title.appendChild(deleteBtn.getContent());
@@ -164,7 +165,7 @@ export class RepeatingGroup extends Nucleus {
         }
 
         for (const fieldDto of this.fields) {
-            const field = await FormRenderer.createField(fieldDto, `rep-${index}`);
+            const field = await FormRenderer.createField(fieldDto, `set-${index}`);
             if (!field || (!(field instanceof InputNucleus))) {
                 throw new Error('Input must be an instance of Input class');
             }

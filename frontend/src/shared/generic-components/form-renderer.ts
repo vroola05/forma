@@ -40,7 +40,6 @@ export class FormRenderer {
             if (child.hasChildren()) {
                 return FormRenderer.#getFieldChildren(child);
             } else if (child.hasSets()) {
-                console.log('aaaaaaaaaaaaaaaaa');
                 return FormRenderer.#getFieldSets(child);
             } else {
                 return FormRenderer.#getField(child as InputNucleus);

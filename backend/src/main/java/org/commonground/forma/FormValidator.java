@@ -11,6 +11,7 @@ import org.commonground.forma.model.form.condition.Condition;
 import org.commonground.forma.model.form.constants.FieldType;
 import org.commonground.forma.model.form.fields.Field;
 import org.commonground.forma.model.form.fields.Form;
+import org.commonground.forma.model.form.fields.RepeatingGroup;
 import org.commonground.forma.util.condition.ConditionParser;
 
 public class FormValidator {
@@ -81,6 +82,32 @@ public class FormValidator {
         }
     }
 
+    private static void validateSet(String path, Form form, List<Field> fieldsDefinition, List<List<Field>> sets ) {
+        List<FormFieldError> fieldErrors = new ArrayList<>();
+
+        for(List<Field> set: sets) {
+            for (int index = 0; index < fieldsDefinition.size(); index++) {
+                Field fieldDef = fieldsDefinition.get(index);
+
+                String currentfield = path + "fields." + index + "." + fieldDef.getName();
+                Optional<Field> fieldOptional = set.stream().filter(field -> fieldDef.getName().equals(field.getName())).findFirst();
+                if (fieldOptional.isEmpty()) {
+                    throwValidationError(currentfield, String.format("De set {} is niet gevonden", fieldDef.getLabel()));
+                }
+
+                try {
+                    validateField(currentfield, form, fieldDef, fieldOptional.get());
+                } catch (FieldValidationException e) {
+                    fieldErrors.add(new FormFieldError(currentfield, currentfield, e.getMessage(), e.getArgs()));
+                }
+            }
+        }
+
+        if (!fieldErrors.isEmpty()) {
+            throw new FormValidationException(fieldErrors);
+        }
+    }
+
     private static void validateField(String path, Form form, Field fieldDefinition, Field field) throws FieldValidationException {
         field.setShow(checkShowConditions(form, fieldDefinition.getCondition()));
         if (!field.isShow()) {
@@ -88,17 +115,34 @@ public class FormValidator {
         }
 
         if (FieldType.REPEATING_GROUP.equals(field.getType())) {
+            RepeatingGroup repeatingGroupDef = (RepeatingGroup)fieldDefinition;
+            RepeatingGroup repeatingGroup = (RepeatingGroup)field;
+
+            validateSize(repeatingGroupDef.getLabel(), repeatingGroupDef.getMinLength(), repeatingGroupDef.getMaxLength(), repeatingGroup.getSets().size());
+
+            if (fieldDefinition.getFields() != null && !fieldDefinition.getFields().isEmpty()) {
+                validateSet(path, form, fieldDefinition.getFields(), repeatingGroup.getSets());
+            }
 
         } else if (FieldType.FORM_GROUP.equals(field.getType())) {
-
+            if (fieldDefinition.getFields() != null && !fieldDefinition.getFields().isEmpty()) {
+                validateFields(path, form, fieldDefinition.getFields(), field);
+            }
         } else if (FieldType.SELECT.equals(field.getType()) || FieldType.PASSWORD.equals(field.getType()) || FieldType.CHECKBOX.equals(field.getType()) || FieldType.FILE.equals(field.getType())) {
             fieldDefinition.validate(field.getValues());
         } else {
             fieldDefinition.validate(field.getValue());
         }
+    }
 
-        if (fieldDefinition.getFields() != null && !fieldDefinition.getFields().isEmpty()) {
-            validateFields(path, form, fieldDefinition.getFields(), field);
+    private static void validateSize(String label, Integer min, Integer max, Integer size) throws FieldValidationException {
+        String labelPrefix = (label == null || label.isEmpty()) ? "" : label + " ";
+
+        if (min != null && (size == null || size < min)) {
+            throw new FieldValidationException("{form.validation.generic.minlength}", labelPrefix, min);
+        }
+        if (max != null && (size == null || size > max)) {
+            throw new FieldValidationException("{form.validation.generic.maxlength}", labelPrefix, max);
         }
     }
 

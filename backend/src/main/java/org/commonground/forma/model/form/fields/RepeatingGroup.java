@@ -110,5 +110,6 @@ public class RepeatingGroup implements Field {
 
     @Override
     public void validate(Object value) throws FieldValidationException {
+
     }
 }

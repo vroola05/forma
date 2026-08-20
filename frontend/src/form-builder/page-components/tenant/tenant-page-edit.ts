@@ -178,7 +178,7 @@ export class TenantPageEdit extends SettingsPage {
                 Router.route('/admin/page/tenant');
             })
             .catch((error) => {
-                console.log(error);
+                console.error(error);
             });
     }
 

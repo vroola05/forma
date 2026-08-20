@@ -53,7 +53,6 @@ export class SuccessPage extends Page {
         if (!formSubmission) {
             const formSubmissionData = Storage.getPageItem('formSubmission');
             if (formSubmissionData) {
-                console.log(JSON.parse(formSubmissionData));
                 formSubmission = JSON.parse(formSubmissionData) as FormSubmission;
             }
         } else {

@@ -176,7 +176,6 @@ export class BuilderFieldInterface {
      * @param {*} errorMap 
      */
     handleValidationError(errorMap: any): any {
-        console.log(errorMap);
         const errorList = [];
         const errorListFields = [];
         for (const [key1, val1] of errorMap) {

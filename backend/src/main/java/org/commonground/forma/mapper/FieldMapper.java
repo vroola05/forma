@@ -105,8 +105,6 @@ public class FieldMapper {
             entity.setMinLength(repeatingGroup.getMinLength());
             entity.setMaxLength(repeatingGroup.getMaxLength());
 
-            System.out.println("A: " + repeatingGroup.getMinLength() + " | " + repeatingGroup.getMaxLength());
-
             RepeatingGroupProperties fieldProperties = new RepeatingGroupProperties(
                     repeatingGroup.getType().getValue(),
                     repeatingGroup.getLayout());
@@ -145,8 +143,6 @@ public class FieldMapper {
 
             repeatingGroup.setMinLength(entity.getMinLength());
             repeatingGroup.setMaxLength(entity.getMaxLength());
-
-            System.out.println(entity.getMinLength() + " | " + entity.getMaxLength());
 
             RepeatingGroupProperties fieldProperties = (RepeatingGroupProperties)entity.getProperties();
             if (fieldProperties != null) {
