@@ -119,12 +119,18 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
             }
 
             for (const field of baseFieldDto.fields) {
-                if (field.type in FIELD_TYPE) {
+
+                try {
+                    Dropzone.getType(field.type);
+
                     const f = this.dropzone?.addNewItem(Dropzone.getType(field.type), field.type);
                     if (f) {
                         f.init(field);
                     }
+                } catch (error) {
+                    console.error('Error initializing field in form group', error);
                 }
+
             }
         }
     }

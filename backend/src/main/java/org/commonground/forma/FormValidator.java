@@ -59,23 +59,27 @@ public class FormValidator {
     private static void validateFields(String path, Form form, List<Field> fieldsDefinition, Field parentField) {
         List<FormFieldError> fieldErrors = new ArrayList<>();
 
-        for (int index = 0; index < fieldsDefinition.size(); index++) {
-            Field fieldDef = fieldsDefinition.get(index);
+            for (int index = 0; index < fieldsDefinition.size(); index++) {
+                Field fieldDef = fieldsDefinition.get(index);
 
-            String currentfield = path + "fields." + index + "." + fieldDef.getName();
-            Optional<Field> fieldOptional = parentField.getField(fieldDef.getName());
-            if (fieldOptional.isEmpty()) {
+                String currentfield = path + "fields." + index ;
+                Optional<Field> fieldOptional = parentField.getField(fieldDef.getName());
+                if (fieldOptional.isEmpty()) {
+                    throwValidationError(currentfield, String.format("De set {} is niet gevonden", fieldDef.getLabel()));
+                }
+                
+                try {
+                    validateField(currentfield, form, fieldDef, fieldOptional.get());
+                } catch (FieldValidationException e) {
+                    String errorField = currentfield + "." + fieldDef.getName();
+                    fieldErrors.add(new FormFieldError(errorField, errorField, e.getMessage(), e.getArgs()));
+                } catch (FormValidationException e) {
+                    List<FormFieldError> errors = e.getErrors();
 
-                throwValidationError(currentfield, String.format("De set {} is niet gevonden", fieldDef.getLabel()));
+                    fieldErrors.addAll(errors);
+                }
             }
-            
-            try {
-                validateField(currentfield, form, fieldDef, fieldOptional.get());
-            } catch (FieldValidationException e) {
-            
-                fieldErrors.add(new FormFieldError(currentfield, currentfield, e.getMessage(), e.getArgs()));
-            }
-        }
+        
 
         if (!fieldErrors.isEmpty()) {
             throw new FormValidationException(fieldErrors);
@@ -85,11 +89,15 @@ public class FormValidator {
     private static void validateSet(String path, Form form, List<Field> fieldsDefinition, List<List<Field>> sets ) {
         List<FormFieldError> fieldErrors = new ArrayList<>();
 
-        for(List<Field> set: sets) {
-            for (int index = 0; index < fieldsDefinition.size(); index++) {
-                Field fieldDef = fieldsDefinition.get(index);
 
-                String currentfield = path + "fields." + index + "." + fieldDef.getName();
+        for (int setIndex = 0; setIndex < sets.size(); setIndex++) {
+            List<Field> set = sets.get(setIndex);
+        
+            String currentSet = path + "sets." + setIndex + ".";
+            for (int fieldIndex = 0; fieldIndex < fieldsDefinition.size(); fieldIndex++) {
+                Field fieldDef = fieldsDefinition.get(fieldIndex);
+
+                String currentfield = currentSet + fieldIndex + "." + fieldDef.getName();
                 Optional<Field> fieldOptional = set.stream().filter(field -> fieldDef.getName().equals(field.getName())).findFirst();
                 if (fieldOptional.isEmpty()) {
                     throwValidationError(currentfield, String.format("De set {} is niet gevonden", fieldDef.getLabel()));
@@ -121,12 +129,12 @@ public class FormValidator {
             validateSize(repeatingGroupDef.getLabel(), repeatingGroupDef.getMinLength(), repeatingGroupDef.getMaxLength(), repeatingGroup.getSets().size());
 
             if (fieldDefinition.getFields() != null && !fieldDefinition.getFields().isEmpty()) {
-                validateSet(path, form, fieldDefinition.getFields(), repeatingGroup.getSets());
+                validateSet(path + ".", form, fieldDefinition.getFields(), repeatingGroup.getSets());
             }
 
         } else if (FieldType.FORM_GROUP.equals(field.getType())) {
             if (fieldDefinition.getFields() != null && !fieldDefinition.getFields().isEmpty()) {
-                validateFields(path, form, fieldDefinition.getFields(), field);
+                validateFields(path + ".", form, fieldDefinition.getFields(), field);
             }
         } else if (FieldType.SELECT.equals(field.getType()) || FieldType.PASSWORD.equals(field.getType()) || FieldType.CHECKBOX.equals(field.getType()) || FieldType.FILE.equals(field.getType())) {
             fieldDefinition.validate(field.getValues());

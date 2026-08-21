@@ -9,6 +9,20 @@
             "projectName": "forma",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "msedge",
+            "request": "launch",
+            "name": "Launch Edge (Vite Frontend)",
+            "url": "http://localhost:5173/system/admin",
+            "webRoot": "${workspaceFolder}/frontend",
+            "sourceMapPathOverrides": {
+                "webpack:///./~/*": "${webRoot}/node_modules/*",
+                "webpack:///src/*": "${webRoot}/src/*",
+                "webpack:///*": "*",
+                "asset:///*": "*",
+                "vite://devices/browser/*": "${webRoot}/*"
+            }
         }
     ]
 }

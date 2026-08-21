@@ -851,7 +851,7 @@ Styles voor builder-repeating-group.js
     position: relative;
     margin: 2px;
     padding: var(--default-space-half) var(--default-space-half) var(--default-space) var(--default-space-half);
-    background: var(--secondary-color-light);
+    background: var(--primary-color-light);
     border: none;
     border-radius: var(--default-space-half);
 

@@ -124,9 +124,7 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
     }
 
     setReadonly(readonly: boolean | undefined = undefined) {
-        if (readonly === undefined) {
-            readonly = false;
-        }
+        readonly ??= false;
         this.readonly = readonly;
         if (this.#isInput()) {
             this.#getInput().readOnly = readonly;
@@ -199,11 +197,11 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
                 this.errors.push(Lang.get('generic.validation.email'));
                 valid = false;
             }
-            if (this.type === 'number' && this.getValue() && isNaN(Number(this.getValue()))) {
+            if (this.type === 'number' && this.getValue() && Number.isNaN(Number(this.getValue()))) {
                 this.errors.push(Lang.get('generic.validation.number'));
                 valid = false;
             }
-            if (this.type === 'date' && this.getValue() && isNaN(Date.parse(this.getValue()))) {
+            if (this.type === 'date' && this.getValue() && Number.isNaN(Date.parse(this.getValue()))) {
                 this.errors.push(Lang.get('generic.validation.date'));
                 valid = false;
             }

@@ -99,7 +99,9 @@ export class FormLogic {
                     formSubmission: formSubmissionData as FormSubmission
                 });
             }).catch(error => {
+
                 if (error.type === ErrorType.VALIDATION) {
+                    console.log(error.getDetails());
                     this.form.validateBE(error.getDetails());
                 }
             });

@@ -123,7 +123,7 @@ export class BuilderFormGroup extends BuilderFieldInterface {
             for (const field of baseFieldDto.fields) {
                 
                 try {
-                    Dropzone.getType(field.type)
+                    Dropzone.getType(field.type);
                     const f = this.dropzone?.addNewItem(Dropzone.getType(field.type), field.type);
                     if (f) {
                         f.init(field);
