@@ -140,7 +140,7 @@
     "prop.minSize.label": "Min row amount",
     "prop.maxSize.label": "Max row amount",
     "prop.layout.label": "Layout",
-    "prop.layout.label.list": "List",
+    "prop.layout.label.default": "Default",
     "prop.layout.label.table": "Table",
 
     "prop.name.message": "Name has is required, can have 200 characters and can have only these characters (a-z 0-9 of _ -).",

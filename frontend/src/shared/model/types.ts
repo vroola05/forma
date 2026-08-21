@@ -57,6 +57,8 @@ export type InputFieldType = 'text' | 'number' | 'email' | 'password' | 'date' |
 export type OptionFieldType = 'checkbox' | 'dual-listbox' | 'radio' | 'select' | 'file';
 export type AllFieldTypes = GenericFieldType | InputFieldType | OptionFieldType;
 
+export type LayoutType = 'default' | 'table';
+
 export class TenantDto {
     id?: string;
     slug?: string;
@@ -129,13 +131,20 @@ export interface OptionDto {
     selected?: boolean;
 }
 
+export interface RepeatingGroupDto extends BaseFieldDto {
+    layout: LayoutType;
+    minLength?: number;
+    maxLength?: number;
+    sets?: FieldDto[];
+}
+
 export interface InputFieldDto extends BaseFieldDto {
     type: InputFieldType;
     metadata?: string[];
     classes?: string;
     required?: boolean;
-    minlength?: number;
-    maxlength?: number;
+    minLength?: number;
+    maxLength?: number;
     placeholder?: string;
     readonly?: boolean;
     value?: string;
@@ -161,7 +170,7 @@ export interface FileOptionFieldDto extends OptionFieldDto {
 }
 
 
-export type FieldDto = BaseFieldDto | InputFieldDto | OptionFieldDto;
+export type FieldDto = BaseFieldDto | InputFieldDto | OptionFieldDto| RepeatingGroupDto;
 
 export interface FormConfig {
     formConfigSuccessPage?: FormConfigSuccessPage;

@@ -132,7 +132,6 @@ export class GroupPageEdit extends SettingsPage {
 
         this.group.permissions = permissions;
 
-        console.log(this.group);
         if (this.isNew) {
             this.post(formGroup);
         } else {

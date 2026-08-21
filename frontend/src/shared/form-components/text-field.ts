@@ -8,8 +8,12 @@ export class TextField extends InputNucleus<HTMLInputElement> {
     minLength: number | undefined = undefined;
     maxLength: number | undefined = undefined;
 
-    constructor(name: string, label: string | undefined, id: string | undefined = undefined) {
-        super(document.createElement('input'), name, label, id);
+    constructor(
+            name: string,
+            label: string | undefined,
+            id: string | undefined = undefined,
+            prefix: string | undefined = undefined) {
+        super(document.createElement('input'), name, label, id, prefix);
         this.type = 'text';
 
         this.createElement();

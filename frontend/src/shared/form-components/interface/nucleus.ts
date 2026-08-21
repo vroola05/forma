@@ -1,11 +1,13 @@
 import { FormService } from '../../../form-viewer/services/form-service';
 import { ConditionParser } from '../../condition-components/condition-parser';
 import { Condition } from '../../model/types';
+import { InputNucleus } from './input-base';
 import { ValidationBase } from './validation-base';
 
 export class Nucleus extends ValidationBase {
     metadata = new Map<string, any>();
 
+    prefix: string | undefined = undefined;
     id: string | undefined = undefined;
     name: string = '';
     label: string | undefined = '';
@@ -17,7 +19,10 @@ export class Nucleus extends ValidationBase {
 
     content: HTMLDivElement = document.createElement('div');
 
-    constructor(name: string, label: string | undefined, id: string | undefined = undefined) {
+    constructor(
+            name: string, label: string | undefined,
+            id: string | undefined = undefined,
+            prefix: string | undefined = undefined) {
         super();
         if (!name) {
             throw new Error('Name is a required parameter');
@@ -25,6 +30,7 @@ export class Nucleus extends ValidationBase {
         
         this.name = name;
         this.label = label;
+        this.prefix = prefix;
         this.id = id;
 
         FormService.getInstance().addNucleus(this);
@@ -46,7 +52,8 @@ export class Nucleus extends ValidationBase {
     }
 
     getId() {
-        return this.id ? `${this.name}-${this.id}` : this.name;
+        const baseId = this.id ? `${this.name}-${this.id}` : this.name;
+        return this.prefix ? `${this.prefix}-${baseId}` : baseId;
     }
 
     setId(id: string | undefined) {
@@ -117,7 +124,19 @@ export class Nucleus extends ValidationBase {
         }
     }
 
+    /**
+     * Returns true if the values are stored in an array
+     * @returns boolean
+     */
     hasChildren(): boolean {
+        return false;
+    }
+
+    /**
+     * Returns true if the values are stored in a set or double array
+     * @returns boolean
+     */
+    hasSets(): boolean {
         return false;
     }
 }

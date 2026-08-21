@@ -4,6 +4,14 @@ This tool can be used to host your own forms platform. It can be used to host si
 # Project startup
 This project is still being developed. To run the project you'll need to follow the steps beneath.
 
+## Which system
+When installing the application on Windows it is recommanded to chose either Windows Subsystem for Linux (WSL) or Windows itself. If you'l mix them up you'll have difficulties connecting the frontend to the backend.
+When you install the app on Linux you can follow the instructions for WSL.
+
+My recommendation is to install the application on WSL or Linux.
+
+When installing WSL for the first time it is recommanded to create a non-root user.
+
 # Prerequisites
 - Docker
 - Java
@@ -16,7 +24,7 @@ This project is still being developed. To run the project you'll need to follow 
 - Add the bin folder to the PATH (example: PATH=C:\INSTALL_DIR\jdk-25.X.X.X\bin)
 - Create a system variable: JAVA_HOME=C:\INSTALL_DIR\jdk-25.X.X.X
 
-### WSL
+### WSL / Linux
 - sudo apt update && sudo apt upgrade -y
 - sudo apt install openjdk-25-jdk -y
 
@@ -26,7 +34,7 @@ This project is still being developed. To run the project you'll need to follow 
 - Extract the zip-file in a folder of choice.
 - Add the bin folder to the PATH (example: PATH=C:\INSTALL_DIR\apache-maven-3.9.12\bin)
 
-### WSL
+### WSL / Linux
 - sudo apt update && sudo apt upgrade -y
 - sudo apt install maven -y
 
@@ -38,7 +46,9 @@ This project is still being developed. To run the project you'll need to follow 
   node -v
   npm -v
 
-### WSL
+### WSL / Linux
+- sudo apt-get update && sudo apt-get install -y curl
+- curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 - nvm install --lts
 - Check the version
   node -v

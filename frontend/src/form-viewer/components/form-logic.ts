@@ -59,7 +59,7 @@ export class FormLogic {
         const tabNameUrlParam = Router.getUrlParameter('tabName');
 
         this.currentTab = tabNameUrlParam ?? this.form.fields[0].name;
-        
+
         this.form.setTab(this.currentTab);
     }
 
@@ -91,7 +91,7 @@ export class FormLogic {
         }
 
         const formData = FormRenderer.getFormData(this.form);
-        
+
         Http.post(`${Router.tenantPath}/api/forms`, formData, {})
             .then(formSubmissionData => {
                 const formNameUrlParam = Router.getUrlParameter('formName');
@@ -99,10 +99,11 @@ export class FormLogic {
                     formSubmission: formSubmissionData as FormSubmission
                 });
             }).catch(error => {
+
                 if (error.type === ErrorType.VALIDATION) {
+                    console.log(error.getDetails());
                     this.form.validateBE(error.getDetails());
                 }
-
             });
     }
 }

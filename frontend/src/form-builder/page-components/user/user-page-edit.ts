@@ -26,21 +26,7 @@ export class UserPageEdit extends SettingsPage {
         this.isNew = id === 'new';
         this.setTitle(this.isNew ? Lang.get('user.new.title') : Lang.get('user.edit.title'));
 
-        Http.get(`${Router.tenantPath}/api/groups/list`, {})
-        .then((groups) => {
-            this.groups = groups;
-
-            if (this.isNew) {
-
-                this.createContent(groups);
-                return;
-            } else {
-                this.#getUser(id, groups);
-            }
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+        this.#getGroups(id);
     }
 
     afterInit() {
@@ -50,11 +36,26 @@ export class UserPageEdit extends SettingsPage {
         }));
     }
 
+    #getGroups(id: string) {
+        Http.get(`${Router.tenantPath}/api/groups/list`, {})
+        .then((groups) => {
+            this.groups = groups;
+
+            if (this.isNew) {
+                this.createContent(groups);
+            } else {
+                this.#getUser(id, groups);
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    }
+
     #getUser(id: string, groups: GroupRegisterRequestDto[]) {
         Http.get(`${Router.tenantPath}/api/users/${id}`)
             .then((user: UserRegisterRequestDto) => {
                 this.user = user;
-                console.log(this.user);
                 this.createContent(groups);
             })
             .catch((error) => {

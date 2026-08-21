@@ -155,6 +155,7 @@ export class BuilderTabPage extends BuilderFieldInterface {
         return {
             ...this.fieldProperties.getProperties(),
             type: this.type,
+            sharedTab: false,
             fields: this.fields.map(f => f.getData())
         };
     }

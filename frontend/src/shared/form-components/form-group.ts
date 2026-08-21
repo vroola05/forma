@@ -50,7 +50,6 @@ export class FormGroup extends Nucleus {
         this.formDomElements.className = 'form-group-container needs-validation';
         this.formDomElements.setAttribute('novalidate', 'true');
         this.content.append(this.formDomElements);
-
     }
     
     async createFields(fields: FieldDto[])  {
@@ -66,7 +65,6 @@ export class FormGroup extends Nucleus {
             
             field.afterInit();
         }
-        
     }
 
     /**
