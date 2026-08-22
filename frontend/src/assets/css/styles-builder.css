@@ -400,10 +400,19 @@
 
             overflow-y: auto;
             overflow-x: hidden;
+
             .form-container {
                 margin: 0;
                 border-radius: 0;
                 border: none;
+            }
+
+
+            .builder-page-settings-success {
+                margin: var(--default-space-double);
+                .builder-page-settings-header {
+
+                }
             }
         }
 
@@ -1216,14 +1225,14 @@ Styles voor builder-field.js
 }
 
 .builder-text-editor.editor-container {
-    border: 1px solid #ddd;
-    border-radius: var(--default-space);
+    border-top: 1px solid var(--secondary-color-light);
+    border-bottom: 1px solid var(--secondary-color-light);
     overflow: hidden;
     font-family: sans-serif;
 
     .builder-text-editor-toolbar {
         background: white;
-        padding: var(--default-space-double);
+        padding: var(--default-space-double) 0px;
         border-bottom: none;
         display: flex;
         flex-wrap: wrap;
@@ -1272,6 +1281,14 @@ Styles voor builder-field.js
         padding: var(--default-space-double);
         outline: none;
         overflow-y: auto;
+
+        p.builder-text-editor-placeholder:first-child::before {
+            color: var(--secondary-color-light);
+            content: attr(data-placeholder);
+            float: left;
+            height: 0;
+            pointer-events: none;
+        }
     }
 
 

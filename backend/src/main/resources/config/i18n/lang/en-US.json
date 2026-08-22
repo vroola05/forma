@@ -65,6 +65,7 @@
 
     "user.title": "User",
 
+    "text.editor.placeholder": "Start typing here...",
     "text.editor.table.create": "Create",
     "text.editor.table.row.add": "Add Row",
     "text.editor.table.row.delete": "Delete Row",

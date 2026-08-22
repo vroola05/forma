@@ -22,7 +22,7 @@ export class RepeatingGroup extends Nucleus {
 
     fields: BaseFieldDto[] | undefined = [];
 
-    sets: { deleteBtn: FormButton | undefined; items: InputNucleus[] | undefined }[] = [];
+    sets: { deleteBtn: FormButton | undefined; fields: InputNucleus[] | undefined }[] = [];
 
     constructor(baseFieldDto: RepeatingGroupDto, id: string | undefined = undefined) {
         super(baseFieldDto.name, baseFieldDto.label, id);
@@ -112,7 +112,7 @@ export class RepeatingGroup extends Nucleus {
      */
     async addRow() {
         const index = this.sets.length;
-        this.sets.push({ deleteBtn: undefined, items: [] });
+        this.sets.push({ deleteBtn: undefined, fields: [] });
         if (this.maxLength && index >= this.maxLength) {
             console.error('can\'t append new row');
             return;
@@ -160,7 +160,7 @@ export class RepeatingGroup extends Nucleus {
     }
 
     async createFields(index: number, repeatingGroupInnerContainerDom: HTMLElement) {
-        if (!this.fields || !this.sets[index].items) {
+        if (!this.fields || !this.sets[index].fields) {
             return;
         }
 
@@ -171,7 +171,7 @@ export class RepeatingGroup extends Nucleus {
             }
 
             repeatingGroupInnerContainerDom.appendChild(field.getContent());
-            this.sets[index].items.push(field);
+            this.sets[index].fields.push(field);
             field.afterInit();
         }
 
@@ -235,36 +235,42 @@ export class RepeatingGroup extends Nucleus {
 
     
     getSets(): Nucleus[][] {
-        return this.sets.map(set => set.items) as Nucleus[][];
+        return this.sets.map(set => set.fields) as Nucleus[][];
     }
 
 
-    // /**
-    //  * Valideert het formulier door alle geregistreerde inputs te controleren.
-    //  * Het voegt de 'was-validated' klasse toe aan het formulier om de validatie visueel weer te geven.
-    //  * @param {*} name
-    //  * @return {boolean} true als alle inputs geldig zijn, anders false
-    //  */
-    // validate() {
-    //     if (!this.getShow()) {
-    //         return true;
-    //     }
+    /**
+     * Valideert het formulier door alle geregistreerde inputs te controleren.
+     * Het voegt de 'was-validated' klasse toe aan het formulier om de validatie visueel weer te geven.
+     * @param {*} name
+     * @return {boolean} true als alle inputs geldig zijn, anders false
+     */
+    validate() {
+        if (!this.getShow()) {
+            return true;
+        }
 
-    //     let valid = true
-    //     for (const set of this.sets) {
-    //         for (const input of set) {
-    //             if (!input.validate()) {
-    //                 valid = false;
-    //             }
-    //         }
-    //     }
-    //     return valid;
-    // }
+        let valid: boolean = true;
+        for (const set of this.sets) {
+            valid = this.#validateSet(set.fields ?? []);
+        }
+        return valid;
+    }
 
-    // /**
-    //  * 
-    //  * @returns 
-    //  */
+    #validateSet(set: InputNucleus[]): boolean {
+        let valid = true;
+        for (const input of set) {
+            if (!input.validate()) {
+                valid = false;
+            }
+        }
+        return valid;
+    }
+
+    /**
+     * 
+     * @returns 
+     */
 
     getValue() {
         return null;

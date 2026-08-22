@@ -110,7 +110,7 @@ export class Tab extends Nucleus {
         
         let isValid = true;
         for (const field of this.fields) {
-            if (field instanceof InputNucleus && !field.validate()) {
+            if (field instanceof Nucleus && !field.validate()) {
                 isValid = false;
             }
         }

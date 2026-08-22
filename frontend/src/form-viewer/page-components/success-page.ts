@@ -1,3 +1,5 @@
+import { Footer } from '../../shared/generic-components/footer';
+import { Header } from '../../shared/generic-components/header';
 import { FormSubmission } from '../../shared/model/types';
 import { Page } from '../../shared/page-components/page';
 import { Http } from '../../shared/services/http';
@@ -11,6 +13,9 @@ export class SuccessPage extends Page {
     pageContentContainer = document.createElement('div');
     formContainer = document.createElement('div');
     pageTitle = document.createElement('h1');
+
+    header: Header = new Header();
+    footer: Footer = new Footer();
 
     formService = FormService.getInstance();
 
@@ -83,5 +88,14 @@ export class SuccessPage extends Page {
         document.title = title;
     }
 
+    getContent() {
+        const fragment = document.createDocumentFragment();
+        fragment.append(
+            this.header.getContent(),
+            this.content,
+            this.footer.getContent());
+
+        return fragment;
+    }
     
 }
