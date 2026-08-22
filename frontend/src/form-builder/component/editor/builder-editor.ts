@@ -3,11 +3,14 @@ import { Table } from '@tiptap/extension-table';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
 import { TableRow } from '@tiptap/extension-table-row';
-import { default as StarterKit, default as Underline } from '@tiptap/starter-kit';
+import StarterKit from '@tiptap/starter-kit';
+import Underline from '@tiptap/extension-underline'; 
+import Placeholder from '@tiptap/extension-placeholder';
 
 import { DollarMenuMention } from './builder-dollar-menu';
 import { BuilderEditorTableBubbleMenu } from './builder-editor-table-bubble-menu';
 import { BuilderTextEditorToolbar } from './builder-editor-toolbar';
+import { Lang } from '../../../shared/services/lang';
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
@@ -22,18 +25,16 @@ const MentionTriggerExtension = Extension.create({
     name: 'mentionTrigger',
     addCommands() {
         return {
-            openMentions: () => ({ state, commands }) => {
-                const { selection } = state;
+            openMentions: () => ({ commands, editor }) => {
+                const { selection } = editor.state;
                 const { $from } = selection;
 
                 const charBefore = $from.nodeBefore?.textContent?.slice(-1);
 
                 if (charBefore !== '$') {
-                    // .insertContent() geeft een boolean terug, stuur die door
                     return commands.insertContent('$');
                 }
-                
-                // .focus() geeft een boolean terug, stuur die door
+
                 return commands.focus();
             }
         }
@@ -42,12 +43,12 @@ const MentionTriggerExtension = Extension.create({
 
 
 export class BuilderEditor  {
-    #content = document.createElement('div');
-    #editorElement = document.createElement('div');
+    readonly #content = document.createElement('div');
+    readonly #editorElement = document.createElement('div');
     #toolbar: BuilderTextEditorToolbar | null = null;
-    #editor: Editor;
+    readonly #editor: Editor;
 
-    timeout: NodeJS.Timeout | undefined = undefined;
+    timeout: number | undefined = undefined;
     onValueChanged: (jsonData: any) => void;
 
     constructor(onValueChanged: (jsonData: any) => void) {
@@ -58,6 +59,11 @@ export class BuilderEditor  {
             extensions: [
                 StarterKit,
                 Underline,
+                Placeholder.configure({
+                    placeholder: Lang.get('text.editor.placeholder'),
+                    emptyEditorClass: 'builder-text-editor-placeholder', 
+                }),
+
                 Table.configure({ resizable: true }),
                 TableRow,
                 TableHeader,
@@ -95,7 +101,7 @@ export class BuilderEditor  {
         if (this.timeout) {
             clearTimeout(this.timeout);
         }
-        this.timeout = setTimeout(() => {
+        this.timeout = window.setTimeout(() => {
             if (this.onValueChanged) {
                 this.onValueChanged(this.#editor.getJSON());
             }

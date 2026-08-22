@@ -74,6 +74,7 @@
     "user.new.title": "Nieuwe gebruiker aanmaken",
     "user.edit.title": "Gebruiker wijzigen",
 
+    "text.editor.placeholder": "Begin hier met typen...",
     "text.editor.table.create": "Maken",
     "text.editor.table.row.add": "Rij toevoegen",
     "text.editor.table.row.delete": "Rij verwijderen",

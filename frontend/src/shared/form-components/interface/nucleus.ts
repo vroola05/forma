@@ -124,6 +124,9 @@ export class Nucleus extends ValidationBase {
         }
     }
 
+    validate(): boolean {
+        return true;
+    }
     /**
      * Returns true if the values are stored in an array
      * @returns boolean

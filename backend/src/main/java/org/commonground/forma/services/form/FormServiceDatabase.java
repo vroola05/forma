@@ -131,12 +131,10 @@ public class FormServiceDatabase implements FormService {
             this.tabPageService.save(resultEntity, tabPage, sortOrderTab++);
         }
 
-        // FormConfig formConfig = formWrapper.getFormConfig();
-        // if (formConfig != null) {
-        //     if (formConfig.getFormConfigSuccessPage() != null) {
-        //         this.formConfigSuccessPageService.save(resultEntity, formConfig.getFormConfigSuccessPage());
-        //     }
-        // }
+        FormConfig formConfig = formWrapper.getFormConfig();
+        if (formConfig != null && formConfig.getFormConfigSuccessPage() != null) {
+            this.formConfigSuccessPageService.save(resultEntity, formConfig.getFormConfigSuccessPage());
+        }
 
         return null;
     }

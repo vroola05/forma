@@ -13,7 +13,9 @@ import org.commonground.forma.database.dao.submission.FormSubmissionEntity;
 import org.commonground.forma.exceptions.FieldValidationException;
 import org.commonground.forma.exceptions.FormFieldError;
 import org.commonground.forma.exceptions.FormValidationException;
+import org.commonground.forma.mapper.FormMapper;
 import org.commonground.forma.model.constants.FormStatus;
+import org.commonground.forma.model.form.FormConfig;
 import org.commonground.forma.model.form.FormConfigSuccessPage;
 import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.fields.Form;
@@ -52,13 +54,16 @@ public class FormController {
     private final FileService fileService;
     private final SecurityService securityService;
 
+    private final FormMapper formMapper;
+
     public FormController(
         FormServiceDatabase formService,
         FormConfigSuccessPageServiceDatabase formConfigSuccessPageService,
         FormSubmissionService formSubmissionService,
         StorageService storageService,
         FileService fileService,
-        SecurityService securityService
+        SecurityService securityService,
+        FormMapper formMapper
     ) {
         this.formService = formService;
         this.formConfigSuccessPageService = formConfigSuccessPageService;
@@ -66,6 +71,7 @@ public class FormController {
         this.storageService = storageService;
         this.fileService = fileService;
         this.securityService = securityService;
+        this.formMapper = formMapper;
     }
 
     @GetMapping("/{formName}")
@@ -89,16 +95,20 @@ public class FormController {
 
         FormSubmissionEntity formSubmissionEntity = this.formSubmissionService.getFormSubmissionEntity(formSubmission.getSubmissionId());
         FormDefinitionEntity formDefinitionEntity = formSubmissionEntity.getFormDefinition();
+
+        FormWrapper formWrapper = new FormWrapper();
+        formWrapper.setForm(this.formMapper.toResponseDto(formDefinitionEntity));
         FormConfigSuccessPageEntity formConfigSuccessPageEntity = formDefinitionEntity.getFormConfigSuccessPageEntity();
 
+        formWrapper.setFormConfig(new FormConfig());
+        formWrapper.getFormConfig().setFormConfigSuccessPage(this.formConfigSuccessPageService.get(formDefinitionEntity.getId()));
+        
         FormConfigSuccessPage formConfigSuccessPage = new FormConfigSuccessPage();
         if (formConfigSuccessPageEntity != null) {
             formConfigSuccessPage.setShowSummary(formConfigSuccessPageEntity.isShowSummary());
             formConfigSuccessPage.setName(formConfigSuccessPageEntity.getTemplateName());
             formConfigSuccessPage.setTitle(formConfigSuccessPageEntity.getTemplateTitle());
-            // formConfigSuccessPage.setContent(
-            //     this.formConfigSuccessPageService.transform(
-            //         this.formService.transform(formDefinitionEntity), formSubmissionEntity.getData()));
+            formConfigSuccessPage.setContent(this.formConfigSuccessPageService.transform(formWrapper, formSubmissionEntity.getData()));
         }
 
         return formConfigSuccessPage;

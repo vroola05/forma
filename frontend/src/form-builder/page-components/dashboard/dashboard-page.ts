@@ -4,22 +4,25 @@ import { AdminHeader } from '../../component/admin-header';
 
 export class DashboardPage extends Page {
     header: AdminHeader;
-
     constructor() {
         super();
         this.setTitle(Lang.get('dashboad.title'));
         this.header = new AdminHeader();
 
+        
         this.createContent();
+
+        
     }
 
     createContent() {
         this.content = document.createElement('div');
         this.content.className = 'dashboard-container';
+        
+
     }
 
     afterInit() {
-
     }
 
     getContent() {
