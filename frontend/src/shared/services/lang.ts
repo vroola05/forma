@@ -3,31 +3,37 @@ import { Http } from './http';
 import { Router } from './router';
 
 export class Lang {
-    static translation: Map<string, string> = new Map();
+    static #translation: Map<string, string> = new Map();
 
+    static #lang_codes: string[] = ['nl', 'en', 'de', 'pl', 'uk', 'fr', 'es', 'ro', 'it', 'pt', 'hu' ];
+    
     constructor() {
     }
 
     static load() {
         return new Promise<void>((resolve, reject) => {
-        const language = navigator.language || navigator.language;
+            const language = navigator.language || navigator.language;
 
-        Http.get(`${Router.tenantPath}/api/language/${language}`, {})
-            .then(translation => {
-                if (translation) {
-                    this.translation = new Map(Object.entries(translation));
-                }
+            Http.get(`${Router.tenantPath}/api/language/${language}`, {})
+                .then(translation => {
+                    if (translation) {
+                        this.#translation = new Map(Object.entries(translation));
+                    }
 
-                resolve();
-            })
-            .catch(() => {
-                reject();
-            });
+                    resolve();
+                })
+                .catch(() => {
+                    reject();
+                });
         });
     }
 
+    static get_default_languages(): string[] {
+        return this.#lang_codes;
+    }
+    
     static get(key: string, ...val: any[]): string {
-        let translation = this.translation.get(key) || key;
+        let translation = this.#translation.get(key) || key;
 
         val.forEach(replacement => {
             translation = translation.replace('{}', replacement);

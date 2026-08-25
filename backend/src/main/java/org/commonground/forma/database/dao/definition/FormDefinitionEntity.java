@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.commonground.forma.database.dao.BaseEntity;
+import org.commonground.forma.database.dao.translation.FormTranslation;
 import org.commonground.forma.model.constants.FormStatus;
 import org.commonground.forma.model.form.condition.Condition;
 import org.hibernate.annotations.JdbcType;
@@ -58,6 +59,9 @@ public class FormDefinitionEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private FormStatus status;
+
+    @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FormTranslation> labels = new ArrayList<>();
 
     @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FormTabInstanceDefinitionEntity> tabs = new ArrayList<>();

@@ -146,7 +146,7 @@ export class BuilderPropertiesOptionsType {
     addRow(index: number, value: any) {
         const builderPropertyOptionItem = document.createElement('div');
         builderPropertyOptionItem.className = 'builder-property-option-item icon icon-grip-vertical';
-        builderPropertyOptionItem.setAttribute('data-id', this.property.id);
+        builderPropertyOptionItem.dataset.id = this.property.id;
         builderPropertyOptionItem.setAttribute('draggable', 'true');
         builderPropertyOptionItem.addEventListener("dragstart", (event) => {
             this.draggedItem = event.currentTarget as HTMLElement;
@@ -154,13 +154,13 @@ export class BuilderPropertiesOptionsType {
         
         this.builderPropertyOptionsContainer.appendChild(builderPropertyOptionItem);
 
-        for (let i=0; i < this.optionDefinition.length; i++) {
+        for (const element of this.optionDefinition) {
             builderPropertyOptionItem.appendChild(this.getInputCol(
-                this.optionDefinition[i].type,
-                this.optionDefinition[i].label,
-                this.optionDefinition[i].value,
-                this.optionDefinition.length === 1 ? this.property.value[index] : this.property.value[index][this.optionDefinition[i].value],
-                this.optionDefinition[i].type !== 'checkbox'));
+                element.type,
+                element.label,
+                element.value,
+                this.optionDefinition.length === 1 ? this.property.value[index] : this.property.value[index][element.value],
+                element.type !== 'checkbox'));
         }
 
         const builderPropertyOptionItemDeleteContainer = document.createElement('div');
@@ -175,7 +175,7 @@ export class BuilderPropertiesOptionsType {
             const target = event.target as HTMLElement;
             const rowContainer = target.closest('.builder-property-option-item');
             if (rowContainer) {
-                this.builderPropertyOptionsContainer.removeChild(rowContainer);
+                rowContainer.remove();
                 this.setOptions();
             }
         }
@@ -190,7 +190,7 @@ export class BuilderPropertiesOptionsType {
         input.placeholder = placeholder;
         input.name = key;
         input.className = 'form-control' + (type !=='checkbox' ? '' : ' form-check-input');
-        input.setAttribute('data-key', key);
+        input.dataset.key = key;
         
         column.appendChild(input);
 

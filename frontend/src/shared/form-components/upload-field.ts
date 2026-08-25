@@ -409,7 +409,7 @@ class FileUpload {
     constructor(fileName: string, file: File | undefined, onDelete: (fileUpload: FileUpload) => void) {
         this.file = file;
         this.fileName = fileName;
-
+        this.storedFilename = fileName;
         this.barWrapper.className = 'upload-bar-wrapper';
         const barContainer = document.createElement('div');
         barContainer.className = 'upload-bar-container';
@@ -424,6 +424,7 @@ class FileUpload {
         const barLabel = document.createElement('div');
         barLabel.className = 'upload-bar-label';
         barLabel.textContent = this.fileName;
+        
         
 
         this.barLabelProgres.className = 'upload-bar-label-progress';
@@ -453,6 +454,10 @@ class FileUpload {
         return this.barWrapper;
     }
 
+    /**
+     * The stored filename is the name of the file when it is stored on the backend.
+     * @param storedFilename 
+     */
     setStoredFileName(storedFilename: string) {
         this.storedFilename = storedFilename;
     }

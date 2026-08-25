@@ -4,6 +4,7 @@ import { Lang } from '../../shared/services/lang';
 import { Router } from '../../shared/services/router';
 import { Auth } from '../services/auth';
 import { headerService } from '../services/header-service';
+import { Dropdown } from './dropdown-menu';
 
 export class Header {
     header: HTMLElement = document.createElement('header');
@@ -28,7 +29,7 @@ export class Header {
             this.headerLogo.src = logoSrc;
         });
 
-        EventService.addEventListener('header-buttons-left', (formButtons) => {
+        EventService.addEventListener('header-buttons-left', (formButtons: (FormButton | Dropdown)[]) => {
             this.navbarNavLeft.innerHTML = '';
             for (const formButton of formButtons) {
                 this.navbarNavLeft.appendChild(this.getNavBarItem(formButton));
@@ -165,11 +166,11 @@ export class Header {
         document.removeEventListener('click', this.#userMenuClickOutside.bind(this));
     }
 
-    getNavBarItem(formButton: FormButton) {
+    getNavBarItem(menuItem: (FormButton | Dropdown)) {
         const navItem = document.createElement('li');
         navItem.className = 'nav-item';
 
-        navItem.appendChild(formButton.getContent());
+        navItem.appendChild(menuItem.getContent());
         return navItem;
     }
 

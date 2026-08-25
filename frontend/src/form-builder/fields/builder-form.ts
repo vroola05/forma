@@ -26,6 +26,7 @@ export class BuilderForm extends BuilderFieldInterface {
                 options: Object.entries(FORM_STATUS).map(([key, val_fnc]) => ({value: key, text: val_fnc()}))
             },
             {type: PROPERTY_TYPE.LIST, id: 'confirmation', order: 7, label: Lang.get('prop.summary.confirmation.label'), value: []},
+            {type: PROPERTY_TYPE.LABEL, id: 'labels', order: 9, label: 'Labels', value: []},
         ]);
 
         this.createContent();

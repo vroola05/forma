@@ -83,8 +83,10 @@
     "builder.form.name": "Formname",
 
     "form.summary": "Summary page",
-
     "tab.new": "New tab",
+
+    "page.settings.generic.forms": "Form settings",
+    "page.settings.generic.forms.successpage": "Generic success page",
 
     "page.settings.form": "Form",
     "page.settings.generic": "Generic",

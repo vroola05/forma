@@ -95,6 +95,14 @@ CREATE TABLE form_definition (
     CONSTRAINT unique_form_name UNIQUE (name, tenant_id)
 );
 
+CREATE TABLE form_translations (
+    id BIGSERIAL PRIMARY KEY,
+    form_id UUID REFERENCES form_definition(id) ON DELETE CASCADE,
+    locale VARCHAR(5) NOT NULL,
+    label VARCHAR(255) NOT NULL,
+    CONSTRAINT uq_form_locale UNIQUE (form_id, locale)
+);
+
 CREATE TABLE form_tab_definition (
     id UUID PRIMARY KEY,
     tenant_id UUID REFERENCES tenant(id),
@@ -149,10 +157,13 @@ CREATE TABLE form_field_definition (
 );
 
 CREATE TABLE form_config_success_page (
-    id UUID PRIMARY KEY REFERENCES form_definition(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY,
+    form_definition_id UUID NULL REFERENCES form_definition(id) ON DELETE CASCADE,
+    tenant_id UUID REFERENCES tenant(id),
     template_name TEXT NULL,
     template_title TEXT NULL,
     template JSONB NULL,
+    is_global_default BOOLEAN NOT NULL DEFAULT FALSE,
     show_summary  BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

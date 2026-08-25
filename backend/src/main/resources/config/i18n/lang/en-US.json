@@ -84,6 +84,9 @@
 
     "form.summary": "Summary page",
 
+    "page.settings.generic.forms": "Form settings",
+    "page.settings.generic.forms.successpage": "Generic success page",
+
     "page.settings.form": "Form",
     "page.settings.generic": "Generic",
     "page.settings.login": "Login",

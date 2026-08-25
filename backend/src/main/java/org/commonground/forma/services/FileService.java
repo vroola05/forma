@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.apache.tika.Tika;
@@ -208,8 +209,8 @@ public class FileService {
 
             if (allowedExtensions != null && !allowedExtensions.isEmpty()) {
                 boolean isValidExtension = allowedExtensions.stream()
-                        .map(String::toLowerCase)
-                        .anyMatch(ext -> ext.equals(extension));
+                        .filter(Objects::nonNull)
+                        .anyMatch(ext -> ext.equalsIgnoreCase(extension));
 
                 if (!isValidExtension) {
                     throw new FieldValidationException("{form.validation.file.extension}", file.getOriginalFilename(), String.join(", ", allowedExtensions));

@@ -24,10 +24,10 @@ import org.commonground.forma.model.submission.FormSubmissionResponse;
 import org.commonground.forma.services.FileService;
 import org.commonground.forma.services.SecurityService;
 import org.commonground.forma.services.StorageService;
+import org.commonground.forma.services.config.FormConfigSuccessPageService;
+import org.commonground.forma.services.config.FormConfigSuccessPageServiceDatabase;
 import org.commonground.forma.services.form.FormService;
 import org.commonground.forma.services.form.FormServiceDatabase;
-import org.commonground.forma.services.formConfig.FormConfigSuccessPageService;
-import org.commonground.forma.services.formConfig.FormConfigSuccessPageServiceDatabase;
 import org.commonground.forma.services.submission.FormSubmissionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -101,7 +101,7 @@ public class FormController {
         FormConfigSuccessPageEntity formConfigSuccessPageEntity = formDefinitionEntity.getFormConfigSuccessPageEntity();
 
         formWrapper.setFormConfig(new FormConfig());
-        formWrapper.getFormConfig().setFormConfigSuccessPage(this.formConfigSuccessPageService.get(formDefinitionEntity.getId()));
+        formWrapper.getFormConfig().setFormConfigSuccessPage(this.formConfigSuccessPageService.getByFormId(formDefinitionEntity.getId()));
         
         FormConfigSuccessPage formConfigSuccessPage = new FormConfigSuccessPage();
         if (formConfigSuccessPageEntity != null) {

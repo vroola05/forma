@@ -5,6 +5,7 @@ import { BuilderFieldInterface } from '../fields/builder-field-interface';
 import { BuilderPropertiesService } from '../services/builder-properties-service';
 import { FIELD_TYPE, FieldProperty } from '../types';
 import { BuilderPropertiesConditionType } from './builder-properties-condition-type';
+import { BuilderPropertiesLabelType } from './builder-properties-label-type';
 import { BuilderPropertiesOptionsType } from './builder-properties-options-type';
 
 /**
@@ -104,6 +105,11 @@ export class BuilderPropertyComponent {
                             {label: Lang.get('prop.option.text'), value: 'text', type: FIELD_TYPE.TEXT},
                             {label: '', value: 'selected', type: FIELD_TYPE.CHECKBOX}
                         ]);
+                    this.fieldPropertiesContainer.appendChild(builderPropertiesOptionsType.getContent());
+                    break;
+                }
+                case 'label': {
+                    const builderPropertiesOptionsType = new BuilderPropertiesLabelType(field, property);
                     this.fieldPropertiesContainer.appendChild(builderPropertiesOptionsType.getContent());
                     break;
                 }

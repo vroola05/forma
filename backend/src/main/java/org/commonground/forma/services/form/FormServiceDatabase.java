@@ -17,7 +17,7 @@ import org.commonground.forma.model.form.fields.Field;
 import org.commonground.forma.model.form.fields.Form;
 import org.commonground.forma.model.form.fields.TabPage;
 import org.commonground.forma.model.settings.Tenant;
-import org.commonground.forma.services.formConfig.FormConfigSuccessPageService;
+import org.commonground.forma.services.config.FormConfigSuccessPageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,7 +84,7 @@ public class FormServiceDatabase implements FormService {
 
         formWrapper.setFormConfig(new FormConfig());
         formWrapper.getFormConfig()
-                .setFormConfigSuccessPage(this.formConfigSuccessPageService.get(formDefinitionEntity.getId()));
+                .setFormConfigSuccessPage(this.formConfigSuccessPageService.getByFormId(formDefinitionEntity.getId()));
 
         return formWrapper;
     }
@@ -133,7 +133,7 @@ public class FormServiceDatabase implements FormService {
 
         FormConfig formConfig = formWrapper.getFormConfig();
         if (formConfig != null && formConfig.getFormConfigSuccessPage() != null) {
-            this.formConfigSuccessPageService.save(resultEntity, formConfig.getFormConfigSuccessPage());
+            this.formConfigSuccessPageService.saveSpecific(resultEntity, formConfig.getFormConfigSuccessPage());
         }
 
         return null;

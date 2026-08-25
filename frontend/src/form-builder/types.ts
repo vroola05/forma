@@ -24,6 +24,7 @@ export enum PROPERTY_TYPE {
     STRING = 'string',
     HIDDEN = 'hidden',
     SELECT = 'select',
+    LABEL = 'label',
     NUMBER = 'number',
     BOOLEAN = 'boolean',
     OPTIONS = 'options',
@@ -46,5 +47,6 @@ export interface FieldProperty {
 export interface FieldPropertyOption {
     label: string;
     value: string;
+    options?: OptionDto[],
     type: FIELD_TYPE;
 }

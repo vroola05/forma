@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -29,10 +29,14 @@ public class FormConfigSuccessPageEntity extends BaseEntity {
     @Id
     private UUID id;
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "form_definition_id", nullable = true) 
     private FormDefinitionEntity form;
+
+    private UUID tenantId;
+    
+    @Column(name = "is_global_default", nullable = false)
+    private boolean isGlobalDefault = false;
 
     private String templateName;
     private String templateTitle;

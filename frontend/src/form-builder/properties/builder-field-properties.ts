@@ -42,6 +42,7 @@ export class BuilderFieldProperties {
             property.type !== 'boolean' &&
             property.type !== 'options' &&
             property.type !== 'list' &&
+            property.type !== 'label' &&
             property.type !== 'condition') {
             throw new Error('property.type moet een van de volgende waarden hebben: string, number, boolean');
         }

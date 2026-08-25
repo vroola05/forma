@@ -87,6 +87,7 @@
     "form.dashboard.list.active": "Actief",
     "form.dashboard.list.last.modified": "Laatst Gewijzigd",
 
+
     "builder.forms.title": "Formulieren",
     "builder.form.title": "Ontwerp een formulier",
     "builder.form.name": "Naam formulier",
@@ -95,10 +96,14 @@
 
     "tab.new": "Nieuwe tab",
 
+    "page.settings.generic.forms": "Formulier instellingen",
+    "page.settings.generic.forms.successpage": "Algemene dankpagina",
+    
     "page.settings.form": "Formulier",
     "page.settings.generic": "Algemeen",
     "page.settings.login": "Login",
     "page.settings.mail": "Email",
+    
     "page.settings.successpage": "Dankpagina",
     "page.settings.registration": "Registratie",
     "page.settings.payment": "Betaling",

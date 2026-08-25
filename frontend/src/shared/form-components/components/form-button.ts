@@ -9,7 +9,8 @@ export class FormButton {
     path: string | null = null;
     permissions: PERMISSION[] | null = null;
     
-    event: ((e?: PointerEvent | undefined) => void) | null = null;
+    events: ((e?: PointerEvent | undefined) => void)[] = [];
+    // event: ((e?: PointerEvent | undefined) => void) | null = null;
 
     constructor(label: string, classes: string | null, path: string | null = null, event: ((e?: PointerEvent | undefined) => void) | null = null, show: boolean = true) {
         this.label = label;
@@ -18,13 +19,17 @@ export class FormButton {
 
         this.createContent();
 
-        this.setEvent(event);
+        this.addEvent(event);
 
         if (!show) {
             this.hide();
         } else {
             this.show();
         }
+    }
+
+    onClick() {
+
     }
 
     setPermissions(...permissions: (PERMISSION | null)[]) {
@@ -35,7 +40,6 @@ export class FormButton {
     }
 
     #checkAccess() {
-        
         if (this.permissions && this.permissions.length > 0 && !Auth.hasAnyPermission(...this.permissions)) {
             this.hide();
             return false;
@@ -55,26 +59,28 @@ export class FormButton {
         return this;
     }
 
-    setEvent(event: ((e?: PointerEvent | undefined) => void) | null = null) {
-        if (this.event) {
-            this.button.removeEventListener('click', this.event);
-        }
+    addEvent(event: ((e?: PointerEvent | undefined) => void) | null = null) {
+        if (event === null)
+            return this;
 
-        this.event = event;
+        this.events.push(event);
+        
+        this.button.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            if (!this.#checkAccess()) {
+                return;
+            }
+          
+            if (!this.events || this.events.length === 0) {
+                return;
+            }
 
-        if (this.event) {
-            this.button.addEventListener('click', (e) => {
-                e.preventDefault();
+            for (const event of this.events) {
+                event(e);
+            }
+        });
 
-                if (!this.#checkAccess()) {
-                    return;
-                }
-
-                if (this.event) {
-                    this.event(e);
-                }
-            });
-        }
 
         return this;
     }

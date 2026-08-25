@@ -1,4 +1,4 @@
-package org.commonground.forma.services.formConfig;
+package org.commonground.forma.services.config;
 
 import java.util.UUID;
 
@@ -31,8 +31,9 @@ public class FormConfigSuccessPageServiceDatabase implements FormConfigSuccessPa
     }
 
     @Override
-    public FormConfigSuccessPage get(UUID id) {
-        return convertFormConfigSuccessPageEntity(this.formConfigSuccessPageRepository.findById(id).orElse(new FormConfigSuccessPageEntity()));
+    public FormConfigSuccessPage getByFormId(UUID id) {
+        return convertFormConfigSuccessPageEntity(this.formConfigSuccessPageRepository.findByFormId(id)
+                .orElse(new FormConfigSuccessPageEntity()));
     }
 
     private FormConfigSuccessPage convertFormConfigSuccessPageEntity(FormConfigSuccessPageEntity formConfigSuccessPageEntity) {
@@ -45,23 +46,55 @@ public class FormConfigSuccessPageServiceDatabase implements FormConfigSuccessPa
 
         return formConfigSuccessPage;
     }
-    
+
     private FormConfigSuccessPageEntity getFormConfigSuccessPageById(FormDefinitionEntity formDefinitionEntity) {
-        return this.formConfigSuccessPageRepository.findByForm(formDefinitionEntity).orElse(new FormConfigSuccessPageEntity());
+        return this.formConfigSuccessPageRepository.findByForm(formDefinitionEntity).orElseGet(() -> {
+            FormConfigSuccessPageEntity formConfigSuccessPageEntity = new FormConfigSuccessPageEntity();
+            formConfigSuccessPageEntity.setId(UUID.randomUUID());
+            return formConfigSuccessPageEntity;
+        });
     }
 
     @Override
     @Transactional
-    public String save(FormDefinitionEntity formDefinitionEntity, FormConfigSuccessPage formConfigSuccessPage) {
+    public String saveSpecific(FormDefinitionEntity formDefinitionEntity, FormConfigSuccessPage formConfigSuccessPage) {
+        if (formDefinitionEntity == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "{tenant.error.no_id}");
+        }
+        
+        // When the successpage is linked to a form
         FormConfigSuccessPageEntity formConfigSuccessPageEntity = getFormConfigSuccessPageById(formDefinitionEntity);
-
         formConfigSuccessPageEntity.setForm(formDefinitionEntity);
+        formConfigSuccessPageEntity.setGlobalDefault(false);
+        
+        formConfigSuccessPageEntity.setTenantId(formDefinitionEntity.getTenantId());
+
         formConfigSuccessPageEntity.setTemplateName(formConfigSuccessPage.getName());
         formConfigSuccessPageEntity.setTemplateTitle(formConfigSuccessPage.getTitle());
         formConfigSuccessPageEntity.setTemplate(formConfigSuccessPage.getTemplate());
         
-        formConfigSuccessPageEntity.setShowSummary(formConfigSuccessPage.getShowSummary() == null ? false : formConfigSuccessPage.getShowSummary());
+        formConfigSuccessPageEntity.setShowSummary(formConfigSuccessPage.getShowSummary() != null && formConfigSuccessPage.getShowSummary());
         this.formConfigSuccessPageRepository.save(formConfigSuccessPageEntity);
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public String saveGlobal(FormDefinitionEntity formDefinitionEntity, FormConfigSuccessPage formConfigSuccessPage) {
+        // When the successpage is linked to a tenant (global)
+        FormConfigSuccessPageEntity formConfigSuccessPageEntity = new FormConfigSuccessPageEntity();
+        formConfigSuccessPageEntity.setForm(null);
+        formConfigSuccessPageEntity.setGlobalDefault(true);
+        
+        formConfigSuccessPageEntity.setTenantId(formDefinitionEntity.getTenantId());
+
+        formConfigSuccessPageEntity.setTemplateName(formConfigSuccessPage.getName());
+        formConfigSuccessPageEntity.setTemplateTitle(formConfigSuccessPage.getTitle());
+        formConfigSuccessPageEntity.setTemplate(formConfigSuccessPage.getTemplate());
+        
+        formConfigSuccessPageEntity.setShowSummary(formConfigSuccessPage.getShowSummary() != null && formConfigSuccessPage.getShowSummary());
+        this.formConfigSuccessPageRepository.save(formConfigSuccessPageEntity);
+        
         return null;
     }
 

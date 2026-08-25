@@ -1,4 +1,4 @@
-package org.commonground.forma.services.formConfig;
+package org.commonground.forma.services.config;
 
 import java.util.UUID;
 
@@ -8,7 +8,8 @@ import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.fields.Form;
 
 public interface FormConfigSuccessPageService {
-    public FormConfigSuccessPage get(UUID id);
+    public FormConfigSuccessPage getByFormId(UUID id);
     public String transform(FormWrapper formWrapper, Form form);
-    public String save(FormDefinitionEntity formDefinitionEntity, FormConfigSuccessPage formConfigSuccessPage);
+    public String saveSpecific(FormDefinitionEntity formDefinitionEntity, FormConfigSuccessPage formConfigSuccessPage);
+    public String saveGlobal(FormDefinitionEntity formDefinitionEntity, FormConfigSuccessPage formConfigSuccessPage);
 }

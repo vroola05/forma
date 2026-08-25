@@ -92,13 +92,13 @@ export class BuilderSpacer {
         this.content.appendChild(this.spacerBtnsTop);
 
         this.toggleRelative = new FormButton('', 'builder-page-spacer-btn icon icon-pin-angle')
-            .setEvent(() => {
+            .addEvent(() => {
                 this.setAbsolute();
             });
         this.spacerBtnsTop.appendChild(this.toggleRelative.getContent());
 
         this.toggleAbsolute = new FormButton('', 'builder-page-spacer-btn icon icon-pin-angle-fill')
-            .setEvent(() => {
+            .addEvent(() => {
                 this.setRelative();
                 
             });
@@ -119,13 +119,13 @@ export class BuilderSpacer {
         this.content.appendChild(this.spacerBtnsCenter);
 
         this.toggleExpand = new FormButton('', 'builder-page-spacer-btn icon ' + (this.inverted ? 'icon-chevron-left' : 'icon-chevron-right'))
-            .setEvent(() => {
+            .addEvent(() => {
                 this.setExpanded(true);
                 this.setState();
             });
 
         this.toggleCollapse = new FormButton('', 'builder-page-spacer-btn icon ' + (this.inverted ? 'icon-chevron-right' : 'icon-chevron-left'))
-            .setEvent(() => {
+            .addEvent(() => {
                 this.setExpanded(false);
 
                 this.setState();
