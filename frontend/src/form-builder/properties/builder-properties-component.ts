@@ -13,7 +13,7 @@ import { BuilderPropertiesOptionsType } from './builder-properties-options-type'
  */
 export class BuilderPropertyComponent {
     content = document.createElement('div');
-    fieldPropertiesContainer = document.createElement('div');
+    
     
     subscriptions: (() => void)[] = [];
     field: BuilderFieldInterface | undefined = undefined;
@@ -27,9 +27,6 @@ export class BuilderPropertyComponent {
         this.windowFrame.setContent(this.content);
         
         this.content.className = 'builder-properties-container';
-
-        this.fieldPropertiesContainer.className = 'builder-field-properties-container';
-        this.content.appendChild(this.fieldPropertiesContainer);
 
         this.subscriptions.push(BuilderPropertiesService.subscribe((field: BuilderFieldInterface | undefined) => {
             
@@ -58,7 +55,8 @@ export class BuilderPropertyComponent {
     changeProperties(field: BuilderFieldInterface | undefined) {
         this.field = field;
 
-        this.fieldPropertiesContainer.innerHTML = '';
+        this.content.innerHTML = '';
+
         if (!field) {
             this.windowFrame.hide();
             return;
@@ -105,19 +103,19 @@ export class BuilderPropertyComponent {
                             {label: Lang.get('prop.option.text'), value: 'text', type: FIELD_TYPE.TEXT},
                             {label: '', value: 'selected', type: FIELD_TYPE.CHECKBOX}
                         ]);
-                    this.fieldPropertiesContainer.appendChild(builderPropertiesOptionsType.getContent());
+                    this.content.appendChild(builderPropertiesOptionsType.getContent());
                     break;
                 }
                 case 'label': {
                     const builderPropertiesOptionsType = new BuilderPropertiesLabelType(field, property);
-                    this.fieldPropertiesContainer.appendChild(builderPropertiesOptionsType.getContent());
+                    this.content.appendChild(builderPropertiesOptionsType.getContent());
                     break;
                 }
                 case 'list': {
                     const builderPropertiesListType = new BuilderPropertiesOptionsType(field, property, [
                             {label: Lang.get('prop.list.text'), value: 'value', type: FIELD_TYPE.TEXT}
                         ]);
-                    this.fieldPropertiesContainer.appendChild(builderPropertiesListType.getContent());
+                    this.content.appendChild(builderPropertiesListType.getContent());
                     break;
                 }
                 case 'condition': {
@@ -128,7 +126,7 @@ export class BuilderPropertyComponent {
                             this.onPropertyChanged(dom, property);
                         });
 
-                    this.fieldPropertiesContainer.appendChild(builderPropertiesConditionType.getContent());
+                    this.content.appendChild(builderPropertiesConditionType.getContent());
                     break;
                 }
                 default:
@@ -139,30 +137,32 @@ export class BuilderPropertyComponent {
     }
 
     getDefaultProperty(property: FieldProperty) {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'row m-1 ';
+        const builderProperties = document.createElement('div');
+        builderProperties.className = 'builder-properties';
 
         const label = document.createElement('label');
         label.textContent = property.label;
         label.htmlFor = `field-property-${property.id}`;
-        label.className = 'col-sm-4 col-form-label';
-        wrapper.appendChild(label);
+        label.className = 'builder-properties-label';
+        builderProperties.appendChild(label);
 
 
-        const inputWrapper = document.createElement('div');
-        inputWrapper.className = 'col-sm-8';
-        wrapper.appendChild(inputWrapper);
+        const builderPropertiesFieldWrapper = document.createElement('div');
+        builderPropertiesFieldWrapper.className = 'builder-properties-field-wrapper';
+        builderProperties.appendChild(builderPropertiesFieldWrapper);
+
+        const builderPropertiesField = document.createElement('div');
+        builderPropertiesField.className = 'builder-properties-field';
 
         const input = this.getPropertyDom(property);
-        input.setAttribute('data-id', property.id);
-        inputWrapper.appendChild(input);
+        input.dataset.id = property.id;
         
         const inputErrors = document.createElement('div');
         inputErrors.className = 'invalid-feedback';
-        inputWrapper.appendChild(inputErrors);
-
-        this.fieldPropertiesContainer.appendChild(wrapper);
-        // this.validate(property, input);
+        
+        builderPropertiesField.append(input);
+        builderPropertiesFieldWrapper.append(builderPropertiesField, inputErrors);
+        this.content.appendChild(builderProperties);
     }
 
     getPropertyDom(property: FieldProperty) {

@@ -169,6 +169,7 @@ export class BuilderPage extends Page {
     postForm() {
         Loader.show();
         const formWrapper = BuilderFormService.getFormWrapper();
+        console.log(formWrapper?.form);
         Http.post(`${Router.tenantPath}/api/form-builder/form`, formWrapper)
             .then(tab => {
                 Loader.hide();

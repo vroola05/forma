@@ -160,7 +160,7 @@ export class BuilderFieldProperties {
             if (validate) {
                 this.validate(p);
             }
-            
+            console.log('Jajaj', p);
             return [p.id, p.value];
         });
 

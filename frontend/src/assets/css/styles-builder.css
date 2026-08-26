@@ -990,6 +990,37 @@ Styles voor builder-field.js
 }
 
 .builder-properties-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: var(--default-space-half);
+    gap: var(--default-space-half);
+
+    .builder-properties {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        gap: var(--default-space-half);
+
+        .builder-properties-label {
+            flex: 0 0 40%;
+        }
+        .builder-properties-field-wrapper {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            
+            .builder-properties-field {
+                display: flex;
+                flex-direction: row;
+                gap: var(--default-space-half);
+            }
+        }
+        
+
+
+    }
 
     .builder-field-properties {
         display: flex;
@@ -1010,11 +1041,27 @@ Styles voor builder-field.js
         }
     }
 
-    .builder-properties-options-container {
-        margin: 2px;
-        margin-bottom: var(--default-space);
-        padding: 2px;
-        border-radius: var(--default-space-half);
+    .builder-properties.builder-properties-label {
+  
+        .builder-properties-field-locale-container {
+            display: grid;
+            grid-template-columns: max-content 1fr max-content;
+            gap: var(--default-space-half);
+
+            margin-top: var(--default-space-half);
+
+            .builder-properties-field-locale {
+                display: grid;
+                grid-template-columns: subgrid;
+                grid-column: 1 / -1;
+                
+                align-items: center;
+            }
+        }
+    }
+
+    .builder-properties.builder-properties-options {
+        flex-direction: column;
 
         .builder-properties-options-content-container {
             display: table;

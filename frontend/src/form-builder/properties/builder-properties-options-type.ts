@@ -27,7 +27,7 @@ export class BuilderPropertiesOptionsType {
     }
 
     createContent() {
-        this.content.className = 'builder-properties-options-container';
+        this.content.className = 'builder-properties builder-properties-options';
 
         const fieldPropertiesHeader = document.createElement('div');
         fieldPropertiesHeader.innerHTML = `<h3>${this.property.label}</h3>`;

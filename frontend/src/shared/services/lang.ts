@@ -12,7 +12,8 @@ export class Lang {
 
     static load() {
         return new Promise<void>((resolve, reject) => {
-            const language = navigator.language || navigator.language;
+            const browserLang = navigator.language || 'en';
+            const language = new Intl.Locale(browserLang).language;
 
             Http.get(`${Router.tenantPath}/api/language/${language}`, {})
                 .then(translation => {
@@ -28,7 +29,7 @@ export class Lang {
         });
     }
 
-    static get_default_languages(): string[] {
+    static geDefaultLanguages(): string[] {
         return this.#lang_codes;
     }
     

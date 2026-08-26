@@ -22,11 +22,12 @@ export class BuilderForm extends BuilderFieldInterface {
         super(FIELD_TYPE.FORM, '');
 
         this.fieldProperties.addProperties([
+            {type: PROPERTY_TYPE.LABEL, id: 'labels', order: 4, label: 'Labels', value: []},
             {type: PROPERTY_TYPE.SELECT, id: 'status', order: 6, label: Lang.get('generic.status'), value: [], 
                 options: Object.entries(FORM_STATUS).map(([key, val_fnc]) => ({value: key, text: val_fnc()}))
             },
             {type: PROPERTY_TYPE.LIST, id: 'confirmation', order: 7, label: Lang.get('prop.summary.confirmation.label'), value: []},
-            {type: PROPERTY_TYPE.LABEL, id: 'labels', order: 9, label: 'Labels', value: []},
+            
         ]);
 
         this.createContent();
