@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.commonground.forma.exceptions.FieldValidationException;
 import org.commonground.forma.model.constants.FormStatus;
 import org.commonground.forma.model.form.Option;
+import org.commonground.forma.model.form.Translation;
 import org.commonground.forma.model.form.condition.Condition;
 import org.commonground.forma.model.form.constants.FieldType;
 
@@ -29,6 +30,7 @@ public class Form implements Field {
     private UUID id;
     private String name;
     private String label;
+    private List<Translation> labels;
     private String classes;
     private FormStatus status;
 

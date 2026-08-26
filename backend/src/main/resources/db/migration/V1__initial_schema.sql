@@ -96,11 +96,10 @@ CREATE TABLE form_definition (
 );
 
 CREATE TABLE form_translations (
-    id BIGSERIAL PRIMARY KEY,
     form_id UUID REFERENCES form_definition(id) ON DELETE CASCADE,
     locale VARCHAR(5) NOT NULL,
     label VARCHAR(255) NOT NULL,
-    CONSTRAINT uq_form_locale UNIQUE (form_id, locale)
+    PRIMARY KEY (form_id, locale)
 );
 
 CREATE TABLE form_tab_definition (

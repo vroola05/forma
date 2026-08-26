@@ -1017,9 +1017,13 @@ Styles voor builder-field.js
                 gap: var(--default-space-half);
             }
         }
+    }
+
+    .builder-properties-field-wrapper:has(.is-invalid) .invalid-feedback {
+        display: block;
         
-
-
+        
+        
     }
 
     .builder-field-properties {

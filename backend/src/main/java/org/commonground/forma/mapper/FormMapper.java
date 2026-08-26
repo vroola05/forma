@@ -1,10 +1,17 @@
 package org.commonground.forma.mapper;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.commonground.forma.database.dao.definition.FormDefinitionEntity;
+import org.commonground.forma.database.dao.translation.FormTranslationEntity;
 import org.commonground.forma.model.form.Option;
+import org.commonground.forma.model.form.Translation;
 import org.commonground.forma.model.form.constants.FieldType;
 import org.commonground.forma.model.form.fields.CheckboxField;
 import org.commonground.forma.model.form.fields.Form;
@@ -14,7 +21,8 @@ import org.springframework.stereotype.Component;
 public class FormMapper {
 
     public FormDefinitionEntity toNewEntity(Form dto, UUID tenantId) {
-        if (dto == null) return null;
+        if (dto == null)
+            return null;
 
         FormDefinitionEntity entity = new FormDefinitionEntity();
         entity.setId(UUID.randomUUID());
@@ -27,6 +35,8 @@ public class FormMapper {
         entity.setConfirmation(dto.getConfirmation());
         entity.setCondition(dto.getCondition() == null || dto.getCondition().isEmpty() ? null : dto.getCondition());
         entity.setShow(dto.isShow());
+
+        addLabels(entity, dto.getLabels());
 
         return entity;
     }
@@ -41,6 +51,35 @@ public class FormMapper {
         entity.setConfirmation(dto.getConfirmation());
         entity.setCondition(dto.getCondition() == null || dto.getCondition().isEmpty() ? null : dto.getCondition());
         entity.setShow(dto.isShow());
+
+        addLabels(entity, dto.getLabels());
+        
+    }
+
+
+    public void addLabels(FormDefinitionEntity entity, List<Translation> translation) {
+        Set<String> dtoLocales = translation.stream()
+                .map(Translation::getLocale)
+                .collect(Collectors.toSet());
+
+        entity.getLabels().removeIf(existing -> !dtoLocales.contains(existing.getLocale()));
+
+        for (Translation dtoLabel : translation) {
+
+            Optional<FormTranslationEntity> existingOpt = entity.getLabels().stream()
+                    .filter(e -> e.getLocale().equals(dtoLabel.getLocale()))
+                    .findFirst();
+
+            if (existingOpt.isPresent()) {
+                existingOpt.get().setLabel(dtoLabel.getLabel());
+            } else {
+                FormTranslationEntity newTranslation = new FormTranslationEntity();
+                newTranslation.setForm(entity);
+                newTranslation.setLocale(dtoLabel.getLocale());
+                newTranslation.setLabel(dtoLabel.getLabel());
+                entity.getLabels().add(newTranslation);
+            }
+        }
     }
 
     public Form toResponseDto(FormDefinitionEntity entity) {

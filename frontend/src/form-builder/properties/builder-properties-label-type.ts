@@ -1,5 +1,5 @@
 import { FormButton } from "../../shared/form-components/components/form-button";
-import { LabelsDto } from "../../shared/model/types";
+import { TranslationDto } from "../../shared/model/types";
 import { EventService } from "../../shared/services/event-service";
 import { Lang } from "../../shared/services/lang";
 import { BuilderFieldInterface } from "../fields/builder-field-interface";
@@ -45,19 +45,9 @@ export class BuilderPropertiesLabelType  {
         this.input.value = property.value;
         this.input.placeholder = property.label;
         this.input.className = 'form-control';
-        this.input.onchange = (event) => {
-            const target = event.target as HTMLInputElement;
-            const id = target?.dataset?.id;
-
-            if (id === undefined) {
-                return;
-            }
-
-            this.getValues();
-            this.setValue(this.field?.fieldProperties?.properties.get(id), this.defaultLocale, target);
+        this.input.onchange = () => {
+            this.setValue(this.input);
         };
-
-        this.input.dataset.id = property.id;
 
         const addBtn = new FormButton('', 'builder-btn-icon icon icon-plus-lg');
         addBtn.addEvent((e?: PointerEvent | undefined) => {
@@ -82,6 +72,9 @@ export class BuilderPropertiesLabelType  {
         
         const localeOptions = document.createElement('select');
         localeOptions.className = 'form-control';
+        localeOptions.onchange = () => {
+            this.setValue(this.input);
+        };
 
         const locales = Lang.geDefaultLanguages();
         for(const locale of locales) {
@@ -100,31 +93,49 @@ export class BuilderPropertiesLabelType  {
         input.type = 'text';
         input.placeholder = this.property.label;
         input.className = 'form-control';
+        input.onchange = () => {
+            this.setValue(this.input);
+        };
 
         const deleteBtn = new FormButton('', 'builder-btn-icon icon icon-x-lg');
+        deleteBtn.addEvent((event?: PointerEvent | undefined) => {
+            if (event === undefined)
+                return;
+            event.preventDefault();
+
+            const target = event.target as HTMLElement;
+            const builderPropertiesLocale = target.closest('.builder-properties-field-locale');
+            builderPropertiesLocale?.remove();
+
+            this.setValue(this.input);
+        });
 
         builderPropertiesLocale.append(localeOptions, input, deleteBtn.getContent());
         this.builderPropertiesLocaleContainer.append(builderPropertiesLocale);
     }
 
     getValues() {
+        const labels: TranslationDto[] = [];
+        labels.push({locale: this.defaultLocale, text: this.input.value});
+        
         for (const builderPropertiesLocale of this.builderPropertiesLocaleContainer.children) {
             const [rawLocale, rawInput] = builderPropertiesLocale.children;
             const localeDom = rawLocale as HTMLSelectElement;
             const inputDom = rawInput as HTMLInputElement;
+            labels.push({locale: localeDom.value, text: inputDom.value});
         }
+        return labels;
     }
 
-
-    setValue(property: FieldProperty| undefined, locale: string, target: HTMLInputElement) {
-        
+    setValue(target: HTMLInputElement) {
+        const values = this.getValues();
+        const property = this.field?.fieldProperties?.properties.get(this.property.id);
         if (!property) {
             return;
         }
 
         const valueOld = this.field?.getPath(); //prop.value;
-        property.value = target.value;
-        
+        property.value = values;
 
         this.onPropertyChanged(target, property, valueOld);
 
@@ -136,13 +147,13 @@ export class BuilderPropertiesLabelType  {
 
     validate(property: FieldProperty, input: HTMLInputElement) {
         input.classList.remove('is-invalid');
-        const feedback = input.parentElement?.querySelector('.invalid-feedback')
+        const feedback = input.closest('.builder-properties-label')?.querySelector('.invalid-feedback')
 
         if (feedback) {
             feedback.innerHTML = '';
         }
         try {
-            this.field?.fieldProperties.validate(property, undefined);
+            this.field?.fieldProperties.validate(property, this.field);
         } catch(error) {
             input.classList.add('is-invalid');
             if (feedback && error instanceof Error) {

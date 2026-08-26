@@ -1,6 +1,7 @@
 
 import { ValidationError } from '../../shared/errors/validation-error';
-import { BuilderCondition, LogicalOperator, Operator } from '../../shared/model/types';
+import { LabelField } from '../../shared/form-components/label-field';
+import { BuilderCondition, LogicalOperator, Operator, TranslationDto } from '../../shared/model/types';
 import { Lang } from '../../shared/services/lang';
 import { BuilderFieldInterface } from '../fields/builder-field-interface';
 import { FieldProperty } from '../types';
@@ -76,7 +77,10 @@ export class BuilderFieldProperties {
                 throw new ValidationError(fieldName, `Het veld is niet uniek.`).setField(field);
             }
         }
-
+        if (property.type === 'label') {
+            this.#validateTranslation(property.value, field);
+            console.warn('label', property.value)
+        }
         if (property.type === 'options') {
             console.warn('Not yet implemented')
         } else if (property.type === 'list') {
@@ -91,6 +95,28 @@ export class BuilderFieldProperties {
             
             this.#validatePattern(property.value, property.pattern, property.message, field);
         }
+    }
+
+    #validateTranslation(translations: TranslationDto[], field: BuilderFieldInterface | undefined) {
+        if (translations === undefined || translations.length === 0 || field === undefined) {
+            return;
+        }
+
+        const fieldName = `${field ? field.getLabel() : ''} - ${this.getFieldIdentifier()}`;
+
+        const locales = translations.map(t => t.locale);
+        if (locales.some(locale => !locale || locale.trim() === '')) {
+            console.error('a');
+            throw new ValidationError(fieldName, 'Validatie mislukt: Er mag geen lege taalcode aanwezig zijn.').setField(field);
+        }
+        const uniqueLocales = new Set(locales);
+        if (uniqueLocales.size !== translations.length) {
+            console.error('b');
+            const duplicate = locales.find((item, index) => locales.indexOf(item) !== index);
+            throw new ValidationError(fieldName, `Validatie mislukt: De taal '${duplicate}' is meerdere keren toegevoegd.`).setField(field);
+            
+        }
+
     }
 
     #validateCondition (condition: BuilderCondition | undefined, field: BuilderFieldInterface | null = null) {
@@ -153,14 +179,11 @@ export class BuilderFieldProperties {
         return propertyLabel && propertyLabel !== '' ? propertyLabel : propertyName && propertyName !== '' ? propertyName : Lang.get('prop.unknown.field');
     }
 
-    
-
     getProperties(validate = false) {
         const entries = Array.from(this.properties, ([key, p]) => {
             if (validate) {
                 this.validate(p);
             }
-            console.log('Jajaj', p);
             return [p.id, p.value];
         });
 

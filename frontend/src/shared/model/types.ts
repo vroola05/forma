@@ -103,17 +103,16 @@ export interface FormWrapper {
     form?: FormDto;
 
 }
-export interface LabelsDto {
-    id?: string;
+export interface TranslationDto {
     locale?: string;
-    label?: string;
+    text?: string;
 }
 
 export interface BaseFieldDto {
     id?: string;
     name: string;
     label?: string;
-    labels?: LabelsDto[];
+    labels?: TranslationDto[];
     type: AllFieldTypes;
     condition?: Condition;
     classes?: string;
