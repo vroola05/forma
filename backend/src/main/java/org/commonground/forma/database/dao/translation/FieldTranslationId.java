@@ -4,14 +4,14 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-public class FormTranslationId implements Serializable {
-    private UUID form;
+public class FieldTranslationId implements Serializable {
+    private UUID field;
     private String locale;
 
-    public FormTranslationId() {}
+    public FieldTranslationId() {}
 
-    public FormTranslationId(UUID form, String locale) {
-        this.form = form;
+    public FieldTranslationId(UUID field, String locale) {
+        this.field = field;
         this.locale = locale;
     }
 
@@ -19,13 +19,13 @@ public class FormTranslationId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FormTranslationId that = (FormTranslationId) o;
-        return Objects.equals(form, that.form) && Objects.equals(locale, that.locale);
+        FieldTranslationId that = (FieldTranslationId) o;
+        return Objects.equals(field, that.field) && Objects.equals(locale, that.locale);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(form, locale);
+        return Objects.hash(field, locale);
     }
 }
  

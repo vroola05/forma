@@ -36,7 +36,6 @@ public class FormDefinitionEntity extends BaseEntity {
     private UUID id;
     @Column(nullable = false)
     private String name;
-    private String label;
     private String classes;
 
     @Column(nullable = false)

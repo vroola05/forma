@@ -25,8 +25,9 @@ export class RepeatingGroup extends Nucleus {
     sets: { deleteBtn: FormButton | undefined; fields: InputNucleus[] | undefined }[] = [];
 
     constructor(baseFieldDto: RepeatingGroupDto, id: string | undefined = undefined) {
-        super(baseFieldDto.name, baseFieldDto.label, id);
+        super(baseFieldDto.name, baseFieldDto.labels, id);
         
+        this.label = baseFieldDto.label;
         this.type = baseFieldDto.type;
 
         this.fields = baseFieldDto.fields;
@@ -76,7 +77,7 @@ export class RepeatingGroup extends Nucleus {
 
         const repeatingGroupFooterLabelDom = document.createElement('div');
         repeatingGroupFooterLabelDom.className = 'repeating-group-footer-label';
-        repeatingGroupFooterLabelDom.innerHTML = `${this.label} toevoegen`;
+        repeatingGroupFooterLabelDom.innerHTML = `${this.getLabel()} toevoegen`;
         this.repeatingGroupFooterDom.append(repeatingGroupFooterLabelDom);
 
         this.repeatingGroupFooterAddBtn = new FormButton('', 'icon icon-plus-lg', null, (e?: PointerEvent | undefined) => {
@@ -130,7 +131,7 @@ export class RepeatingGroup extends Nucleus {
 
         const title = document.createElement('div');
         title.className = 'repeating-group-title';
-        title.innerHTML = `<div class="repeating-group-title-text">${this.label} ${index + 1}</div>`;
+        title.innerHTML = `<div class="repeating-group-title-text">${this.getLabel()} ${index + 1}</div>`;
 
         const deleteBtn = new FormButton('', 'repeating-group-delete-btn icon icon-x-lg', null, (e?: PointerEvent | undefined) => {
             if (!e) {

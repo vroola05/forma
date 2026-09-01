@@ -58,7 +58,7 @@ export class BuilderEditor  {
             element: this.#editorElement,
             extensions: [
                 StarterKit,
-                Underline,
+                
                 Placeholder.configure({
                     placeholder: Lang.get('text.editor.placeholder'),
                     emptyEditorClass: 'builder-text-editor-placeholder', 

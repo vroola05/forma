@@ -42,7 +42,7 @@ export class BuilderPropertiesLabelType  {
         this.input = document.createElement('input');
         this.input.type = 'text';
         this.input.id = `field-property-${property.id}`;
-        this.input.value = property.value;
+        this.input.value = this.getValue(this.defaultLocale);
         this.input.placeholder = property.label;
         this.input.className = 'form-control';
         this.input.onchange = () => {
@@ -63,20 +63,28 @@ export class BuilderPropertiesLabelType  {
         builderPropertiesField.append(this.input, addBtn.getContent());
         builderPropertiesFieldWrapper.append(builderPropertiesField, this.builderPropertiesLocaleContainer, inputErrors);
 
+        const values = this.property?.value as TranslationDto[];
+        if (values) {
+            for (const value of values) {
+                if (value.locale === this.defaultLocale) {
+                    continue;
+                }
+                this.createLabelLocale(value);
+            }
+        }
     }
 
-    createLabelLocale() {
+    createLabelLocale(translation: TranslationDto | undefined = undefined) {
         const builderPropertiesLocale = document.createElement('div');
         builderPropertiesLocale.className = 'builder-properties-field-locale';
 
-        
         const localeOptions = document.createElement('select');
         localeOptions.className = 'form-control';
         localeOptions.onchange = () => {
             this.setValue(this.input);
         };
 
-        const locales = Lang.geDefaultLanguages();
+        const locales = Lang.getLocales();
         for(const locale of locales) {
             if (locale === this.defaultLocale) {
                 continue;
@@ -97,10 +105,15 @@ export class BuilderPropertiesLabelType  {
             this.setValue(this.input);
         };
 
+        if (translation) {
+            localeOptions.value = translation.locale?? '';
+            input.value = translation.text?? '';
+        }
         const deleteBtn = new FormButton('', 'builder-btn-icon icon icon-x-lg');
         deleteBtn.addEvent((event?: PointerEvent | undefined) => {
             if (event === undefined)
                 return;
+
             event.preventDefault();
 
             const target = event.target as HTMLElement;
@@ -112,6 +125,16 @@ export class BuilderPropertiesLabelType  {
 
         builderPropertiesLocale.append(localeOptions, input, deleteBtn.getContent());
         this.builderPropertiesLocaleContainer.append(builderPropertiesLocale);
+    }
+
+    getValue(locale: string): string {
+        if (locale === undefined || this.property?.value === undefined) {
+            return ''
+        }
+
+        const values = this.property?.value as TranslationDto[];
+        const value = values.find(translation => translation.locale === locale);
+        return value?.text ?? '';
     }
 
     getValues() {
@@ -134,7 +157,7 @@ export class BuilderPropertiesLabelType  {
             return;
         }
 
-        const valueOld = this.field?.getPath(); //prop.value;
+        const valueOld = this.field?.getPath();
         property.value = values;
 
         this.onPropertyChanged(target, property, valueOld);
@@ -176,6 +199,7 @@ export class BuilderPropertiesLabelType  {
             EventService.emit('value-changed', this.field);
         } catch(error) {
             input.classList.add('is-invalid');
+            console.error(error);
         }
     }
 

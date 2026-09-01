@@ -1,3 +1,4 @@
+import { TranslationDto } from '../model/types';
 import { InputNucleus } from './interface/input-base';
 
 /**
@@ -5,8 +6,8 @@ import { InputNucleus } from './interface/input-base';
  */
 export class HiddenField extends InputNucleus<HTMLInputElement> {
     
-    constructor(name: string, label: string | undefined, id: string | undefined = undefined) {
-        super(document.createElement('input'), name, label, id);
+    constructor(name: string, labels: TranslationDto[] | undefined, id: string | undefined = undefined) {
+        super(document.createElement('input'), name, labels, id);
         this.type = 'hidden';
 
         this.createElement();
@@ -35,7 +36,7 @@ export class HiddenField extends InputNucleus<HTMLInputElement> {
     }
 
     clone() {
-        const hiddenfield = new HiddenField(this.name, this.label);
+        const hiddenfield = new HiddenField(this.name, this.labels);
         hiddenfield.setType(this.type);
         hiddenfield.setValue(this.value);
         return hiddenfield;

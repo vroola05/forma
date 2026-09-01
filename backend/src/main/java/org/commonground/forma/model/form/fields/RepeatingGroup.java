@@ -1,5 +1,6 @@
 package org.commonground.forma.model.form.fields;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -7,6 +8,7 @@ import java.util.UUID;
 
 import org.commonground.forma.exceptions.FieldValidationException;
 import org.commonground.forma.model.form.Option;
+import org.commonground.forma.model.form.Translation;
 import org.commonground.forma.model.form.condition.Condition;
 import org.commonground.forma.model.form.constants.FieldType;
 
@@ -24,7 +26,8 @@ import lombok.Setter;
 public class RepeatingGroup implements Field {
     private UUID id;
     private String name;
-    private String label;
+    @Builder.Default
+    private List<Translation> labels = new ArrayList<>();
     private String classes;
     private String layout;
     private FieldType type;
@@ -37,10 +40,7 @@ public class RepeatingGroup implements Field {
     private Condition condition;
     private Boolean show;
 
-    @Override
-    public String getLabel() {
-        return this.label;
-    }
+    
 
     @Override
 	public String getValue() {

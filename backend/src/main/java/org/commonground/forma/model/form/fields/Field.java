@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.commonground.forma.exceptions.FieldValidationException;
 import org.commonground.forma.model.form.Option;
+import org.commonground.forma.model.form.Translation;
 import org.commonground.forma.model.form.condition.Condition;
 import org.commonground.forma.model.form.constants.FieldType;
 
@@ -45,8 +46,10 @@ public interface Field {
     void setId(UUID id);
     String getName();
     void setName(String name);
-    String getLabel();
-    void setLabel(String label);
+        
+    List<Translation> getLabels();
+    void setLabels(List<Translation> labels);
+
     String getClasses();
     void setClasses(String classes);
     List<String> getMetadata();

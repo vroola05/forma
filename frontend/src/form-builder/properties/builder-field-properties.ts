@@ -1,6 +1,5 @@
 
 import { ValidationError } from '../../shared/errors/validation-error';
-import { LabelField } from '../../shared/form-components/label-field';
 import { BuilderCondition, LogicalOperator, Operator, TranslationDto } from '../../shared/model/types';
 import { Lang } from '../../shared/services/lang';
 import { BuilderFieldInterface } from '../fields/builder-field-interface';
@@ -79,7 +78,6 @@ export class BuilderFieldProperties {
         }
         if (property.type === 'label') {
             this.#validateTranslation(property.value, field);
-            console.warn('label', property.value)
         }
         if (property.type === 'options') {
             console.warn('Not yet implemented')
@@ -106,17 +104,14 @@ export class BuilderFieldProperties {
 
         const locales = translations.map(t => t.locale);
         if (locales.some(locale => !locale || locale.trim() === '')) {
-            console.error('a');
-            throw new ValidationError(fieldName, 'Validatie mislukt: Er mag geen lege taalcode aanwezig zijn.').setField(field);
+            
+            throw new ValidationError(fieldName, Lang.get('prop.labels.locale.empty.message')).setField(field);
         }
         const uniqueLocales = new Set(locales);
         if (uniqueLocales.size !== translations.length) {
-            console.error('b');
             const duplicate = locales.find((item, index) => locales.indexOf(item) !== index);
-            throw new ValidationError(fieldName, `Validatie mislukt: De taal '${duplicate}' is meerdere keren toegevoegd.`).setField(field);
-            
+            throw new ValidationError(fieldName, Lang.get('prop.labels.locale.duplicate.message', duplicate?? '')).setField(field);
         }
-
     }
 
     #validateCondition (condition: BuilderCondition | undefined, field: BuilderFieldInterface | null = null) {
@@ -173,10 +168,17 @@ export class BuilderFieldProperties {
     }
 
     getFieldIdentifier() {
-        const propertyLabel = this.getPropertyValueById('label');
+        const propertyLabel = this.getPropertyValueById('labels') as TranslationDto[];
         const propertyName = this.getPropertyValueById('name');
+        if (propertyLabel === undefined || propertyLabel.length === 0) {
+            return propertyName !== '' ? propertyName : Lang.get('prop.unknown.field');
+        }
+        
+        const defaultLocale = Lang.getDefaultLocale();
 
-        return propertyLabel && propertyLabel !== '' ? propertyLabel : propertyName && propertyName !== '' ? propertyName : Lang.get('prop.unknown.field');
+        const identifier = propertyLabel.find(label => label.locale === defaultLocale);
+
+        return identifier !== undefined ? identifier?.text : propertyLabel[0].text;
     }
 
     getProperties(validate = false) {

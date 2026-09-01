@@ -114,9 +114,9 @@ export class Dropzone {
         }
 
         // 
-        if (Dropzone.currentDraggedDom && Dropzone.currentDraggedDom.classList.contains('builder-page-field-item')) {
+        if (Dropzone.currentDraggedDom?.classList.contains('builder-page-field-item')) {
             const label = Dropzone?.currentDraggedDom?.dataset?.label;
-            this.addNewItem(type, label ? label : '', droppedOnFormItem);
+            this.addNewItem(type, label || '', droppedOnFormItem);
         }
 
         // 
@@ -210,30 +210,15 @@ export class Dropzone {
         this.draw();
     }
 
-    getUniqueName(label: string, property: string = 'name', cleanLabel: boolean = false, seperator: string = '-') {
-        const baseLabel = cleanLabel
-            ? label.toLowerCase().trim().replace(/\s+/g, '-')
-            : label;
-
-        const existingNames = this.field?.getFields()?.map(f => f.getPropertyValueById(property));
-
-        let index = 1;
-        let newName = `${baseLabel}${seperator}${index}`;
-
-        while (existingNames && existingNames.includes(newName)) {
-            index++;
-            newName = `${baseLabel}${seperator}${index}`;
-        }
-
-        return newName;
-    }
-
     addNewItem(type: FIELD_TYPE, label: string, droppedOnFormItem: HTMLElement | null = null) {
         const field = this.getField(type);
-        field.setPropertyValueById('name', this.getUniqueName(field.getLabel(), 'name', true));
-        const labelNew = this.getUniqueName(field.getLabel(), 'label', false, ' ');
-        field.setPropertyValueById('label', labelNew);
+        
+        field.setPropertyValueById('name', this.field.getUniqueName(field.getLabel(), 'name', true));
+
+        const labelNew = this.field.getUniqueLabel(field.getLabel());
+        field.setDefaultLabel(labelNew);
         field.setLabel(labelNew);
+        
         this.bindFieldEvents(field);
 
         const builderChildFields = this.field.getFields();

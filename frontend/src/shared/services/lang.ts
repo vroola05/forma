@@ -5,15 +5,12 @@ import { Router } from './router';
 export class Lang {
     static #translation: Map<string, string> = new Map();
 
-    static #lang_codes: string[] = ['nl', 'en', 'de', 'pl', 'uk', 'fr', 'es', 'ro', 'it', 'pt', 'hu' ];
+    static #defaultLocale: string = 'nl';
+    static #locales: string[] = ['nl', 'en', 'de', 'pl', 'uk', 'fr', 'es', 'ro', 'it', 'pt', 'hu' ];
     
-    constructor() {
-    }
-
     static load() {
         return new Promise<void>((resolve, reject) => {
-            const browserLang = navigator.language || 'en';
-            const language = new Intl.Locale(browserLang).language;
+            const language = this.getLocale();
 
             Http.get(`${Router.tenantPath}/api/language/${language}`, {})
                 .then(translation => {
@@ -29,8 +26,17 @@ export class Lang {
         });
     }
 
-    static geDefaultLanguages(): string[] {
-        return this.#lang_codes;
+    static getDefaultLocale(): string {
+        return this.#defaultLocale;
+    }
+
+    static getLocale(): string {
+        const locale = new Intl.Locale(navigator.language || this.#defaultLocale).language;
+        return locale
+    }
+
+    static getLocales(): string[] {
+        return this.#locales;
     }
     
     static get(key: string, ...val: any[]): string {

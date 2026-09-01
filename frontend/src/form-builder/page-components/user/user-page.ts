@@ -40,5 +40,5 @@ export class UserPage extends SettingsPage {
             console.error(error);
         });
     }
-    
+
 }

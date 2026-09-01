@@ -14,23 +14,8 @@ export class BuilderTabPage extends BuilderFieldInterface {
 
     dropzone: Dropzone | null = null;
 
-    acceptedTypes = [
-        'form-group',
-        'checkbox', 
-        'text',
-        'number',
-        'date',
-        'select',
-        'radio',
-        'valuta',
-        'password',
-        'label',
-        'hidden',
-        'file',
-        'dual-listbox',
-        'color',
-        'repeating-group'
-    ];
+    acceptedTypes = ['form-group', 'repeating-group', 'text', 'checkbox', 'number', 'date', 'select', 'radio', 'valuta', 'password', 'label', 'hidden', 'file', 'dual-listbox', 'color'];
+
     tabLabelItem: BuilderTabLabel | null = null;
     active = false;
 
@@ -38,7 +23,8 @@ export class BuilderTabPage extends BuilderFieldInterface {
 
     constructor(type: FIELD_TYPE, label: string) {
         super(type, label);
-        this.createContent(type, label);
+
+        this.createContent(type);
     }
 
     init(baseFieldDto: BaseFieldDto) {
@@ -59,9 +45,9 @@ export class BuilderTabPage extends BuilderFieldInterface {
         }
     }
 
-    createContent(type: FIELD_TYPE, label: string) {
+    createContent(type: FIELD_TYPE) {
         this.builderTabPage.className = 'builder-tab-page';
-        this.builderTabPage.setAttribute('data-type', type);
+        this.builderTabPage.dataset.type = type;
         this.builderTabPage.addEventListener("dragstart", (event) => {
             if (this.onDragStart) {
                 this.onDragStart(event);
@@ -98,10 +84,10 @@ export class BuilderTabPage extends BuilderFieldInterface {
         this.dropzone = new Dropzone(
             this,
             this.builderTabPages,
-            (type, label, dragged, droppedOnformItem) => {
+            (_type, _label, _dragged, _droppedOnformItem) => {
                 this.updateTabPage();
             },
-            (type, label, dragged, droppedOnformItem) => {
+            (_type, _label, _dragged, _droppedOnformItem) => {
                 this.updateTabPage();
             },
             () => {

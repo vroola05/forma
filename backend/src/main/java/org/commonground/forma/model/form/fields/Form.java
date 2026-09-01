@@ -30,7 +30,8 @@ public class Form implements Field {
     private UUID id;
     private String name;
     private String label;
-    private List<Translation> labels;
+    @Builder.Default
+    private List<Translation> labels = new ArrayList<>();
     private String classes;
     private FormStatus status;
 
@@ -59,11 +60,6 @@ public class Form implements Field {
     @Override
     public String getName() {
         return this.name;
-    }
-
-    @Override
-    public String getLabel() {
-        return this.label;
     }
 
     @Override

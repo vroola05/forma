@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.commonground.forma.exceptions.FieldValidationException;
 import org.commonground.forma.model.form.Option;
+import org.commonground.forma.model.form.Translation;
 import org.commonground.forma.model.form.condition.Condition;
 import org.commonground.forma.model.form.constants.FieldType;
 
@@ -27,7 +28,8 @@ import lombok.Setter;
 public class FormGroup implements Field {
     private UUID id;
     private String name;
-    private String label;
+    @Builder.Default
+    private List<Translation> labels = new ArrayList<>();
     private String classes;
     private List<String> metadata;
     @Builder.Default
@@ -40,10 +42,6 @@ public class FormGroup implements Field {
     @JsonProperty("type")
     public void setTypeFromJson(String typeValue) {
         this.type = FieldType.fromValue(typeValue);
-    }
-
-    public Optional<Field> getFieldByLabel(String fieldLabel) {
-        return fields.stream().filter(field -> field.getLabel().equals(fieldLabel)).findFirst();
     }
 
     public Optional<Field> getField(String fieldName) {
@@ -78,11 +76,6 @@ public class FormGroup implements Field {
     @Override
     public String getName() {
         return this.name;
-    }
-
-    @Override
-    public String getLabel() {
-        return this.label;
     }
 
     @Override

@@ -186,26 +186,26 @@ export class FormRenderer {
         switch (fieldDto.type) {
             case 'hidden': {
                 const { HiddenField } = await import( '../form-components/hidden-field');
-                nucleus = new HiddenField(fieldDto.name, fieldDto.label, fieldDto.id)
+                nucleus = new HiddenField(fieldDto.name, fieldDto.labels, fieldDto.id)
                     .setValue(fieldDto.value, true);
                 break;
             }
             case 'label': {
                 const { LabelField } = await import( '../form-components/label-field');
-                nucleus = new LabelField(fieldDto.name, fieldDto.label, fieldDto.id)
+                nucleus = new LabelField(fieldDto.name, fieldDto.labels, fieldDto.id)
                     .setRequired(fieldDto.required)
                 break;
             }
             case 'text':
                 
-                nucleus = new TextField(fieldDto.name, fieldDto.label, fieldDto.id, prefix)
+                nucleus = new TextField(fieldDto.name, fieldDto.labels, fieldDto.id, prefix)
                     .setRequired(fieldDto.required)
                     .setMinLength(fieldDto.minLength)
                     .setMaxLength(fieldDto.maxLength)
                     .addValueChangedListener(fieldDto.change);
                 break;
             case 'number':
-                nucleus = new TextField(fieldDto.name, fieldDto.label, fieldDto.id, prefix)
+                nucleus = new TextField(fieldDto.name, fieldDto.labels, fieldDto.id, prefix)
                     .setType('number')
                     .setRequired(fieldDto.required)
                     .setMinLength(fieldDto.minLength)
@@ -214,7 +214,7 @@ export class FormRenderer {
                 break;
             case 'valuta': {
                 const { ValutaField } = await import( '../form-components/valuta-field');
-                nucleus = new ValutaField(fieldDto.name, fieldDto.label, fieldDto.id)
+                nucleus = new ValutaField(fieldDto.name, fieldDto.labels, fieldDto.id)
                     .setType('text')
                     .setRequired(fieldDto.required)
                     .setMinLength(fieldDto.minLength)
@@ -224,7 +224,7 @@ export class FormRenderer {
             }
             case 'date': {
                 const { DateField } = await import( '../form-components/date-field');
-                nucleus = new DateField(fieldDto.name, fieldDto.label, fieldDto.id)
+                nucleus = new DateField(fieldDto.name, fieldDto.labels, fieldDto.id)
                     .setType('date')
                     .setRequired(fieldDto.required)
                     .setMinLength(fieldDto.minLength)
@@ -234,7 +234,7 @@ export class FormRenderer {
             }
             case 'textarea': {
                 const { TextAreaField } = await import( '../form-components/textarea-field');
-                nucleus = new TextAreaField(fieldDto.name, fieldDto.label, fieldDto.id)
+                nucleus = new TextAreaField(fieldDto.name, fieldDto.labels, fieldDto.id)
                     .setType('textarea')
                     .setRequired(fieldDto.required)
                     .setMinLength(fieldDto.minLength)
@@ -243,7 +243,7 @@ export class FormRenderer {
                 break;
             }
             case 'email':
-                nucleus = new TextField(fieldDto.name, fieldDto.label, fieldDto.id, prefix)
+                nucleus = new TextField(fieldDto.name, fieldDto.labels, fieldDto.id, prefix)
                     .setType('email')
                     .setRequired(fieldDto.required)
                     .setMinLength(fieldDto.minLength)
@@ -252,7 +252,7 @@ export class FormRenderer {
                 break;
             case 'password': {
                 const { PasswordField } = await import( '../form-components/password-field');
-                nucleus = new PasswordField(fieldDto.name, fieldDto.label, fieldDto.id)
+                nucleus = new PasswordField(fieldDto.name, fieldDto.labels, fieldDto.id)
                     .setType('password')
                     .setRequired(fieldDto.required)
                     .setMinLength(fieldDto.minLength)
@@ -262,7 +262,7 @@ export class FormRenderer {
             }
             case 'color': {
                 const { ColorField } = await import( '../form-components/color-field');
-                nucleus = new ColorField(fieldDto.name, fieldDto.label, fieldDto.id)
+                nucleus = new ColorField(fieldDto.name, fieldDto.labels, fieldDto.id)
                     .setType('color')
                     .setRequired(fieldDto.required)
                     .setValue(fieldDto.value, true)
@@ -274,6 +274,7 @@ export class FormRenderer {
                 throw new Error('Field is not implemented yet');
         }
         nucleus.setClasses(fieldDto.classes)
+                .setLabels(fieldDto.labels)
                 .setLabel(fieldDto.label)
                 .setPlaceholder(fieldDto.placeholder)
                 .setReadonly(fieldDto.readonly)
@@ -289,8 +290,8 @@ export class FormRenderer {
             case 'file': {
                 const fileOptionFieldDto =  fieldDto as FileOptionFieldDto;
                 const { FileUploadField } = await import( '../form-components/upload-field');
-                nucleus =  new FileUploadField(fieldDto.name, fieldDto.label, fieldDto.id)
-                    .setLabel(fieldDto.label)
+                nucleus =  new FileUploadField(fieldDto.name, fieldDto.labels, fieldDto.id)
+                    
                     .setIsMultiple(fileOptionFieldDto.isMultiple)
                     .setAccept(fileOptionFieldDto.allowedExtensions)
                     .setMaxFiles(fileOptionFieldDto.maxFiles)
@@ -300,7 +301,7 @@ export class FormRenderer {
             }
             case 'radio': {
                 const { RadioField } = await import( '../form-components/radio-field');
-                nucleus = new RadioField(fieldDto.name, fieldDto.label, fieldDto?.classes || '', fieldDto.id)
+                nucleus = new RadioField(fieldDto.name, fieldDto.labels, fieldDto?.classes || '', fieldDto.id)
                     .addOptions(fieldDto.options)
                     .setReadonly(fieldDto.readonly)
                     .setValue(fieldDto.value, true)
@@ -309,7 +310,7 @@ export class FormRenderer {
             }
             case 'checkbox': {
                 const { CheckboxField } = await import( '../form-components/checkbox-field');
-                nucleus = new CheckboxField(fieldDto.name, fieldDto.label, fieldDto?.classes || '', fieldDto.id)
+                nucleus = new CheckboxField(fieldDto.name, fieldDto.labels, fieldDto?.classes || '', fieldDto.id)
                     .addOptions(fieldDto.options)
                     .setValue(fieldDto.value, true)
                     .addValueChangedListener(fieldDto.change);
@@ -317,7 +318,7 @@ export class FormRenderer {
             }
             case 'select': {
                 const { SelectField } = await import( '../form-components/select-field');
-                const selectField = new SelectField(fieldDto.name, fieldDto.label, fieldDto?.classes || '', fieldDto.id)
+                const selectField = new SelectField(fieldDto.name, fieldDto.labels, fieldDto?.classes || '', fieldDto.id)
                     .addOptions(fieldDto.options);
 
                 selectField
@@ -328,7 +329,7 @@ export class FormRenderer {
             }
             case 'dual-listbox': {
                 const { DualListboxField } = await import( '../form-components/dual-listbox-field');
-                nucleus = new DualListboxField(fieldDto.name, fieldDto.label, fieldDto?.classes || '', fieldDto.id)
+                nucleus = new DualListboxField(fieldDto.name, fieldDto.labels, fieldDto?.classes || '', fieldDto.id)
                     .addOptions(fieldDto.options)
                     .setValue(fieldDto.value, true)
                     .addValueChangedListener(fieldDto.change);
@@ -339,6 +340,8 @@ export class FormRenderer {
         nucleus
             .setType(fieldDto.type)
             .setClasses(fieldDto.classes)
+            .setLabels(fieldDto.labels)
+            .setLabel(fieldDto.label)
             .setRequired(fieldDto.required)
             .setPlaceholder(fieldDto.placeholder)
             .setReadonly(fieldDto.readonly)

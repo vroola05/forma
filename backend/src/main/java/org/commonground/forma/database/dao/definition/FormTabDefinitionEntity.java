@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.commonground.forma.database.dao.BaseEntity;
+import org.commonground.forma.database.dao.translation.TabTranslationEntity;
 import org.commonground.forma.model.form.condition.Condition;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -34,7 +35,6 @@ public class FormTabDefinitionEntity extends BaseEntity {
 
     @Column(nullable = false)
     private String name;
-    private String label;
     private String classes;
     
     @Column(nullable = false)
@@ -51,6 +51,9 @@ public class FormTabDefinitionEntity extends BaseEntity {
 
     @Column(nullable = false)
     private boolean show;
+
+    @OneToMany(mappedBy = "tab", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TabTranslationEntity> labels = new ArrayList<>();
 
     @OneToMany(mappedBy = "tab", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FormFieldDefinitionEntity> fields = new ArrayList<>();

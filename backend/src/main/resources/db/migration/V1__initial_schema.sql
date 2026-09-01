@@ -81,13 +81,11 @@ CREATE TABLE form_definition (
     id UUID PRIMARY KEY,
     tenant_id UUID REFERENCES tenant(id),
     name TEXT NOT NULL,
-    label TEXT NULL,
     classes TEXT NULL,
     metadata TEXT[] NULL,
     summary_confirmation TEXT[] NULL,
     condition JSONB NULL,
     show boolean NOT NULL DEFAULT TRUE,
-
     status TEXT NOT NULL DEFAULT 'ACTIVE',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -106,7 +104,6 @@ CREATE TABLE form_tab_definition (
     id UUID PRIMARY KEY,
     tenant_id UUID REFERENCES tenant(id),
     name TEXT NOT NULL,
-    label TEXT NULL,
     classes TEXT NULL,
     shared_tab BOOLEAN NOT NULL DEFAULT FALSE,
     metadata TEXT[] NULL,
@@ -116,6 +113,13 @@ CREATE TABLE form_tab_definition (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     version BIGINT DEFAULT 0 NOT NULL
+);
+
+CREATE TABLE tab_translations (
+    tab_id UUID REFERENCES form_tab_definition(id) ON DELETE CASCADE,
+    locale VARCHAR(5) NOT NULL,
+    label VARCHAR(255) NOT NULL,
+    PRIMARY KEY (tab_id, locale)
 );
 
 CREATE TABLE form_tab_instance_definition (
@@ -134,7 +138,6 @@ CREATE TABLE form_field_definition (
     tab_id UUID REFERENCES form_tab_definition(id) ON DELETE CASCADE,
     parent_field_id UUID REFERENCES form_field_definition(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
-    label TEXT NULL,
     type TEXT NOT NULL,
     classes TEXT NULL,
     placeholder TEXT NULL,
@@ -153,6 +156,13 @@ CREATE TABLE form_field_definition (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     version BIGINT DEFAULT 0 NOT NULL
+);
+
+CREATE TABLE field_translations (
+    field_id UUID REFERENCES form_field_definition(id) ON DELETE CASCADE,
+    locale VARCHAR(5) NOT NULL,
+    label VARCHAR(255) NOT NULL,
+    PRIMARY KEY (field_id, locale)
 );
 
 CREATE TABLE form_config_success_page (

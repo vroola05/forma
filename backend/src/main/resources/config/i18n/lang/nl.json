@@ -1,5 +1,6 @@
 {
     "generic.lang": "Nederlands",
+    "generic.lang.code": "Taalcode",
     "generic.title": "Forma",
     "generic.search": "Zoeken...",
     "generic.slug": "URL-naam",
@@ -162,11 +163,13 @@
     "prop.layout.label": "Layout",
     "prop.layout.label.default": "Standaard",
     "prop.layout.label.table": "Tabel",
-
+    
     "prop.name.message": "Het veld Naam heeft de volgende specificaties:<br> - Het veld is verplicht<br /> - Maximaal 200 tekens.<br /> - Het Het veld Id mag de volgende tekens bevatten (a-z 0-9 of _ -).",
     "prop.label.message": "Het veld Label heeft een maximum van 200 tekens.",
     "prop.class.message": "Ongeldig formaat: maximaal 200 tekens en class-namen mogen niet met een cijfer beginnen.",
     "prop.metadata.message": "Het veld Metadata heeft een maximum van 200 tekens.",
+    "prop.labels.locale.empty.message": "Het veld 'Taalcode' is een verplicht veld.",
+    "prop.labels.locale.duplicate.message": "Validatie mislukt: De taalcode '{}' is meerdere keren toegevoegd.",
 
     "error.check.fields": "Er is iets fout gegaan. Controleer of alle velden goed zijn ingevuld."
 }

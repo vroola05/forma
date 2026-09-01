@@ -1,12 +1,20 @@
 package org.commonground.forma.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.commonground.forma.database.dao.definition.FormDefinitionEntity;
 import org.commonground.forma.database.dao.definition.FormFieldDefinitionEntity;
 import org.commonground.forma.database.dao.definition.properties.FieldProperties;
 import org.commonground.forma.database.dao.definition.properties.FileFieldProperties;
 import org.commonground.forma.database.dao.definition.properties.RepeatingGroupProperties;
+import org.commonground.forma.database.dao.translation.FieldTranslationEntity;
+import org.commonground.forma.database.dao.translation.FormTranslationEntity;
+import org.commonground.forma.model.form.Translation;
 import org.commonground.forma.model.form.constants.FieldType;
 import org.commonground.forma.model.form.fields.CheckboxField;
 import org.commonground.forma.model.form.fields.ColorField;
@@ -40,13 +48,15 @@ public class FieldMapper {
 
     private void setFormFieldDefinitionEntityProperties(FormFieldDefinitionEntity entity, Field dto, int index) {
         entity.setName(dto.getName());
-        entity.setLabel(dto.getLabel());
+        
         entity.setType(dto.getType().name());
         entity.setClasses(dto.getClasses());
         entity.setMetadata(dto.getMetadata());
         entity.setCondition(dto.getCondition() == null || dto.getCondition().isEmpty() ? null : dto.getCondition());
         entity.setShow(dto.isShow());
         entity.setSortOrder(index);
+
+        translationDtoToEntity(entity, dto.getLabels());
 
         if (isTextField(dto.getType())) {
             TextField textField = (TextField) dto;
@@ -112,6 +122,29 @@ public class FieldMapper {
         }
     }
 
+    public void translationDtoToEntity(FormFieldDefinitionEntity entity, List<Translation> translation) {
+        Set<String> dtoLocales = translation.stream()
+                .map(Translation::getLocale)
+                .collect(Collectors.toSet());
+
+        entity.getLabels().removeIf(existing -> !dtoLocales.contains(existing.getLocale()));
+
+        for (Translation dtoLabel : translation) {
+            Optional<FieldTranslationEntity> existingOpt = entity.getLabels().stream()
+                    .filter(e -> e.getLocale().equals(dtoLabel.getLocale()))
+                    .findFirst();
+
+            if (existingOpt.isPresent()) {
+                existingOpt.get().setLabel(dtoLabel.getText());
+            } else {
+                FieldTranslationEntity newTranslation = new FieldTranslationEntity();
+                newTranslation.setField(entity);
+                newTranslation.setLocale(dtoLabel.getLocale());
+                newTranslation.setLabel(dtoLabel.getText());
+                entity.getLabels().add(newTranslation);
+            }
+        }
+    }
 
     public Field toResponseDto(FormFieldDefinitionEntity entity) {
         Field field;
@@ -120,7 +153,6 @@ public class FieldMapper {
             FormGroup formGroup = new FormGroup();
             formGroup.setId(entity.getId());
             formGroup.setName(entity.getName());
-            formGroup.setLabel(entity.getLabel());
             formGroup.setClasses(entity.getClasses());
             formGroup.setType(FieldType.FORM_GROUP);
             formGroup.setMetadata(entity.getMetadata());
@@ -134,7 +166,6 @@ public class FieldMapper {
             RepeatingGroup repeatingGroup = new RepeatingGroup();
             repeatingGroup.setId(entity.getId());
             repeatingGroup.setName(entity.getName());
-            repeatingGroup.setLabel(entity.getLabel());
             repeatingGroup.setClasses(entity.getClasses());
             repeatingGroup.setType(FieldType.FORM_GROUP);
             repeatingGroup.setMetadata(entity.getMetadata());
@@ -230,19 +261,20 @@ public class FieldMapper {
         field.setId(entity.getId());
         field.setName(entity.getName());
         field.setType(fieldType);
-        field.setLabel(entity.getLabel());
         field.setClasses(entity.getClasses());
         
         field.setMetadata(entity.getMetadata());
         field.setCondition(entity.getCondition());
         field.setShow(entity.getShow());
-        
+
+        translationEntityToDto(field, entity);
+
         return field;
     }
 
     public List<Field> toResponseDtoList(List<FormFieldDefinitionEntity> entities) {
         if (entities == null) {
-            return null;
+            return new ArrayList<>();
         }
 
         return entities.stream()
@@ -258,7 +290,16 @@ public class FieldMapper {
             || fieldType == FieldType.VALUTA
             || fieldType == FieldType.DATE
             || fieldType == FieldType.HIDDEN
-            || fieldType == FieldType.LABEL
             || fieldType == FieldType.PASSWORD;
+    }
+
+    public void translationEntityToDto(Field dto, FormFieldDefinitionEntity entity) {
+        List<FieldTranslationEntity> translationEntities = entity.getLabels();
+        for (FieldTranslationEntity translationEntity : translationEntities) {
+            Translation translation = new Translation();
+            translation.setLocale(translationEntity.getLocale());
+            translation.setText(translationEntity.getLabel());
+            dto.getLabels().add(translation);
+        }
     }
 }

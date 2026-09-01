@@ -2,7 +2,6 @@ package org.commonground.forma.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -28,7 +27,6 @@ public class FormMapper {
         entity.setId(UUID.randomUUID());
         entity.setTenantId(tenantId);
         entity.setName(dto.getName());
-        entity.setLabel(dto.getLabel());
         entity.setClasses(dto.getClasses());
         entity.setStatus(dto.getStatus());
         entity.setMetadata(dto.getMetadata());
@@ -36,7 +34,7 @@ public class FormMapper {
         entity.setCondition(dto.getCondition() == null || dto.getCondition().isEmpty() ? null : dto.getCondition());
         entity.setShow(dto.isShow());
 
-        addLabels(entity, dto.getLabels());
+        translationDtoToEntity(entity, dto.getLabels());
 
         return entity;
     }
@@ -44,7 +42,6 @@ public class FormMapper {
     public void updateEntityFromDto(FormDefinitionEntity entity, Form dto, UUID tenantId) {
         entity.setTenantId(tenantId);
         entity.setName(dto.getName());
-        entity.setLabel(dto.getLabel());
         entity.setClasses(dto.getClasses());
         entity.setStatus(dto.getStatus());
         entity.setMetadata(dto.getMetadata());
@@ -52,12 +49,12 @@ public class FormMapper {
         entity.setCondition(dto.getCondition() == null || dto.getCondition().isEmpty() ? null : dto.getCondition());
         entity.setShow(dto.isShow());
 
-        addLabels(entity, dto.getLabels());
+        translationDtoToEntity(entity, dto.getLabels());
         
     }
 
 
-    public void addLabels(FormDefinitionEntity entity, List<Translation> translation) {
+    public void translationDtoToEntity(FormDefinitionEntity entity, List<Translation> translation) {
         Set<String> dtoLocales = translation.stream()
                 .map(Translation::getLocale)
                 .collect(Collectors.toSet());
@@ -71,12 +68,12 @@ public class FormMapper {
                     .findFirst();
 
             if (existingOpt.isPresent()) {
-                existingOpt.get().setLabel(dtoLabel.getLabel());
+                existingOpt.get().setLabel(dtoLabel.getText());
             } else {
                 FormTranslationEntity newTranslation = new FormTranslationEntity();
                 newTranslation.setForm(entity);
                 newTranslation.setLocale(dtoLabel.getLocale());
-                newTranslation.setLabel(dtoLabel.getLabel());
+                newTranslation.setLabel(dtoLabel.getText());
                 entity.getLabels().add(newTranslation);
             }
         }
@@ -91,7 +88,6 @@ public class FormMapper {
         dto.setId(entity.getId());
         dto.setType(FieldType.FORM);
         dto.setName(entity.getName());
-        dto.setLabel(entity.getLabel());
         dto.setStatus(entity.getStatus());
         dto.setClasses(entity.getClasses());
         dto.setMetadata(entity.getMetadata());
@@ -102,7 +98,6 @@ public class FormMapper {
                 CheckboxField check = new CheckboxField();
                 check.setType(FieldType.CHECKBOX);
                 check.setName("confirmation-" + (i + 1));
-                check.setLabel("");
                 check.setRequired(true);
                 check.setOptions(new ArrayList<>());
                 check.getOptions().add(new Option(entity.getConfirmation().get(i),
@@ -113,6 +108,19 @@ public class FormMapper {
         dto.setCondition(entity.getCondition());
         dto.setShow(entity.isShow());
 
+        translationEntityToDto(dto, entity);
+
         return dto;
+    }
+
+
+    public void translationEntityToDto(Form dto, FormDefinitionEntity entity) {
+        List<FormTranslationEntity> translationEntities = entity.getLabels();
+        for (FormTranslationEntity translationEntity : translationEntities) {
+            Translation translation = new Translation();
+            translation.setLocale(translationEntity.getLocale());
+            translation.setText(translationEntity.getLabel());
+            dto.getLabels().add(translation);
+        }
     }
 }

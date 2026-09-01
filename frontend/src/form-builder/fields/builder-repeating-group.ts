@@ -13,7 +13,7 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
 
     dropzone: Dropzone | null = null;
 
-    acceptedTypes = ['text', 'number', 'date', 'select', 'radio', 'valuta'];
+    acceptedTypes = ['text', 'checkbox', 'number', 'date', 'select', 'radio', 'valuta', 'password', 'label', 'hidden', 'file', 'dual-listbox', 'color'];
 
     fields: BuilderFieldInterface[] = [];
 
@@ -34,10 +34,10 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
         this.createContent(type, label);
     }
 
-    createContent(type: FIELD_TYPE, label: string) {
+    createContent(type: FIELD_TYPE, _label: string) {
         this.builderFormGroup.className = 'builder-repeating-group draggable-item';
         this.builderFormGroup.draggable = true;
-        this.builderFormGroup.setAttribute('data-type', type);
+        this.builderFormGroup.dataset.type = type;
         this.builderFormGroup.addEventListener("dragstart", (event) => {
             if (this.onDragStart) {
                 this.onDragStart(event);
@@ -68,7 +68,7 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
         const builderFormGroupBtnClose = document.createElement('button');
         builderFormGroupBtnClose.className = 'builder-btn-icon icon icon-x-lg';
         builderFormGroupHeaderBarButtons.appendChild(builderFormGroupBtnClose);
-        builderFormGroupBtnClose.addEventListener('click', (event) => {
+        builderFormGroupBtnClose.addEventListener('click', (_event) => {
             if (this.onDeleteCallback) {
                 this.onDeleteCallback(this);
             }
@@ -82,10 +82,10 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
         builderFormGroupFieldContainer.appendChild(this.builderFormGroupField);
 
         this.dropzone = new Dropzone(this, this.builderFormGroupField, 
-            (type, label, dragged, droppedOnformItem) => {
+            (_type, _label, _dragged, _droppedOnformItem) => {
                 this.updateFormGroup();
             }, 
-            (type, label, dragged, droppedOnformItem) => {
+            (_type, _label, _dragged, _droppedOnformItem) => {
                 this.updateFormGroup();
             },
             () => {
@@ -162,10 +162,10 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
 
             const minLength = this.fieldProperties.getPropertyValueById('minLength');
             const maxLength = this.fieldProperties.getPropertyValueById('maxLength');
-            if (minLength !== null && isNaN(minLength)) {
+            if (minLength !== null && Number.isNaN(minLength)) {
                 throw new Error(`${this.fieldProperties.getFieldIdentifier()} - Minimaal aantal rijen moet een geldig getal zijn.`);
             }
-            if (maxLength !== null && isNaN(maxLength)) {
+            if (maxLength !== null && Number.isNaN(maxLength)) {
                 throw new Error(`${this.fieldProperties.getFieldIdentifier()} - Maximaal aantal rijen moet een geldig getal zijn.`);
             }
 

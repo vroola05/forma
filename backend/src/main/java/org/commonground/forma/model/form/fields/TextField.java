@@ -1,5 +1,6 @@
 package org.commonground.forma.model.form.fields;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.UUID;
 
 import org.commonground.forma.exceptions.FieldValidationException;
 import org.commonground.forma.model.form.Option;
+import org.commonground.forma.model.form.Translation;
 import org.commonground.forma.model.form.condition.Condition;
 import org.commonground.forma.model.form.constants.FieldType;
 
@@ -27,8 +29,8 @@ import lombok.Setter;
 public class TextField implements Field {
     private UUID id;
     private String name;
-    private String label;
-
+    @Builder.Default
+    private List<Translation> labels = new ArrayList<>();
     private FieldType type;
     private String placeholder;
     private String classes;
@@ -67,7 +69,7 @@ public class TextField implements Field {
 
     @Override
     public Field cloneField() {
-        return new TextField(id, name, label, type, placeholder, classes, readonly, required, show, minLength, maxLength, value, metadata, data, condition);
+        return new TextField(id, name, labels, type, placeholder, classes, readonly, required, show, minLength, maxLength, value, metadata, data, condition);
     }
 
     @Override

@@ -1,7 +1,7 @@
 
 import { BuilderFieldProperties } from '../properties/builder-field-properties';
 import { Lang } from '../../shared/services/lang'
-import { BaseFieldDto, BuilderCondition } from '../../shared/model/types';
+import { BaseFieldDto, BuilderCondition, TranslationDto } from '../../shared/model/types';
 import { ContitionService } from '../../shared/services/condition-service'
 import { FieldProperty, FIELD_TYPE, PROPERTY_TYPE } from '../types';
 import { Dropzone } from './components/dropzone';
@@ -20,7 +20,6 @@ export class BuilderFieldInterface {
     onDragStart: ((event: DragEvent) => void) | null = null;
 
     onFieldPropertiesClicked = null;
-    // onFieldChanged = null;
     onDeleteCallback: ((field: BuilderFieldInterface) => void) | null = null;
     labelValue = null;
 
@@ -30,16 +29,17 @@ export class BuilderFieldInterface {
         this.name = '';
 
         this.fieldProperties.addProperties([
-            {type: PROPERTY_TYPE.HIDDEN, id: 'id', order: 1, label: 'ID', value: ''},
-            {type: PROPERTY_TYPE.STRING, id: 'name', order: 2, label: Lang.get('prop.name.label'), value: '', pattern: new RegExp("^(?=.{1,200}$)[a-z](?:[a-z0-9_-]*[a-z0-9])?$", "i"), message: Lang.get('prop.name.message'), unique: true},
-            {type: PROPERTY_TYPE.STRING, id: 'label', order: 3, label: Lang.get('prop.label.label'), value: '', pattern: new RegExp(".{0,200}$"), message: Lang.get('prop.name.message')},
-            {type: PROPERTY_TYPE.STRING, id: 'classes', order: 5,  label: Lang.get('prop.class.label'), value: '', pattern: new RegExp(/^(?:(?=.{1,200}$)[-_a-z][-_a-z0-9]*(?:\s+[-_a-z][-_a-z0-9]*)*)?$/i), message: Lang.get('prop.class.message')},
-            {type: PROPERTY_TYPE.CONDITION, id: 'condition', order: 20, label: 'Show condities', value: {}},
-            {type: PROPERTY_TYPE.LIST, id: 'metadata', order: 21, label: Lang.get('prop.metadata.label'), value: [], pattern: new RegExp("^.{0,10}$"), message: Lang.get('prop.metadata.message')}
+            { type: PROPERTY_TYPE.HIDDEN, id: 'id', order: 1, label: 'ID', value: '' },
+            { type: PROPERTY_TYPE.STRING, id: 'name', order: 2, label: Lang.get('prop.name.label'), value: '', pattern: new RegExp("^(?=.{1,200}$)[a-z](?:[a-z0-9_-]*[a-z0-9])?$", "i"), message: Lang.get('prop.name.message'), unique: true },
+            { type: PROPERTY_TYPE.LABEL, id: 'labels', order: 4, label: Lang.get('prop.label.label'), value: [] },
+            { type: PROPERTY_TYPE.STRING, id: 'classes', order: 5, label: Lang.get('prop.class.label'), value: '', pattern: new RegExp(/^(?:(?=.{1,200}$)[-_a-z][-_a-z0-9]*(?:\s+[-_a-z][-_a-z0-9]*)*)?$/i), message: Lang.get('prop.class.message') },
+            { type: PROPERTY_TYPE.CONDITION, id: 'condition', order: 20, label: 'Show condities', value: {} },
+            { type: PROPERTY_TYPE.LIST, id: 'metadata', order: 21, label: Lang.get('prop.metadata.label'), value: [], pattern: new RegExp("^.{0,10}$"), message: Lang.get('prop.metadata.message') }
         ]);
 
 
-        this.fieldProperties.addPropertyChangedListener('label', (value: any) => {
+        this.fieldProperties.addPropertyChangedListener('labels', (value: any) => {
+
             this.setLabel(this.fieldProperties.getFieldIdentifier());
             BuilderPropertiesService.setLabel(this.fieldProperties.getFieldIdentifier());
         });
@@ -47,19 +47,82 @@ export class BuilderFieldInterface {
         this.fieldProperties.addPropertyChangedListener('name', (value: any, pathOld: string) => {
             ContitionService.notify(pathOld, this.getPath());
         });
-        
-
     }
 
     createContent(type: FIELD_TYPE, label: string) {
     }
 
     setLabel(value: string) {
+        // Inherited
     }
 
     getLabel() {
         return this.label;
     }
+
+    /**
+     * Gives an unique name based on the children of the object. It checks getFields()
+     * if there is another field with the name of the label and adds a number.
+     * @param label 
+     * @returns 
+     */
+    getUniqueLabel(label: string): string {
+        const existingLabels = new Set(this.getFields()?.map(f => f.getDefaultLabel()) || []);
+        return this.generateUniqueValue(label, existingLabels, ' ');
+    }
+
+    getUniqueName(label: string, property: string = 'name', cleanLabel: boolean = false, separator: string = '-'): string {
+
+        const existingNames = new Set(this.getFields()?.map(f => f.getPropertyValueById(property)) || []);
+
+        const baseLabel = cleanLabel
+            ? label.toLowerCase().trim().replace(/\s+/g, separator)
+            : label;
+
+        return this.generateUniqueValue(baseLabel, existingNames, separator);
+    }
+
+
+    private generateUniqueValue(base: string, existingValues: Set<unknown>, separator: string): string {
+        let index = 1;
+        let newValue = `${base}${separator}${index}`;
+
+        while (existingValues.has(newValue)) {
+            index++;
+            newValue = `${base}${separator}${index}`;
+        }
+
+        return newValue;
+    }
+
+
+    getDefaultLabel(input: TranslationDto[] | undefined = undefined): string {
+        const labels = input ?? this.fieldProperties.getPropertyById('labels')?.value as TranslationDto[] | undefined;
+        const locale = Lang.getDefaultLocale();
+
+        if (!labels || !locale) return '';
+
+        const currentLabel = labels.find(l => l.locale === locale);
+
+        return currentLabel?.text ? currentLabel.text : '';
+    }
+
+    setDefaultLabel(label: string) {
+        const labels = this.fieldProperties.getPropertyById('labels')?.value as TranslationDto[] | undefined;
+        const locale = Lang.getDefaultLocale();
+
+        if (!labels || !locale) return;
+
+        const currentLabel = labels.find(l => l.locale === locale);
+
+        if (currentLabel) {
+            currentLabel.text = label;
+        } else {
+            labels.push({ locale, text: label });
+        }
+    }
+
+
 
     getContent(): HTMLElement | null {
         return null;
@@ -76,7 +139,7 @@ export class BuilderFieldInterface {
     getPropertyValueById(id: string) {
         return this.fieldProperties.getPropertyValueById(id);
     }
-    
+
     initDefaultProperties(baseFieldDto: BaseFieldDto) {
         if (!baseFieldDto) {
             return;
@@ -89,7 +152,7 @@ export class BuilderFieldInterface {
 
 
             if (this.fieldProperties.hasProperty(key)) {
-         
+
                 if (key === 'condition') {
                     this.fieldProperties.setPropertyValueById(key, new BuilderCondition(baseFieldDto.condition));
                 } else if (value !== undefined && value !== null) {
@@ -97,15 +160,14 @@ export class BuilderFieldInterface {
                 }
             }
 
-            if (key === 'label') {
-                this.setLabel(value);
-            }
         }
+
+        this.setLabel(this.getDefaultLabel());
     }
 
     getPath(): string {
         return !this.parent ? `$.${this.getPropertyValueById('name')}`
-                : `${this.parent.getPath()}.${this.getPropertyValueById('name')}`;
+            : `${this.parent.getPath()}.${this.getPropertyValueById('name')}`;
 
     }
 
@@ -150,7 +212,7 @@ export class BuilderFieldInterface {
             if (prop && prop.value === value) {
                 result.push(prop);
             }
-            
+
             return result;
         }, []);
     }
@@ -160,7 +222,7 @@ export class BuilderFieldInterface {
     }
 
     validate() {
-        
+
     }
 
     /**
@@ -194,7 +256,7 @@ export class BuilderFieldInterface {
                         errorListFields.push(...errorsChild);
                     }
                 }
-                
+
                 continue;
             }
 
@@ -207,7 +269,7 @@ export class BuilderFieldInterface {
                     errors: val1
                 });
             }
-            
+
         }
 
         errorList.push(...errorListFields)

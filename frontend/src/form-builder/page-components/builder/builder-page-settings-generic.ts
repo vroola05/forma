@@ -15,6 +15,7 @@ export class BuilderPageSettingsGeneric extends Page {
     }
 
     createContent(formWrapper: FormWrapper) {
+
         const formDto:FormDto = {
             "id": "form",
             "name": "form",
@@ -49,9 +50,9 @@ export class BuilderPageSettingsGeneric extends Page {
                                     "label": Lang.get('prop.label.label'),
                                     "type": "text",
                                     "required": true,
-                                    "value": formWrapper?.form?.label,
+                                    "value": BuilderFormService?.getBuilderForm()?.getDefaultLabel(formWrapper?.form?.labels),
                                     "change": (key: string, value: any) => {
-                                        BuilderFormService?.getBuilderForm()?.setPropertyValueById(key, value);
+                                        BuilderFormService?.getBuilderForm()?.setDefaultLabel(value);
                                         EventService.emit('field-changed');
                                     }
                                 },
@@ -73,6 +74,7 @@ export class BuilderPageSettingsGeneric extends Page {
                 }
             ]
         }
+
         Form.create(formDto).then(form => {
             this.form = form;
 

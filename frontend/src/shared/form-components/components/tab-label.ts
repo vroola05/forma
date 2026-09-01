@@ -15,7 +15,7 @@ export class TabLabel {
 
     createElement() {
         this.content.className = 'tab-nav flex-sm-fill text-sm-center nav-link';
-        this.content.setAttribute('data-name', this.name); 
+        this.content.dataset.name = this.name; 
         this.content.innerHTML = `<span>${this.label}</span>`;
     }
 

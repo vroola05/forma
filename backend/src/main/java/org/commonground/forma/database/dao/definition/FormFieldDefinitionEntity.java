@@ -6,12 +6,15 @@ import java.util.UUID;
 
 import org.commonground.forma.database.dao.BaseEntity;
 import org.commonground.forma.database.dao.definition.properties.FieldProperties;
+import org.commonground.forma.database.dao.translation.FieldTranslationEntity;
 import org.commonground.forma.model.form.Option;
 import org.commonground.forma.model.form.condition.Condition;
+
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.dialect.type.PostgreSQLJsonPGObjectJsonType;
 import org.hibernate.type.SqlTypes;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,6 +24,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,7 +40,6 @@ public class FormFieldDefinitionEntity extends BaseEntity {
 
     @Column(nullable = false)
     private String name;
-    private String label;
     @Column(nullable = false)
     private String type;
     private String classes;
@@ -88,6 +91,9 @@ public class FormFieldDefinitionEntity extends BaseEntity {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sortOrder ASC")
     private List<FormFieldDefinitionEntity> children = new ArrayList<>();
+
+    @OneToMany(mappedBy = "field", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FieldTranslationEntity> labels = new ArrayList<>();
 
     public List<String> getMetadata() {
         return metadata == null ? null : metadata;

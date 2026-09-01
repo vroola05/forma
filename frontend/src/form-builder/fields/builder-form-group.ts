@@ -12,22 +12,7 @@ export class BuilderFormGroup extends BuilderFieldInterface {
 
     dropzone: Dropzone | null = null;
 
-    acceptedTypes = [
-        'text',
-        'checkbox',
-        'number',
-        'date',
-        'select',
-        'radio',
-        'valuta',
-        'password',
-        'label',
-        'hidden',
-        'file',
-        'dual-listbox',
-        'color',
-        'repeating-group'
-    ];
+    acceptedTypes = ['text', 'checkbox', 'number', 'date', 'select', 'radio', 'valuta', 'password', 'label', 'hidden', 'file', 'dual-listbox', 'color'];
 
     fields: BuilderFieldInterface[] = [];
 
@@ -38,10 +23,10 @@ export class BuilderFormGroup extends BuilderFieldInterface {
         this.createContent(type, label);
     }
 
-    createContent(type: FIELD_TYPE, label: string) {
+    createContent(type: FIELD_TYPE, _label: string) {
         this.builderFormGroup.className = 'builder-form-group draggable-item';
         this.builderFormGroup.draggable = true;
-        this.builderFormGroup.setAttribute('data-type', type);
+        this.builderFormGroup.dataset.type = type;
         this.builderFormGroup.addEventListener("dragstart", (event) => {
             if (this.onDragStart) {
                 this.onDragStart(event);
@@ -71,7 +56,7 @@ export class BuilderFormGroup extends BuilderFieldInterface {
         const builderFormGroupBtnClose = document.createElement('button');
         builderFormGroupBtnClose.className = 'builder-btn-icon icon icon-x-lg';
         builderFormGroupHeaderBarButtons.appendChild(builderFormGroupBtnClose);
-        builderFormGroupBtnClose.addEventListener('click', (event) => {
+        builderFormGroupBtnClose.addEventListener('click', (_event) => {
             if (this.onDeleteCallback) {
                 this.onDeleteCallback(this);
             }
@@ -85,10 +70,10 @@ export class BuilderFormGroup extends BuilderFieldInterface {
         builderFormGroupFieldContainer.appendChild(this.builderFormGroupField);
 
         this.dropzone = new Dropzone(this, this.builderFormGroupField, 
-            (type, label, dragged, droppedOnformItem) => {
+            (_type, _label, _dragged, _droppedOnformItem) => {
                 this.updateFormGroup();
             }, 
-            (type, label, dragged, droppedOnformItem) => {
+            (_type, _label, _dragged, _droppedOnformItem) => {
                 this.updateFormGroup();
             },
             () => {

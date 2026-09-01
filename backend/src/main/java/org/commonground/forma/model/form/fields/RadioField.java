@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.commonground.forma.exceptions.FieldValidationException;
 import org.commonground.forma.model.form.Option;
+import org.commonground.forma.model.form.Translation;
 import org.commonground.forma.model.form.condition.Condition;
 import org.commonground.forma.model.form.constants.FieldType;
 
@@ -28,7 +29,8 @@ import lombok.Setter;
 public class RadioField implements Field {
     private UUID id;
     private String name;
-    private String label;
+    @Builder.Default
+    private List<Translation> labels = new ArrayList<>();
 
     private FieldType type;
     private String placeholder;
@@ -60,7 +62,7 @@ public class RadioField implements Field {
     
     @Override
     public Field cloneField() {
-        return new RadioField(id, name, label, type, placeholder, classes, readonly, readonly, show, value, metadata, cloneOptions(options), cloneOptions(values), data, condition);
+        return new RadioField(id, name, labels, type, placeholder, classes, readonly, readonly, show, value, metadata, cloneOptions(options), cloneOptions(values), data, condition);
     }
 
     public List<Option> cloneOptions(List<Option> options) {

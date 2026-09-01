@@ -1,7 +1,7 @@
 import { FormService } from '../../../form-viewer/services/form-service';
 import { ConditionParser } from '../../condition-components/condition-parser';
-import { Condition } from '../../model/types';
-import { InputNucleus } from './input-base';
+import { Condition, TranslationDto } from '../../model/types';
+import { Lang } from '../../services/lang';
 import { ValidationBase } from './validation-base';
 
 export class Nucleus extends ValidationBase {
@@ -10,7 +10,9 @@ export class Nucleus extends ValidationBase {
     prefix: string | undefined = undefined;
     id: string | undefined = undefined;
     name: string = '';
+    // Label is onlu used when manualy creating a form
     label: string | undefined = '';
+    labels: TranslationDto[] | undefined = [];
     type: string = '';
 
     classes: string = '';
@@ -20,7 +22,7 @@ export class Nucleus extends ValidationBase {
     content: HTMLDivElement = document.createElement('div');
 
     constructor(
-            name: string, label: string | undefined,
+            name: string, labels: TranslationDto[] | undefined,
             id: string | undefined = undefined,
             prefix: string | undefined = undefined) {
         super();
@@ -29,7 +31,7 @@ export class Nucleus extends ValidationBase {
         }
         
         this.name = name;
-        this.label = label;
+        this.labels = labels;
         this.prefix = prefix;
         this.id = id;
 
@@ -70,8 +72,33 @@ export class Nucleus extends ValidationBase {
         return this;
     }
 
-    getLabel() {
-        return this.label;
+    setLabels(label: TranslationDto[] | undefined) {
+        this.labels = label;
+        return this;
+    }
+
+    getLabels() {
+        return this.labels;
+    }
+
+    getLabel(): string {
+        
+        const locale = Lang.getLocale();
+
+        const localeDefault = Lang.getDefaultLocale();
+
+        if (this.labels && this.labels.length > 0) {
+            let label = this.labels.find(l => l.locale === locale);
+            if (label?.text) {
+                return label.text;
+            }
+            label = this.labels.find(l => l.locale === localeDefault);
+            if (label?.text) {
+                return label.text;
+            }
+        }
+        return this.label ? this.label : ''
+
     }
 
     setType(type: string) {

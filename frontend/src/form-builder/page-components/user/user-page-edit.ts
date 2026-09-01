@@ -72,10 +72,10 @@ export class UserPageEdit extends SettingsPage {
                         }))
                     ] as OptionDto[];
 
-                    const groupOptionValues = (this.user?.groups?.map(group => ({
-                                        "value": group.id,
-                                        "text": group.name
-                                    })) || []) as OptionDto[];
+        const groupOptionValues = (this.user?.groups?.map(group => ({
+                            "value": group.id,
+                            "text": group.name
+                        })) || []) as OptionDto[];
 
         const formDto: FormDto = {
             "id": "user-form",

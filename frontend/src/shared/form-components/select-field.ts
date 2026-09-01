@@ -1,4 +1,4 @@
-import { OptionDto } from '../model/types';
+import { OptionDto, TranslationDto } from '../model/types';
 import { InputNucleus } from './interface/input-base';
 
 /**
@@ -7,8 +7,8 @@ import { InputNucleus } from './interface/input-base';
 export class SelectField extends InputNucleus<HTMLSelectElement> {
     value: OptionDto[];
 
-    constructor(name: string, label: string | undefined, classes: string, id: string | undefined = undefined) {
-        super(document.createElement('select'), name, label, id);
+    constructor(name: string, labels: TranslationDto[] | undefined, classes: string, id: string | undefined = undefined) {
+        super(document.createElement('select'), name, labels, id);
         
         this.value = [];
         this.classes = classes;
@@ -93,7 +93,7 @@ export class SelectField extends InputNucleus<HTMLSelectElement> {
     }
 
     clone() {
-        const selectField = new SelectField(this.name, this.label, this.classes, this.id);
+        const selectField = new SelectField(this.name, this.labels, this.classes, this.id);
         [...this.inputElement.options].forEach(option => {
             const clone = option.cloneNode(true) as HTMLOptionElement
             clone.selected = option.selected;

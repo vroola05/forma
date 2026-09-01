@@ -6,13 +6,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.commonground.forma.config.AppConstants;
 import org.commonground.forma.config.tenant.TenantContext;
 import org.commonground.forma.database.dao.definition.FormDefinitionEntity;
+import org.commonground.forma.database.dao.translation.FormTranslationEntity;
 import org.commonground.forma.database.repository.FormDefinitionRepository;
 import org.commonground.forma.mapper.FormMapper;
 import org.commonground.forma.model.form.FormConfig;
 import org.commonground.forma.model.form.FormList;
 import org.commonground.forma.model.form.FormWrapper;
+import org.commonground.forma.model.form.Translation;
 import org.commonground.forma.model.form.fields.Field;
 import org.commonground.forma.model.form.fields.Form;
 import org.commonground.forma.model.form.fields.TabPage;
@@ -58,15 +61,28 @@ public class FormServiceDatabase implements FormService {
         List<FormList> formLists = new ArrayList<>();
         List<FormDefinitionEntity> formDefinitionEntities = this.formDefinitionRepository.findByTenantId(tenant.getId());
         formDefinitionEntities.stream().forEach(formDefinitionEntity -> {
+
+            List<FormTranslationEntity> a = formDefinitionEntity.getLabels();
             FormList formList = new FormList();
             formList.setId(formDefinitionEntity.getId());
             formList.setName(formDefinitionEntity.getName());
-            formList.setLabel(formDefinitionEntity.getLabel());
+            formList.setLabel(AppConstants.getTranslation(getTranslations(formDefinitionEntity.getLabels())));
             formList.setStatus(formDefinitionEntity.getStatus());
             formLists.add(formList);
         });
 
         return formLists;
+    }
+
+    public List<Translation> getTranslations(List<FormTranslationEntity> translationEntities) {
+        List<Translation> translations = new ArrayList<>();
+        for (FormTranslationEntity translationEntity : translationEntities) {
+            Translation translation = new Translation();
+            translation.setLocale(translationEntity.getLocale());
+            translation.setText(translationEntity.getLabel());
+            translations.add(translation);
+        }
+        return translations;
     }
 
     @Override

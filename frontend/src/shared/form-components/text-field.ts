@@ -1,3 +1,4 @@
+import { TranslationDto } from '../model/types';
 import { InputNucleus } from './interface/input-base';
 
 /**
@@ -10,10 +11,10 @@ export class TextField extends InputNucleus<HTMLInputElement> {
 
     constructor(
             name: string,
-            label: string | undefined,
+            labels: TranslationDto[] | undefined = undefined,
             id: string | undefined = undefined,
             prefix: string | undefined = undefined) {
-        super(document.createElement('input'), name, label, id, prefix);
+        super(document.createElement('input'), name, labels, id, prefix);
         this.type = 'text';
 
         this.createElement();
@@ -25,10 +26,9 @@ export class TextField extends InputNucleus<HTMLInputElement> {
         this.inputElement.className = 'form-control';
         this.inputElement.name = this.name;
         this.inputElement.id = this.getId();
-        
+
         this.inputElement.value = this.getValue();
-        
-        
+
         this.inputElement.addEventListener('change', (e) => {
             this.setValue((e.target as HTMLInputElement).value, false, true);
         });
@@ -85,7 +85,7 @@ export class TextField extends InputNucleus<HTMLInputElement> {
     }
 
     clone() {
-        const textfield = new TextField(this.name, this.label);
+        const textfield = new TextField(this.name, this.labels);
         textfield.setType(this.type);
         textfield.setValue(this.value);
         textfield.setClasses(this.classes);

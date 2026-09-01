@@ -30,12 +30,13 @@ export class Form extends Nucleus {
 
 
     constructor(formDto: FormDto, options: FormOptions | undefined = undefined) {
-        super(formDto.name, formDto.label, formDto.id)
+        super(formDto.name, formDto.labels, formDto.id)
 
         this.#options = options;
 
         this.id = formDto.id;
-
+        this.label = formDto.label;
+        
         this.type = 'form';
 
         this.singlePage = !formDto.singlePage ? false : formDto.singlePage;
