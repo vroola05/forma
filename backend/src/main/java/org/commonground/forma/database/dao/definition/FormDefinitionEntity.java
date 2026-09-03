@@ -76,4 +76,11 @@ public class FormDefinitionEntity extends BaseEntity {
     public List<String> getConfirmation() {
         return confirmation == null ? null : confirmation;
     }
+
+    public void removeFormConfigSuccessPageEntity() {
+        if (this.formConfigSuccessPageEntity != null) {
+            this.formConfigSuccessPageEntity.setForm(null);
+            this.formConfigSuccessPageEntity = null;
+        }
+    }
 }

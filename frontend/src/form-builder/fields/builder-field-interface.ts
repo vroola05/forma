@@ -146,7 +146,6 @@ export class BuilderFieldInterface {
         }
 
         const keys = Object.keys(baseFieldDto) as Array<keyof BaseFieldDto>;
-
         for (const key of keys) {
             const value = (baseFieldDto as Record<string, any>)[key];
 

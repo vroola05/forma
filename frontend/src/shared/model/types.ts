@@ -53,7 +53,7 @@ export const FORM_STATUS: Record<string, () => string> = {
 };
 
 export type GenericFieldType = 'form' | 'tab' | 'form-group' | 'repeating-group';
-export type InputFieldType = 'text' | 'number' | 'email' | 'password' | 'date' | 'hidden' | 'label' | 'valuta' | 'textarea' | 'color';
+export type InputFieldType = 'text' | 'rich-text' | 'number' | 'email' | 'password' | 'date' | 'hidden' | 'label' | 'valuta' | 'textarea' | 'color';
 export type OptionFieldType = 'checkbox' | 'dual-listbox' | 'radio' | 'select' | 'file';
 export type AllFieldTypes = GenericFieldType | InputFieldType | OptionFieldType;
 
@@ -152,7 +152,7 @@ export interface InputFieldDto extends BaseFieldDto {
     maxLength?: number;
     placeholder?: string;
     readonly?: boolean;
-    value?: string;
+    value?: any;
     change?: any;
 }
 
@@ -182,10 +182,11 @@ export interface FormConfig {
 }
 
 export interface FormConfigSuccessPage {
+    useSuccessPage?: boolean
     id?: string;
     name?: string;
     title?: string;
-    template?: string;
+    template?: any;
     content?: string;
     showSummary?: boolean;
 }

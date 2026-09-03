@@ -24,13 +24,12 @@ export class ConditionParser {
      */
     eval() {
         if (this.func && this.condition && !Object.values(this.condition).every(waarde => !waarde)) {
-            
             this.func(this.checkLogic(this.condition));
         }
     }
 
     isField(input: string | undefined) {
-        return input && input.startsWith("$.");
+        return input?.startsWith("$.");
     }
 
     getConditionType(condition: Condition) {
@@ -38,17 +37,19 @@ export class ConditionParser {
     }
 
     #bindFieldToConditions(condition: Condition, form: Form) {
-        if (condition && form) {
-            if (this.getConditionType(condition) === ConditionType.COMPOSITE) {
-                if (condition.conditions) {
-                    for (let i = 0; i < condition.conditions.length; i++) {
-                        this.#bindFieldToConditions(condition.conditions[i], form);
-                    }
-                
+        if (condition === undefined || form === undefined) {
+            return;
+        }
+
+        if (this.getConditionType(condition) === ConditionType.COMPOSITE) {
+            if (condition.conditions) {
+                for (const element of condition.conditions) {
+                    this.#bindFieldToConditions(element, form);
                 }
-            } else {
-                this.#bindSimpelConditions(condition, form);
+            
             }
+        } else {
+            this.#bindSimpelConditions(condition, form);
         }
     }
     

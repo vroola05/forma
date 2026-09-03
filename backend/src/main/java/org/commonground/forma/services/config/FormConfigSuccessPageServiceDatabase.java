@@ -1,7 +1,9 @@
 package org.commonground.forma.services.config;
 
+import java.util.Optional;
 import java.util.UUID;
 
+import org.commonground.forma.config.tenant.TenantContext;
 import org.commonground.forma.database.dao.definition.FormConfigSuccessPageEntity;
 import org.commonground.forma.database.dao.definition.FormDefinitionEntity;
 import org.commonground.forma.database.repository.FormConfigSuccessPageRepository;
@@ -9,7 +11,6 @@ import org.commonground.forma.model.form.FormConfigSuccessPage;
 import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.fields.Form;
 import org.commonground.forma.services.editor.TiptapService;
-import org.commonground.forma.services.submission.FormSubmissionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ public class FormConfigSuccessPageServiceDatabase implements FormConfigSuccessPa
 
     public FormConfigSuccessPageServiceDatabase(
             FormConfigSuccessPageRepository formConfigSuccessPageRepository,
-            FormSubmissionService formSubmissionService,
+            
             TiptapService tiptapService) {
 
         this.formConfigSuccessPageRepository = formConfigSuccessPageRepository;
@@ -36,6 +37,13 @@ public class FormConfigSuccessPageServiceDatabase implements FormConfigSuccessPa
                 .orElse(new FormConfigSuccessPageEntity()));
     }
 
+    
+	@Override
+	public FormConfigSuccessPage getByTenantId(UUID id) {
+		return convertFormConfigSuccessPageEntity(this.formConfigSuccessPageRepository.findByTenantIdAndIsGlobalDefaultIsTrue(id)
+                .orElse(new FormConfigSuccessPageEntity()));
+	}
+    
     private FormConfigSuccessPage convertFormConfigSuccessPageEntity(FormConfigSuccessPageEntity formConfigSuccessPageEntity) {
         FormConfigSuccessPage formConfigSuccessPage = new FormConfigSuccessPage();
         
@@ -57,11 +65,11 @@ public class FormConfigSuccessPageServiceDatabase implements FormConfigSuccessPa
 
     @Override
     @Transactional
-    public String saveSpecific(FormDefinitionEntity formDefinitionEntity, FormConfigSuccessPage formConfigSuccessPage) {
+    public FormConfigSuccessPage saveByForm(FormDefinitionEntity formDefinitionEntity, FormConfigSuccessPage formConfigSuccessPage) {
         if (formDefinitionEntity == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "{tenant.error.no_id}");
         }
-        
+    
         // When the successpage is linked to a form
         FormConfigSuccessPageEntity formConfigSuccessPageEntity = getFormConfigSuccessPageById(formDefinitionEntity);
         formConfigSuccessPageEntity.setForm(formDefinitionEntity);
@@ -74,28 +82,33 @@ public class FormConfigSuccessPageServiceDatabase implements FormConfigSuccessPa
         formConfigSuccessPageEntity.setTemplate(formConfigSuccessPage.getTemplate());
         
         formConfigSuccessPageEntity.setShowSummary(formConfigSuccessPage.getShowSummary() != null && formConfigSuccessPage.getShowSummary());
-        this.formConfigSuccessPageRepository.save(formConfigSuccessPageEntity);
-        return null;
+        
+        return convertFormConfigSuccessPageEntity(this.formConfigSuccessPageRepository.save(formConfigSuccessPageEntity));
+        
     }
 
     @Override
     @Transactional
-    public String saveGlobal(FormDefinitionEntity formDefinitionEntity, FormConfigSuccessPage formConfigSuccessPage) {
+    public FormConfigSuccessPage saveByTenant(FormConfigSuccessPage formConfigSuccessPage) {
         // When the successpage is linked to a tenant (global)
-        FormConfigSuccessPageEntity formConfigSuccessPageEntity = new FormConfigSuccessPageEntity();
+        FormConfigSuccessPageEntity formConfigSuccessPageEntity = this.formConfigSuccessPageRepository.findByTenantIdAndIsGlobalDefaultIsTrue(TenantContext.getTenant().getId()).orElseGet(() -> {
+            FormConfigSuccessPageEntity formConfigSuccessPageEntityNew = new FormConfigSuccessPageEntity();
+            formConfigSuccessPageEntityNew.setId(UUID.randomUUID());
+            return formConfigSuccessPageEntityNew;
+        });
+
         formConfigSuccessPageEntity.setForm(null);
         formConfigSuccessPageEntity.setGlobalDefault(true);
         
-        formConfigSuccessPageEntity.setTenantId(formDefinitionEntity.getTenantId());
+        formConfigSuccessPageEntity.setTenantId(TenantContext.getTenant().getId());
 
         formConfigSuccessPageEntity.setTemplateName(formConfigSuccessPage.getName());
         formConfigSuccessPageEntity.setTemplateTitle(formConfigSuccessPage.getTitle());
         formConfigSuccessPageEntity.setTemplate(formConfigSuccessPage.getTemplate());
         
         formConfigSuccessPageEntity.setShowSummary(formConfigSuccessPage.getShowSummary() != null && formConfigSuccessPage.getShowSummary());
-        this.formConfigSuccessPageRepository.save(formConfigSuccessPageEntity);
-        
-        return null;
+
+        return convertFormConfigSuccessPageEntity(this.formConfigSuccessPageRepository.save(formConfigSuccessPageEntity));
     }
 
     @Override
@@ -110,4 +123,8 @@ public class FormConfigSuccessPageServiceDatabase implements FormConfigSuccessPa
         return this.tiptapService.convert(formWrapper.getFormConfig().getFormConfigSuccessPage().getTemplate(), form);
     }
 
+    @Override
+    public void delete(FormConfigSuccessPageEntity formConfigSuccessPageEntity) {
+        this.formConfigSuccessPageRepository.delete(formConfigSuccessPageEntity);
+    }
 }

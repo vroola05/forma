@@ -1,5 +1,5 @@
 import { TableCell } from '@tiptap/extension-table-cell';
-import { Lang } from '../../../shared/services/lang';
+import { Lang } from '../../services/lang';
 
 export const BuilderEditorTableCell = TableCell.extend({
     addAttributes() {

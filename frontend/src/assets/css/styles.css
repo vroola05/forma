@@ -737,10 +737,6 @@ option:disabled {
     .field-wrapper-label {
         width: calc(100% / 3);
 
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
         &.required::after {
             content: " *";
             color: var(--validation);

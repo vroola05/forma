@@ -8,11 +8,13 @@ import java.util.UUID;
 
 import org.commonground.forma.config.AppConstants;
 import org.commonground.forma.config.tenant.TenantContext;
+import org.commonground.forma.database.dao.definition.FormConfigSuccessPageEntity;
 import org.commonground.forma.database.dao.definition.FormDefinitionEntity;
 import org.commonground.forma.database.dao.translation.FormTranslationEntity;
 import org.commonground.forma.database.repository.FormDefinitionRepository;
 import org.commonground.forma.mapper.FormMapper;
 import org.commonground.forma.model.form.FormConfig;
+import org.commonground.forma.model.form.FormConfigSuccessPage;
 import org.commonground.forma.model.form.FormList;
 import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.Translation;
@@ -132,12 +134,27 @@ public class FormServiceDatabase implements FormService {
         }
 
         Set<UUID> incomingIds = new HashSet<>();
-        form.getFields().stream().forEach(f -> {
+        form.getFields().forEach(f -> {
             if (f.getId() != null) incomingIds.add(f.getId());
         });
 
         formDefinitionEntity.getTabs().removeIf(existingTabInstance -> !incomingIds.contains(existingTabInstance.getTab().getId()));
 
+
+        boolean removeSuccessPage = formWrapper.getFormConfig() == null
+                || formWrapper.getFormConfig().getFormConfigSuccessPage() == null
+                || formWrapper.getFormConfig().getFormConfigSuccessPage().getUseSuccessPage() == null
+                || !formWrapper.getFormConfig().getFormConfigSuccessPage().getUseSuccessPage();
+
+        FormConfig formConfig = formWrapper.getFormConfig();
+        if (removeSuccessPage) {
+            FormConfigSuccessPageEntity formConfigSuccessPageEntity = formDefinitionEntity.getFormConfigSuccessPageEntity();
+            if (formConfigSuccessPageEntity != null) {
+                formDefinitionEntity.removeFormConfigSuccessPageEntity();
+                formConfig.setFormConfigSuccessPage(null);
+                this.formConfigSuccessPageService.delete(formConfigSuccessPageEntity);
+            }
+        }
 
         FormDefinitionEntity resultEntity = this.formDefinitionRepository.save(formDefinitionEntity);
 
@@ -147,9 +164,8 @@ public class FormServiceDatabase implements FormService {
             this.tabPageService.save(resultEntity, tabPage, sortOrderTab++);
         }
 
-        FormConfig formConfig = formWrapper.getFormConfig();
-        if (formConfig != null && formConfig.getFormConfigSuccessPage() != null) {
-            this.formConfigSuccessPageService.saveSpecific(resultEntity, formConfig.getFormConfigSuccessPage());
+        if (!removeSuccessPage) {
+            this.formConfigSuccessPageService.saveByForm(resultEntity, formConfig.getFormConfigSuccessPage());
         }
 
         return null;

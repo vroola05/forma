@@ -135,7 +135,7 @@ export class TenantPageNew extends SettingsPage {
         if (!this.form || !this.form.validate()) {
             return;
         }
-        console.log('aaaaaaaaaaaaaaaaa');
+        
         const tenantGroup = this.form.getTabField('tenant-tab', 'tenant-group') as FormGroup;
         const userGroup = this.form.getTabField('tenant-tab', 'user-group') as FormGroup;
 

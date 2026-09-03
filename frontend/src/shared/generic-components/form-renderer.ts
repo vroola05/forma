@@ -3,6 +3,7 @@
 
 
 
+import { FormService } from '../../form-viewer/services/form-service';
 import { Form, FormOptions } from '../form-components/form';
 import { InputNucleus } from '../form-components/interface/input-base';
 import { Nucleus } from '../form-components/interface/nucleus';
@@ -106,6 +107,17 @@ export class FormRenderer {
         const form = await Form.create(formDto, options);
         form.setClientSessionId(clientSessionId);
 
+        const formService = FormService.getInstance();
+        formService.setForm(form);
+
+        const fields = formService.getNucleus();
+
+        // Logic that needs to be initialized after the form is loaded.
+        // For example the showconditions
+        for (const element of fields) {
+            element.afterFormInit();
+        }
+
         return form;
     }
 
@@ -130,7 +142,7 @@ export class FormRenderer {
     // }
 
     static isInputType(type: string): type is InputFieldType {
-        const inputs: InputFieldType[] = ['text', 'number', 'email', 'password', 'date', 'color', 'hidden', 'label', 'valuta', 'textarea'];
+        const inputs: InputFieldType[] = ['text', 'rich-text', 'number', 'email', 'password', 'date', 'color', 'hidden', 'label', 'valuta', 'textarea'];
         return inputs.includes(type as InputFieldType);
     }
 
@@ -197,13 +209,19 @@ export class FormRenderer {
                 break;
             }
             case 'text':
-                
                 nucleus = new TextField(fieldDto.name, fieldDto.labels, fieldDto.id, prefix)
                     .setRequired(fieldDto.required)
                     .setMinLength(fieldDto.minLength)
                     .setMaxLength(fieldDto.maxLength)
                     .addValueChangedListener(fieldDto.change);
                 break;
+            case 'rich-text': {
+                const { RichTextField } = await import( '../form-components/rich-text-field');
+                nucleus = new RichTextField(fieldDto.name, fieldDto.labels, fieldDto.id)
+                    .setRequired(fieldDto.required)
+                    .addValueChangedListener(fieldDto.change);
+                break;
+            }
             case 'number':
                 nucleus = new TextField(fieldDto.name, fieldDto.labels, fieldDto.id, prefix)
                     .setType('number')

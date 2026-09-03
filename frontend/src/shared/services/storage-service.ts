@@ -36,7 +36,6 @@ export class Storage {
     static setPage(page: string) {
         const currentPage = Storage.getSessionItem('page');
         if (currentPage && page !== currentPage) {
-            console.log('Clear page storage.');
             Storage.clearPageItems(currentPage);
         }
         Storage.setSessionItem('page', page);

@@ -1,3 +1,4 @@
+import { BaseFieldDto } from '../../../shared/model/types';
 import { EventService } from '../../../shared/services/event-service';
 import { Lang } from '../../../shared/services/lang';
 import { FIELD_TYPE } from '../../types';
@@ -210,15 +211,23 @@ export class Dropzone {
         this.draw();
     }
 
-    addNewItem(type: FIELD_TYPE, label: string, droppedOnFormItem: HTMLElement | null = null) {
+    addNewItem(
+            type: FIELD_TYPE,
+            label: string,
+            droppedOnFormItem: HTMLElement | null = null,
+            baseFieldDto: BaseFieldDto | undefined = undefined) {
         const field = this.getField(type);
-        
-        field.setPropertyValueById('name', this.field.getUniqueName(field.getLabel(), 'name', true));
 
-        const labelNew = this.field.getUniqueLabel(field.getLabel());
-        field.setDefaultLabel(labelNew);
-        field.setLabel(labelNew);
+        if (baseFieldDto === undefined) {
+            field.setPropertyValueById('name', this.field.getUniqueName(field.getLabel(), 'name', true));
         
+            const labelNew = this.field.getUniqueLabel(field.getLabel());
+            field.setDefaultLabel(labelNew);
+            field.setLabel(labelNew);
+        } else {
+            field.init(baseFieldDto);
+        }
+
         this.bindFieldEvents(field);
 
         const builderChildFields = this.field.getFields();
@@ -237,6 +246,7 @@ export class Dropzone {
         }
 
         this.onAddCallback(type, label, Dropzone.currentDraggedDom, droppedOnFormItem);
+
         return field;
     }
 

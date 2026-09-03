@@ -101,7 +101,6 @@ export class Dropdown {
         const navItem = document.createElement('li');
         navItem.className = 'nav-item';
         menuItem.addEvent(() => {
-            console.log('aaaaaaaa');
             this.#close();
         });
 

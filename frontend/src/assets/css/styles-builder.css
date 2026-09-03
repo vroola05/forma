@@ -1380,6 +1380,21 @@ Styles voor builder-field.js
    
 }
 
+.field-wrapper .builder-text-editor.editor-container {
+    border: 1px solid var(--border-grey);
+    border-radius: var(--default-space-half);
+    padding: var(--default-space-double);
+
+    .builder-text-editor-toolbar {
+        padding: 0px 0px var(--default-space-double) 0px;
+    }
+
+    
+    .tiptap.ProseMirror {
+        padding: 0px;
+    }
+}
+
 .builder-table-dropdown {
     display: block;
     position: absolute;

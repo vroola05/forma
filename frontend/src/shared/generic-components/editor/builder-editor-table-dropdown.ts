@@ -1,6 +1,6 @@
 
 import { Editor } from '@tiptap/core';
-import { Lang } from '../../../shared/services/lang';
+import { Lang } from '../../services/lang';
 
 export class BuilderEditorTableDropdown {
     content: HTMLElement = document.createElement('div');
@@ -83,6 +83,14 @@ export class BuilderEditorTableDropdown {
             !this.editor?.can().deleteRow(),
             () => {
                 this.editor?.chain().focus().deleteColumn().run();
+            }
+        ));
+        btnsContainer.appendChild(this.createBtn(
+            Lang.get('text.editor.table.col.delete'),
+            'btn-primary btn-add-col icon icon-x-lg',
+            !this.editor?.can().deleteTable(),
+            () => {
+                this.editor?.chain().focus().deleteTable().run();
             }
         ));
 

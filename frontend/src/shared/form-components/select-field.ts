@@ -7,11 +7,12 @@ import { InputNucleus } from './interface/input-base';
 export class SelectField extends InputNucleus<HTMLSelectElement> {
     value: OptionDto[];
 
-    constructor(name: string, labels: TranslationDto[] | undefined, classes: string, id: string | undefined = undefined) {
+    constructor(name: string, labels: TranslationDto[] | undefined = undefined, classes: string | undefined = undefined, id: string | undefined = undefined) {
         super(document.createElement('select'), name, labels, id);
         
         this.value = [];
-        this.classes = classes;
+        
+        this.setClasses(classes);
         this.createElement();
     }
 

@@ -17,6 +17,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class FormConfigSuccessPage {
     private UUID id;
+    private Boolean useSuccessPage;
     private String name;
     private String title;
     private TiptapNode template;

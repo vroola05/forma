@@ -106,6 +106,7 @@ public class TabPageServiceDatabase implements TabPageService {
         Set<UUID> incomingIds = new HashSet<>();
         flattenFieldIds(fields, incomingIds);
 
+        // Remove any existing fields that are not present in the incoming list of fields
         formTabDefinitionEntity.getFields().removeIf(
                 existingField -> {
                     return existingField.getId() != null && !incomingIds.contains(existingField.getId());
@@ -195,6 +196,13 @@ public class TabPageServiceDatabase implements TabPageService {
         formFieldDefinitionEntity.setParent(formFieldDefinitionEntityParent);
     }
 
+    /**
+     * Flattens the list of fields and adds their IDs to the target set.
+     * This method is recursive and will traverse nested fields.
+     * 
+     * @param fields
+     * @param targetSet
+     */
     private void flattenFieldIds(List<Field> fields, Set<UUID> targetSet) {
         if (fields == null)
             return;

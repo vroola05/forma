@@ -5,7 +5,6 @@ import { InputNucleus } from './interface/input-base';
  * Textfield
  */
 export class TextField extends InputNucleus<HTMLInputElement> {
-    
     minLength: number | undefined = undefined;
     maxLength: number | undefined = undefined;
 

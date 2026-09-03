@@ -36,11 +36,7 @@ export class BuilderTabPage extends BuilderFieldInterface {
             }
             
             for (const field of baseFieldDto.fields) {
-                const f = this.dropzone?.addNewItem(Dropzone.getType(field.type), field.type);
-                if (f) {
-                    f.init(field);
-                }
-                
+                this.dropzone?.addNewItem(Dropzone.getType(field.type), field.type, null, field);
             }
         }
     }

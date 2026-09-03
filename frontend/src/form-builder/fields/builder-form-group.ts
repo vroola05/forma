@@ -106,13 +106,8 @@ export class BuilderFormGroup extends BuilderFieldInterface {
                 return;
             }
             for (const field of baseFieldDto.fields) {
-                
                 try {
-                    Dropzone.getType(field.type);
-                    const f = this.dropzone?.addNewItem(Dropzone.getType(field.type), field.type);
-                    if (f) {
-                        f.init(field);
-                    }
+                    this.dropzone?.addNewItem(Dropzone.getType(field.type), field.type, null, field);
                 } catch (error) {
                     console.error('Error initializing field in form group', error);
                 }

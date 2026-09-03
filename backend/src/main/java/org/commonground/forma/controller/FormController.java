@@ -98,11 +98,16 @@ public class FormController {
 
         FormWrapper formWrapper = new FormWrapper();
         formWrapper.setForm(this.formMapper.toResponseDto(formDefinitionEntity));
+
         FormConfigSuccessPageEntity formConfigSuccessPageEntity = formDefinitionEntity.getFormConfigSuccessPageEntity();
 
+        if (formConfigSuccessPageEntity == null) {
+            FormConfigSuccessPage a = formConfigSuccessPageService.getByTenantId(formSubmissionEntity.getTenantId());
+        }
+        
         formWrapper.setFormConfig(new FormConfig());
         formWrapper.getFormConfig().setFormConfigSuccessPage(this.formConfigSuccessPageService.getByFormId(formDefinitionEntity.getId()));
-        
+
         FormConfigSuccessPage formConfigSuccessPage = new FormConfigSuccessPage();
         if (formConfigSuccessPageEntity != null) {
             formConfigSuccessPage.setShowSummary(formConfigSuccessPageEntity.isShowSummary());

@@ -16,7 +16,7 @@ export class BuilderPageSettingsGeneric extends Page {
 
     createContent(formWrapper: FormWrapper) {
 
-        const formDto:FormDto = {
+        const formDto: FormDto = {
             "id": "form",
             "name": "form",
             "label": Lang.get('page.settings.generic'),

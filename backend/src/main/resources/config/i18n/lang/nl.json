@@ -100,6 +100,12 @@
     "page.settings.generic.forms": "Formulier instellingen",
     "page.settings.generic.forms.successpage": "Algemene dankpagina",
     
+
+
+    "page.settings.generic.successpage.title": "Titel dankpagina",
+    "page.settings.generic.successpage.text": "Tekst dankpagina",
+    "page.settings.generic.successpage.summary": "Toon overzichtspagina na inzending",
+    
     "page.settings.form": "Formulier",
     "page.settings.generic": "Algemeen",
     "page.settings.login": "Login",

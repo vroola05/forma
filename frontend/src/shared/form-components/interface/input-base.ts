@@ -44,7 +44,7 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         }
     }
 
-    createInput(inputElement: HTMLElement | undefined = undefined) {
+    createInput(inputElement: HTMLElement | undefined = undefined, showLabel: boolean = true) {
         this.content.className = ' ' + (!this.classes ? '' : this.classes);
         this.content.classList.add('field-wrapper');
         this.setLayout(InputLayout[0]);
@@ -55,7 +55,7 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         if (this.label || this.labels) {
             this.labelElement.innerHTML = this.getLabel();
         }
-        
+        this.showLabel(showLabel);        
         this.inputWrapper.className = 'field-wrapper-input';
 
         this.feedbackElement.className = 'invalid-feedback';
@@ -67,6 +67,14 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         this.inputWrapper.appendChild(this.feedbackElement);
         this.content.appendChild(this.labelElement);
         this.content.appendChild(this.inputWrapper);
+    }
+
+    showLabel(show: boolean) {
+        if (show) {
+            this.labelElement.classList.remove('hidden');
+        } else {
+            this.labelElement.classList.add('hidden');
+        }
     }
 
     hasOptions() {

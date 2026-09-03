@@ -28,7 +28,6 @@ export class Form extends Nucleus {
     } | undefined;
     onTabChange: ((tabObject: Tab, index: number, size: number) => void) | undefined;
 
-
     constructor(formDto: FormDto, options: FormOptions | undefined = undefined) {
         super(formDto.name, formDto.labels, formDto.id)
 

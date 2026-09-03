@@ -7,8 +7,13 @@ import org.commonground.forma.database.dao.definition.FormConfigSuccessPageEntit
 import org.commonground.forma.database.dao.definition.FormDefinitionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+
 public interface FormConfigSuccessPageRepository extends JpaRepository<FormConfigSuccessPageEntity, UUID> {
     Optional<FormConfigSuccessPageEntity> findByForm(FormDefinitionEntity formDefinition);
 
     Optional<FormConfigSuccessPageEntity> findByFormId(UUID id);
+    Optional<FormConfigSuccessPageEntity> findByTenantIdAndIsGlobalDefaultIsTrue(UUID tenantId);
+    
+    
+
 }
