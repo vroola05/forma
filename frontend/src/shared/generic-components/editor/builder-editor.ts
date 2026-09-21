@@ -79,7 +79,13 @@ export class BuilderEditor {
         this.#content.appendChild(this.#editorElement);
     }
 
-    addDataContent(jsonData: any) {
+    addData(jsonData: any) {
+
+        if (!jsonData || Object.keys(jsonData).length === 0) {
+            this.#editor.commands.clearContent();
+            return;
+        }
+        
         this.#editor.commands.setContent(jsonData, {
             emitUpdate: false
         });

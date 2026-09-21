@@ -16,6 +16,7 @@ export class BuilderPageFormEditorBtns {
         this.createMenuItem('', '/settings-mail', Lang.get('page.settings.mail'));
         this.createMenuItem('', '/settings-registration', Lang.get('page.settings.registration'));
         this.createMenuItem('', '/settings-payment', Lang.get('page.settings.payment'));
+        this.createMenuItem('', '/settings-variables', Lang.get('page.settings.vars'));
     }
 
     createMenuItem(icon: string, path: string, label: string) {

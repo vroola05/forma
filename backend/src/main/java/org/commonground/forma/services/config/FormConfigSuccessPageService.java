@@ -9,8 +9,10 @@ import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.fields.Form;
 
 public interface FormConfigSuccessPageService {
+    public FormConfigSuccessPage get(FormDefinitionEntity formDefinitionEntity);
     public FormConfigSuccessPage getByFormId(UUID id);
     public FormConfigSuccessPage getByTenantId(UUID id);
+    public FormConfigSuccessPageEntity getEntityByTenantId(UUID id);
     public String transform(FormWrapper formWrapper, Form form);
     public FormConfigSuccessPage saveByForm(FormDefinitionEntity formDefinitionEntity, FormConfigSuccessPage formConfigSuccessPage);
     public FormConfigSuccessPage saveByTenant(FormConfigSuccessPage formConfigSuccessPage);

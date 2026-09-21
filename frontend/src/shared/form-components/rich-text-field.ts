@@ -33,7 +33,7 @@ export class RichTextField extends InputNucleus<HTMLDivElement> {
         ]);
 
         this.builderEditor.onValueChanged = (jsonData: any) => {
-            this.setValue(jsonData, false);
+            this.updateValue(jsonData);
         };
         this.createElement();
     }
@@ -54,11 +54,16 @@ export class RichTextField extends InputNucleus<HTMLDivElement> {
     }
 
     setValue(value: any | undefined, noCallback: boolean = false) {
-        this.value = value ?? undefined;
-        this.builderEditor.addDataContent(this.value ?? {});
+        this.updateValue(value, noCallback);
+
+        this.builderEditor.addData(this.value ?? {});
         
-        this.valueChanged(noCallback);
         return this;
+    }
+
+    updateValue(value: any | undefined, noCallback: boolean = false) {
+        this.value = value ?? undefined;
+        this.valueChanged(noCallback);
     }
 
     getValue() {

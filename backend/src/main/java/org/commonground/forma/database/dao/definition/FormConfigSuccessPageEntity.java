@@ -40,6 +40,7 @@ public class FormConfigSuccessPageEntity extends BaseEntity {
 
     private String templateName;
     private String templateTitle;
+    private String downloadText;
     
     @JdbcTypeCode(SqlTypes.JSON)
     @JdbcType(PostgreSQLJsonPGObjectJsonType.class)

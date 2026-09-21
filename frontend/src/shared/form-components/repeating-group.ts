@@ -59,7 +59,6 @@ export class RepeatingGroup extends Nucleus {
      * 
      */
     afterInit() {
-
         this.checkMinMaxAmount().then(()=> {}).catch(() => {});
     }
 

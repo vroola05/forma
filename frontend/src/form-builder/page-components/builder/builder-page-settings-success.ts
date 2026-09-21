@@ -41,7 +41,6 @@ export class BuilderPageSettingsSuccess extends Page {
     }
 
     createContent() {
-
         const builderPageSettingsSuccess = document.createElement('div');
         builderPageSettingsSuccess.className = 'builder-page-settings-success';
 
@@ -51,6 +50,7 @@ export class BuilderPageSettingsSuccess extends Page {
         builderPageSettingsSuccess.appendChild(header);
 
         this.#builderLayout.setCenterContent(builderPageSettingsSuccess);
+
         const formDto: FormDto = {
             "id": "form",
             "name": "form",
@@ -64,16 +64,15 @@ export class BuilderPageSettingsSuccess extends Page {
                     "type": "tab",
                     "fields": [
                         {
-                            "name": "has-success-page",
-                            "label": Lang.get('page.settings.generic.successpage.summary'),
+                            "name": "custom-success-page",
+                            "label": Lang.get('page.settings.successpage.custom'),
                             "type": "radio",
                             "options": [
                                 { "value": "true", "text": Lang.get('generic.yes') },
                                 { "value": "false", "text": Lang.get('generic.no') }
                             ],
-                            "value": this.formConfigSuccessPage?.useSuccessPage === undefined ? [] : [
-                                {
-                                    value: this.formConfigSuccessPage?.useSuccessPage ? 'true' : 'false',
+                            "value": [{
+                                    value: !this.formConfigSuccessPage?.customSuccessPage ? 'false' : 'true',
                                     text: ''
                                 }],
                             "change": (key: string, value: any) => {
@@ -86,7 +85,7 @@ export class BuilderPageSettingsSuccess extends Page {
                             "label": Lang.get('page.settings.successpage.title'),
                             "type": "form-group",
                             "condition": {
-                                var1: "$.form.tab.has-success-page",
+                                var1: "$.form.tab.custom-success-page",
                                 operator: Operator.EQ,
                                 var2: "true"
                             },
@@ -113,6 +112,15 @@ export class BuilderPageSettingsSuccess extends Page {
                                             value: this.formConfigSuccessPage?.showSummary ? 'true' : 'false',
                                             text: ''
                                         }],
+                                    "change": (key: string, value: any) => {
+                                        this.onEditorValueChanged('success-page-group', key);
+                                    }
+                                },
+                                {
+                                    "name": "download-text",
+                                    "label": Lang.get('page.settings.generic.successpage.title'),
+                                    "type": "text",
+                                    "value": this.formConfigSuccessPage?.downloadText,
                                     "change": (key: string, value: any) => {
                                         this.onEditorValueChanged('success-page-group', key);
                                     }
@@ -149,7 +157,7 @@ export class BuilderPageSettingsSuccess extends Page {
 
         if (groupName === undefined) {
             const field = this.form.getTabField('tab', fieldName) as InputNucleus;
-            this.formConfigSuccessPage.useSuccessPage = !!field.getOptions().some(option => option.value === 'true');
+            this.formConfigSuccessPage.customSuccessPage = !!field.getOptions().some(option => option.value === 'true');
         } else {
             const formGroup = this.form.getTabField('tab', groupName) as FormGroup;
             const field = formGroup.getField(fieldName) as InputNucleus;
@@ -158,6 +166,8 @@ export class BuilderPageSettingsSuccess extends Page {
                 this.formConfigSuccessPage.showSummary = !!field.getOptions().some(option => option.value === 'true');
             } else if (fieldName === 'title') {
                 this.formConfigSuccessPage.title = field.getValue();
+            } else if (fieldName === 'download-text') {
+                this.formConfigSuccessPage.downloadText = field.getValue();
             } else if (fieldName === 'success-text') {
                 this.formConfigSuccessPage.template = field.getValue();
             }

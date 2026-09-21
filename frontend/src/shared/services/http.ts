@@ -118,6 +118,18 @@ export class Http {
                     }
                 }
 
+                // óf dat de server aangeeft dat het een PDF/binaire stream is
+                const isBlobRequested = options.responseType === 'blob';
+                const contentType = response.headers.get('Content-Type');
+                const isBlobResponse = contentType && (
+                    contentType.includes('application/pdf') || 
+                    contentType.includes('application/octet-stream')
+                );
+
+                if (response.ok && (isBlobRequested || isBlobResponse)) {
+                    return response.blob();
+                }
+
                 return response.text().then(text => {
                     const data = this.#getContent(text);
 

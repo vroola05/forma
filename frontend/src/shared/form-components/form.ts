@@ -1,5 +1,5 @@
 import type { Tab } from './tab';
-
+import { FormService } from '../../form-viewer/services/form-service';
 import { FormSummaryRenderer } from '../../form-viewer/components/form-summary-renderer';
 import { BaseFieldDto, FormDto } from '../model/types';
 import { Lang } from '../services/lang';
@@ -31,6 +31,8 @@ export class Form extends Nucleus {
     constructor(formDto: FormDto, options: FormOptions | undefined = undefined) {
         super(formDto.name, formDto.labels, formDto.id)
 
+        FormService.setForm(this);
+
         this.#options = options;
 
         this.id = formDto.id;
@@ -45,6 +47,7 @@ export class Form extends Nucleus {
 
         this.createElement();
 
+        
     }
 
     static async create(formDto: FormDto, options: FormOptions | undefined = undefined) {

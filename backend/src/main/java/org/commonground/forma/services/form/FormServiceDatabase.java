@@ -143,8 +143,8 @@ public class FormServiceDatabase implements FormService {
 
         boolean removeSuccessPage = formWrapper.getFormConfig() == null
                 || formWrapper.getFormConfig().getFormConfigSuccessPage() == null
-                || formWrapper.getFormConfig().getFormConfigSuccessPage().getUseSuccessPage() == null
-                || !formWrapper.getFormConfig().getFormConfigSuccessPage().getUseSuccessPage();
+                || formWrapper.getFormConfig().getFormConfigSuccessPage().getCustomSuccessPage() == null
+                || !formWrapper.getFormConfig().getFormConfigSuccessPage().getCustomSuccessPage();
 
         FormConfig formConfig = formWrapper.getFormConfig();
         if (removeSuccessPage) {

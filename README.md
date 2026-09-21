@@ -152,6 +152,9 @@ Fields in the backend are an instance of the Field class. The Field class contai
 
 # Fonts
 The fonts are created with fantasticon.
+
+sudo npm install -g fantasticon
+
 The images that are used for the fonts are /src/main/resources/static/includes/images
 fantasticon /mnt/...../src/main/resources/static/includes/images -o OUTPUT_DIRECTORY
 

@@ -35,7 +35,7 @@ export class Nucleus extends ValidationBase {
         this.prefix = prefix;
         this.id = id;
 
-        FormService.getInstance().addNucleus(this);
+        FormService.addNucleus(this);
     }
 
     /**

@@ -37,20 +37,36 @@ public class FormConfigSuccessPageServiceDatabase implements FormConfigSuccessPa
                 .orElse(new FormConfigSuccessPageEntity()));
     }
 
-    
+    @Override
+    public FormConfigSuccessPageEntity getEntityByTenantId(UUID id) {
+        return this.formConfigSuccessPageRepository.findByTenantIdAndIsGlobalDefaultIsTrue(id)
+                .orElse(new FormConfigSuccessPageEntity());
+    }
+   
 	@Override
 	public FormConfigSuccessPage getByTenantId(UUID id) {
-		return convertFormConfigSuccessPageEntity(this.formConfigSuccessPageRepository.findByTenantIdAndIsGlobalDefaultIsTrue(id)
-                .orElse(new FormConfigSuccessPageEntity()));
+		return convertFormConfigSuccessPageEntity(getEntityByTenantId(id));
 	}
+
+    @Override
+    public FormConfigSuccessPage get(FormDefinitionEntity formDefinitionEntity) {
+        FormConfigSuccessPage formConfigSuccessPage = this.getByFormId(formDefinitionEntity.getId());
+
+        if (formConfigSuccessPage == null || formConfigSuccessPage.getId() == null) {
+            formConfigSuccessPage = this.getByTenantId(formDefinitionEntity.getTenantId());
+        }
+
+        return formConfigSuccessPage;
+    }
     
     private FormConfigSuccessPage convertFormConfigSuccessPageEntity(FormConfigSuccessPageEntity formConfigSuccessPageEntity) {
         FormConfigSuccessPage formConfigSuccessPage = new FormConfigSuccessPage();
-        
+        formConfigSuccessPage.setId(formConfigSuccessPageEntity.getId());
         formConfigSuccessPage.setName(formConfigSuccessPageEntity.getTemplateName());
         formConfigSuccessPage.setTitle(formConfigSuccessPageEntity.getTemplateTitle());
         formConfigSuccessPage.setTemplate(formConfigSuccessPageEntity.getTemplate());
         formConfigSuccessPage.setShowSummary(formConfigSuccessPageEntity.isShowSummary());
+        formConfigSuccessPage.setCustomSuccessPage(formConfigSuccessPageEntity.getId() != null);
 
         return formConfigSuccessPage;
     }
@@ -127,4 +143,5 @@ public class FormConfigSuccessPageServiceDatabase implements FormConfigSuccessPa
     public void delete(FormConfigSuccessPageEntity formConfigSuccessPageEntity) {
         this.formConfigSuccessPageRepository.delete(formConfigSuccessPageEntity);
     }
+
 }

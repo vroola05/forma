@@ -107,39 +107,17 @@ export class FormRenderer {
         const form = await Form.create(formDto, options);
         form.setClientSessionId(clientSessionId);
 
-        const formService = FormService.getInstance();
-        formService.setForm(form);
-
-        const fields = formService.getNucleus();
-
         // Logic that needs to be initialized after the form is loaded.
         // For example the showconditions
+        const fields = FormService.getNucleus();
         for (const element of fields) {
             element.afterFormInit();
         }
 
+        FormService.formReady();
+
         return form;
     }
-
-    // static #createRepeatingSets(sets) {
-    //     const repeatingSets = [];
-    //     if (sets) {
-    //         sets.forEach(set => {
-    //             repeatingSets.push(FormRenderer.createFields(set));
-    //         });
-    //     }
-    //     return repeatingSets;
-    // }
-
-    // static createFields(fields: any[]) {
-    //     const fieldsInstances = [];
-    //     fields.forEach(fieldDto => {
-    //         const field = FormRenderer.createField(fieldDto);
-    //         field.persistenceEnabled(true)
-    //         fieldsInstances.push(field);
-    //     });
-    //     return fieldsInstances;
-    // }
 
     static isInputType(type: string): type is InputFieldType {
         const inputs: InputFieldType[] = ['text', 'rich-text', 'number', 'email', 'password', 'date', 'color', 'hidden', 'label', 'valuta', 'textarea'];
@@ -164,8 +142,6 @@ export class FormRenderer {
         } else {
         
             switch (fieldDto.type) {
-                
-            
                 case 'form-group': {
                     const { FormGroup } = await import( '../form-components/form-group');
                     const formGroup = new FormGroup(fieldDto, fieldDto.id);

@@ -173,6 +173,7 @@ CREATE TABLE form_config_success_page (
     template_title TEXT NULL,
     template JSONB NULL,
     is_global_default BOOLEAN NOT NULL DEFAULT FALSE,
+    download_text TEXT NULL,
     show_summary  BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

@@ -19,8 +19,6 @@ export class FormPage extends Page {
     pageContentContainer = document.createElement('div');
     pageTitle = document.createElement('h1');
 
-    formService = FormService.getInstance();
-
     header: Header = new Header();
     footer: Footer = new Footer();
 
@@ -109,19 +107,10 @@ export class FormPage extends Page {
             this.form = form;
 
             this.pageContentContainer.append(this.form.getContent());
-            
-            // this.formService.setForm(this.form);
-
-            const fields = this.formService.getNucleus();
-
-            // Logic that needs to be initialized after the form is loaded.
-            // For example the showconditions
-            // for (let i=0; i < fields.length; i++) {
-            //     fields[i].afterFormInit();
-            // }
 
             new FormLogic(this.form);
 
+            const fields = FormService.getNucleus();
             const fileInputs = fields.filter(field => field.getType() === 'file') as FileUploadField[];
             for (const fileInput of fileInputs) {
                 fileInput

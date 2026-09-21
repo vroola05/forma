@@ -25,6 +25,7 @@ export type IconsId =
   | "eye-slash"
   | "exclamation-circle"
   | "currency-euro"
+  | "cloud-download"
   | "chevron-up"
   | "chevron-right"
   | "chevron-left"
@@ -68,6 +69,7 @@ export type IconsKey =
   | "EyeSlash"
   | "ExclamationCircle"
   | "CurrencyEuro"
+  | "CloudDownload"
   | "ChevronUp"
   | "ChevronRight"
   | "ChevronLeft"
@@ -111,6 +113,7 @@ export enum Icons {
   EyeSlash = "eye-slash",
   ExclamationCircle = "exclamation-circle",
   CurrencyEuro = "currency-euro",
+  CloudDownload = "cloud-download",
   ChevronUp = "chevron-up",
   ChevronRight = "chevron-right",
   ChevronLeft = "chevron-left",
@@ -155,19 +158,20 @@ export const ICONS_CODEPOINTS: { [key in Icons]: string } = {
   [Icons.EyeSlash]: "61720",
   [Icons.ExclamationCircle]: "61721",
   [Icons.CurrencyEuro]: "61722",
-  [Icons.ChevronUp]: "61723",
-  [Icons.ChevronRight]: "61724",
-  [Icons.ChevronLeft]: "61725",
-  [Icons.ChevronDown]: "61726",
-  [Icons.Check2]: "61727",
-  [Icons.CheckSquare]: "61728",
-  [Icons.CaretRightFill]: "61729",
-  [Icons.CardText]: "61730",
-  [Icons.CardList]: "61731",
-  [Icons.Calendar2Date]: "61732",
-  [Icons.ArrowsAngleExpand]: "61733",
-  [Icons.ArrowsAngleContract]: "61734",
-  [Icons.AddRowBottom]: "61735",
-  [Icons.AddColumnRight]: "61736",
-  [Icons.i9Square]: "61737",
+  [Icons.CloudDownload]: "61723",
+  [Icons.ChevronUp]: "61724",
+  [Icons.ChevronRight]: "61725",
+  [Icons.ChevronLeft]: "61726",
+  [Icons.ChevronDown]: "61727",
+  [Icons.Check2]: "61728",
+  [Icons.CheckSquare]: "61729",
+  [Icons.CaretRightFill]: "61730",
+  [Icons.CardText]: "61731",
+  [Icons.CardList]: "61732",
+  [Icons.Calendar2Date]: "61733",
+  [Icons.ArrowsAngleExpand]: "61734",
+  [Icons.ArrowsAngleContract]: "61735",
+  [Icons.AddRowBottom]: "61736",
+  [Icons.AddColumnRight]: "61737",
+  [Icons.i9Square]: "61738",
 };

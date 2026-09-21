@@ -182,13 +182,14 @@ export interface FormConfig {
 }
 
 export interface FormConfigSuccessPage {
-    useSuccessPage?: boolean
+    customSuccessPage?: boolean
     id?: string;
     name?: string;
     title?: string;
     template?: any;
     content?: string;
     showSummary?: boolean;
+    downloadText?: string;
 }
 
 export interface FormSubmission {

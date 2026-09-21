@@ -2,47 +2,41 @@ import { Form } from '../../shared/form-components/form';
 import { Nucleus } from '../../shared/form-components/interface/nucleus';
 
 export class FormService {
-    static instance: FormService | null = null;
+    static #fields: Nucleus[] = [];
 
-    fields: Nucleus[] = [];
+    static #form: Form | undefined;
+    static #formChangeListeners: ((form: Form) => void)[] = [];
 
-    form: Form | undefined;
-    formChangeListeners: ((form: Form) => void)[] = [];
-
-    stateTimeout = -1;
-
-    
-
-    constructor() {
+    static addEventListener(callback: (form: Form) => void): void {
+        this.#formChangeListeners.push(callback);
     }
 
-    static getInstance() {
-        if (FormService.instance === null) {
-            FormService.instance = new FormService();
+    static getForm(): Form | undefined {
+        return this.#form;
+    }
+
+    static setForm(form: Form): void {
+        this.#fields = [];
+        this.#formChangeListeners = [];
+        this.#form = form;
+    }
+
+    static formReady() {
+        if (!this.#form) {
+            console.error('Form is not yet ready')
+            return;
         }
-        return FormService.instance;
-    }
 
-    addEventListener(callback: (form: Form) => void): void {
-        this.formChangeListeners.push(callback);
-    }
-
-    getForm(): Form | undefined {
-        return this.form;
-    }
-
-    setForm(form: Form): void {
-        this.form = form;
-        for ( const callback of this.formChangeListeners ) {
-            callback(form);
+        for ( const callback of this.#formChangeListeners ) {
+            callback(this.#form);
         };
     }
 
-    addNucleus(field: Nucleus): void {
-        this.fields.push(field);
+    static addNucleus(field: Nucleus): void {
+        this.#fields.push(field);
     }
 
-    getNucleus(): Nucleus[] {
-        return this.fields;
+    static getNucleus(): Nucleus[] {
+        return this.#fields;
     }
 }
