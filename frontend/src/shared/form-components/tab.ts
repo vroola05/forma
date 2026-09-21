@@ -1,4 +1,3 @@
-import { InputNucleus } from './interface/input-base';
 import { Nucleus } from './interface/nucleus';
 
 import { TabLabel } from './components/tab-label';
@@ -14,11 +13,13 @@ export class Tab extends Nucleus {
     fields: Nucleus[] = [];
     active: boolean = false;
     tabLabel: TabLabel | undefined;
+
     onTabClick: ((tabName: string) => void) | undefined;
 
     constructor(baseFieldDto: BaseFieldDto, onTabClick: (tabName: string) => void) {
-        super(baseFieldDto.name, baseFieldDto.label, baseFieldDto.id);
+        super(baseFieldDto.name, baseFieldDto.labels, baseFieldDto.id);
 
+        this.label = baseFieldDto.label;
         this.type = baseFieldDto.type;
         
         if (baseFieldDto.condition) {
@@ -63,7 +64,7 @@ export class Tab extends Nucleus {
     
     createElement() {
         this.content.className = 'tab-content p-1 p-lg-4' + (this.active ? ' active' : '');
-        this.tabLabel = new TabLabel(this.name, this.label);
+        this.tabLabel = new TabLabel(this.name, this.getLabel());
         this.tabLabel.onTabClick((tabName) => {
             if (this.onTabClick && tabName) {
                 this.onTabClick(tabName);
@@ -75,7 +76,7 @@ export class Tab extends Nucleus {
         if (active) {
             this.active = true;
             this.content.classList.add('active');
-            if (this.formSummary && this.formSummary.onActiveChange) {
+            if (this.formSummary?.onActiveChange) {
                 this.formSummary.onActiveChange(true);
             }
         } else {

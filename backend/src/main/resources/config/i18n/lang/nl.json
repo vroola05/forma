@@ -1,5 +1,6 @@
 {
     "generic.lang": "Nederlands",
+    "generic.lang.code": "Taalcode",
     "generic.title": "Forma",
     "generic.search": "Zoeken...",
     "generic.slug": "URL-naam",
@@ -33,9 +34,9 @@
     "generic.no": "Nee",
 
     "generic.status": "Status",
-    "generic.status.invited": "Uitgenodigd",
     "generic.status.active": "Actief",
     "generic.status.inactive": "Inactief",
+    "generic.status.invited": "Uitgenodigd",
     "generic.status.suspended": "Opgeschort",
     "generic.status.pending.deletion": "In afwachting van verwijdering",
     "generic.status.blocked": "Geblokkeerd",
@@ -71,6 +72,7 @@
     "group.name": "Naam van de groep",
 
     "user.title": "Gebruikers",
+
     "user.new.title": "Nieuwe gebruiker aanmaken",
     "user.edit.title": "Gebruiker wijzigen",
 
@@ -95,13 +97,27 @@
 
     "tab.new": "Nieuwe tab",
 
+    "page.settings.generic.forms": "Formulier instellingen",
+    "page.settings.generic.forms.successpage": "Algemene dankpagina",
+
+    "page.settings.generic.successpage.title": "Titel dankpagina",
+    "page.settings.generic.successpage.text": "Tekst dankpagina",
+    "page.settings.generic.successpage.summary": "Toon download knop na inzending",
+    
+    "page.settings.successpage.custom": "Gebruikt dit formulier een eigen dankpagina",
+    "page.settings.successpage.title": "Gegevens van de dankpagina",
+
+    "page.successpage.download.pdf": "Download de pdf",
+
     "page.settings.form": "Formulier",
     "page.settings.generic": "Algemeen",
     "page.settings.login": "Login",
     "page.settings.mail": "Email",
+    
     "page.settings.successpage": "Dankpagina",
     "page.settings.registration": "Registratie",
     "page.settings.payment": "Betaling",
+    "page.settings.vars": "Variabelen",
 
     "field.type.form.form": "Formulier",
     "field.type.form.group": "Groep",
@@ -157,11 +173,13 @@
     "prop.layout.label": "Layout",
     "prop.layout.label.default": "Standaard",
     "prop.layout.label.table": "Tabel",
-
+    
     "prop.name.message": "Het veld Naam heeft de volgende specificaties:<br> - Het veld is verplicht<br /> - Maximaal 200 tekens.<br /> - Het Het veld Id mag de volgende tekens bevatten (a-z 0-9 of _ -).",
     "prop.label.message": "Het veld Label heeft een maximum van 200 tekens.",
     "prop.class.message": "Ongeldig formaat: maximaal 200 tekens en class-namen mogen niet met een cijfer beginnen.",
     "prop.metadata.message": "Het veld Metadata heeft een maximum van 200 tekens.",
+    "prop.labels.locale.empty.message": "Het veld 'Taalcode' is een verplicht veld.",
+    "prop.labels.locale.duplicate.message": "Validatie mislukt: De taalcode '{}' is meerdere keren toegevoegd.",
 
     "error.check.fields": "Er is iets fout gegaan. Controleer of alle velden goed zijn ingevuld."
 }

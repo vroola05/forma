@@ -33,6 +33,9 @@ import { BuilderPageSettingsMail } from '../src/form-builder/page-components/bui
 import { BuilderPageSettingsPayment } from '../src/form-builder/page-components/builder/builder-page-settings-payment';
 import { BuilderPageSettingsRegistration } from '../src/form-builder/page-components/builder/builder-page-settings-registration';
 import { BuilderPageSettingsSuccess } from '../src/form-builder/page-components/builder/builder-page-settings-success';
+import { BuilderPageSettingsVariables } from '../src/form-builder/page-components/builder/builder-page-settings-variables';
+import { FormSettingsGenericSuccessPage } from '../src/form-builder/page-components/form-settings/form-settings-generic-success-page';
+
 
 export class Main {
     constructor() {
@@ -49,6 +52,7 @@ export class Main {
                 {'path': '/admin/page/users', 'page': UserPage, 'authenticated': true},
                 {'path': '/admin/page/users/:id', 'page': UserPageEdit, 'authenticated': true},
                 {'path': '/admin/page/forms', 'page': FormDashboard, 'authenticated': true},
+                {'path': '/admin/page/form-generic-successpage', 'page': FormSettingsGenericSuccessPage, 'authenticated': true},
                 {'path': '/admin/page/forms/:formName', 'page': BuilderPage, 'authenticated': true,
                     'routes': [
                         {'path': '', 'page': BuilderPageSettingsGeneric},
@@ -58,6 +62,7 @@ export class Main {
                         {'path': '/settings-success', 'page': BuilderPageSettingsSuccess},
                         {'path': '/settings-registration', 'page': BuilderPageSettingsRegistration},
                         {'path': '/settings-payment', 'page': BuilderPageSettingsPayment},
+                        {'path': '/settings-variables', 'page': BuilderPageSettingsVariables},
                     ]
 
                 }

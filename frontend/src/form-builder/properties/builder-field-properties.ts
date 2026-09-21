@@ -1,6 +1,6 @@
 
 import { ValidationError } from '../../shared/errors/validation-error';
-import { BuilderCondition, LogicalOperator, Operator } from '../../shared/model/types';
+import { BuilderCondition, LogicalOperator, Operator, TranslationDto } from '../../shared/model/types';
 import { Lang } from '../../shared/services/lang';
 import { BuilderFieldInterface } from '../fields/builder-field-interface';
 import { FieldProperty } from '../types';
@@ -42,6 +42,7 @@ export class BuilderFieldProperties {
             property.type !== 'boolean' &&
             property.type !== 'options' &&
             property.type !== 'list' &&
+            property.type !== 'label' &&
             property.type !== 'condition') {
             throw new Error('property.type moet een van de volgende waarden hebben: string, number, boolean');
         }
@@ -75,7 +76,9 @@ export class BuilderFieldProperties {
                 throw new ValidationError(fieldName, `Het veld is niet uniek.`).setField(field);
             }
         }
-
+        if (property.type === 'label') {
+            this.#validateTranslation(property.value, field);
+        }
         if (property.type === 'options') {
             console.warn('Not yet implemented')
         } else if (property.type === 'list') {
@@ -89,6 +92,25 @@ export class BuilderFieldProperties {
         } else {
             
             this.#validatePattern(property.value, property.pattern, property.message, field);
+        }
+    }
+
+    #validateTranslation(translations: TranslationDto[], field: BuilderFieldInterface | undefined) {
+        if (translations === undefined || translations.length === 0 || field === undefined) {
+            return;
+        }
+
+        const fieldName = `${field ? field.getLabel() : ''} - ${this.getFieldIdentifier()}`;
+
+        const locales = translations.map(t => t.locale);
+        if (locales.some(locale => !locale || locale.trim() === '')) {
+            
+            throw new ValidationError(fieldName, Lang.get('prop.labels.locale.empty.message')).setField(field);
+        }
+        const uniqueLocales = new Set(locales);
+        if (uniqueLocales.size !== translations.length) {
+            const duplicate = locales.find((item, index) => locales.indexOf(item) !== index);
+            throw new ValidationError(fieldName, Lang.get('prop.labels.locale.duplicate.message', duplicate?? '')).setField(field);
         }
     }
 
@@ -146,20 +168,24 @@ export class BuilderFieldProperties {
     }
 
     getFieldIdentifier() {
-        const propertyLabel = this.getPropertyValueById('label');
+        const propertyLabel = this.getPropertyValueById('labels') as TranslationDto[];
         const propertyName = this.getPropertyValueById('name');
+        if (propertyLabel === undefined || propertyLabel.length === 0) {
+            return propertyName !== '' ? propertyName : Lang.get('prop.unknown.field');
+        }
+        
+        const defaultLocale = Lang.getDefaultLocale();
 
-        return propertyLabel && propertyLabel !== '' ? propertyLabel : propertyName && propertyName !== '' ? propertyName : Lang.get('prop.unknown.field');
+        const identifier = propertyLabel.find(label => label.locale === defaultLocale);
+
+        return identifier !== undefined ? identifier?.text : propertyLabel[0].text;
     }
-
-    
 
     getProperties(validate = false) {
         const entries = Array.from(this.properties, ([key, p]) => {
             if (validate) {
                 this.validate(p);
             }
-            
             return [p.id, p.value];
         });
 

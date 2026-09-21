@@ -13,24 +13,24 @@ export class ConditionParser {
         this.condition = condition;
         this.func = func;
         
-        FormService.getInstance().addEventListener((form) => {
+
+        FormService.addEventListener((form) => {
             this.#bindFieldToConditions(this.condition, form);
         });
     }
-
 
     /**
      * This function is also called from outside
      */
     eval() {
+        // Check if at least one condition is active (truthy)
         if (this.func && this.condition && !Object.values(this.condition).every(waarde => !waarde)) {
-            
             this.func(this.checkLogic(this.condition));
         }
     }
 
     isField(input: string | undefined) {
-        return input && input.startsWith("$.");
+        return input?.startsWith("$.");
     }
 
     getConditionType(condition: Condition) {
@@ -38,17 +38,20 @@ export class ConditionParser {
     }
 
     #bindFieldToConditions(condition: Condition, form: Form) {
-        if (condition && form) {
-            if (this.getConditionType(condition) === ConditionType.COMPOSITE) {
-                if (condition.conditions) {
-                    for (let i = 0; i < condition.conditions.length; i++) {
-                        this.#bindFieldToConditions(condition.conditions[i], form);
-                    }
-                
+        if (condition === undefined || form === undefined) {
+            return;
+        }
+
+        if (this.getConditionType(condition) === ConditionType.COMPOSITE) {
+            if (condition.conditions) {
+                for (const element of condition.conditions) {
+                    this.#bindFieldToConditions(element, form);
                 }
-            } else {
-                this.#bindSimpelConditions(condition, form);
+            
             }
+        } else {
+            console.log('bla');
+            this.#bindSimpelConditions(condition, form);
         }
     }
     
@@ -65,6 +68,7 @@ export class ConditionParser {
 
     #setFieldListeners(fields: InputNucleus[]) {
         for (const field of fields) {
+            console.log('bla', field)
             field.addValueChangedListener(() => {
                 this.eval();
             });
@@ -72,6 +76,7 @@ export class ConditionParser {
     }
 
     checkLogic(condition: Condition): boolean {
+        console.log('a');
         if (this.getConditionType(condition) === ConditionType.COMPOSITE) {
             
             if( condition.logicalOperator === null) {
@@ -110,6 +115,8 @@ export class ConditionParser {
 
         const var1List = condition.var1Fields ? this.#getFieldValues(condition.var1Fields) : [condition.var1];
         const var2List = condition.var2Fields ? this.#getFieldValues(condition.var2Fields) : [condition.var2];
+
+        console.log('check simple condition');
         for (const var1 of var1List) {
             for (const var2 of var2List) {
                 if (!this.#evaluateConditionType(var1, condition.operator, var2)) {

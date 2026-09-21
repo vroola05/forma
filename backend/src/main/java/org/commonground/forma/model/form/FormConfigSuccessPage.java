@@ -17,10 +17,12 @@ import lombok.Setter;
 @AllArgsConstructor
 public class FormConfigSuccessPage {
     private UUID id;
+    private Boolean customSuccessPage;
     private String name;
     private String title;
     private TiptapNode template;
     private String content;
     private Boolean showSummary;
+    private String downloadText;
 
 }

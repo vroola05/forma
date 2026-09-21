@@ -9,7 +9,7 @@ export class Footer {
 
     constructor() {
         this.createContent();
-
+        footerService.clear();
         footerService.subscribe((buttons: { left: FormButton[], right: FormButton[] }) => this.render(buttons));
     }
 

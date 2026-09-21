@@ -1,15 +1,20 @@
 {
     "generic.lang": "English",
-    "generic.title": "Form Builder",
+    "generic.lang.code": "Countrycode",
+    "generic.title": "Forma",
     "generic.search": "Search...",
     "generic.slug": "URL Name",
     "generic.primary.color": "Primairy color",
     "generic.secondary.color": "Secondairy color",
 
     "generic.not.logged.in": "Logged out",
+
     "generic.btn.cancel": "Cancel",
     "generic.btn.save": "Save",
     "generic.btn.send": "Send",
+    "generic.btn.previous": "Previous",
+    "generic.btn.next": "Next",
+    "generic.btn.summary": "Overview",
 
     "generic.permissions": "Permissions",
 
@@ -22,6 +27,7 @@
     "generic.username": "Username",
     "generic.password": "Password",
     "generic.email": "Email",
+    "generic.groups": "Groups",
     "generic.active": "Active",
 
     "generic.yes": "Yes",
@@ -30,12 +36,14 @@
     "generic.status": "Status",
     "generic.status.active": "Active",
     "generic.status.inactive": "Inactive",
+    "generic.status.invited": "Invited",
     "generic.status.suspended": "Suspended",
     "generic.status.pending.deletion": "Pending Deletion",
+    "generic.status.blocked": "Blocked",
 
     "generic.status.draft": "Concept",
-    "generic.status.published": "Gepubliceerd",
-    "generic.status.archived": "Gearchiveerd",
+    "generic.status.published": "Published",
+    "generic.status.archived": "Archived",
     
     "generic.role.tenant.admin": "Tenant admin",
 
@@ -65,6 +73,9 @@
 
     "user.title": "User",
 
+    "user.new.title": "Create new user",
+    "user.edit.title": "Change user",
+
     "text.editor.placeholder": "Start typing here...",
     "text.editor.table.create": "Create",
     "text.editor.table.row.add": "Add Row",
@@ -86,13 +97,27 @@
 
     "tab.new": "New tab",
 
+    "page.settings.generic.forms": "Form settings",
+    "page.settings.generic.forms.successpage": "Generic success page",
+
+    "page.settings.generic.successpage.title": "Title success page",
+    "page.settings.generic.successpage.text": "Text success page",
+    "page.settings.generic.successpage.summary": "Show download after submission",
+
+    "page.settings.successpage.custom": "Does this form has a custom success page",
+    "page.settings.successpage.title": "Success page information",
+
+    "page.successpage.download.pdf": "Download the pdf",
+    
     "page.settings.form": "Form",
     "page.settings.generic": "Generic",
     "page.settings.login": "Login",
     "page.settings.mail": "Email",
+
     "page.settings.successpage": "Success page",
     "page.settings.registration": "Registration",
     "page.settings.payment": "Payment",
+    "page.settings.vars": "Variables",
 
     "field.type.form.form": "Form",
     "field.type.repeating.group": "Repeating group",
@@ -136,6 +161,11 @@
     "prop.maxLength.label": "Max length",
     "prop.value.label": "Default value",
     "prop.options.label": "Options",
+
+    "prop.multiple.files.label": "Allow multiple files",
+    "prop.max.file.size.label": "Max size in MB",
+    "prop.allowed.extensions.label": "Allowed extensions",
+
     "prop.summary.confirmation.label": "Confirmation summary page",
 
     "prop.minSize.label": "Min row amount",
@@ -148,6 +178,8 @@
     "prop.label.message": "Label can have a maximum of 200 characters.",
     "prop.class.message": "Css is required and can have 200 character.",
     "prop.metadata.message": "Metadata is required and can have 200 characters",
+    "prop.labels.locale.empty.message": "The field 'Languagecode' is required.",
+    "prop.labels.locale.duplicate.message": "Validation failed: The languagecode '{}' has been added multiple times.",
 
-    "error.check.fields": "'Something went wrong. Check if all fields are correct.'"
+    "error.check.fields": "Something went wrong. Check if all fields are correct."
 }

@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.commonground.forma.exceptions.FieldValidationException;
 import org.commonground.forma.model.form.Option;
+import org.commonground.forma.model.form.Translation;
 import org.commonground.forma.model.form.condition.Condition;
 import org.commonground.forma.model.form.constants.FieldType;
 
@@ -27,7 +28,8 @@ import lombok.Setter;
 public class TabPage implements Field {
     private UUID id;
     private String name;
-    private String label;
+    @Builder.Default
+    private List<Translation> labels = new ArrayList<>();
     private String classes;
     private Boolean sharedTab;
     private List<String> metadata;
@@ -49,11 +51,6 @@ public class TabPage implements Field {
     @Override
     public String getName() {
         return this.name;
-    }
-
-    @Override
-    public String getLabel() {
-        return this.label;
     }
 
     @Override

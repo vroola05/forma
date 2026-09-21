@@ -19,17 +19,16 @@ class FooterService {
     }
 
     clear() {
-        
         this.buttons = { left: [], right: [] };
         this.notify();
+        this.listeners = [];
     }
-
+    
     notify() {
         this.listeners.forEach(callback => callback(this.buttons));
     }
 
     subscribe(callback: (buttons: { left: FormButton[]; right: FormButton[] }) => void) {
-
         this.listeners.push(callback);
     }
 }

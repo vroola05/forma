@@ -1,6 +1,7 @@
 import { FormButton } from '../../shared/form-components/components/form-button';
 import { Footer } from '../../shared/generic-components/footer';
 import { Page } from '../../shared/page-components/page';
+import { footerService } from '../../shared/services/footer-service';
 import { AdminHeader } from '../component/admin-header';
 export class SettingsPage extends Page {
     contentInner = document.createElement('div');
@@ -61,6 +62,11 @@ export class SettingsPage extends Page {
             this.footer.getContent());
 
         return fragment;
+    }
+
+    destroy(): void {
+        super.destroy();
+        footerService.clear();
     }
 
 }

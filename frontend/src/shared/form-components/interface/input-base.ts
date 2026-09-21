@@ -1,4 +1,4 @@
-import { OptionDto } from '../../model/types';
+import { OptionDto, TranslationDto } from '../../model/types';
 import { FieldService } from '../../services/field-service';
 import { Lang } from '../../services/lang';
 import { Nucleus } from './nucleus';
@@ -27,11 +27,11 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
     constructor(
             element: T, 
             name: string,
-            label: string | undefined,
+            labels: TranslationDto[] | undefined = undefined,
             id: string | undefined = undefined,
             prefix: string | undefined = undefined) {
 
-        super(name, label, id, prefix);
+        super(name, labels, id, prefix);
         this.inputElement = element;
     }
 
@@ -44,7 +44,7 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         }
     }
 
-    createInput(inputElement: HTMLElement | undefined = undefined) {
+    createInput(inputElement: HTMLElement | undefined = undefined, showLabel: boolean = true) {
         this.content.className = ' ' + (!this.classes ? '' : this.classes);
         this.content.classList.add('field-wrapper');
         this.setLayout(InputLayout[0]);
@@ -52,10 +52,10 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         // Label
         this.labelElement.className = 'col-form-label field-wrapper-label';
         this.labelElement.htmlFor = this.getId();
-        if (this.label) {
-            this.labelElement.innerHTML = this.label;
+        if (this.label || this.labels) {
+            this.labelElement.innerHTML = this.getLabel();
         }
-        
+        this.showLabel(showLabel);        
         this.inputWrapper.className = 'field-wrapper-input';
 
         this.feedbackElement.className = 'invalid-feedback';
@@ -67,6 +67,14 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         this.inputWrapper.appendChild(this.feedbackElement);
         this.content.appendChild(this.labelElement);
         this.content.appendChild(this.inputWrapper);
+    }
+
+    showLabel(show: boolean) {
+        if (show) {
+            this.labelElement.classList.remove('hidden');
+        } else {
+            this.labelElement.classList.add('hidden');
+        }
     }
 
     hasOptions() {
@@ -87,6 +95,16 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
 
     #getInput(): HTMLInputElement {
         return (this.inputElement as unknown as HTMLInputElement);
+    }
+
+    setLabel(label: string | undefined) {
+        super.setLabel(label);
+        
+        if (this.label || this.labels) {
+            this.labelElement.innerHTML = this.getLabel();
+        }
+
+        return this;
     }
 
     setValue(value: any, noCallback: boolean = false, fromUi: boolean = false) {

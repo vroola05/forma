@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TiptapService {
     public String convert(TiptapNode node, Form form) {
-        return "<div class=\"form-template\">" + convertToHtml(node, form) + "</div>";
+        return "<div class=\"template-container\">" + convertToHtml(node, form) + "</div>";
     }
 
     private String convertToHtml(TiptapNode node, Form form) {

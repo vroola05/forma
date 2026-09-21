@@ -6,18 +6,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.commonground.forma.config.AppConstants;
 import org.commonground.forma.config.tenant.TenantContext;
+import org.commonground.forma.database.dao.definition.FormConfigSuccessPageEntity;
 import org.commonground.forma.database.dao.definition.FormDefinitionEntity;
+import org.commonground.forma.database.dao.translation.FormTranslationEntity;
 import org.commonground.forma.database.repository.FormDefinitionRepository;
 import org.commonground.forma.mapper.FormMapper;
 import org.commonground.forma.model.form.FormConfig;
+import org.commonground.forma.model.form.FormConfigSuccessPage;
 import org.commonground.forma.model.form.FormList;
 import org.commonground.forma.model.form.FormWrapper;
+import org.commonground.forma.model.form.Translation;
 import org.commonground.forma.model.form.fields.Field;
 import org.commonground.forma.model.form.fields.Form;
 import org.commonground.forma.model.form.fields.TabPage;
 import org.commonground.forma.model.settings.Tenant;
-import org.commonground.forma.services.formConfig.FormConfigSuccessPageService;
+import org.commonground.forma.services.config.FormConfigSuccessPageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,15 +63,28 @@ public class FormServiceDatabase implements FormService {
         List<FormList> formLists = new ArrayList<>();
         List<FormDefinitionEntity> formDefinitionEntities = this.formDefinitionRepository.findByTenantId(tenant.getId());
         formDefinitionEntities.stream().forEach(formDefinitionEntity -> {
+
+            List<FormTranslationEntity> a = formDefinitionEntity.getLabels();
             FormList formList = new FormList();
             formList.setId(formDefinitionEntity.getId());
             formList.setName(formDefinitionEntity.getName());
-            formList.setLabel(formDefinitionEntity.getLabel());
+            formList.setLabel(AppConstants.getTranslation(getTranslations(formDefinitionEntity.getLabels())));
             formList.setStatus(formDefinitionEntity.getStatus());
             formLists.add(formList);
         });
 
         return formLists;
+    }
+
+    public List<Translation> getTranslations(List<FormTranslationEntity> translationEntities) {
+        List<Translation> translations = new ArrayList<>();
+        for (FormTranslationEntity translationEntity : translationEntities) {
+            Translation translation = new Translation();
+            translation.setLocale(translationEntity.getLocale());
+            translation.setText(translationEntity.getLabel());
+            translations.add(translation);
+        }
+        return translations;
     }
 
     @Override
@@ -84,7 +102,7 @@ public class FormServiceDatabase implements FormService {
 
         formWrapper.setFormConfig(new FormConfig());
         formWrapper.getFormConfig()
-                .setFormConfigSuccessPage(this.formConfigSuccessPageService.get(formDefinitionEntity.getId()));
+                .setFormConfigSuccessPage(this.formConfigSuccessPageService.getByFormId(formDefinitionEntity.getId()));
 
         return formWrapper;
     }
@@ -116,12 +134,27 @@ public class FormServiceDatabase implements FormService {
         }
 
         Set<UUID> incomingIds = new HashSet<>();
-        form.getFields().stream().forEach(f -> {
+        form.getFields().forEach(f -> {
             if (f.getId() != null) incomingIds.add(f.getId());
         });
 
         formDefinitionEntity.getTabs().removeIf(existingTabInstance -> !incomingIds.contains(existingTabInstance.getTab().getId()));
 
+
+        boolean removeSuccessPage = formWrapper.getFormConfig() == null
+                || formWrapper.getFormConfig().getFormConfigSuccessPage() == null
+                || formWrapper.getFormConfig().getFormConfigSuccessPage().getCustomSuccessPage() == null
+                || !formWrapper.getFormConfig().getFormConfigSuccessPage().getCustomSuccessPage();
+
+        FormConfig formConfig = formWrapper.getFormConfig();
+        if (removeSuccessPage) {
+            FormConfigSuccessPageEntity formConfigSuccessPageEntity = formDefinitionEntity.getFormConfigSuccessPageEntity();
+            if (formConfigSuccessPageEntity != null) {
+                formDefinitionEntity.removeFormConfigSuccessPageEntity();
+                formConfig.setFormConfigSuccessPage(null);
+                this.formConfigSuccessPageService.delete(formConfigSuccessPageEntity);
+            }
+        }
 
         FormDefinitionEntity resultEntity = this.formDefinitionRepository.save(formDefinitionEntity);
 
@@ -131,9 +164,8 @@ public class FormServiceDatabase implements FormService {
             this.tabPageService.save(resultEntity, tabPage, sortOrderTab++);
         }
 
-        FormConfig formConfig = formWrapper.getFormConfig();
-        if (formConfig != null && formConfig.getFormConfigSuccessPage() != null) {
-            this.formConfigSuccessPageService.save(resultEntity, formConfig.getFormConfigSuccessPage());
+        if (!removeSuccessPage) {
+            this.formConfigSuccessPageService.saveByForm(resultEntity, formConfig.getFormConfigSuccessPage());
         }
 
         return null;

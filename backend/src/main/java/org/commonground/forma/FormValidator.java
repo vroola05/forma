@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.commonground.forma.config.AppConstants;
 import org.commonground.forma.exceptions.FieldValidationException;
 import org.commonground.forma.exceptions.FormFieldError;
 import org.commonground.forma.exceptions.FormValidationException;
@@ -39,7 +40,7 @@ public class FormValidator {
 
             Optional<Field> fieldOptional = form.getField(fieldDefinition.getName());
             if (fieldOptional.isEmpty()) {
-                throwValidationError(fieldDefinition.getName(), String.format("De set {} is niet gevonden", fieldDefinition.getLabel()));
+                throwValidationError(fieldDefinition.getName(), String.format("De set {} is niet gevonden", AppConstants.getTranslation(fieldDefinition.getLabels())));
             }
 
             validateTab("fields." + index + ".", form, fieldDefinition, fieldOptional.get());
@@ -65,7 +66,7 @@ public class FormValidator {
                 String currentfield = path + "fields." + index ;
                 Optional<Field> fieldOptional = parentField.getField(fieldDef.getName());
                 if (fieldOptional.isEmpty()) {
-                    throwValidationError(currentfield, String.format("De set {} is niet gevonden", fieldDef.getLabel()));
+                    throwValidationError(currentfield, String.format("De set {} is niet gevonden", AppConstants.getTranslation(fieldDef.getLabels())));
                 }
                 
                 try {
@@ -100,7 +101,7 @@ public class FormValidator {
                 String currentfield = currentSet + fieldIndex + "." + fieldDef.getName();
                 Optional<Field> fieldOptional = set.stream().filter(field -> fieldDef.getName().equals(field.getName())).findFirst();
                 if (fieldOptional.isEmpty()) {
-                    throwValidationError(currentfield, String.format("De set {} is niet gevonden", fieldDef.getLabel()));
+                    throwValidationError(currentfield, String.format("De set {} is niet gevonden", AppConstants.getTranslation(fieldDef.getLabels())));
                 }
 
                 try {
@@ -126,7 +127,7 @@ public class FormValidator {
             RepeatingGroup repeatingGroupDef = (RepeatingGroup)fieldDefinition;
             RepeatingGroup repeatingGroup = (RepeatingGroup)field;
 
-            validateSize(repeatingGroupDef.getLabel(), repeatingGroupDef.getMinLength(), repeatingGroupDef.getMaxLength(), repeatingGroup.getSets().size());
+            validateSize(AppConstants.getTranslation(repeatingGroupDef.getLabels()), repeatingGroupDef.getMinLength(), repeatingGroupDef.getMaxLength(), repeatingGroup.getSets().size());
 
             if (fieldDefinition.getFields() != null && !fieldDefinition.getFields().isEmpty()) {
                 validateSet(path + ".", form, fieldDefinition.getFields(), repeatingGroup.getSets());
@@ -170,4 +171,6 @@ public class FormValidator {
         }
         return true;
     }
+
+    
 }

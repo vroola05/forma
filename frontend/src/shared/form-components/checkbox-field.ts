@@ -1,4 +1,4 @@
-import { OptionDto } from '../model/types';
+import { OptionDto, TranslationDto } from '../model/types';
 import { InputNucleus } from './interface/input-base';
 
 /**
@@ -9,8 +9,8 @@ export class CheckboxField extends InputNucleus<HTMLDivElement> {
     
     value: OptionDto[];
 
-    constructor(name: string, label: string | undefined, classes: string, id: string | undefined = undefined) {
-        super(document.createElement('div'), name, label, id);
+    constructor(name: string, labels: TranslationDto[] | undefined, classes: string, id: string | undefined = undefined) {
+        super(document.createElement('div'), name, labels, id);
         this.value = [];
         this.classes = classes;
         this.createElement();
@@ -179,7 +179,7 @@ export class CheckboxField extends InputNucleus<HTMLDivElement> {
      * @returns 
      */
     clone() {
-        const checkboxField = new CheckboxField(this.name, this.label, this.classes, this.id);
+        const checkboxField = new CheckboxField(this.name, this.labels, this.classes, this.id);
 
         [...this.inputElements].forEach(inputElement => {
             checkboxField.addOption(inputElement.checkbox.value, inputElement.checkbox.dataset.text ?? '');

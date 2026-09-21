@@ -1,8 +1,9 @@
+import { TranslationDto } from '../model/types';
 import { TextField } from './text-field';
 
 export class DateField extends TextField {
-    constructor(name: string, label: string | undefined, id: string | undefined = undefined) {
-        super(name, label, id);
+    constructor(name: string, labels: TranslationDto[] | undefined, id: string | undefined = undefined) {
+        super(name, labels, id);
     }
 
     setValue(value: string | undefined, noCallback = false) {

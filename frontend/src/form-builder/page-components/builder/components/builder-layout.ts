@@ -24,7 +24,7 @@ export class BuilderLayout {
         const builderPageMenuLeftContainer = document.createElement('div');
 
         const menuToggle = new FormButton('', 'builder-btn-icon builder-page-wrapper-btn-toggle icon icon-list');
-        menuToggle.setEvent(() => {
+        menuToggle.addEvent(() => {
             builderPageMenuLeftContainer.classList.toggle('active');
         });
         builderPageWrapperBtnContainer.append(menuToggle.getContent());
@@ -63,7 +63,7 @@ export class BuilderLayout {
         this.#builderPageMenuRightContainer.appendChild(builderPageMenuRightBtns);
 
         const closeRightBtn = new FormButton('', 'builder-btn-icon icon icon-x-lg');
-        closeRightBtn.setEvent(() => {
+        closeRightBtn.addEvent(() => {
             if (this.#onClose) {
                 this.#onClose();
             }

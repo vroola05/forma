@@ -1,4 +1,4 @@
-import { OptionDto } from '../model/types';
+import { OptionDto, TranslationDto } from '../model/types';
 import { InputNucleus } from './interface/input-base';
 
 /**
@@ -9,8 +9,8 @@ export class RadioField extends InputNucleus {
 
     inputElements: { radio: HTMLInputElement; label: HTMLLabelElement }[] = [];
 
-    constructor(name: string, label: string | undefined, classes: string, id: string | undefined = undefined) {
-        super(document.createElement('div'), name, label, id);
+    constructor(name: string, labels: TranslationDto[] | undefined, classes: string, id: string | undefined = undefined) {
+        super(document.createElement('div'), name, labels, id);
         
         this.classes = classes;
 
@@ -26,9 +26,7 @@ export class RadioField extends InputNucleus {
     }
 
     setReadonly(readonly: boolean | undefined = undefined) {
-        if (readonly === undefined) {
-            readonly = false;
-        }
+        readonly ??= false;
         this.readonly = readonly;
 
         [...this.inputElements].forEach(inputElement => {
@@ -68,7 +66,7 @@ export class RadioField extends InputNucleus {
         radioElement.className = 'radio-input-field form-check-input';
         radioElement.value = value;
         radioElement.id = id;
-        radioElement.setAttribute('data-text', text);
+        radioElement.dataset.text = text;
         radioElement.addEventListener('change', (e) => {
             const radioInputField = (e.target as HTMLElement).closest('.radio-input-field') as HTMLInputElement;
             this.setInputValue([{ value: radioInputField.value, text: radioInputField.dataset.text }]);
@@ -159,7 +157,7 @@ export class RadioField extends InputNucleus {
      * @returns 
      */
     clone() {
-        const radioField = new RadioField(this.name, this.label, this.classes, this.id);
+        const radioField = new RadioField(this.name, this.labels, this.classes, this.id);
 
         [...this.inputElements].forEach(inputElement => {
             const radioElement = inputElement.radio as HTMLElement;

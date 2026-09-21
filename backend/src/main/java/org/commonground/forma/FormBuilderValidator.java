@@ -9,7 +9,6 @@ import org.commonground.forma.model.form.constants.FieldType;
 import org.commonground.forma.model.form.fields.Field;
 import org.commonground.forma.model.form.fields.Form;
 
-
 public class FormBuilderValidator {
 
     private static final String NAME_REGEX = "^(?=.{1,200}$)[a-z](?:[a-z0-9_-]*[a-z0-9])?$";
@@ -20,7 +19,8 @@ public class FormBuilderValidator {
     public static void validate(FormWrapper formWrapper) {
 
         if (formWrapper.getForm() == null) {
-            throw new FormValidationException(List.of(new FormFieldError("form", "*", "{form.validation.required.form}")));
+            throw new FormValidationException(
+                    List.of(new FormFieldError("form", "*", "{form.validation.required.form}")));
         }
 
         validate(formWrapper.getForm());
@@ -30,27 +30,31 @@ public class FormBuilderValidator {
     public static void validate(Form form) {
         String path = "";
         if (form == null) {
-            throw new FormValidationException(List.of(new FormFieldError("form", "*", "{form.validation.required.form}")));
+            throw new FormValidationException(
+                    List.of(new FormFieldError("form", "*", "{form.validation.required.form}")));
         }
 
         validateBase(path, form);
 
         if (form.getStatus() == null) {
-            throw new FormValidationException(List.of(new FormFieldError("form", path + "status", "{form.validation.name}")));
+            throw new FormValidationException(
+                    List.of(new FormFieldError("form", path + "status", "{form.validation.name}")));
         }
-        
-        for (int tabIndex = 0; tabIndex < form.getFields().size(); tabIndex++){
+
+        for (int tabIndex = 0; tabIndex < form.getFields().size(); tabIndex++) {
             Field tabPage = form.getFields().get(tabIndex);
             validateBase(path + "fields." + tabIndex + ".", tabPage);
 
-            for (int fieldIndex = 0; fieldIndex < tabPage.getFields().size(); fieldIndex++){
-                validateRoute(path + "fields." + tabIndex + ".fields." + fieldIndex + ".", tabPage.getFields().get(fieldIndex));
+            for (int fieldIndex = 0; fieldIndex < tabPage.getFields().size(); fieldIndex++) {
+                validateRoute(path + "fields." + tabIndex + ".fields." + fieldIndex + ".",
+                        tabPage.getFields().get(fieldIndex));
             }
         }
     }
 
     /**
      * A tab can either contain a formgroup repeating group or a field.
+     * 
      * @param routeField
      */
     public static void validateRoute(String path, Field routeField) {
@@ -67,14 +71,28 @@ public class FormBuilderValidator {
 
     public static void validateBase(String path, Field field) {
         if (field == null) {
-            throw new FormValidationException(List.of(new FormFieldError("field", "*", "{form.validation.required.field}")));
+            throw new FormValidationException(
+                    List.of(new FormFieldError("field", "*", "{form.validation.required.field}")));
         }
         if (field.getName() == null || !field.getName().matches(NAME_REGEX)) {
-            throw new FormValidationException(List.of(new FormFieldError("name", path + "name", "{form.validation.name}")));
+            throw new FormValidationException(
+                    List.of(new FormFieldError("name", path + "name", "{form.validation.name}")));
         }
-        if (field.getLabel() == null || !field.getLabel().matches(LABEL_REGEX)) {
-            throw new FormValidationException(List.of(new FormFieldError("label", path + "label", "{form.validation.label}")));
+
+        if (field.getLabels() == null || field.getLabels().isEmpty()) {
+            throw new FormValidationException(
+                    List.of(new FormFieldError("label", path + "label", "{form.validation.label}")));
         }
+
+        boolean hasInvalidLabel = field.getLabels().stream()
+                .anyMatch(label -> label.getLocale() == null || label.getLocale().isEmpty()
+                        || label.getText() == null || !label.getText().matches(LABEL_REGEX));
+
+        if (hasInvalidLabel) {
+            throw new FormValidationException(
+                    List.of(new FormFieldError("label", path + "label", "{form.validation.label}")));
+        }
+
         if (field.getClasses() != null && !field.getClasses().isEmpty() && !field.getClasses().matches(CLASSES_REGEX)) {
             throw new FormValidationException(
                     List.of(new FormFieldError("classes", path + "classes", "{form.validation.classes}")));
@@ -88,18 +106,32 @@ public class FormBuilderValidator {
             }
         }
     }
-    
+
     public static void validateField(String path, Field field) {
         if (field == null) {
-            throw new FormValidationException(List.of(new FormFieldError("field", "*", "{form.validation.required.field}")));
+            throw new FormValidationException(
+                    List.of(new FormFieldError("field", "*", "{form.validation.required.field}")));
         }
         if (!field.getName().matches(NAME_REGEX)) {
-            throw new FormValidationException(List.of(new FormFieldError("name", path + "name", "{form.validation.name}")));
+            throw new FormValidationException(
+                    List.of(new FormFieldError("name", path + "name", "{form.validation.name}")));
         }
-        if (!field.getLabel().matches(LABEL_REGEX)) {
-            
-            throw new FormValidationException(List.of(new FormFieldError("label", path + "label", "{form.validation.label}")));
+
+
+        if (field.getLabels() == null || field.getLabels().isEmpty()) {
+            throw new FormValidationException(
+                    List.of(new FormFieldError("label", path + "label", "{form.validation.label}")));
         }
+
+        boolean hasInvalidLabel = field.getLabels().stream()
+                .anyMatch(label -> label.getLocale() == null || label.getLocale().isEmpty()
+                        || label.getText() == null || !label.getText().matches(LABEL_REGEX));
+
+        if (hasInvalidLabel) {
+            throw new FormValidationException(
+                    List.of(new FormFieldError("label", path + "label", "{form.validation.label}")));
+        }
+
         if (field.getClasses() != null && !field.getClasses().matches(CLASSES_REGEX)) {
             throw new FormValidationException(
                     List.of(new FormFieldError("classes", path + "classes", "{form.validation.classes}")));

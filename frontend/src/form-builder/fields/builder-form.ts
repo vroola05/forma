@@ -26,6 +26,7 @@ export class BuilderForm extends BuilderFieldInterface {
                 options: Object.entries(FORM_STATUS).map(([key, val_fnc]) => ({value: key, text: val_fnc()}))
             },
             {type: PROPERTY_TYPE.LIST, id: 'confirmation', order: 7, label: Lang.get('prop.summary.confirmation.label'), value: []},
+            
         ]);
 
         this.createContent();
@@ -33,7 +34,6 @@ export class BuilderForm extends BuilderFieldInterface {
 
     init(baseFieldDto: BaseFieldDto) {
         this.fieldProperties.setPropertyValueById('name', Lang.get('field.type.form.form').toLowerCase().replace(/\s+/g, '-'));
-        this.fieldProperties.setPropertyValueById('label', Lang.get('field.type.form.form'));
 
         if (baseFieldDto) {
             this.initDefaultProperties(baseFieldDto);
@@ -52,7 +52,7 @@ export class BuilderForm extends BuilderFieldInterface {
     createContent() {
         
         this.content.className = 'builder-form';
-        this.content.setAttribute('data-type', 'form');
+        this.content.dataset.type = 'form';
         
 
         ///////////////////////
@@ -92,7 +92,7 @@ export class BuilderForm extends BuilderFieldInterface {
      */
     initTabComponent() {
         // When a new tab is created
-        this.builderTabComponent.onCreateCallback = (tab) => {
+        this.builderTabComponent.onCreateCallback = () => {
             EventService.emit('field-changed', this);
         };
 
@@ -100,11 +100,11 @@ export class BuilderForm extends BuilderFieldInterface {
             EventService.emit('field-changed', this);
         };
 
-        this.builderTabComponent.onActivateCallback = (tabLabel) => {
+        this.builderTabComponent.onActivateCallback = () => {
             
         };
 
-        this.builderTabComponent.onDeleteCallback = (tabLabel) => {
+        this.builderTabComponent.onDeleteCallback = () => {
             BuilderPropertiesService.clear();
         };
         return this.builderTabComponent;

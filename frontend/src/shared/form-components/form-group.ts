@@ -13,12 +13,14 @@ export class FormGroup extends Nucleus {
     fields: InputNucleus[] = [];
 
     constructor(baseFieldDto: BaseFieldDto, id: string | undefined = undefined) {
-        super(baseFieldDto.name, baseFieldDto.label, id);
+        super(baseFieldDto.name, baseFieldDto.labels, id);
 
         this.type = baseFieldDto.type;
+        this.label = baseFieldDto.label;
+
         this.setShowConditions(baseFieldDto?.condition);
 
-        this.createElement(baseFieldDto.label, baseFieldDto.classes);
+        this.createElement(baseFieldDto.classes);
     }
     
     async init(baseFieldDto: BaseFieldDto): Promise<this> {
@@ -36,10 +38,11 @@ export class FormGroup extends Nucleus {
      * @param {*} label - De titel van het document
      * @param {*} classes - Additionele css classes
      */
-    createElement(label: string = '', classes: string = '') {
+    createElement( classes: string = '') {
         this.content.id = this.getId() + '-form-group';
         this.content.className = `form-group ${classes}`;
 
+        const label = this.getLabel();
         if (label !== '') {
             this.formGroupTitleDom.className = 'form-group-title pt-4 pb-2';
             this.formGroupTitleDom.innerHTML = `<h2>${label}</h2>`;

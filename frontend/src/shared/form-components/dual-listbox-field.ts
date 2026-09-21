@@ -1,4 +1,4 @@
-import { OptionDto } from '../model/types';
+import { OptionDto, TranslationDto } from '../model/types';
 import { FormButton } from './components/form-button';
 import { InputNucleus } from './interface/input-base';
 
@@ -10,8 +10,8 @@ export class DualListboxField extends InputNucleus<HTMLSelectElement> {
 
     inputElementDeselected: HTMLSelectElement = document.createElement('select');
 
-    constructor(name: string, label: string | undefined, classes: string, id: string | undefined) {
-        super(document.createElement('select'), name, label);
+    constructor(name: string, labels: TranslationDto[] | undefined, classes: string, id: string | undefined) {
+        super(document.createElement('select'), name, labels);
         this.type = 'dual-listbox';
         
         this.values = [];
@@ -173,9 +173,7 @@ export class DualListboxField extends InputNucleus<HTMLSelectElement> {
     }
 
     setReadonly(readonly: boolean | undefined = undefined) {
-        if (readonly === undefined) {
-            readonly = false;
-        }
+        readonly ??= false;
 
         this.readonly = readonly;
         this.inputElement.disabled = readonly;
@@ -198,7 +196,7 @@ export class DualListboxField extends InputNucleus<HTMLSelectElement> {
     }
 
     clone() {
-        const dualListboxField = new DualListboxField(this.name, this.label, this.classes, this.id);
+        const dualListboxField = new DualListboxField(this.name, this.labels, this.classes, this.id);
         [...this.inputElement.options].forEach(option => {
             const clone = option.cloneNode(true) as HTMLOptionElement;
             clone.selected = option.selected;

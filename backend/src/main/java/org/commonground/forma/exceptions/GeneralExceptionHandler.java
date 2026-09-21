@@ -41,6 +41,15 @@ public class GeneralExceptionHandler {
             ex.getStatusCode());
     }
 
+    @ExceptionHandler(PageExpiredException.class)
+    public ResponseEntity<ApiErrorResponse> handlePageExpiredException(PageExpiredException ex) {
+        return ResponseEntity.badRequest().body(new ApiErrorResponse(
+                HttpStatus.GONE.value(),
+                HttpStatus.GONE.toString(),
+                ApiErrorType.CONSOLE,
+                translate(ex.getMessage(), null)));
+    }
+
     @ExceptionHandler(FormValidationException.class)
     public ResponseEntity<ApiErrorResponse> handleFormValidation(FormValidationException ex) {
         ValidationTree validationTree = new ValidationTree();

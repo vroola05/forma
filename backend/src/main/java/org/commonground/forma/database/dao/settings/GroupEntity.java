@@ -25,6 +25,7 @@ import lombok.Setter;
 public class GroupEntity extends BaseEntity {
     @Id
     private UUID id;
+    
     @Column(nullable = false)
     private UUID tenantId;
 

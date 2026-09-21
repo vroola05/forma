@@ -107,8 +107,6 @@ export class BuilderTabComponent {
             }
         });
 
-
-
         const builderFormTabContainer = document.createElement('div');
         builderFormTabContainer.className = 'builder-form-tab-container';
         this.builderTab.appendChild(builderFormTabContainer);
@@ -167,19 +165,18 @@ export class BuilderTabComponent {
                 }
             }
 
-            this.builderFormTabs.removeChild(this.tabs[index].getContent());
+            this.tabs[index].getContent().remove();
 
             this.tabs.splice(index, 1);
             
             EventService.emit('field-deleted', this);
         }
 
-
         if (this.onDeleteCallback) {
             this.onDeleteCallback(tabLabel);
         }
 
-        this.builderTabLabelBtnTabContainerInner.removeChild(tabLabel.getContent());
+        tabLabel.getContent().remove();
     }
 
     createTab() {
@@ -199,49 +196,26 @@ export class BuilderTabComponent {
 
         this.builderTabLabelBtnTabContainerInner.appendChild(tabLabelDom);
 
-
-        //////////////
-        //////////////
         const tab = new BuilderTabPage(FIELD_TYPE.TAB, tabLabel.getLabel());
         this.tabs.push(tab);
         tab.setParent(this.builderForm);
         tabLabel.setTab(tab);
         tab.setTabLabelItem(tabLabel);
-        tab.setPropertyValueById('name', this.getUniqueName(Lang.get('tab.new'), 'name', true));
 
-        const label = this.getUniqueName(Lang.get('tab.new'), 'label', false, ' ');
-        tab.setPropertyValueById('label', label);
+        tab.setPropertyValueById('name', this.builderForm.getUniqueName(Lang.get('tab.new'), 'name', true));
+
+        const label = this.builderForm.getUniqueLabel(Lang.get('tab.new'));
+        tab.setDefaultLabel(label);
         tabLabel.setLabel(label);
 
         this.builderFormTabs.appendChild(tab.getContent());
         this.setActive(tabLabel);
-        //////////////
-        //////////////
-
+        
         if (this.onCreateCallback !== null) {
             this.onCreateCallback(tab);
         }
 
         return tabLabel.getTab();
-        
-    }
-
-    getUniqueName(label: string, property: string = 'name', cleanLabel = false, seperator = '-') {
-        const baseLabel = cleanLabel
-            ? label.toLowerCase().trim().replace(/\s+/g, '-')
-            : label;
-
-        const existingNames = this.tabs.map(f => f.getPropertyValueById(property));
-
-        let index = 1;
-        let newName = `${baseLabel}${seperator}${index}`;
-
-        while (existingNames.includes(newName)) {
-            index++;
-            newName = `${baseLabel}${seperator}${index}`;
-        }
-
-        return newName;
     }
 
     setActive(tabLabel: BuilderTabLabel) {

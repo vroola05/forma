@@ -28,12 +28,14 @@ export class BuilderPropertiesCondition {
     compositeConditionDom = document.createElement('div');
     compositeConditionDropareaDom = document.createElement('div');
 
-    var1SimpleTextfield: BuilderConditionsAutocompleteField = new BuilderConditionsAutocompleteField('var1', 'Variabele 1');
-    operatorSimpleSelect: SelectField = new SelectField('opereator', 'Operator', '');
-    var2SimpleTextfield: BuilderConditionsAutocompleteField = new BuilderConditionsAutocompleteField('var2', 'Variabele 2');
+    var1SimpleTextfield: BuilderConditionsAutocompleteField = new BuilderConditionsAutocompleteField('var1').setLabel('Variabele 1');
+    operatorSimpleSelect: SelectField = new SelectField('opereator').setLabel('Operator');
+    
+
+    var2SimpleTextfield: BuilderConditionsAutocompleteField = new BuilderConditionsAutocompleteField('var2').setLabel('Variabele 2');
 
     
-    operatorCompositeSelect: SelectField = new SelectField('opereator', 'Operator', '');
+    operatorCompositeSelect: SelectField = new SelectField('opereator').setLabel('Operator');
     builderPropertiesFooter: BuilderPropertiesFooter = new BuilderPropertiesFooter('Conditie toevoegen');
 
     draggedItem: HTMLElement | null = null;
@@ -61,7 +63,8 @@ export class BuilderPropertiesCondition {
         builderConditionTypeContainer.className = 'builder-properties-condition-type-container';
         this.content.appendChild(builderConditionTypeContainer);
 
-        this.conditionTypeSelect = new SelectField('condition-type', 'Type', '')
+        this.conditionTypeSelect = new SelectField('condition-type')
+                .setLabel('Conditie type')
                 .setPlaceholder('Condition type');
         this.conditionTypeSelect.addValueChangedListener((name, options: OptionDto[] | undefined) => {
             if (options && options.length !== null) {

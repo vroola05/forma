@@ -11,6 +11,7 @@
     --secondary-color: #85aaca;
     --secondary-color-light: color-mix(in srgb, var(--secondary-color), var(--white) 40%);
     --secondary-color-lighter: color-mix(in srgb, var(--secondary-color), var(--white) 95%);
+    --secondary-color-transparent: color-mix(in srgb, var(--secondary-color), transparent 50%);
 
     --black: #000000;
     --white: #ffffff;
@@ -383,6 +384,15 @@ header, footer {
             padding: 0;
 
             list-style: none;
+
+            li {
+                border-left: transparent 1px solid;
+                border-right: transparent 1px solid;
+            }
+            li:hover {
+                border-left: 1px solid var(--primary-color-light);
+                border-right: 1px solid var(--primary-color-light);
+            }
         }
 
         .header-navbar-left {}
@@ -457,6 +467,78 @@ header, footer {
         .nav-link {
             cursor: pointer;
         }
+
+        .dropdown {
+            position: relative;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            height: 100%;
+
+            .form-btn {
+                padding: var(--default-space);
+
+                border: none;
+
+                color: var(--black);
+                background: none;
+
+            }
+            .dropdown-menu-btn {
+
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+
+                border: none;
+                background: unset;
+                color: var(--white);
+
+                .dropdown-label {
+
+                }
+
+                .dropdown-label-icon {
+                    display: inline-block;
+                    transition: transform 0.1s ease;
+                    font-size: 1.5rem;
+                }
+
+                &[aria-expanded="true"] .dropdown-label-icon {
+                    transform: rotate(180deg);
+                }
+            }
+            .dropdown-menu {
+                position: absolute;
+                display: none;
+                flex-direction: column;
+
+                top: 100%;
+                left: 0%;
+                min-width: 160px;
+                background-color: var(--white);
+                list-style: none;
+
+                border: var(--border-grey) solid 1px;
+                border-top: none;
+                border-radius: 0;
+                box-shadow: 0 4px 12px rgba(153, 153, 153, 0.1);
+                z-index: 1000;
+
+                &.active {
+                    display: block;
+                }
+
+                button {
+                    width: 100%;
+                    text-align: left;
+                }
+            }
+        }
     }
 }
 
@@ -488,99 +570,6 @@ header, footer {
 /**********************************************
  Formulier
  ******************************************** */
-.page-wrapper {
-
-    .page-title {
-        margin: var(--default-space-quadruple) var(--default-space-quadruple) var(--default-space-double) var(--default-space-quadruple);
-    }
-}
-
-.page-content-container {}
-
-.form-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-
-    padding: var(--default-space-double);
-    margin: var(--default-space-double) var(--default-space-quadruple);
-    margin-bottom: 0px;
-
-    border: var(--border-grey) solid 1px;
-    border-radius: var(--default-space) var(--default-space);
-
-    background-color: var(--white);
-
-    .tab-nav-container {
-        .tab-nav-inner-container {
-            margin: var(--default-space) var(--default-space-quadruple);
-            padding: var(--default-space);
-            background-color: var(--secondary-color-lighter);
-            border: var(--border-grey) solid 1px;
-            border-radius: var(--default-space);
-
-            .tab-nav {
-                padding: var(--default-space) var(--default-space-quadruple);
-                cursor: pointer;
-
-                color: #6c757d;
-
-                &.active {
-                    background-color: var(--primary-color);
-                    color: var(--white);
-
-                    border-radius: calc(var(--default-space) / 2);
-                }
-            }
-        }
-    }
-
-    .tab-content-container {
-        display: inline-block;
-        width: 100%;
-    }
-
-    .tab-component>.tab-nav:only-child {
-        display: none;
-    }
-
-    .tab-content {
-        display: none;
-
-        &.active {
-            display: block;
-        }
-
-        .form-group {
-            .form-group-title {
-                padding-top: var(--default-space-double);
-                padding-bottom: calc(var(--default-space) * 1);
-            }
-
-            .form-group-container {
-                margin-left: 0;
-
-            }
-        }
-    }
-
-    &.success-page {
-
-        .form-template {
-            h1 {}
-
-            h2 {}
-        }
-    }
-}
-
-
-/**********************************************
- * Footer
- ******************************************** */
-
-
-
 option:disabled {
     color: gray !important;
 }
@@ -608,41 +597,7 @@ option:disabled {
     }
 }
 
-@media (max-width: 576px) {
-    .form-container {
-        flex-direction: column;
 
-        margin: 0px;
-        margin-bottom: var(--default-space-quadruple);
-        border: none;
-        border-radius: 0px;
-    }
-}
-@media (max-width: 768px) {
-
-    .form-container {
-        flex-direction: column;
-
-
-        .tab-nav-container {
-            .tab-nav-inner-container {
-                margin: 0px;
-            }
-        }
-    }
-}
-
-@media (min-width: 576px) {
-    .tab-nav {
-        &:first-child {
-            border-top-left-radius: var(--bs-border-radius) !important;
-        }
-
-        &:last-child {
-            border-top-right-radius: var(--bs-border-radius) !important;
-        }
-    }
-}
 
 
 .field-wrapper {
@@ -654,10 +609,6 @@ option:disabled {
 
     .field-wrapper-label {
         width: calc(100% / 3);
-
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
 
         &.required::after {
             content: " *";
@@ -892,80 +843,6 @@ option:disabled {
             width: calc(100%);
         }
 
-    }
-}
-
-
-
-/* 
-*************************************************************
-*************************************************************
-*************************************************************
-*************************************************************
-*/
-
-
-.form-comparison-container {
-    display: none;
-    position: absolute;
-    height: calc(90% - 72px);
-    width: 90%;
-    top: calc(5% + 72px);
-    left: 5%;
-
-    background: #dffcff;
-    border: var(--black) solid 1px;
-    border-radius: 5px;
-
-    &.active {
-        display: block;
-    }
-
-    .form-comparison-container-header {
-        height: 30px;
-        width: 100%;
-        background-color: #23abb7;
-
-        div {
-            float: right;
-            width: 20px;
-            height: 100%;
-            padding: 4px 25px;
-            color: var(--white);
-            cursor: pointer;
-        }
-    }
-
-    .form-comparison-container-inner {
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-        height: 100%;
-
-        .current-form-container,
-        .revision-form-container {
-            height: calc(100% - 30px);
-        }
-
-        .tab-wrapper {
-            height: 100%;
-            width: 100%;
-            overflow-y: auto;
-        }
-    }
-}
-
-.compare-revisions-button {
-    display: none;
-    position: absolute;
-    right: 0px;
-    top: 0px;
-    width: 30px;
-    height: 30px;
-    background: transparent url("../images/lightning-charge.svg") left / 2em auto no-repeat;
-
-    &.active {
-        display: inline-block;
     }
 }
 

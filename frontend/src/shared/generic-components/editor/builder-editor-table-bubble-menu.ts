@@ -1,6 +1,6 @@
 import { BubbleMenu, BubbleMenuPlugin } from '@tiptap/extension-bubble-menu';
 
-import { Lang } from '../../../shared/services/lang';
+import { Lang } from '../../services/lang';
 
 export const BuilderEditorTableBubbleMenu = BubbleMenu.extend({
     addOptions() {
@@ -80,6 +80,13 @@ export const BuilderEditorTableBubbleMenu = BubbleMenu.extend({
             'btn-primary btn-add-col icon icon-remove-column-right',
             false,
             () => { editorAny.chain().focus().deleteColumn().run(); }
+        ));
+
+        element.appendChild(createBtn(
+            Lang.get('text.editor.table.col.delete'),
+            'btn-primary btn-add-col icon icon-x-lg',
+            false,
+            () => { editorAny.chain().focus().deleteTable().run(); }
         ));
 
         element.addEventListener('keydown', (e) => {

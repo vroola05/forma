@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.commonground.forma.database.dao.BaseEntity;
+import org.commonground.forma.database.dao.translation.FormTranslationEntity;
 import org.commonground.forma.model.constants.FormStatus;
 import org.commonground.forma.model.form.condition.Condition;
 import org.hibernate.annotations.JdbcType;
@@ -35,7 +36,6 @@ public class FormDefinitionEntity extends BaseEntity {
     private UUID id;
     @Column(nullable = false)
     private String name;
-    private String label;
     private String classes;
 
     @Column(nullable = false)
@@ -60,6 +60,9 @@ public class FormDefinitionEntity extends BaseEntity {
     private FormStatus status;
 
     @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FormTranslationEntity> labels = new ArrayList<>();
+
+    @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FormTabInstanceDefinitionEntity> tabs = new ArrayList<>();
 
     @OneToOne(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -72,5 +75,12 @@ public class FormDefinitionEntity extends BaseEntity {
 
     public List<String> getConfirmation() {
         return confirmation == null ? null : confirmation;
+    }
+
+    public void removeFormConfigSuccessPageEntity() {
+        if (this.formConfigSuccessPageEntity != null) {
+            this.formConfigSuccessPageEntity.setForm(null);
+            this.formConfigSuccessPageEntity = null;
+        }
     }
 }

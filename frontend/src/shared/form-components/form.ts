@@ -1,5 +1,5 @@
 import type { Tab } from './tab';
-
+import { FormService } from '../../form-viewer/services/form-service';
 import { FormSummaryRenderer } from '../../form-viewer/components/form-summary-renderer';
 import { BaseFieldDto, FormDto } from '../model/types';
 import { Lang } from '../services/lang';
@@ -28,14 +28,16 @@ export class Form extends Nucleus {
     } | undefined;
     onTabChange: ((tabObject: Tab, index: number, size: number) => void) | undefined;
 
-
     constructor(formDto: FormDto, options: FormOptions | undefined = undefined) {
-        super(formDto.name, formDto.label, formDto.id)
+        super(formDto.name, formDto.labels, formDto.id)
+
+        FormService.setForm(this);
 
         this.#options = options;
 
         this.id = formDto.id;
-
+        this.label = formDto.label;
+        
         this.type = 'form';
 
         this.singlePage = !formDto.singlePage ? false : formDto.singlePage;
@@ -45,6 +47,7 @@ export class Form extends Nucleus {
 
         this.createElement();
 
+        
     }
 
     static async create(formDto: FormDto, options: FormOptions | undefined = undefined) {

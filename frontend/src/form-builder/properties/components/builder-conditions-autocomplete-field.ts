@@ -1,4 +1,5 @@
 import { InputNucleus } from '../../../shared/form-components/interface/input-base';
+import { TranslationDto } from '../../../shared/model/types';
 import { BuilderFieldInterface } from '../../fields/builder-field-interface';
 import { BuilderFormService } from '../../services/builder-form-service';
 import { FIELD_TYPE } from '../../types';
@@ -19,8 +20,8 @@ export class BuilderConditionsAutocompleteField extends InputNucleus<HTMLInputEl
     onListItemClickedListener: ((value: any) => void) | null = null;
     onFieldFoundListener: ((value: any) => void) | null = null;
 
-    constructor(name: string, label: string | undefined) {
-        super(document.createElement('input'), name, label);
+    constructor(name: string, labels: TranslationDto[] | undefined = undefined) {
+        super(document.createElement('input'), name, labels);
         this.type = 'text';
 
         const inputElementContainer = document.createElement('div');

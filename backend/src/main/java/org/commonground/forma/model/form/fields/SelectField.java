@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.commonground.forma.exceptions.FieldValidationException;
 import org.commonground.forma.model.form.Option;
+import org.commonground.forma.model.form.Translation;
 import org.commonground.forma.model.form.condition.Condition;
 import org.commonground.forma.model.form.constants.FieldType;
 
@@ -28,8 +29,8 @@ import lombok.Setter;
 public class SelectField implements Field {
     private UUID id;
     private String name;
-    private String label;
-
+    @Builder.Default
+    private List<Translation> labels = new ArrayList<>();
     private FieldType type;
     private String placeholder;
     private String classes;
@@ -64,7 +65,7 @@ public class SelectField implements Field {
 
     @Override
     public Field cloneField() {
-        return new SelectField(id, name, label, type, placeholder, classes, readonly, readonly, show, value, cloneOptions(values), metadata, cloneOptions(options), data, condition);
+        return new SelectField(id, name, labels, type, placeholder, classes, readonly, readonly, show, value, cloneOptions(values), metadata, cloneOptions(options), data, condition);
     }
 
     public List<Option> cloneOptions(List<Option> options) {

@@ -1,8 +1,9 @@
+import { TranslationDto } from '../model/types';
 import { TextField } from './text-field';
 
 export class ValutaField extends TextField {
-    constructor(name: string, label: string | undefined, id: string | undefined = undefined) {
-        super(name, label, id);
+    constructor(name: string, labels: TranslationDto[] | undefined, id: string | undefined = undefined) {
+        super(name, labels, id);
 
         this.inputElement.addEventListener("keypress", (e) => {
             if (!/[0-9,]/.test(e.key)) {
@@ -20,8 +21,8 @@ export class ValutaField extends TextField {
     formatCurrency(value: string) {
         if (value === null || value === undefined || value === '')
             return '';
-        value = parseFloat(value.replace(',', '.')).toFixed(2)
-        if (isNaN(Number(value))) {
+        value = Number.parseFloat(value.replace(',', '.')).toFixed(2)
+        if (Number.isNaN(Number(value))) {
             return '';
         }
         return value.replace('.', ',');

@@ -18,9 +18,11 @@ export class LoginPage extends Page {
     constructor() {
         super();
         
-        this.usernameField = new TextField('username', Lang.get('login.username'))
+        this.usernameField = new TextField('username')
+                .setLabel(Lang.get('login.username'))
                 .setLayout('layout-column');
-        this.passwordField = new PasswordField('password', Lang.get('login.password'))
+        this.passwordField = new PasswordField('password')
+                .setLabel(Lang.get('login.password'))
                 .setLayout('layout-column');
 
         this.setTitle(Lang.get('login.title'));
@@ -110,7 +112,4 @@ export class LoginPage extends Page {
             this.loginErrorContainer);
     }
 
-    afterInit() {
-
-    }
 }

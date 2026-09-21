@@ -1,3 +1,4 @@
+import { TranslationDto } from '../model/types';
 import { InputNucleus } from './interface/input-base';
 
 /**
@@ -7,8 +8,8 @@ export class PasswordField extends InputNucleus<HTMLInputElement> {
         minLength: number | undefined = undefined;
     maxLength: number | undefined = undefined;
 
-    constructor(name: string, label: string | undefined, id: string | undefined = undefined) {
-        super(document.createElement('input'),name, label, id);
+    constructor(name: string, labels: TranslationDto[] | undefined = undefined, id: string | undefined = undefined) {
+        super(document.createElement('input'), name, labels, id);
         this.type = 'password';
 
         this.createElement();
@@ -78,7 +79,7 @@ export class PasswordField extends InputNucleus<HTMLInputElement> {
     }
 
     clone() {
-        const passwordfield = new PasswordField(this.name, this.label);
+        const passwordfield = new PasswordField(this.name, this.labels);
         passwordfield.setType(this.type);
         passwordfield.setValue(this.value);
         passwordfield.setClasses(this.classes);
