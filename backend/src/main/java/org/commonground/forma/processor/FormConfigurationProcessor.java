@@ -17,16 +17,13 @@ public class FormConfigurationProcessor  {
     private final TabPageService tabPageService;
     private final FormConfigSuccessPageService successPageService;
     private final FormVariableService formVariableService;
-    private final FormConfigSuccessPageService formConfigSuccessPageService;
 
     public FormConfigurationProcessor(TabPageService tabPageService, 
                                       FormConfigSuccessPageService successPageService,
-                                      FormConfigSuccessPageService formConfigSuccessPageService,
                                       FormVariableService formVariableService) {
         this.tabPageService = tabPageService;
         this.successPageService = successPageService;
         this.formVariableService = formVariableService;
-        this.formConfigSuccessPageService = formConfigSuccessPageService;
     }
     
     public void processUpdate(FormDefinitionEntity entity, FormWrapper wrapper) {
@@ -52,7 +49,7 @@ public class FormConfigurationProcessor  {
         }
 
         if (!removeSuccessPage) {
-            this.formConfigSuccessPageService.saveByForm(entity, config.getFormConfigSuccessPage());
+            this.successPageService.saveByForm(entity, config.getFormConfigSuccessPage());
         }
    
     }

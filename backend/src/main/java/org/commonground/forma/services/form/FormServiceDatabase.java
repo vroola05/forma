@@ -14,9 +14,7 @@ import org.commonground.forma.model.form.FormConfig;
 import org.commonground.forma.model.form.FormList;
 import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.Translation;
-import org.commonground.forma.model.form.fields.Field;
 import org.commonground.forma.model.form.fields.Form;
-import org.commonground.forma.model.form.fields.TabPage;
 import org.commonground.forma.model.settings.Tenant;
 import org.commonground.forma.processor.FormConfigurationProcessor;
 import org.commonground.forma.services.config.FormConfigSuccessPageService;
@@ -132,20 +130,11 @@ public class FormServiceDatabase implements FormService {
             this.formMapper.updateEntityFromDto(formDefinitionEntity, form, tenantId);
         }
 
-        
+        this.formConfigurationProcessor.processUpdate(formDefinitionEntity, formWrapper);
         
 
         FormDefinitionEntity resultEntity = this.formDefinitionRepository.save(formDefinitionEntity);
 
-        int sortOrderTab = 0;
-        for (Field field : form.getFields()) {
-            TabPage tabPage = (TabPage) field;
-            this.tabPageService.save(resultEntity, tabPage, sortOrderTab++);
-        }
-
-        if (!removeSuccessPage) {
-            this.formConfigSuccessPageService.saveByForm(resultEntity, formConfig.getFormConfigSuccessPage());
-        }
 
         return null;
     }
