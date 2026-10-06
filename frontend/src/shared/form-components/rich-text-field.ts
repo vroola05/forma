@@ -1,11 +1,11 @@
-import { Table, TableRow, TableHeader, TableCell } from "@tiptap/extension-table";
+import Placeholder from '@tiptap/extension-placeholder';
+import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import { DollarMenuMention } from "../generic-components/editor/builder-dollar-menu";
 import { BuilderEditor, MentionTriggerExtension } from "../generic-components/editor/builder-editor";
 import { BuilderEditorTableBubbleMenu } from "../generic-components/editor/builder-editor-table-bubble-menu";
 import { TranslationDto } from "../model/types";
 import { Lang } from "../services/lang";
 import { InputNucleus } from "./interface/input-base";
-import Placeholder from '@tiptap/extension-placeholder';
 
 export class RichTextField extends InputNucleus<HTMLDivElement> {
     builderEditor: BuilderEditor;
@@ -14,9 +14,7 @@ export class RichTextField extends InputNucleus<HTMLDivElement> {
         super(document.createElement('div'), name, labels, id);
         this.type = 'rich-text';
 
-        // @TODO: Consider making the extensions configurable through the constructor or a setter method, allowing for more flexibility in the editor's functionality.
         this.builderEditor = new BuilderEditor((jsonData: any) => {
-            
         }, [
             Placeholder.configure({
                     placeholder: Lang.get('text.editor.placeholder'),
@@ -36,6 +34,7 @@ export class RichTextField extends InputNucleus<HTMLDivElement> {
             this.updateValue(jsonData);
         };
         this.createElement();
+        
     }
 
     createElement() {
@@ -46,6 +45,13 @@ export class RichTextField extends InputNucleus<HTMLDivElement> {
 
     setType(type: string) {
         this.type = type;
+        return this;
+    }
+
+    setInline(inline: boolean | undefined) {
+        if (inline) {
+            this.builderEditor.setInline();
+        }
         return this;
     }
 

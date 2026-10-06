@@ -1,5 +1,4 @@
-import { InputNucleus } from '../form-components/interface/input-base';
-import { ContitionService } from '../services/condition-service';
+import { Nucleus } from '../form-components/interface/nucleus';
 
 import { Lang } from '../services/lang';
 
@@ -52,9 +51,18 @@ export const FORM_STATUS: Record<string, () => string> = {
     PENDING_DELETION: () => Lang.get('generic.status.pending.deletion')
 };
 
-export type GenericFieldType = 'form' | 'tab' | 'form-group' | 'repeating-group';
-export type InputFieldType = 'text' | 'rich-text' | 'number' | 'email' | 'password' | 'date' | 'hidden' | 'label' | 'valuta' | 'textarea' | 'color';
-export type OptionFieldType = 'checkbox' | 'dual-listbox' | 'radio' | 'select' | 'file';
+
+export const GENERIC_FIELD_TYPES = ['form', 'tab', 'form-group', 'repeating-group'] as const;
+export type GenericFieldType = typeof GENERIC_FIELD_TYPES[number];
+
+export const INPUT_FIELD_TYPES = [
+    'text', 'rich-text', 'number', 'email', 'password', 'date', 
+    'hidden', 'label', 'valuta', 'textarea', 'color', 'conditions-autocomplete', 'conditions'
+] as const;
+export type InputFieldType = typeof INPUT_FIELD_TYPES[number];
+
+export const OPTIONS_FIELD_TYPES = ['checkbox', 'dual-listbox', 'radio', 'select', 'tag', 'file'] as const;
+export type OptionFieldType = typeof OPTIONS_FIELD_TYPES[number];
 export type AllFieldTypes = GenericFieldType | InputFieldType | OptionFieldType;
 
 export type LayoutType = 'default' | 'table';
@@ -114,7 +122,7 @@ export interface BaseFieldDto {
     label?: string;
     labels?: TranslationDto[];
     type: AllFieldTypes;
-    condition?: Condition;
+    condition?: ConditionDto;
     classes?: string;
     fields?: FieldDto[];
 }
@@ -137,10 +145,10 @@ export interface OptionDto {
 }
 
 export interface RepeatingGroupDto extends BaseFieldDto {
-    layout: LayoutType;
+    layout?: LayoutType;
     minLength?: number;
     maxLength?: number;
-    sets?: FieldDto[];
+    sets?: FieldDto[][];
 }
 
 export interface InputFieldDto extends BaseFieldDto {
@@ -156,13 +164,17 @@ export interface InputFieldDto extends BaseFieldDto {
     change?: any;
 }
 
+export interface RichTextFieldDto extends InputFieldDto {
+    inline?: boolean;
+}
+
 export interface OptionFieldDto extends BaseFieldDto {
     type: OptionFieldType;
     metadata?: string[];
     required?: boolean;
     placeholder?: string;
     readonly?: boolean;
-    value?: OptionDto[];
+    values?: OptionDto[];
     options?: OptionDto[];
     change?: any;
 }
@@ -175,13 +187,14 @@ export interface FileOptionFieldDto extends OptionFieldDto {
 }
 
 
-export type FieldDto = BaseFieldDto | InputFieldDto | OptionFieldDto| RepeatingGroupDto;
+export type FieldDto = BaseFieldDto | InputFieldDto | RichTextFieldDto | OptionFieldDto| RepeatingGroupDto;
 
 export interface FormConfig {
-    formConfigSuccessPage?: FormConfigSuccessPage;
+    formConfigSuccessPage?: FormConfigSuccessPageDto;
+    variables?: FormVariableDto[];
 }
 
-export interface FormConfigSuccessPage {
+export interface FormConfigSuccessPageDto {
     customSuccessPage?: boolean
     id?: string;
     name?: string;
@@ -192,20 +205,22 @@ export interface FormConfigSuccessPage {
     downloadText?: string;
 }
 
+export interface FormVariableDto {
+    id?: string;
+    name?: string;
+    tag?: string;
+    values?: FormVariableValueDto[];
+}
+
+export interface FormVariableValueDto {
+    id?: string;
+    value?: string;
+    conditions?: ConditionDto[];
+}
+
 export interface FormSubmission {
     submissionId?: string;
     content?: string;
-}
-
-
-export interface Condition {
-    var1?: string;
-    var1Fields?: InputNucleus[]
-    operator?: Operator;
-    var2?: string;
-    var2Fields?: InputNucleus[]
-    logicalOperator?: LogicalOperator;
-    conditions?: Condition[];
 }
 
 export enum LogicalOperator {
@@ -246,47 +261,17 @@ export enum ConditionType {
     COMPOSITE = 1
 }
 
-/**
- * When an object has been created, all the variables that are bound toe fields are registered.
- * This is used for when a fieldname receives an update.
- */
-export class BuilderCondition {
+export interface ConditionDto {
+    conditionType?: ConditionType;
+
     var1?: string;
     operator?: Operator;
     var2?: string;
     logicalOperator?: LogicalOperator;
-    conditionType?: ConditionType;
-    conditions?: BuilderCondition[];
+    
+    conditions?: ConditionDto[];
 
-    constructor(data: any = {}) {
-        Object.assign(this, data);
-        
-        this.conditions = [];
-        if (data?.conditions) {
-            this.conditions = data.conditions.map((con: any) => new BuilderCondition(con));
-        }
-
-        this.#registerVariables();
-    }
-
-    #registerVariables() {
-
-        if (this.var1 &&this.isField(this.var1)) {
-            ContitionService.addCondition(this.var1, this);
-        }
-        if (this.var2 && this.isField(this.var2)) {
-            ContitionService.addCondition(this.var2, this);
-        }
-    }
-
-    destroy() {
-        if (this.var1)
-            ContitionService.deleteCondition(this.var1, this);
-        if (this.var2)
-            ContitionService.deleteCondition(this.var2, this);
-    }
-
-    isField(input?: string) {
-        return input && input.startsWith('$.')
-    }
+    var2Fields?: Nucleus[];
+    var1Fields?: Nucleus[];
 }
+

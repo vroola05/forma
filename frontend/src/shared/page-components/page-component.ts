@@ -4,9 +4,6 @@ export class PageComponent {
     subscriptions: (() => void)[] = [];
     content: HTMLElement = document.createElement('div');
 
-    constructor() {
-    }
-
     /**
      * If you want to use a sub-page in the current-page you need to attach
      * a container where the subpage is rendered in.
@@ -39,7 +36,7 @@ export class PageComponent {
 
 
     afterInit() {
-        
+        // Need to be implemented in the child class if needed.
     }
 
     setContent(content: HTMLElement) {

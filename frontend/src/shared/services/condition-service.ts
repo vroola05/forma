@@ -1,3 +1,4 @@
+import { ConditionDto } from "../model/types";
 
 class ConditionNode {
     children = new Map();
@@ -208,6 +209,30 @@ class ConditionNode {
  */
 export class ContitionService {
     static #node = new ConditionNode();
+
+    static clear() {
+        this.#node = new ConditionNode();
+    }
+
+    static isField(input?: string) {
+        return input?.startsWith('$.')
+    }
+
+    static registerVariable(conditionDto: ConditionDto) {
+        if (conditionDto.var1 && this.isField(conditionDto.var1)) {
+            this.addCondition(conditionDto.var1, conditionDto);
+        }
+
+        if (conditionDto.var2 && this.isField(conditionDto.var2)) {
+            this.addCondition(conditionDto.var2, conditionDto);
+        }
+
+        if (conditionDto?.conditions) {
+            for (const subCondition of conditionDto.conditions) {
+                this.registerVariable(subCondition);
+            }
+        }
+    }
 
     static addCondition(path: string, field: any) {
         this.#node.set(path, field);

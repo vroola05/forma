@@ -112,6 +112,25 @@
 Styles voor de form-group
 */
 .repeating-group-field {
+    margin-top: var(--default-space);
+    padding: calc(var(--default-space) / 2);
+
+    .form-btn {
+
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        width: var(--default-space-triple);
+        height: var(--default-space-triple);
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    .field-wrapper {
+        padding: var(--default-space-half) 0;
+    }
+
     .repeating-group-container {
         margin-bottom: var(--default-space);
 
@@ -137,8 +156,6 @@ Styles voor de form-group
                 }
 
                 .form-btn {
-                    flex-shrink: 0;
-
                     border: var(--secondary-color) solid 1px;
                     border-radius: var(--default-space-half);
 
@@ -157,8 +174,15 @@ Styles voor de form-group
                     }
                 }
             }
+        }
+        .repeating-group-container {
+            margin: var(--default-space-double);
+            
+            padding: var(--default-space);
+            border: var(--border-grey) solid 1px;
+            background: var(--bg-grey);
 
-
+            
         }
     }
 
@@ -169,6 +193,11 @@ Styles voor de form-group
 
         .repeating-group-footer-label {
             flex: auto;
+            &:hover {
+                background: var(--white);
+                color: var(--primary-color);
+                cursor: pointer;
+            }
         }
 
         .form-btn {
@@ -190,6 +219,24 @@ Styles voor de form-group
             &::before {
                 line-height: unset;
             }
+        }
+    }
+
+    .repeating-group {
+        .repeating-group-footer {
+            color: var(--primary-color);
+            margin-left: calc(100% / 3);
+
+            .repeating-group-footer-label {
+                flex: none;
+            }
+            .form-btn {
+                border: none;
+                border-radius: none;
+                background: none;
+                color: var(--primary-color);
+            }
+
         }
     }
 

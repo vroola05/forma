@@ -73,22 +73,25 @@ export class BuilderEditor {
         this.#editorElement.className = 'editor-content';
 
         this.#toolbar = new BuilderTextEditorToolbar(this.#editor);
-       
 
         this.#content.appendChild(this.#toolbar.getContent());
         this.#content.appendChild(this.#editorElement);
     }
 
     addData(jsonData: any) {
-
         if (!jsonData || Object.keys(jsonData).length === 0) {
             this.#editor.commands.clearContent();
             return;
         }
-        
+
         this.#editor.commands.setContent(jsonData, {
             emitUpdate: false
         });
+    }
+
+    setInline() {
+        this.#toolbar.getContent().remove();
+        this.#content.classList.add('text-editor-inline');
     }
 
     #updateEditor() {

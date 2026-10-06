@@ -1,6 +1,6 @@
 import { FormService } from '../../../form-viewer/services/form-service';
 import { ConditionParser } from '../../condition-components/condition-parser';
-import { Condition, TranslationDto } from '../../model/types';
+import { ConditionDto, TranslationDto } from '../../model/types';
 import { Lang } from '../../services/lang';
 import { ValidationBase } from './validation-base';
 
@@ -49,7 +49,8 @@ export class Nucleus extends ValidationBase {
      */
     afterFormInit() {
         if (this.showCondition !== undefined) {
-            this.showCondition.eval();
+            this.showCondition?.onFieldValueChanged();
+
         }
     }
 
@@ -113,6 +114,7 @@ export class Nucleus extends ValidationBase {
     setClasses(classes: string | undefined) {
         if (classes)
             this.classes = classes;
+            this.content.className += ' ' + classes;
         return this;
     }
 
@@ -120,7 +122,7 @@ export class Nucleus extends ValidationBase {
         return this.content;
     }
 
-    setShowConditions(condition: Condition | undefined) {
+    setShowConditions(condition: ConditionDto | undefined) {
         if (!condition || Object.keys(condition).length === 0) {
             return this;
         }

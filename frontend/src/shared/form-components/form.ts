@@ -1,9 +1,9 @@
-import type { Tab } from './tab';
-import { FormService } from '../../form-viewer/services/form-service';
 import { FormSummaryRenderer } from '../../form-viewer/components/form-summary-renderer';
+import { FormService } from '../../form-viewer/services/form-service';
 import { BaseFieldDto, FormDto } from '../model/types';
 import { Lang } from '../services/lang';
 import { Nucleus } from './interface/nucleus';
+import { Tab } from './tab';
 
 export interface FormOptions {
     showSummary: boolean
@@ -26,6 +26,7 @@ export class Form extends Nucleus {
     #options: {
         showSummary: boolean
     } | undefined;
+
     onTabChange: ((tabObject: Tab, index: number, size: number) => void) | undefined;
 
     constructor(formDto: FormDto, options: FormOptions | undefined = undefined) {

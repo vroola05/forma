@@ -1,7 +1,8 @@
 
 import '../src/assets/css/fonts/icons.css';
-import '../src/assets/css/styles.css';
 import '../src/assets/css/styles-builder.css';
+import '../src/assets/css/styles-viewer.css';
+import '../src/assets/css/styles.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -10,13 +11,13 @@ import 'bootstrap';
 import '../src/shared/form-components/interface/input-base';
 import '../src/shared/form-components/interface/nucleus';
 
-import { Forma } from '../src/forma';
-import { LoginPage } from '../src/form-builder/page-components/login/login-page';
 import { DashboardPage } from '../src/form-builder/page-components/dashboard/dashboard-page';
+import { LoginPage } from '../src/form-builder/page-components/login/login-page';
 import { TenantPage } from '../src/form-builder/page-components/tenant/tenant-page';
-import { TenantPageNew } from '../src/form-builder/page-components/tenant/tenant-page-new';
-import { TenantPageEdit } from '../src/form-builder/page-components/tenant/tenant-page-edit';
 import { TenantPageCustomise } from '../src/form-builder/page-components/tenant/tenant-page-customise';
+import { TenantPageEdit } from '../src/form-builder/page-components/tenant/tenant-page-edit';
+import { TenantPageNew } from '../src/form-builder/page-components/tenant/tenant-page-new';
+import { Forma } from '../src/forma';
 
 import { GroupPage } from '../src/form-builder/page-components/group/group-page';
 import { GroupPageEdit } from '../src/form-builder/page-components/group/group-page-edit';
@@ -25,7 +26,6 @@ import { UserPage } from '../src/form-builder/page-components/user/user-page';
 import { UserPageEdit } from '../src/form-builder/page-components/user/user-page-edit';
 
 import { BuilderPage } from '../src/form-builder/page-components/builder/builder-page';
-import { FormDashboard } from '../src/form-builder/page-components/builder/form-dashboard-page';
 import { BuilderPageSettingsForm } from '../src/form-builder/page-components/builder/builder-page-settings-form';
 import { BuilderPageSettingsGeneric } from '../src/form-builder/page-components/builder/builder-page-settings-generic';
 import { BuilderPageSettingsLogin } from '../src/form-builder/page-components/builder/builder-page-settings-login';
@@ -34,6 +34,7 @@ import { BuilderPageSettingsPayment } from '../src/form-builder/page-components/
 import { BuilderPageSettingsRegistration } from '../src/form-builder/page-components/builder/builder-page-settings-registration';
 import { BuilderPageSettingsSuccess } from '../src/form-builder/page-components/builder/builder-page-settings-success';
 import { BuilderPageSettingsVariables } from '../src/form-builder/page-components/builder/builder-page-settings-variables';
+import { FormDashboard } from '../src/form-builder/page-components/builder/form-dashboard-page';
 import { FormSettingsGenericSuccessPage } from '../src/form-builder/page-components/form-settings/form-settings-generic-success-page';
 
 

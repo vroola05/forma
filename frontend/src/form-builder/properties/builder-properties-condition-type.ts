@@ -1,7 +1,9 @@
+import { ConditionDto } from '../../shared/model/types';
+import { Lang } from '../../shared/services/lang';
+import { ConditionComponent } from '../component/condition-component';
+import { FooterAddComponent } from '../component/footer-add-component';
 import { BuilderFieldInterface } from '../fields/builder-field-interface';
 import { FieldProperty } from '../types';
-import { BuilderPropertiesCondition } from './components/builder-properties-condition';
-import { BuilderPropertiesFooter } from './components/builder-properties-footer';
 
 /**
  * 
@@ -15,8 +17,8 @@ export class BuilderPropertiesConditionType {
     valueDefault: any;
     onChanged: (dom: HTMLElement, property: FieldProperty) => void;
 
-    builderPropertiesFooter: BuilderPropertiesFooter;
-    builderPropertiesCondition: BuilderPropertiesCondition | null = null;
+    footerAddComponent: FooterAddComponent;
+    conditionComponent: ConditionComponent | null = null;
 
     constructor(
             field: BuilderFieldInterface,
@@ -59,41 +61,42 @@ export class BuilderPropertiesConditionType {
         this.builderPropertyOptionsContainer.innerHTML = '';
         keyValueContainer.appendChild(this.builderPropertyOptionsContainer);
         
-        this.builderPropertiesFooter = new BuilderPropertiesFooter('Conditie toevoegen')
+        this.footerAddComponent = new FooterAddComponent(Lang.get('condition.add'))
                 .addButton('add', '', 'builder-properties-btn-add', () => {
-                    if (!this.builderPropertiesCondition) {
+                    if (!this.conditionComponent) {
                         this.addCondition();
-                        this.builderPropertiesFooter.show(false);
+                        this.footerAddComponent.show(false);
                     }
                 });
-        this.content.appendChild(this.builderPropertiesFooter.getContent());
+        this.content.appendChild(this.footerAddComponent.getContent());
 
         if (this.property.value && Object.keys(this.property.value).length > 0) {
             this.addCondition(this.property.value)
         }
     }
 
-    addCondition(conditionData = undefined) {
-        this.builderPropertiesCondition = new BuilderPropertiesCondition(
-            conditionData,
+    addCondition(conditionDto: ConditionDto | undefined = undefined) {
+        this.conditionComponent = new ConditionComponent(
             (value: any) => {
-                this.property.value = value;
-                if (this.onChanged) {
-                    this.onChanged(this.content, this.property);
-                }
+                console.log('main');
+                // this.property.value = value;
+                // if (this.onChanged) {
+                //     this.onChanged(this.content, this.property);
+                // }
             },
             () => {
                 this.property.value = null;
                 this.builderPropertyOptionsContainer.innerHTML = '';
-                this.builderPropertiesCondition = null;
-                this.builderPropertiesFooter.show(true);
+                this.conditionComponent = null;
+                this.footerAddComponent.show(true);
                 
                 if (this.onChanged) {
                     this.onChanged(this.content, this.property);
                 }
             });
 
-        this.builderPropertyOptionsContainer.appendChild(this.builderPropertiesCondition.getContent());
+            this.conditionComponent.setValue(conditionDto);
+        this.builderPropertyOptionsContainer.appendChild(this.conditionComponent.getContent());
     }
 
     getContent() {

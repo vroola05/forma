@@ -1,20 +1,20 @@
-import { FormConfigSuccessPage, FormDto, Operator } from '../../../shared/model/types';
+import { FormConfigSuccessPageDto, FormDto, Operator } from '../../../shared/model/types';
 import { Page } from '../../../shared/page-components/page';
 import { EventService } from '../../../shared/services/event-service';
 import { Lang } from '../../../shared/services/lang';
 
-import { BuilderFormService } from '../../services/builder-form-service';
-import { BuilderLayout } from './components/builder-layout';
 import { Form } from '../../../shared/form-components/form';
+import { FormGroup } from '../../../shared/form-components/form-group';
 import { InputNucleus } from '../../../shared/form-components/interface/input-base';
 import { FormRenderer } from '../../../shared/generic-components/form-renderer';
-import { FormGroup } from '../../../shared/form-components/form-group';
+import { BuilderFormService } from '../../services/builder-form-service';
+import { BuilderLayout } from './components/builder-layout';
 
 export class BuilderPageSettingsSuccess extends Page {
     readonly #builderLayout = new BuilderLayout();
     #isEditorLoaded = false;
     
-    formConfigSuccessPage: FormConfigSuccessPage | null = null;
+    formConfigSuccessPage: FormConfigSuccessPageDto | null = null;
     form!: Form;
 
     constructor() {
@@ -35,8 +35,6 @@ export class BuilderPageSettingsSuccess extends Page {
             this.createContent();
 
             this.#isEditorLoaded = true;
-
-
         }));
     }
 
@@ -71,7 +69,7 @@ export class BuilderPageSettingsSuccess extends Page {
                                 { "value": "true", "text": Lang.get('generic.yes') },
                                 { "value": "false", "text": Lang.get('generic.no') }
                             ],
-                            "value": [{
+                            "values": [{
                                     value: !this.formConfigSuccessPage?.customSuccessPage ? 'false' : 'true',
                                     text: ''
                                 }],
@@ -107,7 +105,7 @@ export class BuilderPageSettingsSuccess extends Page {
                                         { "value": "true", "text": Lang.get('generic.yes') },
                                         { "value": "false", "text": Lang.get('generic.no') }
                                     ],
-                                    "value": this.formConfigSuccessPage?.showSummary === undefined ? [] : [
+                                    "values": this.formConfigSuccessPage?.showSummary === undefined ? [] : [
                                         {
                                             value: this.formConfigSuccessPage?.showSummary ? 'true' : 'false',
                                             text: ''
@@ -172,7 +170,6 @@ export class BuilderPageSettingsSuccess extends Page {
                 this.formConfigSuccessPage.template = field.getValue();
             }
         }
-        
 
         const formWrapper = BuilderFormService.getFormWrapper();
         if (formWrapper?.formConfig && this.formConfigSuccessPage) {

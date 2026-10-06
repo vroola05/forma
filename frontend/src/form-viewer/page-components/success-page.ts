@@ -1,7 +1,7 @@
 import { FormButton } from '../../shared/form-components/components/form-button';
 import { Footer } from '../../shared/generic-components/footer';
 import { Header } from '../../shared/generic-components/header';
-import { FormConfigSuccessPage, FormSubmission } from '../../shared/model/types';
+import { FormConfigSuccessPageDto, FormSubmission } from '../../shared/model/types';
 import { Page } from '../../shared/page-components/page';
 import { Http } from '../../shared/services/http';
 import { Lang } from '../../shared/services/lang';
@@ -68,38 +68,38 @@ export class SuccessPage extends Page {
         }
 
         Http.post(`${Router.tenantPath}/api/forms/success-page`, formSubmission, {})
-            .then(formConfigSuccessPageData => {
-                const formConfigSuccessPage = formConfigSuccessPageData as FormConfigSuccessPage;
+            .then(formConfigSuccessPageDtoData => {
+                const formConfigSuccessPageDto = formConfigSuccessPageDtoData as FormConfigSuccessPageDto;
 
-                this.setTitle(formConfigSuccessPage.title || '');
+                this.setTitle(formConfigSuccessPageDto.title || '');
                 this.successPage.innerHTML = '';
 
-                this.#createSuccessPageContent(formConfigSuccessPage);
+                this.#createSuccessPageContent(formConfigSuccessPageDto);
 
-                if (formConfigSuccessPage.showSummary) {
-                    this.#createDownloadButton(formConfigSuccessPage);
+                if (formConfigSuccessPageDto.showSummary) {
+                    this.#createDownloadButton(formConfigSuccessPageDto);
                 }
                 
 
             }).catch(() => { });
     }
 
-    #createSuccessPageContent(formConfigSuccessPage: FormConfigSuccessPage) {
+    #createSuccessPageContent(formConfigSuccessPageDto: FormConfigSuccessPageDto) {
         const contentContainer = document.createElement('div');
         contentContainer.className = 'success-page-content-container';
-        if (formConfigSuccessPage.content) {
-            contentContainer.innerHTML = formConfigSuccessPage.content;
+        if (formConfigSuccessPageDto.content) {
+            contentContainer.innerHTML = formConfigSuccessPageDto.content;
         }
 
         this.successPage.appendChild(contentContainer);
     }
 
-    #createDownloadButton(formConfigSuccessPage: FormConfigSuccessPage) {
+    #createDownloadButton(formConfigSuccessPageDto: FormConfigSuccessPageDto) {
         const buttonContainer = document.createElement('div');
         buttonContainer.className = 'success-page-btn-container';
         this.successPage.appendChild(buttonContainer);
 
-        const downloadBtnLabel = formConfigSuccessPage?.downloadText !== undefined && formConfigSuccessPage?.downloadText !== '' ? formConfigSuccessPage.downloadText : Lang.get('page.successpage.download.pdf');
+        const downloadBtnLabel = formConfigSuccessPageDto?.downloadText !== undefined && formConfigSuccessPageDto?.downloadText !== '' ? formConfigSuccessPageDto.downloadText : Lang.get('page.successpage.download.pdf');
 
         const formButton = new FormButton(downloadBtnLabel, 'icon icon-cloud-download', undefined, (e?: PointerEvent) => {
             this.#downloadPdf();

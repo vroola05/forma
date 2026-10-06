@@ -31,7 +31,6 @@ export class FormPage extends Page {
     constructor() {
         super();
 
-        
         const formNameUrlParam = Router.getUrlParameter('formName');
         if (formNameUrlParam) {
             this.formName = formNameUrlParam;
@@ -78,6 +77,7 @@ export class FormPage extends Page {
         Http.get(`${Router.tenantPath}/api/forms/${formName}`, {})
             .then(formWrapper => {
                 Loader.hide();
+
                 this.initForm(formWrapper);
             })
             .catch(error => {

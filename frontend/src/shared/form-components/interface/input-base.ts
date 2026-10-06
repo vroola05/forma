@@ -161,14 +161,17 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         return this;
     }
 
-    setRequired(required: boolean = false) {
+    setRequired(required: boolean = false, noAsterisk: boolean = false) {
         this.required = required;
         if (this.#isInput()) {
             this.#getInput().required = required;
         }
-        if (required ) {
+        if (required) {
             if (!this.labelElement.classList.contains('required')) {
                 this.labelElement.classList.add('required');
+                if (noAsterisk) {
+                    this.labelElement.classList.add('no-asterisk');
+                }
             }
         } else {
             this.labelElement.classList.remove('required');

@@ -96,6 +96,7 @@ export class BuilderPage extends Page {
 
         EventService.addEventListener('settings-changed', () => {
             Storage.setPageItem('form-wrapper', JSON.stringify(BuilderFormService.getFormWrapper()));
+            console.log('Settings changed, form wrapper updated in storage', BuilderFormService.getFormWrapper());
         });
     }
 
@@ -143,16 +144,14 @@ export class BuilderPage extends Page {
         Loader.show();
         
         Http.get(`${Router.tenantPath}/api/form-builder/form/${formName}`, {})
-            .then(formWrapper => {
+            .then((formWrapper: FormWrapper) => {
                 Loader.hide();
                 if (!formWrapper) {
                     console.error('No fields found in the project details');
                     return;
                 }
 
-                if (!formWrapper?.formConfig) {
-                    formWrapper.formConfig = {};
-                }
+                formWrapper.formConfig ??= {};
 
                 BuilderFormService.setFormWrapper(formWrapper as FormWrapper);
 

@@ -1,83 +1,110 @@
 export class JsonPathTokenizer {
-    static maxDepth = 10;
+    static readonly maxDepth = 10;
 
-    // ^            : start of the string
-    // (\*|\d+|\d*:\d+) : match either '*' OR one or more digits OR optional digits followed by ':' and digits
-    // $            : end of the string
-    static regexInArray = RegExp(/^(\*|\d+|\d*:\d+)$/);
-    static regexNameCharacters = RegExp(/^[a-zA-Z0-9_\-$]$/);
+    static readonly regexInArray = new RegExp(/^(\*|\d+|\d*:\d+)$/);
+    static readonly regexNameCharacters = new RegExp(/^[a-zA-Z0-9_\-$]$/);
 
-    static tokenize(input: string) {
-        const output = [];
-        let bracketLevel = 0;
+    readonly #input: string;
+    readonly #output: string[] = [];
+    #token = '';
+    #bracketLevel = 0;
+    #i = 0;
 
-        let token = '';
-        for (let i = 0; i < input.length; i++) {
-            const c = input[i];
+    private constructor(input: string) {
+        this.#input = input;
+    }
 
-            if (bracketLevel > 0) {
-                if (c === ']') {
-                    if (JsonPathTokenizer.regexInArray.test(token)) {
-                        output.push('[' + token + ']');
-                        token = '';
-                        bracketLevel--;
-                    } else {
-                        throw new Error(`Syntax fout: Ongeldige index of slice ${token} op positie ${i}`);
-                    }
+    static tokenize(input: string): string[] {
+        const instance = new JsonPathTokenizer(input);
+        return instance.#run();
+    }
 
-                } else if ('0123456789:*'.includes(c)) {
-                    token += c;
-                } else {
-                    throw new Error(`Syntax fout: Ongeldige index of slice ${token} op positie ${i}`);
-                }
+    /**
+     * Main loop
+     */
+    #run(): string[] {
+        for (this.#i = 0; this.#i < this.#input.length; this.#i++) {
+            const c = this.#input[this.#i];
+
+            if (this.#bracketLevel > 0) {
+                this.#handleBracketState(c);
             } else {
-                if (c === '.') {
-                    // Check of we een veldnaam afsluiten
-                    token = JsonPathTokenizer.handlePendingToken(token, output, i);
-
-                    // Check op ".." (Deep Scan)
-                    if (i + 1 < input.length && input[i + 1] === '.') {
-                        output.push('..');
-                        i++; // Sla de tweede punt over
-                    }
-                } else if (c === '[') {
-                    // Check of de veldnaam voor de '[' niet ongeldig eindigt, bijv. "veld-"
-                    token =JsonPathTokenizer.handlePendingToken(token, output, i);
-                    bracketLevel++;
-                } else if (c === ']') {
-                    throw new Error(`Syntax fout: Sluitende haak ']' zonder opening op positie ${i}`);
-                } else if (JsonPathTokenizer.regexNameCharacters.test(c)) {
-                    token += c;
-                } else if (c === ' ') {
-                    // Sla spaties over of gooi een error afhankelijk van je voorkeur
-                } else {
-                    throw new Error(`Syntax fout: Karakter '${c}' niet toegestaan in veldnaam op positie  ${i}`);
-                }
+                this.#handleNormalState(c);
             }
         }
 
-        if (output.length >JsonPathTokenizer.maxDepth) {
-            throw new Error(`Limiet fout: er is een maximum diepte van $JsonPathTokenizer.maxDepth}.`);
-        }
+        this.#validateAndFinalize();
+        return this.#output;
+    }
 
-        if (bracketLevel > 0) {
+    /**
+     * Logic within the brackets [ and ]
+     */
+    #handleBracketState(c: string): void {
+        if (c === ']') {
+            if (JsonPathTokenizer.regexInArray.test(this.#token)) {
+                this.#output.push('[' + this.#token + ']');
+                this.#token = '';
+                this.#bracketLevel--;
+            } else {
+                throw new Error(`Syntax fout: Ongeldige index of slice ${this.#token} op positie ${this.#i}`);
+            }
+        } else if ('0123456789:*'.includes(c)) {
+            this.#token += c;
+        } else {
+            throw new Error(`Syntax fout: Ongeldige index of slice ${this.#token} op positie ${this.#i}`);
+        }
+    }
+
+    /**
+     * 
+     */
+    #handleNormalState(c: string): void {
+        if (c === '.') {
+            this.#handlePendingToken();
+
+            if (this.#i + 1 < this.#input.length && this.#input[this.#i + 1] === '.') {
+                this.#output.push('..');
+                this.#i++;
+            }
+        } else if (c === '[') {
+            this.#handlePendingToken();
+            this.#bracketLevel++;
+        } else if (c === ']') {
+            throw new Error(`Syntax fout: Sluitende haak ']' zonder opening op positie ${this.#i}`);
+        } else if (JsonPathTokenizer.regexNameCharacters.test(c)) {
+            this.#token += c;
+        } else {
+            throw new Error(`Syntax fout: Karakter '${c}' niet toegestaan in veldnaam op positie ${this.#i}`);
+        }
+    }
+
+    /**
+     * Adds the token to the output string and clears the token
+     */
+    #handlePendingToken(): void {
+        if (this.#token.length > 0) {
+            if (this.#token.endsWith('-')) {
+                throw new Error(`Het veld ${this.#token} mag niet eindigen met een -`);
+            }
+
+            this.#output.push(this.#token);
+            this.#token = '';
+        }
+    }
+
+    /**
+     * Eindvalidaties
+     */
+    #validateAndFinalize(): void {
+        if (this.#bracketLevel > 0) {
             throw new Error(`Syntax fout: Niet alle haken zijn gesloten.`);
         }
 
-        JsonPathTokenizer.handlePendingToken(token, output, input.length);
+        this.#handlePendingToken();
 
-        return output;
-    }
-
-    static handlePendingToken(token: string, output: string[], pos: number) {
-        if (token.length > 0) {
-            if (token[token.length - 1] === '-') {
-                throw new Error(`Het veld ${token} mag niet eindigen met een -`);
-            }
-
-            output.push(token);
-            token = '';
+        if (this.#output.length > JsonPathTokenizer.maxDepth) {
+            throw new Error(`Limiet fout: er is een maximum diepte van ${JsonPathTokenizer.maxDepth}.`);
         }
-        return token;
     }
 }

@@ -1,11 +1,10 @@
 
+import { BaseFieldDto, TranslationDto } from '../../shared/model/types';
+import { Lang } from '../../shared/services/lang';
 import { BuilderFieldProperties } from '../properties/builder-field-properties';
-import { Lang } from '../../shared/services/lang'
-import { BaseFieldDto, BuilderCondition, TranslationDto } from '../../shared/model/types';
-import { ContitionService } from '../../shared/services/condition-service'
-import { FieldProperty, FIELD_TYPE, PROPERTY_TYPE } from '../types';
-import { Dropzone } from './components/dropzone';
 import { BuilderPropertiesService } from '../services/builder-properties-service';
+import { FIELD_TYPE, FieldProperty, PROPERTY_TYPE } from '../types';
+import { Dropzone } from './components/dropzone';
 export class BuilderFieldInterface {
     fieldProperties = new BuilderFieldProperties(this);
 
@@ -45,7 +44,7 @@ export class BuilderFieldInterface {
         });
 
         this.fieldProperties.addPropertyChangedListener('name', (value: any, pathOld: string) => {
-            ContitionService.notify(pathOld, this.getPath());
+            // ContitionService.notify(pathOld, this.getPath());
         });
     }
 
@@ -149,11 +148,12 @@ export class BuilderFieldInterface {
         for (const key of keys) {
             const value = (baseFieldDto as Record<string, any>)[key];
 
-
             if (this.fieldProperties.hasProperty(key)) {
-
                 if (key === 'condition') {
-                    this.fieldProperties.setPropertyValueById(key, new BuilderCondition(baseFieldDto.condition));
+                    if (baseFieldDto.condition) {
+                        // ContitionService.registerVariable(baseFieldDto.condition);
+                        this.fieldProperties.setPropertyValueById(key, baseFieldDto.condition);
+                    }
                 } else if (value !== undefined && value !== null) {
                     this.fieldProperties.setPropertyValueById(key, value);
                 }

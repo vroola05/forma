@@ -408,11 +408,9 @@
             }
 
 
-            .builder-page-settings-success {
+            .builder-page-settings-success, .builder-page-settings-variables {
                 margin: var(--default-space-double);
-                .builder-page-settings-header {
 
-                }
             }
         }
 
@@ -1132,96 +1130,94 @@ Styles voor builder-field.js
         padding: 2px;
         border-radius: var(--default-space-half);
 
-        .builder-properties-condition-content-container {
-            .builder-property-content-container {
-                .builder-condition {
-                    .builder-properties-condition-type-container {
-                        display: flex;
-                        flex-direction: row;
-                        width: calc(100% - var(--default-space));
-                        margin: var(--default-space-half);
-
-                        .field-wrapper {
-                            flex: auto;
-                        }
-
-                        .builder-properties-button-container {
-                            display: flex;
-                            align-items: center;
-                        }
-                    }
-
-                    .builder-simple-condition {
-                        display: none;
-                        flex-direction: row;
-
-                        &.active {
-                            display: flex;
-                        }
-
-                        .field-wrapper {
-                            flex: 1;
-                        }
-                    }
-
-                    .builder-composite-condition {
-                        display: none;
-                        margin: var(--default-space-half);
-
-                        &.active {
-                            display: block;
-                        }
-
-                        .builder-composite-condition-droparea {
-
-                            width: 100%;
-
-                            padding: var(--default-space-half);
-                            border-radius: var(--default-space);
-                            margin-top: var(--default-space-half);
-
-                            &.drag-over {
-                                background-color: var(--secondary-color);
-                            }
-
-                            .builder-property-condition-row {
-                                display: flex;
-                                flex-direction: row;
-                                width: 100%;
-                                &:before {
-                                    padding-top: var(--default-space-triple);;
-                                }
-                                .options-type-col {
-                                    flex-grow: 1;
-                                    margin: 0px 0px var(--default-space-half) var(--default-space);
-                                    padding: var(--default-space-half);
-                                    border: var(--bs-border-color) 1px solid;
-                                    border-radius: var(--default-space);
-
-                                    background: var(--bg-grey);
-                                }
-                            }
-                        }
-                    }
-                }
-
-
-            }
-        }
-    }
-
-    .builder-properties-footer {
-        display: flex;
-        /* justify-content: flex-end; */
-        width: 100%;
-
-        .builder-properties-footer-label {
-            flex: auto;
-            margin: var(--default-space-half);
-        }
     }
 }
 
+.footer-add-component {
+    display: flex;
+    /* justify-content: flex-end; */
+    width: 100%;
+
+    .footer-add-component-label {
+        flex: auto;
+        margin: var(--default-space-half);
+    }
+}
+
+.builder-condition {
+    .builder-condition-type-container {
+        display: flex;
+        flex-direction: row;
+        width: calc(100% - var(--default-space));
+        margin: var(--default-space-half);
+
+        .field-wrapper {
+            flex: auto;
+        }
+
+        .builder-properties-button-container {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    .builder-condition-container {
+        .builder-simple-condition {
+            display: flex;
+            flex-direction: row;
+
+            &.active {
+                display: flex;
+            }
+
+            .field-wrapper {
+                flex: 1;
+            }
+        }
+
+        .builder-composite-condition {
+            display: flex;
+            flex-direction: column;
+            margin: var(--default-space-half);
+
+            &.active {
+                display: block;
+            }
+
+            .builder-composite-condition-droparea {
+
+                width: 100%;
+
+                padding: var(--default-space-half);
+                border-radius: var(--default-space);
+                margin-top: var(--default-space-half);
+
+                &.drag-over {
+                    background-color: var(--secondary-color);
+                }
+
+                .builder-property-condition-row {
+                    display: flex;
+                    flex-direction: row;
+                    width: 100%;
+                    &:before {
+                        padding-top: var(--default-space-triple);;
+                    }
+                    .options-type-col {
+                        flex-grow: 1;
+                        margin: 0px 0px var(--default-space-half) var(--default-space);
+                        padding: var(--default-space-half);
+                        border: var(--bs-border-color) 1px solid;
+                        border-radius: var(--default-space);
+
+                        background: var(--bg-grey);
+                    }
+                }
+            }
+        }
+    }
+    
+}
 
 .builder-autocomplete-wrapper {
     position: relative;
@@ -1281,6 +1277,7 @@ Styles voor builder-field.js
     overflow: hidden;
     font-family: sans-serif;
 
+    
     .builder-text-editor-toolbar {
         background: white;
         padding: var(--default-space-double) 0px;
@@ -1342,6 +1339,18 @@ Styles voor builder-field.js
         }
     }
 
+    &.text-editor-inline {
+        padding: .375rem .75rem !important;
+        .tiptap.ProseMirror {
+            min-height: unset;
+            max-height: unset;
+            padding: 0;
+
+            p {
+                margin-bottom: 0;
+            }
+        }
+    }
 
     table {
         border-collapse: collapse;
@@ -1353,8 +1362,6 @@ Styles voor builder-field.js
         
     }
 
-    
-    
     .builder-editor-td {
         position: relative;
         .builder-editor-td-menu {

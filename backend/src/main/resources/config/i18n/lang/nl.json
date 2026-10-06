@@ -4,9 +4,9 @@
     "generic.title": "Forma",
     "generic.search": "Zoeken...",
     "generic.slug": "URL-naam",
+    "generic.tags": "Tags",
     "generic.primary.color": "Primaire kleur",
     "generic.secondary.color": "Secundaire kleur",
-
     "generic.not.logged.in": "Niet ingelogd",
 
     "generic.btn.cancel": "Annuleren",
@@ -117,7 +117,12 @@
     "page.settings.successpage": "Dankpagina",
     "page.settings.registration": "Registratie",
     "page.settings.payment": "Betaling",
-    "page.settings.vars": "Variabelen",
+    "page.settings.vars": "Formulier Variabelen",
+
+    "page.settings.vars.table": "Variabele",
+    "page.settings.vars.name": "Variabele naam",
+    "page.settings.vars.value": "Variabele waarde",
+    "page.settings.vars.conditions": "Variabele voorwaarden",
 
     "field.type.form.form": "Formulier",
     "field.type.form.group": "Groep",
@@ -181,5 +186,16 @@
     "prop.labels.locale.empty.message": "Het veld 'Taalcode' is een verplicht veld.",
     "prop.labels.locale.duplicate.message": "Validatie mislukt: De taalcode '{}' is meerdere keren toegevoegd.",
 
-    "error.check.fields": "Er is iets fout gegaan. Controleer of alle velden goed zijn ingevuld."
+    "error.check.fields": "Er is iets fout gegaan. Controleer of alle velden goed zijn ingevuld.",
+
+    "condition.add": "Nieuwe conditie toevoegen",
+    "condition.type": "Conditie type",
+    "condition.type.simple": "Simpele conditie",
+    "condition.type.composite": "Samengestelde conditie",
+    "condition.simple.var1": "Variabele 1",
+    "condition.simple.operator": "Operator",
+    "condition.simple.var2": "Variabele 2",
+    "condition.composite.operator": "Relationele operator",
+    "condition.validation.required": "Er moet minstens 1 conditie toegevoegd worden."
+
 }

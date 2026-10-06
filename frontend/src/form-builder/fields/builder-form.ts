@@ -36,6 +36,7 @@ export class BuilderForm extends BuilderFieldInterface {
         this.fieldProperties.setPropertyValueById('name', Lang.get('field.type.form.form').toLowerCase().replace(/\s+/g, '-'));
 
         if (baseFieldDto) {
+            // ContitionService.clear();
             this.initDefaultProperties(baseFieldDto);
 
             if (baseFieldDto.fields) {
@@ -50,10 +51,8 @@ export class BuilderForm extends BuilderFieldInterface {
     }
 
     createContent() {
-        
         this.content.className = 'builder-form';
         this.content.dataset.type = 'form';
-        
 
         ///////////////////////
         // Header
@@ -82,7 +81,6 @@ export class BuilderForm extends BuilderFieldInterface {
 
         const tabComponent = this.initTabComponent();
         this.content.appendChild(tabComponent.getContent());
-
     }
 
 
@@ -101,7 +99,6 @@ export class BuilderForm extends BuilderFieldInterface {
         };
 
         this.builderTabComponent.onActivateCallback = () => {
-            
         };
 
         this.builderTabComponent.onDeleteCallback = () => {

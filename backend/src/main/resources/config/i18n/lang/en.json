@@ -4,6 +4,7 @@
     "generic.title": "Forma",
     "generic.search": "Search...",
     "generic.slug": "URL Name",
+    "generic.tags": "Tags",
     "generic.primary.color": "Primairy color",
     "generic.secondary.color": "Secondairy color",
 
@@ -117,8 +118,12 @@
     "page.settings.successpage": "Success page",
     "page.settings.registration": "Registration",
     "page.settings.payment": "Payment",
-    "page.settings.vars": "Variables",
+    "page.settings.vars": "Form variables",
 
+    "page.settings.vars.table": "Variable",
+    "page.settings.vars.name": "Variable name",
+    "page.settings.vars.value": "Variable value",
+    "page.settings.vars.conditions": "Variable conditions",
     "field.type.form.form": "Form",
     "field.type.repeating.group": "Repeating group",
     "field.type.form.group": "Group",
@@ -181,5 +186,16 @@
     "prop.labels.locale.empty.message": "The field 'Languagecode' is required.",
     "prop.labels.locale.duplicate.message": "Validation failed: The languagecode '{}' has been added multiple times.",
 
-    "error.check.fields": "Something went wrong. Check if all fields are correct."
+    "error.check.fields": "Something went wrong. Check if all fields are correct.",
+
+    "condition.add": "Add new condition",
+    "condition.type": "Condition type",
+    "condition.type.simple": "Simple condition",
+    "condition.type.composite": "Composite condition",
+    "condition.simple.var1": "Variable 1",
+    "condition.simple.operator": "Operator",
+    "condition.simple.var2": "Variable 2",
+    "condition.composite.operator": "Relational operator",
+    "condition.validation.required": "At least 1 condition must be added."
+
 }

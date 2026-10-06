@@ -180,6 +180,41 @@ CREATE TABLE form_config_success_page (
     version BIGINT DEFAULT 0 NOT NULL
 );
 
+CREATE TABLE form_variable (
+    id UUID PRIMARY KEY,
+    form_definition_id UUID NULL REFERENCES form_definition(id) ON DELETE CASCADE,
+    tenant_id UUID REFERENCES tenant(id),
+    variable_name TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    version BIGINT DEFAULT 0 NOT NULL
+);
+
+CREATE TABLE tag (
+    id UUID PRIMARY KEY,
+    tenant_id UUID REFERENCES tenant(id), -- Zorgt dat tenants elkaars tags niet zien
+    tag_name TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    version BIGINT DEFAULT 0 NOT NULL,
+    CONSTRAINT unique_tenant_tag UNIQUE (tenant_id, tag_name) -- Voorkomt dubbele tags binnen dezelfde tenant
+);
+
+CREATE TABLE form_variable_tag (
+    form_variable_id UUID REFERENCES form_variable(id) ON DELETE CASCADE,
+    tag_id UUID REFERENCES tag(id) ON DELETE CASCADE,
+    PRIMARY KEY (form_variable_id, tag_id)
+);
+
+CREATE TABLE form_variable_values (
+    id UUID PRIMARY KEY,
+    form_variable_id UUID NULL REFERENCES form_variable(id) ON DELETE CASCADE,
+    variable_value TEXT NOT NULL,
+    variable_condition JSONB NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    version BIGINT DEFAULT 0 NOT NULL
+);
 
 CREATE TABLE form_submission (
     id UUID PRIMARY KEY,

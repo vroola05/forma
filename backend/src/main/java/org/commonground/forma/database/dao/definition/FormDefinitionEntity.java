@@ -2,6 +2,7 @@ package org.commonground.forma.database.dao.definition;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.commonground.forma.database.dao.BaseEntity;
@@ -12,9 +13,7 @@ import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.dialect.type.PostgreSQLJsonPGObjectJsonType;
 import org.hibernate.type.SqlTypes;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,6 +23,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Getter
@@ -77,7 +79,11 @@ public class FormDefinitionEntity extends BaseEntity {
         return confirmation == null ? null : confirmation;
     }
 
-    public void removeFormConfigSuccessPageEntity() {
+    public void retainTabs(Set<UUID> incomingIds) {
+        this.tabs.removeIf(tab -> !incomingIds.contains(tab.getTab().getId()));
+    }
+
+    public void clearSuccessPage() {
         if (this.formConfigSuccessPageEntity != null) {
             this.formConfigSuccessPageEntity.setForm(null);
             this.formConfigSuccessPageEntity = null;

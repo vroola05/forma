@@ -1,13 +1,13 @@
 import Mention from '@tiptap/extension-mention';
 
 import { SuggestionKeyDownProps, SuggestionProps } from '@tiptap/suggestion';
-import { BuilderConditionsAutocompleteField } from '../../../form-builder/properties/components/builder-conditions-autocomplete-field';
+import { ConditionsAutocompleteField } from '../../form-components/conditions-autocomplete-field';
 
 export class DollarMenu {
     popup: HTMLElement | null = null;
     props: SuggestionProps | null = null;;
 
-    var1SimpleTextfield: BuilderConditionsAutocompleteField | null = null;
+    var1SimpleTextfield: ConditionsAutocompleteField | null = null;
 
     onStart(props: SuggestionProps) {
         this.props = props;
@@ -23,7 +23,7 @@ export class DollarMenu {
 
         document.body.appendChild(this.popup);
 
-        this.var1SimpleTextfield = new BuilderConditionsAutocompleteField('var1','')
+        this.var1SimpleTextfield = new ConditionsAutocompleteField('var1')
             .setPlaceholder('Formula veld')
             .setOnFieldFoundListener((value) => {
                 value = `{${value.startsWith('$.') ? value.substring(2) : value}}`;

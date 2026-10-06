@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
@@ -17,12 +19,14 @@
     "@eslint/js": "^10.0.1",
     "@types/node": "^26.1.0",
     "@types/web": "^0.0.352",
+    "@vitest/coverage-v8": "^5.0.1",
     "eslint": "^10.8.1",
     "fantasticon": "^4.1.0",
     "jiti": "^2.7.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.67.0",
-    "vite": "^8.1.2"
+    "vite": "^8.1.2",
+    "vitest": "^5.0.1"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",

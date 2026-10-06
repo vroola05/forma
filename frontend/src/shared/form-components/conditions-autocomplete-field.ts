@@ -1,13 +1,13 @@
-import { InputNucleus } from '../../../shared/form-components/interface/input-base';
-import { TranslationDto } from '../../../shared/model/types';
-import { BuilderFieldInterface } from '../../fields/builder-field-interface';
-import { BuilderFormService } from '../../services/builder-form-service';
-import { FIELD_TYPE } from '../../types';
+import { BuilderFieldInterface } from '../../form-builder/fields/builder-field-interface';
+import { BuilderFormService } from '../../form-builder/services/builder-form-service';
+import { FIELD_TYPE } from '../../form-builder/types';
+import { TranslationDto } from '../model/types';
+import { InputNucleus } from './interface/input-base';
 
 /**
  * Textfield
  */
-export class BuilderConditionsAutocompleteField extends InputNucleus<HTMLInputElement> {
+export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> {
     autocompleteMenuElement = document.createElement('div');
     minLength: number | undefined = undefined;
     maxLength: number | undefined = undefined;
@@ -22,7 +22,7 @@ export class BuilderConditionsAutocompleteField extends InputNucleus<HTMLInputEl
 
     constructor(name: string, labels: TranslationDto[] | undefined = undefined) {
         super(document.createElement('input'), name, labels);
-        this.type = 'text';
+        this.type = 'conditions-autocomplete';
 
         const inputElementContainer = document.createElement('div');
         inputElementContainer.className = 'input-element-container';

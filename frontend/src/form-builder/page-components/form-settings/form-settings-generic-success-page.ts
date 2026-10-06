@@ -4,14 +4,14 @@ import { SettingsPage } from '../settings-page';
 import { FormButton } from '../../../shared/form-components/components/form-button';
 import { footerService } from '../../../shared/services/footer-service';
 
-import { Http } from '../../../shared/services/http';
-import { Router } from '../../../shared/services/router';
-import { FormConfigSuccessPage, FormDto } from '../../../shared/model/types';
 import { Form } from '../../../shared/form-components/form';
 import { InputNucleus } from '../../../shared/form-components/interface/input-base';
+import { FormConfigSuccessPageDto, FormDto } from '../../../shared/model/types';
+import { Http } from '../../../shared/services/http';
+import { Router } from '../../../shared/services/router';
 
 export class FormSettingsGenericSuccessPage extends SettingsPage {
-    formConfigSuccessPage: FormConfigSuccessPage | undefined;
+    formConfigSuccessPage: FormConfigSuccessPageDto | undefined;
     form: Form | null = null;
 
     constructor() {
@@ -21,7 +21,7 @@ export class FormSettingsGenericSuccessPage extends SettingsPage {
     }
 
     retrieveFormConfigSuccessPage() {
-        Http.get(`${Router.tenantPath}/api/config/generic/success-page`).then((formConfigSuccessPage: FormConfigSuccessPage)  => {
+        Http.get(`${Router.tenantPath}/api/config/generic/success-page`).then((formConfigSuccessPage: FormConfigSuccessPageDto)  => {
             this.formConfigSuccessPage = formConfigSuccessPage;
             
             this.createContent();
@@ -65,7 +65,7 @@ export class FormSettingsGenericSuccessPage extends SettingsPage {
                                 { "value": "true", "text": Lang.get('generic.yes') },
                                 { "value": "false", "text": Lang.get('generic.no') }
                             ],
-                            "value": this.formConfigSuccessPage?.showSummary === undefined ? [] : [
+                            "values": this.formConfigSuccessPage?.showSummary === undefined ? [] : [
                                 {
                                     value: this.formConfigSuccessPage?.showSummary ? 'true' : 'false',
                                     text: ''

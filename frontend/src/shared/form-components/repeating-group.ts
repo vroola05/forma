@@ -2,7 +2,6 @@ import { FormRenderer } from "../generic-components/form-renderer";
 import { BaseFieldDto, LayoutType, RepeatingGroupDto } from "../model/types";
 import { FieldService } from "../services/field-service";
 import { FormButton } from "./components/form-button";
-import { InputNucleus } from "./interface/input-base";
 import { Nucleus } from "./interface/nucleus";
 
 export class RepeatingGroup extends Nucleus {
@@ -22,7 +21,7 @@ export class RepeatingGroup extends Nucleus {
 
     fields: BaseFieldDto[] | undefined = [];
 
-    sets: { deleteBtn: FormButton | undefined; fields: InputNucleus[] | undefined }[] = [];
+    sets: { deleteBtn: FormButton | undefined; fields: Nucleus[] | undefined }[] = [];
 
     constructor(baseFieldDto: RepeatingGroupDto, id: string | undefined = undefined) {
         super(baseFieldDto.name, baseFieldDto.labels, id);
@@ -35,7 +34,7 @@ export class RepeatingGroup extends Nucleus {
         this.minLength = baseFieldDto.minLength;
         this.maxLength = baseFieldDto.maxLength;
 
-        this.layout = baseFieldDto.layout;
+        this.layout = baseFieldDto.layout ? baseFieldDto.layout : 'default';
 
         this.setShowConditions(baseFieldDto?.condition);
 
@@ -60,6 +59,7 @@ export class RepeatingGroup extends Nucleus {
      */
     afterInit() {
         this.checkMinMaxAmount().then(()=> {}).catch(() => {});
+        this.setSetContainer();
     }
 
     /**
@@ -67,6 +67,17 @@ export class RepeatingGroup extends Nucleus {
      * @param {*} classes 
      */
     createElement(classes: string = '') {
+        const onClick = (e?: PointerEvent | undefined) => {
+            if (!e) {
+                return;
+            }
+            e.preventDefault();
+            this.addRow()
+                .then(() => { })
+                .catch(() => { });
+
+            this.valueChanged();
+        };
         this.repeatingGroupFieldDom.className = 'repeating-group-field' + (!classes ? '' : ' ' + classes);
 
         this.repeatingGroupContainerDom.className = 'repeating-group-container';
@@ -77,19 +88,10 @@ export class RepeatingGroup extends Nucleus {
         const repeatingGroupFooterLabelDom = document.createElement('div');
         repeatingGroupFooterLabelDom.className = 'repeating-group-footer-label';
         repeatingGroupFooterLabelDom.innerHTML = `${this.getLabel()} toevoegen`;
+        repeatingGroupFooterLabelDom.onclick = onClick;
         this.repeatingGroupFooterDom.append(repeatingGroupFooterLabelDom);
 
-        this.repeatingGroupFooterAddBtn = new FormButton('', 'icon icon-plus-lg', null, (e?: PointerEvent | undefined) => {
-            if (!e) {
-                return;
-            }
-            e.preventDefault();
-            this.addRow()
-                .then(() => { })
-                .catch(() => { });
-
-            this.valueChanged();
-        });
+        this.repeatingGroupFooterAddBtn = new FormButton('', 'icon icon-plus-lg', null, onClick);
 
         this.repeatingGroupFooterDom.append(this.repeatingGroupFooterAddBtn.getContent());
 
@@ -165,10 +167,7 @@ export class RepeatingGroup extends Nucleus {
         }
 
         for (const fieldDto of this.fields) {
-            const field = await FormRenderer.createField(fieldDto, `set-${index}`);
-            if (!field || (!(field instanceof InputNucleus))) {
-                throw new Error('Input must be an instance of Input class');
-            }
+            const field = await FormRenderer.createField(fieldDto, `${this.getId()}-set-${index}`);
 
             repeatingGroupInnerContainerDom.appendChild(field.getContent());
             this.sets[index].fields.push(field);
@@ -189,20 +188,30 @@ export class RepeatingGroup extends Nucleus {
         this.valueChanged();
     }
 
+    setSetContainer() {
+        if (this.sets.length > 0) {
+            this.repeatingGroupContainerDom.classList.remove('hidden');
+        } else {
+            this.repeatingGroupContainerDom.classList.add('hidden');
+        }
+    }
+
     valueChanged(noCallback: boolean = false, value: any = undefined) {
+        this.setSetContainer();
+        
+        FieldService.setFieldValue(this.getId(), this.sets.length);
+
+        this.checkMinMaxAmount().then(() => {}).catch(() => {});
+
         if (noCallback) {
             return;
         }
-
-        FieldService.setFieldValue(this.getId(), this.sets.length);
 
         if (this.callback.length > 0) {
             this.callback.forEach(callback => {
                 callback(this.name, this.sets.length, this);
             });
         }
-
-        this.checkMinMaxAmount().then(() => {}).catch(() => {});
     }
 
     /**
@@ -257,7 +266,7 @@ export class RepeatingGroup extends Nucleus {
         return valid;
     }
 
-    #validateSet(set: InputNucleus[]): boolean {
+    #validateSet(set: Nucleus[]): boolean {
         let valid = true;
         for (const input of set) {
             if (!input.validate()) {
