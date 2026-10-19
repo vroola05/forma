@@ -46,7 +46,7 @@ export class TagField extends InputNucleus<HTMLDivElement> {
         if (!tagValue) {
             return;
         }
-        
+
         if (this.hasTag(tagValue)) {
             return;
         }
@@ -119,12 +119,12 @@ export class TagField extends InputNucleus<HTMLDivElement> {
             return this;
         }
 
-        this.value = options;
-
         options.forEach(option => {
+            
             this.addTag(option.value);
         });
 
+        this.value = options;
         this.valueChanged(noCallback, this.value);
         return this;
     }

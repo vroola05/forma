@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.commonground.forma.model.form.fields.Form;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +25,7 @@ public class FormWrapper {
     FormConfig formConfig;
     Form form;
 
+    @JsonIgnore
     public Set<UUID> getIncomingTabIds() {
         if (this.form == null || this.form.getFields() == null) {
             return Set.of();

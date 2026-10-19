@@ -72,7 +72,12 @@ export class ConditionsField extends InputNucleus<HTMLDivElement> {
     }
 
     setValue(value: ConditionDto | undefined, noCallback: boolean = false) {
-        this.conditionComponent?.setValue(value);
+        if (this.conditionComponent === undefined) {
+            this.addCondition(value)
+        } else {
+            this.conditionComponent?.setValue(value);
+        }
+        
         this.updateValue(value, noCallback);
 
         return this;

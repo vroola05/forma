@@ -2,6 +2,7 @@ package org.commonground.forma.database.dao.definition;
 
 import org.commonground.forma.database.dao.BaseEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -28,7 +29,7 @@ public class FormTabInstanceDefinitionEntity extends BaseEntity {
     private FormDefinitionEntity form;
 
     @Id
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "tab_id")
     private FormTabDefinitionEntity tab;
 

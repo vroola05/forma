@@ -94,7 +94,7 @@ export class FormRenderer {
             return {
                 name: field.name,
                 type: field.type as OptionFieldType,
-                values: field.hasOptions() ? field.getOptions() : undefined,
+                values: field.getOptions(),
                 label: field.label,
                 classes: field.classes,
                 readonly: field.readonly

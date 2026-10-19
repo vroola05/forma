@@ -127,6 +127,10 @@ export class FormGroup extends Nucleus {
 
     getFieldValue(name: string) {
         const field = this.fields.find(f => f.name === name);
-        return !field ? undefined : field.hasOptions() ? field.getOptions() : field.getValue();
+        if (!field) {
+            return undefined;
+        }
+        
+        return FormRenderer.isOptionType(field.type) ? field.getOptions() : field.getValue();
     }
 }

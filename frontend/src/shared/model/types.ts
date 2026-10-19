@@ -187,7 +187,7 @@ export interface FileOptionFieldDto extends OptionFieldDto {
 }
 
 
-export type FieldDto = BaseFieldDto | InputFieldDto | RichTextFieldDto | OptionFieldDto| RepeatingGroupDto;
+export type FieldDto = BaseFieldDto | InputFieldDto | RichTextFieldDto | OptionFieldDto | RepeatingGroupDto;
 
 export interface FormConfig {
     formConfigSuccessPage?: FormConfigSuccessPageDto;
@@ -208,7 +208,7 @@ export interface FormConfigSuccessPageDto {
 export interface FormVariableDto {
     id?: string;
     name?: string;
-    tag?: string;
+    tags?: string[];
     values?: FormVariableValueDto[];
 }
 

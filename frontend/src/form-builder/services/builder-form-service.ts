@@ -1,29 +1,74 @@
+import { Form } from '../../shared/form-components/form';
 import { FormWrapper } from '../../shared/model/types';
 import { Observable } from '../../shared/services/observable';
 import { BuilderForm } from '../fields/builder-form';
 
+export type FormKey = 'builder' | 'variables' | 'email' | 'login' | 'success';
+
 export class BuilderFormService {
-    static #builderForm = new Observable<BuilderForm>(undefined);
-    static #formWrapper = new Observable<FormWrapper>(undefined);
+    #builderForm = new Observable<BuilderForm>(undefined);
+    // #variablesForm = new Observable<Form>(undefined);
+    #forms = new Map<FormKey, Observable<Form | undefined>>();
+    #formWrapper = new Observable<FormWrapper>(undefined);
     
-    static getBuilderForm() {
+    getBuilderForm() {
         return this.#builderForm.value;
     }
 
-    static setBuilderForm(builderForm: BuilderForm | undefined) {
+    setBuilderForm(builderForm: BuilderForm | undefined) {
         this.#builderForm.value = builderForm;
     }
 
-    static getFormWrapper() {
+
+    #getOrCreateObservable(key: FormKey): Observable<Form | undefined> {
+        if (!this.#forms.has(key)) {
+            this.#forms.set(key, new Observable<Form | undefined>(undefined));
+        }
+        return this.#forms.get(key)!;
+    }
+
+    getForm(key: FormKey): Form | undefined {
+        return this.#getOrCreateObservable(key).value;
+    }
+
+    setForm(key: FormKey, value: Form | undefined): void {
+        this.#getOrCreateObservable(key).value = value;
+    }
+
+    subscribeToForm<T>(key: FormKey, subscribe: (value: Form | undefined) => void) {
+        return this.#getOrCreateObservable(key).subscribe(subscribe);
+    }
+
+    getFormWrapper() {
         return this.#formWrapper.value;
     }
 
-    static setFormWrapper(formWrapper: FormWrapper | undefined) {
+    setFormWrapper(formWrapper: FormWrapper | undefined) {
         this.#formWrapper.value = formWrapper;
-
     }
 
-    static formWrapperSubscription(subscribe: (value: FormWrapper | undefined) => void) {
+    subscribeToFormWrapper(subscribe: (value: FormWrapper | undefined) => void) {
         return this.#formWrapper.subscribe(subscribe);
     }
 }
+
+
+export class BuilderFormServiceRegistryImpl {
+    #instances = new Map<string, BuilderFormService>();
+
+    get(formId: string): BuilderFormService {
+        if (!this.#instances.has(formId)) {
+            this.#instances.set(formId, new BuilderFormService());
+        }
+        return this.#instances.get(formId)!
+    }
+
+    destroy(formId: string): void {
+        this.#instances.delete(formId);
+    }
+}
+
+/**
+ * Use this to receive the correct form-service
+ */
+export const BuilderFormServiceRegistry = new BuilderFormServiceRegistryImpl();

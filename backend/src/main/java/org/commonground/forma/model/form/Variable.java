@@ -14,7 +14,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Variables {
+public class Variable {
     private UUID id;
     private String name;
     private List<String> tags;

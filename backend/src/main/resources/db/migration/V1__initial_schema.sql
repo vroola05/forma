@@ -191,20 +191,22 @@ CREATE TABLE form_variable (
 );
 
 CREATE TABLE tag (
-    id UUID PRIMARY KEY,
-    tenant_id UUID REFERENCES tenant(id), -- Zorgt dat tenants elkaars tags niet zien
+    tenant_id UUID REFERENCES tenant(id) ON DELETE CASCADE,
     tag_name TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     version BIGINT DEFAULT 0 NOT NULL,
-    CONSTRAINT unique_tenant_tag UNIQUE (tenant_id, tag_name) -- Voorkomt dubbele tags binnen dezelfde tenant
+    PRIMARY KEY (tenant_id, tag_name)
 );
 
 CREATE TABLE form_variable_tag (
     form_variable_id UUID REFERENCES form_variable(id) ON DELETE CASCADE,
-    tag_id UUID REFERENCES tag(id) ON DELETE CASCADE,
-    PRIMARY KEY (form_variable_id, tag_id)
+    tenant_id UUID NOT NULL,
+    tag_name TEXT NOT NULL,
+    PRIMARY KEY (form_variable_id, tenant_id, tag_name),
+    FOREIGN KEY (tenant_id, tag_name) REFERENCES tag(tenant_id, tag_name) ON DELETE CASCADE
 );
+
 
 CREATE TABLE form_variable_values (
     id UUID PRIMARY KEY,

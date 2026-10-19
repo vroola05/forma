@@ -629,7 +629,7 @@ option:disabled {
             display: inline-flex;
             flex-direction: row;
             flex-wrap: wrap;
-            gap: var(--default-space-quarter);
+            gap: var(--default-space-half);
 
             .tag {
                 display: flex;
@@ -644,22 +644,23 @@ option:disabled {
 
                 font-size: smaller;
                 .tag-label {
-                    padding: 0 var(--default-space-quarter);
+                    padding: 0 var(--default-space-half);
                     font-size: medium;
 
-                    ::before {
+                    &::before {
                         line-height: unset;
                     }
                 }
                 .tag-text {
                     display: inline-block;
+                    padding-bottom: var(--default-space-half);
                 }
                 .tag-button-remove {
                     padding: 0 var(--default-space-quarter);
                     border: none;
                     background: none;
 
-                    ::before {
+                    &::before {
                         line-height: unset;
                     }
                 }

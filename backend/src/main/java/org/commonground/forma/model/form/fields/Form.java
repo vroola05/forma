@@ -129,6 +129,10 @@ public class Form implements Field {
         return this.fields.stream().map(field -> (Field)field).toList();
     }
 
+    public void addField(TabPage tab) {
+        this.fields.add(tab);
+    }
+
     @Override
     public void validate(Object value) throws FieldValidationException {
     }

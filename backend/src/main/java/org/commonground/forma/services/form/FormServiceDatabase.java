@@ -10,7 +10,8 @@ import org.commonground.forma.database.dao.definition.FormDefinitionEntity;
 import org.commonground.forma.database.dao.translation.FormTranslationEntity;
 import org.commonground.forma.database.repository.FormDefinitionRepository;
 import org.commonground.forma.mapper.FormMapper;
-import org.commonground.forma.model.form.FormConfig;
+import org.commonground.forma.mapper.FormWrapperMapper;
+import org.commonground.forma.mapper.TabPageMapper;
 import org.commonground.forma.model.form.FormList;
 import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.Translation;
@@ -29,22 +30,28 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional(readOnly = true)
 public class FormServiceDatabase implements FormService {
+    private final FormWrapperMapper formWrapperMapper;
     private final FormMapper formMapper;
     private final FormDefinitionRepository formDefinitionRepository;
     private final FormConfigSuccessPageService formConfigSuccessPageService;
     private final TabPageService tabPageService;
     private final FormConfigurationProcessor formConfigurationProcessor;
+    private final TabPageMapper tabPageMapper;
     public FormServiceDatabase(
+            FormWrapperMapper formWrapperMapper,
             FormMapper formMapper,
             TabPageService tabPageService,
             FormConfigSuccessPageService formConfigSuccessPageService,
             FormDefinitionRepository formDefinitionRepository,
+            TabPageMapper tabPageMapper,
             FormConfigurationProcessor formConfigurationProcessor) {
 
+        this.formWrapperMapper = formWrapperMapper;
         this.formMapper = formMapper;
         this.formDefinitionRepository = formDefinitionRepository;
         this.tabPageService = tabPageService;
         this.formConfigSuccessPageService = formConfigSuccessPageService;
+        this.tabPageMapper = tabPageMapper;
         this.formConfigurationProcessor = formConfigurationProcessor;
 
     }
@@ -60,7 +67,7 @@ public class FormServiceDatabase implements FormService {
         List<FormList> formLists = new ArrayList<>();
         List<FormDefinitionEntity> formDefinitionEntities = this.formDefinitionRepository.findByTenantId(tenant.getId());
 
-        formDefinitionEntities.stream().forEach(formDefinitionEntity -> {
+        formDefinitionEntities.forEach(formDefinitionEntity -> {
             FormList formList = new FormList();
             formList.setId(formDefinitionEntity.getId());
             formList.setName(formDefinitionEntity.getName());
@@ -84,59 +91,46 @@ public class FormServiceDatabase implements FormService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public FormWrapper get(String formName) {
         FormDefinitionEntity formDefinitionEntity = this.formDefinitionRepository.findByName(formName)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.definition.error.not_found}"));
 
-        FormWrapper formWrapper = new FormWrapper();
-        
-        Form form = formMapper.toResponseDto(formDefinitionEntity);
-
-        form.setFields(tabPageService.get(formDefinitionEntity.getId()));
-
-        formWrapper.setForm(form);
-
-        formWrapper.setFormConfig(new FormConfig());
-        formWrapper.getFormConfig()
-                .setFormConfigSuccessPage(this.formConfigSuccessPageService.getByFormId(formDefinitionEntity.getId()));
-
-        return formWrapper;
+        return this.formWrapperMapper.toResponseDto(formDefinitionEntity);
     }
 
     @Override
     @Transactional
     public FormWrapper save(UUID tenantId, FormWrapper formWrapper) {
         Form form = formWrapper.getForm();
+        UUID formId = form.getId();
 
-        boolean isNewForm = form.getId() == null;
-        boolean isNotUnique;
-
-        if (isNewForm) {
-            isNotUnique = this.formDefinitionRepository.existsByNameAndTenantId(form.getName(), tenantId);
-        } else {
-            isNotUnique = this.formDefinitionRepository.existsByNameAndTenantIdAndIdNot(form.getName(), tenantId, form.getId());
-        }
-
-        if (isNotUnique) {
+        if (isNameNotUnique(form.getName(), tenantId, formId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{form.definition.error.not_unique}");
         }
 
+        FormDefinitionEntity formDefinitionEntity = (formId == null) 
+            ? this.formMapper.toNewEntity(form, tenantId) 
+            : updateExistingEntity(formId, form, tenantId);
 
-        FormDefinitionEntity formDefinitionEntity;
-        if (isNewForm) {
-            formDefinitionEntity = this.formMapper.toNewEntity(form, tenantId);
-        } else {
-            formDefinitionEntity = this.getFormDefinitionById(form.getId());
-            this.formMapper.updateEntityFromDto(formDefinitionEntity, form, tenantId);
-        }
-
-        this.formConfigurationProcessor.processUpdate(formDefinitionEntity, formWrapper);
         
+        this.formConfigurationProcessor.processUpdate(formDefinitionEntity, formWrapper);
 
         FormDefinitionEntity resultEntity = this.formDefinitionRepository.save(formDefinitionEntity);
-
-
+        // Return dto
         return null;
     }
 
+
+    private boolean isNameNotUnique(String name, UUID tenantId, UUID formId) {
+        return (formId == null) 
+            ? this.formDefinitionRepository.existsByNameAndTenantId(name, tenantId)
+            : this.formDefinitionRepository.existsByNameAndTenantIdAndIdNot(name, tenantId, formId);
+}
+
+    private FormDefinitionEntity updateExistingEntity(UUID formId, Form form, UUID tenantId) {
+        FormDefinitionEntity entity = this.getFormDefinitionById(formId);
+        this.formMapper.updateEntityFromDto(entity, form, tenantId);
+        return entity;
+    }
 }

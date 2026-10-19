@@ -77,10 +77,6 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         }
     }
 
-    hasOptions() {
-        return this.type === 'radio' || this.type === 'checkbox' || this.type === 'select' || this.type === 'file';
-    }
-
     getValue() {
         return this.value ? this.value : '';
     }

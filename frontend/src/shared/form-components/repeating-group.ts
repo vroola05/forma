@@ -1,5 +1,5 @@
 import { FormRenderer } from "../generic-components/form-renderer";
-import { BaseFieldDto, LayoutType, RepeatingGroupDto } from "../model/types";
+import { BaseFieldDto, FieldDto, InputFieldDto, LayoutType, OptionFieldDto, RepeatingGroupDto } from "../model/types";
 import { FieldService } from "../services/field-service";
 import { FormButton } from "./components/form-button";
 import { Nucleus } from "./interface/nucleus";
@@ -21,11 +21,10 @@ export class RepeatingGroup extends Nucleus {
 
     fields: BaseFieldDto[] | undefined = [];
 
-    sets: { deleteBtn: FormButton | undefined; fields: Nucleus[] | undefined }[] = [];
+    sets: { deleteBtn: FormButton | undefined; fields: Nucleus[] | undefined; values: FieldDto[] | undefined }[] = [];
 
     constructor(baseFieldDto: RepeatingGroupDto, id: string | undefined = undefined) {
         super(baseFieldDto.name, baseFieldDto.labels, id);
-        
         this.label = baseFieldDto.label;
         this.type = baseFieldDto.type;
 
@@ -48,6 +47,13 @@ export class RepeatingGroup extends Nucleus {
             const sets = Number(setsStr);
             for (let index = 0; index < sets; index++) {
                 await this.addRow();
+            }
+        } else {
+            const repeatingGroupDto = baseFieldDto as RepeatingGroupDto;
+            if (repeatingGroupDto.sets) {
+                for (let index = 0; index < repeatingGroupDto.sets.length; index++) {
+                    await this.addRow(repeatingGroupDto.sets[index]);
+                }
             }
         }
 
@@ -112,17 +118,20 @@ export class RepeatingGroup extends Nucleus {
     /**
      * 
      */
-    async addRow() {
+    async addRow(values: FieldDto[] | undefined = undefined) {
         const index = this.sets.length;
-        this.sets.push({ deleteBtn: undefined, fields: [] });
+
+        this.sets.push({ deleteBtn: undefined, fields: [], values });
+
         if (this.maxLength && index >= this.maxLength) {
             console.error('can\'t append new row');
             return;
         }
 
-        const repeatingGroup = await this.createRepeatingGroup(index);
+        const repeatingGroupDom = await this.createRepeatingGroup(index);
 
-        this.repeatingGroupContainerDom.appendChild(repeatingGroup);
+        this.repeatingGroupContainerDom.appendChild(repeatingGroupDom);
+
         this.valueChanged();
     }
 
@@ -156,6 +165,7 @@ export class RepeatingGroup extends Nucleus {
         const repeatingGroupInnerContainerDom = document.createElement('div');
         repeatingGroupInnerContainerDom.className = 'repeating-group-inner-container';
         repeatingGroup.append(repeatingGroupInnerContainerDom);
+
         await this.createFields(index, repeatingGroupInnerContainerDom);
 
         return repeatingGroup;
@@ -166,7 +176,21 @@ export class RepeatingGroup extends Nucleus {
             return;
         }
 
-        for (const fieldDto of this.fields) {
+        for (let i = 0; i < this.fields.length; i++) {
+            
+            const fieldDto = structuredClone(this.fields[i]);
+            
+            const setDto= this.getSetField(index, i);
+
+            if (FormRenderer.isOptionType(fieldDto.type)) {
+                (fieldDto as OptionFieldDto).values = (setDto as OptionFieldDto).values;
+
+            } else if (FormRenderer.isInputType(fieldDto.type)) {
+                (fieldDto as InputFieldDto).value = (setDto as InputFieldDto).value;
+            } else if (fieldDto.type === 'repeating-group') {
+                (fieldDto as RepeatingGroupDto).sets = (setDto as RepeatingGroupDto).sets;
+            }
+            
             const field = await FormRenderer.createField(fieldDto, `${this.getId()}-set-${index}`);
 
             repeatingGroupInnerContainerDom.appendChild(field.getContent());
@@ -174,6 +198,14 @@ export class RepeatingGroup extends Nucleus {
             field.afterInit();
         }
 
+    }
+
+    getSetField(index: number, fieldIndex: number) {
+        if (this.sets[index]?.values === undefined || fieldIndex >= this.sets[index]?.values?.length) {
+            return undefined;
+        }
+
+        return this.sets[index]?.values[fieldIndex];
     }
 
     onRemoveRepeatingGroup(repeatingGroup: HTMLElement) {
@@ -224,6 +256,7 @@ export class RepeatingGroup extends Nucleus {
                     await this.addRow();
                 }
             }
+            
             for (const set of this.sets) {
                 if (this.sets.length <= this.minLength) {
                     set.deleteBtn?.hide();

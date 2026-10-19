@@ -1,7 +1,7 @@
 import { Page } from '../../../shared/page-components/page';
 import { Lang } from '../../../shared/services/lang';
 import { BuilderPropertyComponent } from '../../properties/builder-properties-component';
-import { BuilderFormService } from '../../services/builder-form-service';
+import { BuilderFormServiceRegistry } from '../../services/builder-form-service';
 import { BuilderPropertiesService } from '../../services/builder-properties-service';
 import { FIELD_TYPE } from '../../types';
 import { BuilderFieldItems } from './components/builder-field-items';
@@ -10,6 +10,7 @@ import { BuilderLayout } from './components/builder-layout';
 export class BuilderPageSettingsForm extends Page {
     #builderLayout: BuilderLayout = new BuilderLayout();
     #builderPropertiesComponent = new BuilderPropertyComponent();
+    #builderFormService = BuilderFormServiceRegistry.get('builder-form');
 
     constructor() {
         super();
@@ -46,7 +47,7 @@ export class BuilderPageSettingsForm extends Page {
         ]);
         
         this.#builderLayout.setLeftContent(builderFieldItemsBasic.getContent());
-        this.#builderLayout.getCenterContent();
+        
 
         this.#builderLayout.onClose(() => {
             BuilderPropertiesService.set(undefined);
@@ -61,7 +62,7 @@ export class BuilderPageSettingsForm extends Page {
      * 
      */
     afterInit() {
-        const content = BuilderFormService?.getBuilderForm()?.getContent();
+        const content = this.#builderFormService?.getBuilderForm()?.getContent();
         if (content) {
             this.#builderLayout.setCenterContent(content);
         }

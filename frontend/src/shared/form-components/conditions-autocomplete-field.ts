@@ -1,5 +1,5 @@
 import { BuilderFieldInterface } from '../../form-builder/fields/builder-field-interface';
-import { BuilderFormService } from '../../form-builder/services/builder-form-service';
+import { BuilderFormServiceRegistry } from '../../form-builder/services/builder-form-service';
 import { FIELD_TYPE } from '../../form-builder/types';
 import { TranslationDto } from '../model/types';
 import { InputNucleus } from './interface/input-base';
@@ -16,6 +16,8 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
     cancelBlur: boolean = false;
     hasFocus: boolean = false;
     selectedAutocompleteIndex: number = -1;
+
+    #builderFormService = BuilderFormServiceRegistry.get('builder-form');
 
     onListItemClickedListener: ((value: any) => void) | null = null;
     onFieldFoundListener: ((value: any) => void) | null = null;
@@ -178,7 +180,7 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
     }
 
     getCurrentBuilderFields(tokens: string[]) {
-        const form = BuilderFormService.getBuilderForm();
+        const form = this.#builderFormService.getBuilderForm();
         if (!form) {
             return;
         }

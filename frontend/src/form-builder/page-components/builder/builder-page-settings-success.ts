@@ -7,12 +7,14 @@ import { Form } from '../../../shared/form-components/form';
 import { FormGroup } from '../../../shared/form-components/form-group';
 import { InputNucleus } from '../../../shared/form-components/interface/input-base';
 import { FormRenderer } from '../../../shared/generic-components/form-renderer';
-import { BuilderFormService } from '../../services/builder-form-service';
+import { BuilderFormServiceRegistry } from '../../services/builder-form-service';
 import { BuilderLayout } from './components/builder-layout';
 
 export class BuilderPageSettingsSuccess extends Page {
     readonly #builderLayout = new BuilderLayout();
+    #builderFormService = BuilderFormServiceRegistry.get('builder-form');
     #isEditorLoaded = false;
+
     
     formConfigSuccessPage: FormConfigSuccessPageDto | null = null;
     form!: Form;
@@ -21,7 +23,7 @@ export class BuilderPageSettingsSuccess extends Page {
         super();
 
 
-        this.subscriptions.push(BuilderFormService.formWrapperSubscription((formWrapper) => {
+        this.subscriptions.push(this.#builderFormService.subscribeToFormWrapper((formWrapper) => {
             if (this.#isEditorLoaded) {
                 return;
             }
@@ -171,11 +173,11 @@ export class BuilderPageSettingsSuccess extends Page {
             }
         }
 
-        const formWrapper = BuilderFormService.getFormWrapper();
+        const formWrapper = this.#builderFormService.getFormWrapper();
         if (formWrapper?.formConfig && this.formConfigSuccessPage) {
             formWrapper.formConfig.formConfigSuccessPage = this.formConfigSuccessPage;
 
-            BuilderFormService.setFormWrapper(formWrapper);
+            this.#builderFormService.setFormWrapper(formWrapper);
 
             EventService.emit('settings-changed', this.formConfigSuccessPage);
         }

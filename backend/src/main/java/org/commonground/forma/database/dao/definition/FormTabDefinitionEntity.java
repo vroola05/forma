@@ -2,6 +2,7 @@ package org.commonground.forma.database.dao.definition;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.commonground.forma.database.dao.BaseEntity;
@@ -11,15 +12,16 @@ import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.dialect.type.PostgreSQLJsonPGObjectJsonType;
 import org.hibernate.type.SqlTypes;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -57,4 +59,18 @@ public class FormTabDefinitionEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "tab", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FormFieldDefinitionEntity> fields = new ArrayList<>();
+
+    public void removeFieldsExcept(Set<UUID> incomingIds) {
+        this.fields.removeIf(existingField -> 
+            existingField.getId() != null && !incomingIds.contains(existingField.getId())
+        );
+    }
+
+    public void addOrUpdateField(FormFieldDefinitionEntity fieldEntity) {
+        fieldEntity.setTab(this);
+        if (!this.fields.contains(fieldEntity)) {
+            this.fields.add(fieldEntity);
+        }
+    }
+
 }

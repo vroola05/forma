@@ -15,5 +15,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class FormConfig {
     FormConfigSuccessPage formConfigSuccessPage;
-    List<Variables> variables;
+    List<Variable> variables;
 }

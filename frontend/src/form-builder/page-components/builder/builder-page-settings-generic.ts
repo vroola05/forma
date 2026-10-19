@@ -3,11 +3,12 @@ import { FORM_STATUS, FormDto, FormWrapper, OptionDto } from '../../../shared/mo
 import { Page } from '../../../shared/page-components/page';
 import { EventService } from '../../../shared/services/event-service';
 import { Lang } from '../../../shared/services/lang';
-import { BuilderFormService } from '../../services/builder-form-service';
+import { BuilderFormServiceRegistry } from '../../services/builder-form-service';
 import { BuilderLayout } from './components/builder-layout';
 
 export class BuilderPageSettingsGeneric extends Page {
     #builderLayout: BuilderLayout = new BuilderLayout();
+    #builderFormService = BuilderFormServiceRegistry.get('builder-form');
     form: Form | null = null;
 
     constructor() {
@@ -41,7 +42,7 @@ export class BuilderPageSettingsGeneric extends Page {
                                     "required": true,
                                     "value": formWrapper?.form?.name,
                                     "change": (key: string, value: any) => {
-                                        BuilderFormService?.getBuilderForm()?.setPropertyValueById(key, value);
+                                        this.#builderFormService?.getBuilderForm()?.setPropertyValueById(key, value);
                                         EventService.emit('field-changed');
                                     }
                                 },
@@ -50,9 +51,9 @@ export class BuilderPageSettingsGeneric extends Page {
                                     "label": Lang.get('prop.label.label'),
                                     "type": "text",
                                     "required": true,
-                                    "value": BuilderFormService?.getBuilderForm()?.getDefaultLabel(formWrapper?.form?.labels),
+                                    "value": this.#builderFormService?.getBuilderForm()?.getDefaultLabel(formWrapper?.form?.labels),
                                     "change": (key: string, value: any) => {
-                                        BuilderFormService?.getBuilderForm()?.setDefaultLabel(value);
+                                        this.#builderFormService?.getBuilderForm()?.setDefaultLabel(value);
                                         EventService.emit('field-changed');
                                     }
                                 },
@@ -62,9 +63,9 @@ export class BuilderPageSettingsGeneric extends Page {
                                     "type": "select",
                                     "required": true,
                                     "options": Object.entries(FORM_STATUS).map(([key, val_fnc]) => ({ value: key, text: val_fnc() })),
-                                    "value": [{value:formWrapper?.form?.status}] as OptionDto[],
+                                    "values": [{value:formWrapper?.form?.status}] as OptionDto[],
                                     "change": (key: string, options: OptionDto[]) => {
-                                        BuilderFormService?.getBuilderForm()?.setPropertyValueById(key, options?.[0].value);
+                                        this.#builderFormService?.getBuilderForm()?.setPropertyValueById(key, options?.[0].value);
                                         EventService.emit('field-changed');
                                     }
                                 }
@@ -86,7 +87,7 @@ export class BuilderPageSettingsGeneric extends Page {
      * 
      */
     afterInit() {
-        this.subscriptions.push(BuilderFormService.formWrapperSubscription((formWrapper: FormWrapper | undefined) => {
+        this.subscriptions.push(this.#builderFormService.subscribeToFormWrapper((formWrapper: FormWrapper | undefined) => {
             if (!formWrapper) {
                 return;
             }

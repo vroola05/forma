@@ -1,6 +1,5 @@
 package org.commonground.forma.model.form;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.commonground.forma.model.form.condition.Condition;
@@ -19,5 +18,5 @@ import lombok.Setter;
 public class VariableValue {
     private UUID id;
     private String value;
-    private List<Condition> tags;
+    private Condition conditions;
 }
