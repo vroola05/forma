@@ -1,40 +1,59 @@
 import { Storage } from "./storage-service";
 
 export class FieldService {
-    static #fields = new Map();
-    static mapLoaded = false;
+    #fields = new Map();
+    readonly formId: string;
+    readonly #storageKey: string;
 
+    constructor(formId: string) {
+        this.formId = formId;
+        this.#storageKey = `${this.formId}-field-values`;
+        this.#loadFieldsFromStorage();
+    }
 
-    static #loadFieldsFromStorage() {
+    #loadFieldsFromStorage() {
 
-        if (FieldService.mapLoaded) {
-
-            return;
-        }
-
-        FieldService.mapLoaded = true;
-        const storeon = Storage.getPageItem('field-values');
+        const storeon = Storage.getPageItem(this.#storageKey);
 
         if (storeon !== null) {
             try {
-                FieldService.#fields = new Map(Object.entries(JSON.parse(storeon)));
+                this.#fields = new Map(Object.entries(JSON.parse(storeon)));
                 return;
             } catch (e) {
                 console.error("Error retreiving field-values from strage", e);
             }
         }
-        FieldService.#fields = new Map();
+        this.#fields = new Map();
     }
 
-    static setFieldValue(id: string, value: any) {
-        FieldService.#loadFieldsFromStorage();
-        FieldService.#fields.set(id, value);
-
-        Storage.setPageItem('field-values', JSON.stringify(Object.fromEntries(FieldService.#fields)));
+    setFieldValue(id: string, value: any) {
+        this.#fields.set(id, value);
+        
+        Storage.setPageItem(this.#storageKey, JSON.stringify(Object.fromEntries(this.#fields)));
     }
 
-    static getFieldValue(id: string) {
-        FieldService.#loadFieldsFromStorage();
-        return FieldService.#fields.get(id);
+    getFieldValue(id: string) {
+        return this.#fields.get(id);
     }
 }
+
+
+export class FieldServiceRegistryImpl {
+    #instances = new Map<string, FieldService>();
+
+    get(formId: string): FieldService {
+        if (!this.#instances.has(formId)) {
+            this.#instances.set(formId, new FieldService(formId));
+        }
+        return this.#instances.get(formId)!
+    }
+
+    destroy(formId: string): void {
+        this.#instances.delete(formId);
+    }
+}
+
+/**
+ * Use this to receive the correct field-service
+ */
+export const FieldServiceRegistry = new FieldServiceRegistryImpl();

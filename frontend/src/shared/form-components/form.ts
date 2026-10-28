@@ -139,7 +139,7 @@ export class Form extends Nucleus {
         const tab = new Tab(tabDto, (tabName: string) => {
             this.setTab(tabName);
         });
-
+        tab.setForm(this);
         await tab.init(tabDto);
 
         if (!this.singlePage) {
@@ -307,4 +307,5 @@ export class Form extends Nucleus {
     getFields() {
         return this.fields;
     }
+
 }

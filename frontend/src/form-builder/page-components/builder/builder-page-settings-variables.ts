@@ -13,32 +13,33 @@ export class BuilderPageSettingsVariables extends Page {
     formVariables: FormVariableDto[] = [];
 
     constructor() {
-        super();
+        super(false);
+
         this.setTitle(Lang.get('page.settings.vars'));
         this.#builderLayout = new BuilderLayout();
 
-        const builderPageSettingsVariables = document.createElement('div');
-        builderPageSettingsVariables.className = 'builder-page-settings-variables';
-
-        const header = document.createElement('h1');
-        header.className = 'builder-page-settings-header';
-        header.innerText = Lang.get('page.settings.vars');
-        builderPageSettingsVariables.appendChild(header);
-
-        this.#builderLayout.setCenterContent(builderPageSettingsVariables, true);
+        
     }
 
     /**
      * 
      */
     afterInit() {
-        this.subscriptions.push(this.#builderFormService.subscribeToForm('variables', (variablesForm) => {
+        this.subscriptions.push(this.#builderFormService.subscribeToForm('variable-form', (variablesForm) => {
             const content = variablesForm?.getContent();
             if (content) {
-                this.#builderLayout.setCenterContent(content, true);
+                const builderPageSettingsVariables = document.createElement('div');
+                builderPageSettingsVariables.className = 'builder-page-settings';
+
+                const header = document.createElement('h1');
+                header.className = 'builder-page-settings-header';
+                header.innerText = Lang.get('page.settings.vars');
+                builderPageSettingsVariables.appendChild(header);
+
+                this.#builderLayout.setCenterContent(builderPageSettingsVariables, true);
+                this.#builderLayout.setCenterContent(content);
             }
         }));
-
     }
 
     getContent() {
@@ -46,7 +47,6 @@ export class BuilderPageSettingsVariables extends Page {
     }
 
     destroy() {
-        console.log('destroy');
         super.destroy();
     }
 }

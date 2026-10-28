@@ -55,8 +55,19 @@ export class RichTextField extends InputNucleus<HTMLDivElement> {
         return this;
     }
 
-    validate() {
-        return true;
+    validate(valid: boolean = true, message: string = '') {
+        if (!this.getShow()) {
+            return true;
+        }
+        valid = super.validate(valid, message);
+
+        if (this.required && this.builderEditor.isEmpty())  {
+            this.errors.push(Lang.get('generic.validation.required'));
+            valid = false;
+        }
+
+        this.setValidationState(valid);
+        return valid;
     }
 
     setValue(value: any | undefined, noCallback: boolean = false) {

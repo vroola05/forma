@@ -407,8 +407,7 @@
                 border: none;
             }
 
-
-            .builder-page-settings-success, .builder-page-settings-variables {
+            .builder-page-settings {
                 margin: var(--default-space-double);
 
             }

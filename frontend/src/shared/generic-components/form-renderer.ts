@@ -150,24 +150,26 @@ export class FormRenderer {
      * @param fieldDto 
      * @returns 
      */
-    static async createField(fieldDto: FieldDto, prefix: string | undefined = undefined): Promise<Nucleus> {
+    static async createField(fieldDto: FieldDto, form?: Form, prefix: string | undefined = undefined): Promise<Nucleus> {
         if (this.isInputType(fieldDto.type)) {
-            return await this.createInputField(fieldDto as InputFieldDto, prefix);
+            return await this.createInputField(fieldDto as InputFieldDto, form, prefix);
         } else if (this.isOptionType(fieldDto.type)) {
-            return await this.createOptionField(fieldDto as OptionFieldDto, prefix);
+            return await this.createOptionField(fieldDto as OptionFieldDto, form, prefix);
         } else {
 
             switch (fieldDto.type) {
                 case 'form-group': {
                     const { FormGroup } = await import('../form-components/form-group');
                     const formGroup = new FormGroup(fieldDto, fieldDto.id);
+                    formGroup.setForm(form);
                     await formGroup.init(fieldDto);
                     return formGroup;
                 }
                 case 'repeating-group': {
                     const { RepeatingGroup } = await import('../form-components/repeating-group');
-
                     const repeatingGroup = new RepeatingGroup((fieldDto as RepeatingGroupDto), fieldDto.id)
+                    repeatingGroup.setForm(form);
+                    
                     await repeatingGroup.init(fieldDto);
                     return repeatingGroup;
 
@@ -183,7 +185,7 @@ export class FormRenderer {
         }
     }
 
-    static async createInputField(fieldDto: InputFieldDto, prefix: string | undefined = undefined): Promise<Nucleus> {
+    static async createInputField(fieldDto: InputFieldDto, form?: Form, prefix: string | undefined = undefined): Promise<Nucleus> {
         const { TextField } = await import('../form-components/text-field');
         let nucleus: InputNucleus;
         switch (fieldDto.type) {
@@ -305,12 +307,13 @@ export class FormRenderer {
             .setPlaceholder(fieldDto.placeholder)
             .setReadonly(fieldDto.readonly)
             .setValue(fieldDto.value, true)
-            .setShowConditions(fieldDto.condition);
+            .setShowConditions(fieldDto.condition)
+            .setForm(form);
 
         return nucleus;
     }
 
-    static async createOptionField(fieldDto: OptionFieldDto, prefix: string | undefined = undefined): Promise<Nucleus> {
+    static async createOptionField(fieldDto: OptionFieldDto, form?: Form, prefix: string | undefined = undefined): Promise<Nucleus> {
         let nucleus: InputNucleus;
         switch (fieldDto.type) {
             case 'file': {
@@ -380,6 +383,7 @@ export class FormRenderer {
             .setPlaceholder(fieldDto.placeholder)
             .setReadonly(fieldDto.readonly)
             .setShowConditions(fieldDto.condition)
+            .setForm(form)
         return nucleus;
     }
 }

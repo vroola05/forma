@@ -1,5 +1,5 @@
+import type { Form } from '../form';
 import { Nucleus } from "./nucleus";
-
 
 /**
  * When the validation fails on the backend it sends back an object that looks like this in structure.
@@ -47,6 +47,8 @@ import { Nucleus } from "./nucleus";
  * 
  */
 export class ValidationBase {
+    form?: Form;
+
     handleValidationError(errorMap : Map<string, any>) {
         for (const [key, errors] of errorMap) {
             if (key === 'fields') {
@@ -105,6 +107,9 @@ export class ValidationBase {
         }
     }
 
+    setBackendErrorsField(valid: boolean, errors: any) {
+    }
+    
     getFields(): Nucleus[] | null {
         return null;
     }
@@ -113,6 +118,11 @@ export class ValidationBase {
         return [];
     }
 
-    setBackendErrorsField(valid: boolean, errors: any) {
-    }   
+    setForm(form?: Form) {
+        this.form = form;
+    }
+
+    getForm(): Form | undefined {
+        return this.form;
+    }
 }

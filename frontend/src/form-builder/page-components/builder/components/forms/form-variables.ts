@@ -6,12 +6,10 @@ import { TagField } from "../../../../../shared/form-components/tag-field";
 import { TextField } from "../../../../../shared/form-components/text-field";
 import { FieldDto, FormDto, FormVariableDto, FormVariableValueDto, OptionDto } from "../../../../../shared/model/types";
 import { Lang } from "../../../../../shared/services/lang";
-import { BuilderFormServiceRegistry } from "../../../../services/builder-form-service";
 
 export class FormVariables {
-    #builderFormService = BuilderFormServiceRegistry.get('builder-form');
-
-    createForm(variables: FormVariableDto[] | undefined) {
+    createForm(variables: FormVariableDto[] | undefined): Promise<Form> {
+        const sets = this.#getSets(variables);
         const formDto: FormDto = {
             "name": "variable-form",
             "label": '',
@@ -27,7 +25,7 @@ export class FormVariables {
                             "name": "variables-repeating-group",
                             "label": Lang.get('page.settings.vars.table'),
                             "type": "repeating-group",
-                            "sets": this.#getSets(variables),
+                            "sets": sets,
                             "fields": [
                                 {
                                     "name": "id",
@@ -59,14 +57,14 @@ export class FormVariables {
                                         {
                                             "name": "value",
                                             "label": Lang.get('page.settings.vars.value'),
-                                            "type": "text",
+                                            "type": "conditions-autocomplete",
                                             "required": true
                                         },
                                         {
                                             "name": "condition",
                                             "label": Lang.get('page.settings.vars.conditions'),
                                             "type": "conditions",
-                                            "required": true
+                                            "required": false
                                         }
                                     ]
                                 }
@@ -76,10 +74,7 @@ export class FormVariables {
                 }
             ]
         }
-
-        Form.create(formDto).then(form => {
-            this.#builderFormService.setForm('variables', form);
-        }).catch(() => { });
+        return Form.create(formDto);
     }
 
 
@@ -91,6 +86,7 @@ export class FormVariables {
 
         for (const variable of formVariables) {
             const set: FieldDto[] = [];
+
             set.push(
                 {
                     type: 'hidden',
@@ -114,6 +110,7 @@ export class FormVariables {
                 }
             );
 
+            
             sets.push(set);
         }
 
@@ -135,6 +132,7 @@ export class FormVariables {
 
         for (const value of values) {
             const set: FieldDto[] = [];
+            console.log('value', value);
             set.push(
                 {
                     type: 'hidden',
@@ -159,8 +157,7 @@ export class FormVariables {
         return sets;
     }
 
-    getFormData(): FormVariableDto[] {
-        const form = this.#builderFormService.getForm('variables');
+    getFormData(form?: Form): FormVariableDto[] {
 
         if (!form) {
             return [];

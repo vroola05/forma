@@ -1,5 +1,5 @@
 import { OptionDto, TranslationDto } from '../../model/types';
-import { FieldService } from '../../services/field-service';
+import { FieldServiceRegistry } from '../../services/field-service';
 import { Lang } from '../../services/lang';
 import { Nucleus } from './nucleus';
 
@@ -38,9 +38,12 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
     afterFormInit() {
         super.afterFormInit();
 
-        const value = FieldService.getFieldValue(this.getId());
-        if (value) {
-            this.setValue(value, true);
+        if (this.form) {
+            const fieldService = FieldServiceRegistry.get(this.form.getId());
+            const value = fieldService.getFieldValue(this.getId());
+            if (value) {
+                this.setValue(value, true);
+            }
         }
     }
 
@@ -116,7 +119,12 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
 
     valueChanged(noCallback: boolean = false, value: any = undefined) {
         if (!noCallback) {
-            FieldService.setFieldValue(this.getId(), this.value);
+            
+            if (this.form) {
+
+                const fieldService = FieldServiceRegistry.get(this.form.getId());
+                fieldService.setFieldValue(this.getId(), this.value);
+            }
 
             if (this.callback.length > 0) {
                 this.callback.forEach( callback => {
@@ -136,6 +144,14 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         this.callback.push(callback);
         return this;
     }
+
+    removeValueChangedListener(callback: (name: string, value: any, field: InputNucleus) => void) {
+        const index = this.callback.indexOf(callback);
+        if (index > -1) {
+            this.callback.splice(index, 1);
+        }
+    }
+
 
     setReadonly(readonly: boolean | undefined = undefined) {
         readonly ??= false;
@@ -226,7 +242,7 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         }
 
         this.setValidationState(valid);
-
+        
         return valid;
     }
 

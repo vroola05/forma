@@ -13,7 +13,7 @@ export class BuilderPageSettingsForm extends Page {
     #builderFormService = BuilderFormServiceRegistry.get('builder-form');
 
     constructor() {
-        super();
+        super(false);
 
         BuilderPropertiesService.clear();
 
@@ -62,10 +62,13 @@ export class BuilderPageSettingsForm extends Page {
      * 
      */
     afterInit() {
-        const content = this.#builderFormService?.getBuilderForm()?.getContent();
-        if (content) {
-            this.#builderLayout.setCenterContent(content);
-        }
+        this.subscriptions.push(this.#builderFormService?.subscribeToBuilderForm(form => {
+            const content = form?.getContent();
+            if (content) {
+                this.#builderLayout.setCenterContent(content, true);
+            }
+        }));
+        
         
         this.#builderLayout.setRightContent(this.#builderPropertiesComponent.getContent());
 

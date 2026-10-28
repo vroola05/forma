@@ -13,16 +13,22 @@ import { Lang } from '../../../shared/services/lang';
 import { Router } from '../../../shared/services/router';
 import { ToastService } from '../../../shared/services/toast-service';
 
+import { Form } from '../../../shared/form-components/form';
 import { BaseFieldDto, FormWrapper } from '../../../shared/model/types';
+import { FieldServiceRegistry } from '../../../shared/services/field-service';
 import { Loader } from '../../../shared/services/loader';
 import { BuilderFormServiceRegistry } from '../../services/builder-form-service';
 import { BuilderPropertiesService } from '../../services/builder-properties-service';
+import { FormGeneric } from './components/forms/form-generic';
+import { FormSuccess } from './components/forms/form-success';
 import { FormVariables } from './components/forms/form-variables';
 
 
 export class BuilderPage extends Page {
     routerOutlet = document.createElement('div');
     #builderFormService = BuilderFormServiceRegistry.get('builder-form');
+
+    forms: {form: Form, url: string}[] = [];
     adminHeader: AdminHeader;
     footer: Footer;
 
@@ -74,14 +80,30 @@ export class BuilderPage extends Page {
     }
 
     init(formWrapper: FormWrapper | undefined) {
+        const currentPath = Router.getCurrentRoute();
         // Create the Builder form
         const builderForm = new BuilderForm();
         builderForm.init(formWrapper?.form as BaseFieldDto);
         this.#builderFormService.setBuilderForm(builderForm);
 
+        const formGeneric = new FormGeneric();
+        formGeneric.createForm(formWrapper).then(form => {
+            this.#builderFormService.setForm(form);
+            this.forms.push({form, url: currentPath?.parentPath + ''});
+        }).catch(() => {});
+
+        const formSuccess = new FormSuccess();
+        formSuccess.createForm(formWrapper?.formConfig?.formConfigSuccessPage).then(form => {
+            this.#builderFormService.setForm(form);
+            this.forms.push({form, url: currentPath?.parentPath + '/settings-success'});
+        }).catch(() => {});
+
         // Create the Variables form
-        const formVariables = new FormVariables()
-        formVariables.createForm(formWrapper?.formConfig?.variables);
+        const formVariables = new FormVariables();
+        formVariables.createForm(formWrapper?.formConfig?.variables).then(form => {
+            this.#builderFormService.setForm(form); 
+            this.forms.push({form, url: currentPath?.parentPath + '/settings-variables'});
+        }).catch(() => {});
 
         this.isLoaded = true;
     }
@@ -111,24 +133,60 @@ export class BuilderPage extends Page {
         footerService.addButtonRight(new FormButton(Lang.get('generic.btn.cancel'), 'footer-btn btn-secondary cancel', null, () => {
             Router.route('/admin/page/forms');
         }));
+
+
         footerService.addButtonRight(new FormButton(Lang.get('generic.btn.save'), 'footer-btn btn-primary save', null, () => {
-            try {
-                this.#builderFormService?.getBuilderForm()?.validate();
-            } catch(error: unknown) {
-                if (error instanceof ValidationError) {
-                    ToastService.error(`${error.getPath()} - ${error.message}`);
-                } else if (error instanceof Error) {
-                    ToastService.error(error.message);
-                } else {
-                    ToastService.error(String(error));
-                }
-                
+            const formWrapper = this.#builderFormService?.getFormWrapper();
+            if (!formWrapper) {
+                return false;
+            }
+            if (!formWrapper?.formConfig) {
+                formWrapper.formConfig = {};
+            }
+
+            if (!this.validate()) {
                 return;
             }
 
-            this.#builderFormService?.getForm('variables')?.validate();
-            // this.postForm();
+            const formSuccess = new FormSuccess();
+            const form = this.#builderFormService.getForm('success-form');
+            formWrapper.formConfig.formConfigSuccessPage = formSuccess.getFormData(form);
+
+            const formVariables = new FormVariables();
+            const variablesForm = this.#builderFormService.getForm('variable-form');
+            formWrapper.formConfig.variables = formVariables.getFormData(variablesForm);
+
+            this.postForm();
         }));
+    }
+
+    validate(): boolean {
+        
+        for (const formItem of this.forms) {
+            if (!formItem.form.validate()) {
+                Router.route(formItem.url);
+                return false;
+            }
+        }
+
+
+        // Validate Form page
+        try {
+            this.#builderFormService?.getBuilderForm()?.validate();
+        } catch(error: unknown) {
+            if (error instanceof ValidationError) {
+                ToastService.error(`${error.getPath()} - ${error.message}`);
+            } else if (error instanceof Error) {
+                ToastService.error(error.message);
+            } else {
+                ToastService.error(String(error));
+            }
+            const currentPath = Router.getCurrentRoute();
+            Router.route(currentPath?.parentPath + '/settings-form');
+            return false;
+        }
+
+        return true;
     }
 
     updateForm() {
@@ -140,9 +198,14 @@ export class BuilderPage extends Page {
             const formWrapper = this.#builderFormService?.getFormWrapper();
             if (formWrapper){ 
                 formWrapper.form = this.#builderFormService?.getBuilderForm()?.getData();
+
+                Storage.setPageItem('form-wrapper', JSON.stringify(formWrapper));
+            } else {
+                Storage.removePageItem('form-wrapper');
             }
 
-            Storage.setPageItem('form-wrapper', JSON.stringify(this.#builderFormService.getFormWrapper()));
+            
+            
         } catch(error) {
             console.error(error);
         }
@@ -209,13 +272,20 @@ export class BuilderPage extends Page {
     }
 
     destroy() {
+        console.log('destroy');
         super.destroy();
 
         footerService.clear();
         
-        this.#builderFormService.setForm('variables', undefined);
+        for (const formItem of this.forms) {
+            FieldServiceRegistry.destroy(formItem.form.getId());
+        }
+        
+
+        
         this.#builderFormService.setBuilderForm(undefined);
         this.#builderFormService.setFormWrapper(undefined);
+
         BuilderFormServiceRegistry.destroy('builder-form');
     }
 }

@@ -48,7 +48,7 @@ export class ConditionsField extends InputNucleus<HTMLDivElement> {
                 this.conditionsContainerDom.innerHTML = '';
                 this.conditionComponent = undefined;
                 this.footerAddComponent.show(true);
-                this.valueChanged();
+                this.updateValue(undefined);
             });
         this.footerAddComponent.show(false);
         this.conditionComponent.setValue(conditionDto);
@@ -72,7 +72,11 @@ export class ConditionsField extends InputNucleus<HTMLDivElement> {
     }
 
     setValue(value: ConditionDto | undefined, noCallback: boolean = false) {
-        if (this.conditionComponent === undefined) {
+        if (value === undefined) {
+            this.conditionsContainerDom.innerHTML = '';
+            this.conditionComponent = undefined;
+            this.footerAddComponent.show(true);
+        } else if (this.conditionComponent === undefined) {
             this.addCondition(value)
         } else {
             this.conditionComponent?.setValue(value);

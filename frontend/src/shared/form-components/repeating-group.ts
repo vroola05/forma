@@ -1,6 +1,6 @@
 import { FormRenderer } from "../generic-components/form-renderer";
 import { BaseFieldDto, FieldDto, InputFieldDto, LayoutType, OptionFieldDto, RepeatingGroupDto } from "../model/types";
-import { FieldService } from "../services/field-service";
+import { FieldServiceRegistry } from "../services/field-service";
 import { FormButton } from "./components/form-button";
 import { Nucleus } from "./interface/nucleus";
 
@@ -41,18 +41,23 @@ export class RepeatingGroup extends Nucleus {
     }
 
     async init(baseFieldDto: BaseFieldDto): Promise<this> {
+        let setsStr = undefined;
 
-        const setsStr = FieldService.getFieldValue(this.getId());
+        if (this.form) {
+            const fieldService = FieldServiceRegistry.get(this.form.getId());
+            setsStr = fieldService.getFieldValue(this.getId());
+        }
+
         if (setsStr) {
             const sets = Number(setsStr);
             for (let index = 0; index < sets; index++) {
-                await this.addRow();
+                await this.addRow(undefined, true);
             }
         } else {
             const repeatingGroupDto = baseFieldDto as RepeatingGroupDto;
             if (repeatingGroupDto.sets) {
                 for (let index = 0; index < repeatingGroupDto.sets.length; index++) {
-                    await this.addRow(repeatingGroupDto.sets[index]);
+                    await this.addRow(repeatingGroupDto.sets[index], true);
                 }
             }
         }
@@ -118,7 +123,7 @@ export class RepeatingGroup extends Nucleus {
     /**
      * 
      */
-    async addRow(values: FieldDto[] | undefined = undefined) {
+    async addRow(values: FieldDto[] | undefined = undefined, noCallback: boolean = false) {
         const index = this.sets.length;
 
         this.sets.push({ deleteBtn: undefined, fields: [], values });
@@ -132,7 +137,10 @@ export class RepeatingGroup extends Nucleus {
 
         this.repeatingGroupContainerDom.appendChild(repeatingGroupDom);
 
-        this.valueChanged();
+        if (!noCallback) {
+            this.valueChanged();
+        }
+        
     }
 
     async createRepeatingGroup(index: number): Promise<HTMLElement> {
@@ -183,15 +191,15 @@ export class RepeatingGroup extends Nucleus {
             const setDto= this.getSetField(index, i);
 
             if (FormRenderer.isOptionType(fieldDto.type)) {
-                (fieldDto as OptionFieldDto).values = (setDto as OptionFieldDto).values;
+                (fieldDto as OptionFieldDto).values = (setDto as OptionFieldDto)?.values;
 
             } else if (FormRenderer.isInputType(fieldDto.type)) {
-                (fieldDto as InputFieldDto).value = (setDto as InputFieldDto).value;
+                (fieldDto as InputFieldDto).value = (setDto as InputFieldDto)?.value;
             } else if (fieldDto.type === 'repeating-group') {
-                (fieldDto as RepeatingGroupDto).sets = (setDto as RepeatingGroupDto).sets;
+                (fieldDto as RepeatingGroupDto).sets = (setDto as RepeatingGroupDto)?.sets;
             }
             
-            const field = await FormRenderer.createField(fieldDto, `${this.getId()}-set-${index}`);
+            const field = await FormRenderer.createField(fieldDto, this.getForm(), `${this.getId()}-set-${index}`);
 
             repeatingGroupInnerContainerDom.appendChild(field.getContent());
             this.sets[index].fields.push(field);
@@ -231,7 +239,10 @@ export class RepeatingGroup extends Nucleus {
     valueChanged(noCallback: boolean = false, value: any = undefined) {
         this.setSetContainer();
         
-        FieldService.setFieldValue(this.getId(), this.sets.length);
+        if (this.form) {
+            const fieldService = FieldServiceRegistry.get(this.form.getId());
+            fieldService.setFieldValue(this.getId(), this.sets.length);
+        }
 
         this.checkMinMaxAmount().then(() => {}).catch(() => {});
 

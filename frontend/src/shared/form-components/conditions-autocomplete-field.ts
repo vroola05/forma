@@ -279,7 +279,9 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
      */
     setInputInputListener() {
         this.inputElement.addEventListener('input', (e) => {
-            const target = e.target as HTMLInputElement;
+            const inputEvent = e as InputEvent;
+            const target = inputEvent.target as HTMLInputElement;
+
             if (!target.value.startsWith('$')) {
                 this.showAutocompleteMenu(false);
                 return;

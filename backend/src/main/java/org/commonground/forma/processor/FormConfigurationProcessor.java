@@ -108,15 +108,15 @@ public class FormConfigurationProcessor {
     private void processSuccessPage(FormDefinitionEntity formDefinitionEntity, FormWrapper wrapper) {
         FormConfig config = wrapper.getFormConfig();
 
-        
         // Check if the success-page needs to be removed
         boolean removeSuccessPage = isSuccessPageMissing(wrapper);
         if (removeSuccessPage) {
-            FormConfigSuccessPageEntity formConfigSuccessPageEntity = formDefinitionEntity.getSuccessPage();
-            if (formConfigSuccessPageEntity != null) {
-                formDefinitionEntity.clearSuccessPage();
-                config.setFormConfigSuccessPage(null);
-            }
+            formDefinitionEntity.clearSuccessPage();
+            // FormConfigSuccessPageEntity formConfigSuccessPageEntity = formDefinitionEntity.getSuccessPage();
+            // if (formConfigSuccessPageEntity != null) {
+                
+            config.setFormConfigSuccessPage(null);
+            // }
             return;
         }
         
@@ -188,7 +188,7 @@ public class FormConfigurationProcessor {
                 formVariableEntity.addValue(formVariableValueEntity);
             } else {
                  formVariableValueEntity = formVariableEntity.getValues().stream()
-                        .filter(valueEntity -> valueEntity.getId() == value.getId()).findFirst()
+                        .filter(valueEntity -> value.getId().equals(valueEntity.getId())).findFirst()
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Variabele niet gevonden"));;
             }
             formVariableValueEntity.setVariableValue(value.getValue());

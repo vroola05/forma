@@ -104,6 +104,10 @@ export class BuilderEditor {
             }
         }, 400);
     }
+
+    isEmpty() {
+        return this.#editor.isEmpty;
+    }
     
     getJsonData() {
         return this.#editor.getJSON();

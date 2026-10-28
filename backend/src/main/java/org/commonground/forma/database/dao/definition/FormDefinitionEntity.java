@@ -101,7 +101,6 @@ public class FormDefinitionEntity extends BaseEntity {
 
     public void clearSuccessPage() {
         if (this.successPage != null) {
-            this.successPage.setForm(null);
             this.successPage = null;
         }
     }
