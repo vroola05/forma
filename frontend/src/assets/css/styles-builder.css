@@ -1231,14 +1231,17 @@ Styles voor builder-field.js
             border: #cccccc solid 1px;
             border-radius: var(--default-space-half) 0px 0px var(--default-space-half);
 
-            font-weight: bolder;
-
             cursor: pointer;
 
             -webkit-user-select: none;
             -ms-user-select: none;
             user-select: none;
+            white-space: nowrap;
+
+            font-family: monospace;
+            font-weight: bolder;
         }
+        
         .autocomplete-input {
             border-radius: 0px var(--default-space-half) var(--default-space-half) 0px;
         }

@@ -1,8 +1,20 @@
 import { BuilderFieldInterface } from '../../form-builder/fields/builder-field-interface';
 import { BuilderFormServiceRegistry } from '../../form-builder/services/builder-form-service';
 import { FIELD_TYPE } from '../../form-builder/types';
-import { TranslationDto } from '../model/types';
+import { OptionDto, TranslationDto } from '../model/types';
+import { VariableService } from '../services/variable-service';
 import { InputNucleus } from './interface/input-base';
+
+export type TokenType = 'TEXT' | 'PAGE_VAR' | 'FORM_VALUE';
+
+interface WordContext {
+    word: string;
+    innerWord: string;
+    startIndex: number;
+    endIndex: number;
+    type: TokenType;
+    isComplete: boolean;
+}
 
 /**
  * Textfield
@@ -17,10 +29,16 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
     hasFocus: boolean = false;
     selectedAutocompleteIndex: number = -1;
 
+    tokenTypes: OptionDto[] = [
+        { value:'FORM_VALUE', text: 'Formulier veld' },
+        { value:'PAGE_VAR', text: 'Formulier variabele' },
+    ];
+
     #builderFormService = BuilderFormServiceRegistry.get('builder-form');
 
     onListItemClickedListener: ((value: any) => void) | null = null;
     onFieldFoundListener: ((value: any) => void) | null = null;
+    currentCursorPostion: number = -1;
 
     constructor(name: string, labels: TranslationDto[] | undefined = undefined) {
         super(document.createElement('input'), name, labels);
@@ -31,9 +49,9 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
 
         const autoCompleteMenuIcon = document.createElement('div');
         autoCompleteMenuIcon.className = 'autocomplete-input-btn';
-        autoCompleteMenuIcon.innerHTML = '$';
+        autoCompleteMenuIcon.innerHTML = '{}';
         inputElementContainer.appendChild(autoCompleteMenuIcon);
-        autoCompleteMenuIcon.addEventListener('click', () => {
+        autoCompleteMenuIcon.addEventListener('click', (e) => {
             this.toggle();
         });
 
@@ -58,161 +76,35 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
         this.setInputChangeListener();
     }
 
-    /**
-     * Select the autocomplete menu item at the given index and add the 'selected' class to it, while removing the 'selected' class from the previously selected item
-     * @param {number} index 
-     */
-    selectAutocompleteMenuItem(index: number) {
-        this.autocompleteMenuElement.children[this.selectedAutocompleteIndex]?.classList.remove('selected');
-        this.selectedAutocompleteIndex = index;
-        if (this.selectedAutocompleteIndex >= 0 && this.selectedAutocompleteIndex < this.autocompleteMenuElement.children.length) {
-            this.autocompleteMenuElement.children[this.selectedAutocompleteIndex].classList.add('selected');
-        }
+    focus(index: number = -1) {
+        this.inputElement.focus();
+        const position = index >= 0 ? index : this.inputElement.value.length
+        this.inputElement.setSelectionRange(position, position);
     }
 
     toggle() {
-        if (this.hasFocus === true) {
-            this.cancelBlur = true;
+        const wordContext = this.getWordAtCursor(this.inputElement);
+
+        if (this.currentCursorPostion === -1 || this.currentCursorPostion === wordContext.endIndex) {
+            if (wordContext.type === 'TEXT' || wordContext.isComplete) {
+                wordContext.startIndex = wordContext.endIndex;
+                wordContext.innerWord = '';
+                wordContext.word = '';
+                wordContext.type = 'TEXT';
+            }
         }
-        if (this.autocompleteMenuElement.classList.contains('hidden')) {
-            this.searchPath(this.inputElement.value);
-            this.focus();
-        } else {
+
+        if (wordContext.type === 'TEXT' && wordContext.word !== '') {
             this.showAutocompleteMenu(false);
+            return this;
         }
-        return this;
-    }
 
-    showAutocompleteMenu(show: boolean) {
-        const isHidden = this.autocompleteMenuElement.classList.contains('hidden');
-        if (show && isHidden) {
-            this.isAutocompleteVisible = true;
-            this.selectedAutocompleteIndex = -1;
-            this.autocompleteMenuElement.classList.remove('hidden');
-        } else if (!show && !isHidden) {
-            this.isAutocompleteVisible = false;
-            this.autocompleteMenuElement.classList.add('hidden');
-        }
-    }
+        const tokens = wordContext.innerWord.split('.');
+        const menuItems = this.getMenuItems(wordContext, tokens);
 
-    createAutocompleteMenuItems(fields: BuilderFieldInterface[], prefix: string) {
-        this.autocompleteMenuElement.innerHTML = '';
-
-        fields.forEach(field => {
-            const name = field.fieldProperties.getPropertyById('name')?.value;
-            const matchName = name.slice(0, prefix.length);
-            const restName = name.slice(prefix.length); 
-
-            const item = document.createElement('div');
-            item.className = 'autocomplete-menu-item';
-            item.dataset.value = name;
-            item.innerHTML = `<span class="match">${matchName}</span>${restName}`;
-            this.autocompleteMenuElement.appendChild(item);
-            item.addEventListener('click', () => {
-                this.cancelBlur = true;
-
-                const tokens = this.getValueAsArray();
-                if (tokens.length === 0) {
-                    return;
-                }
-
-                const fields = this.getCurrentBuilderFields(tokens);
-                if (!fields) {
-                    return;
-                }
-
-                tokens[tokens.length - 1] = field.fieldProperties.getPropertyById('name')?.value;
-
-                const childFields = field.getFields();
-                if (childFields && childFields.length > 0) {
-                    tokens.push('');
-                
-                    const value = tokens.join('.');
-                    this.setValue(value);
-                    
-                    this.focus();
-                    this.searchPath(value);
-                    if (this.onListItemClickedListener) {
-                        this.onListItemClickedListener(this.getValue());
-                    }
-                } else {
-                    const value = tokens.join('.');
-                    this.setValue(value);
-                    this.showAutocompleteMenu(false);
-                    if (this.onFieldFoundListener) {
-                        this.onFieldFoundListener(this.getValue());
-                    }
-                }
-            });
-        });
-    }
-
-    focus() {
-        this.inputElement.focus();
-        const lengte = this.inputElement.value.length;
-        this.inputElement.setSelectionRange(lengte, lengte);
-    }
-
-    // TODO: Value isnt used?
-    searchPath(value: string) {
-        this.autocompleteMenuElement.innerHTML = '';
-
+        this.createMenuItems(wordContext, menuItems);
         this.showAutocompleteMenu(true);
-        const tokens = this.getValueAsArray();
-        
-        const fields = this.getCurrentBuilderFields(tokens);
-        if (!fields) {
-            this.autocompleteMenuElement.innerHTML = '<div class="autocomplete-menu-item">Geen velden gevonden</div>';
-            return;
-        }
-        this.createAutocompleteMenuItems(fields, tokens[tokens.length - 1]);
-    }
-
-    getValueAsArray() {
-        let value = this.inputElement.value;
-        if (!value || value === '') {
-            value += '$.';
-        } else if (value === '$') {
-            value += '.';
-        }
-        
-        return value.split('.');
-    }
-
-    getCurrentBuilderFields(tokens: string[]) {
-        const form = this.#builderFormService.getBuilderForm();
-        if (!form) {
-            return;
-        }
-
-        let fields: BuilderFieldInterface[] = [];
-        fields.push(form);
-        for (let i = 1; i < tokens.length; i++) {
-            if (i >= tokens.length - 1) {
-                return this.filterFields(fields, tokens[i]);
-            }
-
-            const field = this.getField(fields, tokens[i]);
-            if (!field) {
-                console.warn('Field not found for token:', tokens[i]);
-                return undefined;
-            }
-
-            fields = field.getFields() || [];
-            if (fields.length === 0) {
-                console.warn('No builder fields found for field:', field);
-                return undefined;
-            }
-        }
-        return [];
-    }
-
-    getField(fields: BuilderFieldInterface[], name: string): BuilderFieldInterface | undefined{
-        return fields.find(field => field.fieldProperties.getPropertyById('name')?.value === name);
-    }
-
-    filterFields(fields: BuilderFieldInterface[], name: string) {
-        return fields.filter(field => field.fieldProperties.getPropertyById('name')?.value.startsWith(name));
+        return this;
     }
 
     setType(type: FIELD_TYPE) {
@@ -282,20 +174,264 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
             const inputEvent = e as InputEvent;
             const target = inputEvent.target as HTMLInputElement;
 
-            if (!target.value.startsWith('$')) {
+            if (!target) {
+                this.showAutocompleteMenu(false);
+                return null;
+            }
+            this.saveCursor(e);
+            
+            const wordContext = this.getWordAtCursor(target);
+            if (wordContext.type === 'TEXT') {
                 this.showAutocompleteMenu(false);
                 return;
             }
-            this.searchPath(target.value);
+
+            const tokens = wordContext.innerWord.split('.');
+            const menuItems = this.getMenuItems(wordContext, tokens);
+
+            this.createMenuItems(wordContext, menuItems);
+            this.showAutocompleteMenu(true);
         });
     }
+
+    getMenuItems(wordContext: WordContext, tokens: string []) {
+        let menuItems: OptionDto[];
+        if (wordContext.type === 'FORM_VALUE') {
+            menuItems = this.getCurrentFieldNames(tokens);
+        } else if (wordContext.type === 'PAGE_VAR') {
+            menuItems = this.getCurrentVariableNames(tokens)
+        } else {
+            menuItems = this.getStartMenuNames();
+        }
+
+        if (menuItems.length === 0) {
+            this.showAutocompleteMenu(false);
+            return [];
+        }
+        return menuItems;
+    }
+
+    getWordAtCursor(target: HTMLInputElement | HTMLTextAreaElement): WordContext {
+        const text = target.value;
+        const cursorIndex = target.selectionStart ?? 0;
+
+        let start = cursorIndex;
+
+        while (start > 0) {
+            const prevChar = text.charAt(start - 1);
+            
+            if (/\s/.test(prevChar)) break;
+            
+            if (prevChar === '}' && start !== cursorIndex) break;
+            
+            start--;
+            
+            
+            const currentChar = text.charAt(start);
+            if (currentChar === '$' || currentChar === '#') {
+                break;
+            }
+        }
+
+        let end = cursorIndex;
+        while (end < text.length) {
+            const nextChar = text.charAt(end);
+
+            if (/\s/.test(nextChar)) break;
+            
+            if ((nextChar === '$' || nextChar === '#') && end !== cursorIndex) break;
+
+            end++;
+
+            if (text.charAt(end - 1) === '}') {
+                break;
+            }
+        }
+
+        const word = text.substring(start, end);
+
+        let type: TokenType = 'TEXT';
+        let isComplete = false;
+
+        if (word.startsWith('${') || word === '$') {
+            type = 'FORM_VALUE';
+            isComplete = word.startsWith('${') && word.endsWith('}');
+        } else if (word.startsWith('#{') || word === '#') {
+            type = 'PAGE_VAR';
+            isComplete = word.startsWith('#{') && word.endsWith('}');
+        }
+
+        let innerWord;
+        if (type !== 'TEXT') {
+            const prefixLength = word.includes('{') ? 2 : 1;
+            const suffixLength = word.endsWith('}') ? 1 : 0;
+
+            innerWord = word.substring(prefixLength, word.length - suffixLength);
+        } else {
+            innerWord = word;
+        }
+
+        return {
+            word,
+            innerWord,
+            startIndex: start,
+            endIndex: end,
+            type,
+            isComplete
+        };
+    }
+
+    createMenuItems(wordContext: WordContext, menuItems: OptionDto[]) {
+        this.autocompleteMenuElement.innerHTML = '';
+
+        for (const tokenType of menuItems) {
+            const item = document.createElement('div');
+            item.className = 'autocomplete-menu-item';
+            item.dataset.value = tokenType.value;
+            item.innerHTML = `<span class="match">${tokenType.text}</span>`;
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+
+
+                let tokens;
+                if (this.tokenTypes.find(a => a.value === item.dataset.value)) {
+                    wordContext.type = item.dataset.value as TokenType;
+                    tokens = [];
+                    tokens.push('');
+                } else {
+                    wordContext.innerWord = item.dataset.value?? '';
+
+                    tokens = wordContext.innerWord.split('.');
+                    tokens.push('');
+                }
+
+                const menuItems = this.getMenuItems(wordContext, tokens);
+                if (menuItems.length > 0) {
+
+                    this.createMenuItems(wordContext, menuItems);
+                    this.showAutocompleteMenu(true);
+
+                    if (this.onListItemClickedListener) {
+                        this.onListItemClickedListener(this.getValue());
+                    }
+                } else {
+                    this.showAutocompleteMenu(false);
+
+                    let completedTag;
+                    if (wordContext.type === 'FORM_VALUE') {
+                        completedTag = `\${${wordContext.innerWord}}`;
+                    } else if (wordContext.type === 'PAGE_VAR') {
+                        completedTag = `#{${wordContext.innerWord}}`;
+                    } else {
+                        completedTag = wordContext.innerWord;
+                    }
+
+                    const value = this.getValue() as string;
+
+                    this.setValue(value.substring(0, wordContext.startIndex) + 
+                        completedTag + 
+                        value.substring(wordContext.endIndex));
+
+                    this.cancelBlur = true;
+                    
+                    this.focus(wordContext.startIndex + completedTag.length);
+
+                    if (this.onFieldFoundListener) {
+                        this.onFieldFoundListener(completedTag);
+                    }
+                    
+                }
+            });
+            this.autocompleteMenuElement.appendChild(item);
+        }
+    }
+    
+    getStartMenuNames(): OptionDto[] {
+        return this.tokenTypes;
+    }
+    getCurrentFieldNames(tokens: string[]): OptionDto[] {
+        const form = this.#builderFormService.getBuilderForm();
+        if (!form) {
+            return [];
+        }
+
+        let fields: BuilderFieldInterface[] = [];
+        fields.push(form);
+        let prefix = '';
+        for (let i = 0; i < tokens.length; i++) {
+            if (i >= tokens.length - 1) {
+                
+                return this.#filterFields(fields, tokens[i], prefix);
+            }
+            
+            const field = this.#getField(fields, tokens[i]);
+            if (!field) {
+                return [];
+            }
+
+            prefix += field.fieldProperties.getPropertyById('name')?.value + '.';
+
+            fields = field.getFields() || [];
+
+            if (fields.length === 0) {
+                return [];
+            }
+        }
+        return [];
+    }
+
+    #filterFields(fields: BuilderFieldInterface[], name: string, prefix: string): OptionDto[] {
+        return fields
+                .filter(field => field.fieldProperties.getPropertyById('name')?.value.startsWith(name))
+                .map(field => {
+                    const value = field.fieldProperties.getPropertyById('name')?.value;
+
+                    return {
+                        value: prefix + value,
+                        text: value
+                    }
+                });
+    }
+
+    #getField(fields: BuilderFieldInterface[], name: string): BuilderFieldInterface | undefined{
+        return fields.find(field => field.fieldProperties.getPropertyById('name')?.value === name);
+    }
+
+    getCurrentVariableNames(tokens: string[]): OptionDto[] {
+            if (!this.form || tokens === undefined || tokens.length !== 1) {
+                return [];
+            }
+    
+            const variables = VariableService.get(this.form.getId());
+            if (!variables) {
+                return [];
+            }
+            
+            const token: string = tokens.at(1)?? '';
+            return variables
+                .filter(variable => variable.name !== undefined && variable.name.startsWith(token))
+                .map(variable => {
+                    return {
+                        value: variable.name,
+                        text: variable.name
+                    }
+                });
+        }
 
     /**
      * Set hasFocus to true when the input element is focused
      */
     setInputFocusListener() {
-        this.inputElement.addEventListener('focus', (e) => {
+        this.inputElement.addEventListener('focus', () => {
             this.hasFocus = true;
+        });
+        this.inputElement.addEventListener('click', (e: Event) => {
+            if (!e.target) {
+                this.showAutocompleteMenu(false);
+                return null;
+            }
+            
+            this.saveCursor(e)
         });
     }
 
@@ -312,7 +448,7 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
                     this.cancelBlur = false;
                     return;
                 }
-                this.showAutocompleteMenu(false);
+                this.currentCursorPostion = -1;
             }, 200); 
         });
     }
@@ -331,22 +467,23 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
      * Set keydown listener on the input element to navigate through the autocomplete menu with the arrow keys and select an item with enter or tab
      */
     setInputKeyDownListener() {
-        this.inputElement.addEventListener('keydown', (e) => {
+        this.inputElement.addEventListener('keyup', (e) => {
+            this.saveCursor(e);
             if (!this.isAutocompleteVisible) {
                 return;
             }
-            
+
             switch (e.key) {
                 case 'ArrowUp':
                     e.preventDefault();
-                    this.selectAutocompleteMenuItem(
-                        this.selectedAutocompleteIndex > 0 ? this.selectedAutocompleteIndex - 1 : this.autocompleteMenuElement.children.length - 1);
+                    // this.selectAutocompleteMenuItem(
+                    //     this.selectedAutocompleteIndex > 0 ? this.selectedAutocompleteIndex - 1 : this.autocompleteMenuElement.children.length - 1);
                     
                     break;
                 case 'ArrowDown':
                     e.preventDefault();
-                    this.selectAutocompleteMenuItem(
-                            this.selectedAutocompleteIndex < this.autocompleteMenuElement.children.length - 1 ? this.selectedAutocompleteIndex + 1 : 0);
+                    // this.selectAutocompleteMenuItem(
+                    //         this.selectedAutocompleteIndex < this.autocompleteMenuElement.children.length - 1 ? this.selectedAutocompleteIndex + 1 : 0);
                     break;
                 case 'ArrowLeft':
                     break;
@@ -372,4 +509,31 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
             }
         });
     }
+
+    saveCursor(e: Event) {
+        const target = e.target as HTMLInputElement;
+        this.currentCursorPostion = target?.selectionStart ?? 0;
+        console.log(this.currentCursorPostion);
+    }
+
+    /**
+     * 
+     */
+    showAutocompleteMenu(show: boolean) {
+        const isHidden = this.autocompleteMenuElement.classList.contains('hidden');
+
+        if (!show) {
+            if (!isHidden) {
+                this.isAutocompleteVisible = false;
+                this.autocompleteMenuElement.classList.add('hidden');
+            }
+            return;
+        }
+
+        this.isAutocompleteVisible = true;
+        this.selectedAutocompleteIndex = -1;
+        this.autocompleteMenuElement.classList.remove('hidden');
+
+    }
+
 }

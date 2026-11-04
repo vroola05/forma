@@ -16,8 +16,8 @@ import org.commonground.forma.exceptions.FormFieldError;
 import org.commonground.forma.exceptions.FormValidationException;
 import org.commonground.forma.exceptions.PageExpiredException;
 import org.commonground.forma.mapper.FormMapper;
+import org.commonground.forma.mapper.FormWrapperMapper;
 import org.commonground.forma.model.constants.FormStatus;
-import org.commonground.forma.model.form.FormConfig;
 import org.commonground.forma.model.form.FormConfigSuccessPage;
 import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.fields.Form;
@@ -60,6 +60,7 @@ public class FormController {
     private final FileService fileService;
     private final SecurityService securityService;
     private final FormPdfService formPdfService;
+    private final FormWrapperMapper formWrapperMapper;
     private final FormMapper formMapper;
 
     public FormController(
@@ -70,6 +71,7 @@ public class FormController {
         FileService fileService,
         SecurityService securityService,
         FormMapper formMapper,
+        FormWrapperMapper formWrapperMapper,
         FormPdfService formPdfService
     ) {
         this.formService = formService;
@@ -79,6 +81,7 @@ public class FormController {
         this.fileService = fileService;
         this.securityService = securityService;
         this.formMapper = formMapper;
+        this.formWrapperMapper = formWrapperMapper;
         this.formPdfService = formPdfService;
     }
 
@@ -114,18 +117,16 @@ public class FormController {
             throw new PageExpiredException("{page.succes.expired}");
         }
 
-        FormWrapper formWrapper = new FormWrapper();
-        formWrapper.setForm(this.formMapper.toResponseDto(formDefinitionEntity));
-
-        FormConfigSuccessPage formConfigSuccessPage = this.formConfigSuccessPageService.get(formDefinitionEntity);
-
-        formWrapper.setFormConfig(new FormConfig());
-        formWrapper.getFormConfig().setFormConfigSuccessPage(formConfigSuccessPage);
-
         
-        if (formConfigSuccessPage != null) {
-            formConfigSuccessPage.setContent(this.formConfigSuccessPageService.transform(formWrapper, formSubmissionEntity.getData()));
+        FormWrapper formWrapper = this.formWrapperMapper.toResponseDto(formDefinitionEntity);
+        
+
+        if (formWrapper.getFormConfig() == null || formWrapper.getFormConfig().getFormConfigSuccessPage() == null) {
+            return new FormConfigSuccessPage();
         }
+
+        FormConfigSuccessPage formConfigSuccessPage = formWrapper.getFormConfig().getFormConfigSuccessPage();
+        formConfigSuccessPage.setContent(this.formConfigSuccessPageService.transform(formWrapper, formSubmissionEntity.getData()));
 
         return formConfigSuccessPage;
     }

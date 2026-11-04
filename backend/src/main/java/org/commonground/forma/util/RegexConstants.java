@@ -11,7 +11,16 @@ public final class RegexConstants {
     public static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
     public static final String COLOR_REGEX = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$";
 
+    public static final String DYNAMIC_VALUE_REGEX = "([#$]\\{([A-Za-z0-9._-]+?)\\})";
+
+
     public static final Pattern SLUG = Pattern.compile(SLUG_REGEX);
     public static final Pattern EMAIL = Pattern.compile(EMAIL_REGEX);
     public static final Pattern COLOR = Pattern.compile(COLOR_REGEX);
+
+    public static final Pattern PAGE_VAR = Pattern.compile(DYNAMIC_VALUE_REGEX);
+
+
+    
+    
 }

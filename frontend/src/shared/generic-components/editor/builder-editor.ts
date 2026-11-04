@@ -2,6 +2,7 @@ import { Editor, Extension } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 
 import { BuilderTextEditorToolbar } from './builder-editor-toolbar';
+import { FieldMenu } from './builder-field-mention-menu';
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
@@ -16,15 +17,42 @@ export const MentionTriggerExtension = Extension.create({
     addCommands() {
         return {
             openMentions: () => ({ commands, editor }) => {
+                commands.focus();
+
+                // 2. Haal de cursorpositie op
                 const { selection } = editor.state;
-                const { $from } = selection;
+                const { from } = selection;
 
-                const charBefore = $from.nodeBefore?.textContent?.slice(-1);
+                try {
+                    // 3. Haal de coördinaten (DOMRect) van de cursor op
+                    const coords = editor.view.coordsAtPos(from);
+                    
+                    // 4. Maak een instantie van je menu
+                    const menu = new FieldMenu();
+                    menu.toggle();
+                    
+                    // 5. Bouw de SuggestionProps na (mocken) die updatePosition verwacht
+                    const mockedProps = {
+                        clientRect: () => new DOMRect(
+                            coords.left, 
+                            coords.top + window.scrollY, // Rekening houden met scroll als je popup absolute is t.o.v. de body
+                            coords.right - coords.left, 
+                            coords.bottom - coords.top
+                        ),
+                        // Voeg eventuele andere verplichte props toe die je FieldMenu vereist, bijv:
+                        // editor: editor,
+                        // command: (item) => { ... }
+                    };
 
-                if (charBefore !== '$') {
-                    return commands.insertContent('$');
+                    // 6. Geef het door aan je bestaande functie
+                    menu.updatePosition(mockedProps as any);
+                    console.log('yes', mockedProps);
+                    return true;
+                } catch (error) {
+                    console.error("Kon cursorpositie niet bepalen:", error);
+                    return false;
                 }
-                return commands.focus();
+                
             }
         }
     }

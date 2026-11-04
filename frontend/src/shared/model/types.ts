@@ -207,7 +207,7 @@ export interface FormConfigSuccessPageDto {
 
 export interface FormVariableDto {
     id?: string;
-    name?: string;
+    name: string;
     tags?: string[];
     values?: FormVariableValueDto[];
 }

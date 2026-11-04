@@ -1,8 +1,8 @@
 import Placeholder from '@tiptap/extension-placeholder';
 import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
-import { DollarMenuMention } from "../generic-components/editor/builder-dollar-menu";
 import { BuilderEditor, MentionTriggerExtension } from "../generic-components/editor/builder-editor";
 import { BuilderEditorTableBubbleMenu } from "../generic-components/editor/builder-editor-table-bubble-menu";
+import { FieldMenuMention, VariableMenuMention } from "../generic-components/editor/builder-field-mention-menu";
 import { TranslationDto } from "../model/types";
 import { Lang } from "../services/lang";
 import { InputNucleus } from "./interface/input-base";
@@ -25,7 +25,8 @@ export class RichTextField extends InputNucleus<HTMLDivElement> {
                 TableRow,
                 TableHeader,
                 TableCell,
-                DollarMenuMention,
+                FieldMenuMention,
+                VariableMenuMention,
                 MentionTriggerExtension,
                 BuilderEditorTableBubbleMenu
         ]);

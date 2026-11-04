@@ -22,7 +22,8 @@ export class Form extends Nucleus {
     confirmation: any[] = [];
     confirmationCheck: any[] | undefined = undefined;
     clientSessionId: string | undefined = undefined;
-    
+    callback: ((name: string, value: string) => void)[] = [];
+
     #options: {
         showSummary: boolean
     } | undefined;
@@ -306,6 +307,25 @@ export class Form extends Nucleus {
 
     getFields() {
         return this.fields;
+    }
+
+    valueChanged(name: string, value: any = undefined) {
+        if (this.callback.length > 0) {
+            this.callback.forEach( callback => {
+                callback(name, value);
+            });
+        }
+    }
+
+    addValueChangedListener(callback: (name: string, value: any) => void) {
+        if (!callback) {
+            return this;
+        }
+        if (typeof callback !== 'function') {
+            throw new Error('Callback must be a function');
+        }
+        this.callback.push(callback);
+        return this;
     }
 
 }

@@ -8,6 +8,7 @@ import org.commonground.forma.database.dao.definition.FormConfigSuccessPageEntit
 import org.commonground.forma.database.dao.definition.FormDefinitionEntity;
 import org.commonground.forma.database.repository.FormConfigSuccessPageRepository;
 import org.commonground.forma.mapper.SuccessPageMapper;
+import org.commonground.forma.model.form.FormConfig;
 import org.commonground.forma.model.form.FormConfigSuccessPage;
 import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.fields.Form;
@@ -90,7 +91,9 @@ public class FormConfigSuccessPageServiceDatabase implements FormConfigSuccessPa
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.config.successpage.template.error.not_found}");
         }
 
-        return this.tiptapService.convert(formWrapper.getFormConfig().getFormConfigSuccessPage().getTemplate(), form);
+        FormConfig formConfig = formWrapper.getFormConfig();
+
+        return this.tiptapService.convert(formConfig.getFormConfigSuccessPage().getTemplate(), form, formConfig.getVariables());
     }
 
     @Override

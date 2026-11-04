@@ -17,6 +17,7 @@ import { Form } from '../../../shared/form-components/form';
 import { BaseFieldDto, FormWrapper } from '../../../shared/model/types';
 import { FieldServiceRegistry } from '../../../shared/services/field-service';
 import { Loader } from '../../../shared/services/loader';
+import { VariableService } from '../../../shared/services/variable-service';
 import { BuilderFormServiceRegistry } from '../../services/builder-form-service';
 import { BuilderPropertiesService } from '../../services/builder-properties-service';
 import { FormGeneric } from './components/forms/form-generic';
@@ -101,6 +102,10 @@ export class BuilderPage extends Page {
         // Create the Variables form
         const formVariables = new FormVariables();
         formVariables.createForm(formWrapper?.formConfig?.variables).then(form => {
+            form.addValueChangedListener((name, value) => {
+                VariableService.set(form.getId(), formVariables.getFormData(form));
+            });
+
             this.#builderFormService.setForm(form); 
             this.forms.push({form, url: currentPath?.parentPath + '/settings-variables'});
         }).catch(() => {});
@@ -204,7 +209,7 @@ export class BuilderPage extends Page {
                 Storage.removePageItem('form-wrapper');
             }
 
-            
+            console.log('donnie');
             
         } catch(error) {
             console.error(error);

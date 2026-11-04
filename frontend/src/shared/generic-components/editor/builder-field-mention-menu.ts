@@ -3,7 +3,7 @@ import Mention from '@tiptap/extension-mention';
 import { SuggestionKeyDownProps, SuggestionProps } from '@tiptap/suggestion';
 import { ConditionsAutocompleteField } from '../../form-components/conditions-autocomplete-field';
 
-export class DollarMenu {
+export class FieldMenu {
     popup: HTMLElement | null = null;
     props: SuggestionProps | null = null;;
 
@@ -26,10 +26,10 @@ export class DollarMenu {
         this.var1SimpleTextfield = new ConditionsAutocompleteField('var1')
             .setPlaceholder('Formula veld')
             .setOnFieldFoundListener((value) => {
-                value = `{${value.startsWith('$.') ? value.substring(2) : value}}`;
+                const v = value.startsWith('$') || value.startsWith('#') ? value.substring(1) : value;
                 props.command({
-                    id: value,
-                    label: value
+                    id: v,
+                    label: v
                 });
 
             })
@@ -47,7 +47,13 @@ export class DollarMenu {
     }
 
     onUpdate(props: SuggestionProps) {
+        
         this.props = props;
+
+        if (this.var1SimpleTextfield) {
+            const value = props.text.startsWith('$') || props.text.startsWith('#') ? props.text.substring(1) : props.text;
+            this.var1SimpleTextfield.setValue(value, true);
+        }
     }
 
     updatePosition(props: SuggestionProps) {
@@ -84,6 +90,7 @@ export class DollarMenu {
             const tekst = props.view.state.doc.textBetween(this.props.range.from, this.props.range.to);
         }
 
+        
 
         return false;
     }
@@ -98,16 +105,39 @@ export class DollarMenu {
     }
 }
 
-export const DollarMenuMention = Mention.configure({
+export const VariableMenuMention = Mention.extend({
+    name: 'variableMenuMention',
+}).configure({
+    HTMLAttributes: {
+        class: 'mention-item',
+    },
+    suggestion: {
+        char: '#',
+        render: () => {
+            const menu = new FieldMenu();
+            return {
+                onStart: (props) => menu.onStart(props),
+                onUpdate: (props) => menu.onUpdate(props),
+                onKeyDown: (props) => menu.onKeyDown(props),
+                onExit: () => menu.onExit(),
+            };
+        }
+    }
+});
+
+export const FieldMenuMention = Mention.extend({
+    name: 'fieldMenuMention',
+}).configure({
     HTMLAttributes: {
         class: 'mention-item',
     },
     suggestion: {
         char: '$',
         render: () => {
-            const menu = new DollarMenu();
+            const menu = new FieldMenu();
             return {
                 onStart: (props) => menu.onStart(props),
+                onUpdate: (props) => menu.onUpdate(props),
                 onKeyDown: (props) => menu.onKeyDown(props),
                 onExit: () => menu.onExit(),
             };

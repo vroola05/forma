@@ -121,11 +121,14 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         if (!noCallback) {
             
             if (this.form) {
-
                 const fieldService = FieldServiceRegistry.get(this.form.getId());
                 fieldService.setFieldValue(this.getId(), this.value);
+
+                this.form.valueChanged(this.name, value ? value : this.value);
             }
 
+            // In general these are used for things like
+            // showconditions
             if (this.callback.length > 0) {
                 this.callback.forEach( callback => {
                     callback(this.name, value ? value : this.value, this);

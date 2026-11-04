@@ -24,7 +24,7 @@ export class BuilderTextEditorToolbar {
             label: '',
             fnc: () => { new BuilderEditorTableDropdown(this.#editor) }
         },
-        { cmd: 'openMentions', label: '$', extension: 'mentionTrigger' }
+        { cmd: 'openMentions', label: '{}', extension: 'mentionTrigger' }
     ];
 
     constructor(editor: Editor) {
