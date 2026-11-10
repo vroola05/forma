@@ -18,6 +18,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -58,6 +59,7 @@ public class FormTabDefinitionEntity extends BaseEntity {
     private List<TabTranslationEntity> labels = new ArrayList<>();
 
     @OneToMany(mappedBy = "tab", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sortOrder ASC")
     private List<FormFieldDefinitionEntity> fields = new ArrayList<>();
 
     public void removeFieldsExcept(Set<UUID> incomingIds) {

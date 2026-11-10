@@ -264,14 +264,36 @@ export enum ConditionType {
 export interface ConditionDto {
     conditionType?: ConditionType;
 
-    var1?: string;
+    var1: string;
     operator?: Operator;
-    var2?: string;
+    var2: string;
     logicalOperator?: LogicalOperator;
     
     conditions?: ConditionDto[];
 
-    var2Fields?: Nucleus[];
-    var1Fields?: Nucleus[];
+    var1Fields?: Map<string, WordContext>;
+    var2Fields?: Map<string, WordContext>;
 }
 
+export type TokenType = 'TEXT' | 'PAGE_VAR' | 'FORM_VALUE';
+
+export function getTokenTypeByTrigger(match: string): TokenType {
+    if (match.startsWith('$')) {
+        return 'FORM_VALUE';
+    }
+    if (match.startsWith('#')) {
+        return 'PAGE_VAR';
+    }
+    return 'TEXT';
+}
+
+export interface WordContext {
+    word: string;
+    innerWord: string;
+    type: TokenType;
+    startIndex?: number;
+    endIndex?: number;
+    isComplete?: boolean;
+    value?: any;
+    fields?:Nucleus[];
+}

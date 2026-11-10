@@ -1,13 +1,12 @@
 package org.commonground.forma.util.condition;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.commonground.forma.model.form.condition.Condition;
 import org.commonground.forma.model.form.condition.ConditionType;
 import org.commonground.forma.model.form.condition.LogicalOperator;
 import org.commonground.forma.model.form.condition.Operator;
-import org.commonground.forma.model.form.fields.Form;
+import org.commonground.forma.model.form.fields.Field;
 
 /**
  * Ik gebruik een vereenvoudigde JSONPath-syntaxis om logica te definiëren binnen formulieren.
@@ -25,7 +24,7 @@ import org.commonground.forma.model.form.fields.Form;
  * $.winkel.boeken[-1:]	    - Slice (negatief): Selecteert het laatste element uit de array.	Het object voor "RFC Gids".
  */
 public class ConditionParser {
-    public static boolean checkCondition(Form form, Condition condition) {
+    public static boolean checkCondition(Field field, Condition condition) {
         if(condition.getConditionType() == ConditionType.COMPOSITE.getValue()) {
             if( condition.getLogicalOperator() == null) {
                 throw new IllegalArgumentException("Composite conditions must have a logical operator.");
@@ -35,10 +34,10 @@ public class ConditionParser {
             }
 
             if (condition.getLogicalOperator() == LogicalOperator.AND) {
-                return condition.getConditions().stream().allMatch(subCondition -> checkCondition(form, subCondition));
+                return condition.getConditions().stream().allMatch(subCondition -> checkCondition(field, subCondition));
 
             } else if (condition.getLogicalOperator() == LogicalOperator.OR) {
-                return condition.getConditions().stream().anyMatch(subCondition -> checkCondition(form, subCondition));
+                return condition.getConditions().stream().anyMatch(subCondition -> checkCondition(field, subCondition));
             }
         } else {
             if (condition.getOperator() == null) {
@@ -53,30 +52,14 @@ public class ConditionParser {
                 throw new IllegalArgumentException("Var2 is required.");
             }
 
-            return evaluateCondition(form, condition);
+            return evaluateCondition(field, condition);
         }
         return true;
     }
 
-    private static boolean isField(String input) {
-        return input.startsWith("$.");
-    }
-
-    private static boolean evaluateCondition(Form form, Condition condition) {
-        List<String> var1Values = new ArrayList<>();
-        List<String> var2Values = new ArrayList<>();
-
-        if (isField(condition.getVar1())) {
-            var1Values = JsonPathFinder.evalTokenized(condition.getVar1(), form);
-        } else {
-            var1Values.add(condition.getVar1());
-        }
-        
-        if (isField(condition.getVar2())) {
-            var2Values = JsonPathFinder.evalTokenized(condition.getVar2(), form);
-        } else {
-            var2Values.add(condition.getVar2());
-        }
+    private static boolean evaluateCondition(Field field, Condition condition) {
+        List<String> var1Values = JsonPathFinder.eval(condition.getVar1(), field, null);
+        List<String> var2Values = JsonPathFinder.eval(condition.getVar2(), field, null);
 
         for (String value1 : var1Values) {
             for (String value2 : var2Values) {

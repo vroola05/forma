@@ -19,40 +19,33 @@ export const MentionTriggerExtension = Extension.create({
             openMentions: () => ({ commands, editor }) => {
                 commands.focus();
 
-                // 2. Haal de cursorpositie op
                 const { selection } = editor.state;
                 const { from } = selection;
 
                 try {
-                    // 3. Haal de coördinaten (DOMRect) van de cursor op
                     const coords = editor.view.coordsAtPos(from);
                     
-                    // 4. Maak een instantie van je menu
                     const menu = new FieldMenu();
-                    menu.toggle();
-                    
-                    // 5. Bouw de SuggestionProps na (mocken) die updatePosition verwacht
-                    const mockedProps = {
-                        clientRect: () => new DOMRect(
-                            coords.left, 
-                            coords.top + window.scrollY, // Rekening houden met scroll als je popup absolute is t.o.v. de body
-                            coords.right - coords.left, 
-                            coords.bottom - coords.top
-                        ),
-                        // Voeg eventuele andere verplichte props toe die je FieldMenu vereist, bijv:
-                        // editor: editor,
-                        // command: (item) => { ... }
-                    };
+                
+                    (menu as any).init({
+                        editor: editor,
+                        getCoordinates: () => new DOMRect(coords.left, coords.top, 0, coords.bottom - coords.top),
+                        initialText: '',
+                        onSelect: (id: string, label: string, fullText?: string) => {
+                            const value = (fullText ? fullText : label) + ' ';
+                            editor.chain()
+                                .insertContent(value)
+                                .focus()
+                                .run();
+                            menu.destroy();
+                        }
+                    });
 
-                    // 6. Geef het door aan je bestaande functie
-                    menu.updatePosition(mockedProps as any);
-                    console.log('yes', mockedProps);
                     return true;
                 } catch (error) {
-                    console.error("Kon cursorpositie niet bepalen:", error);
+                    console.error("Kon het menu niet openen via de toolbar:", error);
                     return false;
                 }
-                
             }
         }
     }

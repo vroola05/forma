@@ -120,6 +120,7 @@ export class ValidationBase {
 
     setForm(form?: Form) {
         this.form = form;
+        return this;
     }
 
     getForm(): Form | undefined {

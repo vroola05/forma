@@ -208,8 +208,6 @@ export class BuilderPage extends Page {
             } else {
                 Storage.removePageItem('form-wrapper');
             }
-
-            console.log('donnie');
             
         } catch(error) {
             console.error(error);
@@ -223,7 +221,6 @@ export class BuilderPage extends Page {
             .then((formWrapper: FormWrapper) => {
                 Loader.hide();
                 if (!formWrapper) {
-                    console.error('No fields found in the project details');
                     return;
                 }
 
@@ -248,7 +245,6 @@ export class BuilderPage extends Page {
             .then(tab => {
                 Loader.hide();
                 if (!tab) {
-                    console.error('No fields found in the project details');
                     return;
                 }
                 Router.route(Router.tenantPath + '/admin/page/forms');
@@ -277,7 +273,6 @@ export class BuilderPage extends Page {
     }
 
     destroy() {
-        console.log('destroy');
         super.destroy();
 
         footerService.clear();

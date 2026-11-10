@@ -125,7 +125,6 @@ export class ConditionComponent {
     }
 
     validate(): boolean {
-        console.log('ConditionComponent validate', this.conditionType, this.conditionTypeComponent, this.conditionTypeSelect.validate());
         if (!this.conditionTypeComponent) {
             return false;
         }

@@ -13,7 +13,6 @@ export class VariableServiceImpl {
 
     set(formId: string, variables: FormVariableDto[]) {
         this.variables.set(formId, variables);
-        
         Storage.setPageItem('page-variables', JSON.stringify(variables));
     }
 

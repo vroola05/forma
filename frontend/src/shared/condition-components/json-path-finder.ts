@@ -1,27 +1,30 @@
 import type { Nucleus } from '../form-components/interface/nucleus';
+import { WordContext } from '../model/types';
 import { JsonPathTokenizer } from './json-path-tokenizer';
 
 export class JsonPathFinder {
     
     readonly #tokens: string[];
-    readonly #results: Nucleus[] = [];
+    #wordContext: WordContext;
 
-    private constructor(tokens: string[]) {
+    private constructor(wordContext: WordContext, tokens: string[]) {
+        this.#wordContext = wordContext;
+        this.#wordContext.fields = [];
         this.#tokens = tokens;
     }
 
     /**
      * Entrance
      */
-    static eval(path: string, input: Nucleus): Nucleus[] {
-        const tokens = JsonPathTokenizer.tokenize(path);
-        const finder = new JsonPathFinder(tokens);
+    static eval(wordContext: WordContext, input: Nucleus): Nucleus[] {
+        const tokens = JsonPathTokenizer.tokenize(wordContext.innerWord);
+        const finder = new JsonPathFinder(wordContext, tokens);
         return finder.#run(input);
     }
 
     #run(input: Nucleus): Nucleus[] {
         this.#evalTokens(0, input);
-        return this.#results;
+        return this.#wordContext.fields?? [];
     }
 
     #hasToken(index: number): boolean {
@@ -34,6 +37,7 @@ export class JsonPathFinder {
         return this.#tokens[index];
     }
 
+    
 
     /**
      * Main recursive loop that loops through the tokens and fills the result array
@@ -47,8 +51,8 @@ export class JsonPathFinder {
         }
 
         if (!this.#hasToken(tokenIndex + 1)) {
-            if (this.#tokens[this.#tokens.length - 1] === currentField.getName()) {
-                this.#results.push(currentField);
+            if (this.#tokens[this.#tokens.length - 1] === currentField.getName() && this.#wordContext.fields) {
+                this.#wordContext.fields.push(currentField);
             }
             return;
         }
@@ -147,8 +151,8 @@ export class JsonPathFinder {
             if (!bracketChildren || bracketChildren.length === 0) return;
 
             const bracketTokenIndex = nextTokenIndex + 1;
-            if (!this.#hasToken(bracketTokenIndex)) {
-                this.#results.push(...(bracketChildren));
+            if (!this.#hasToken(bracketTokenIndex) && this.#wordContext.fields) {
+                this.#wordContext.fields.push(...(bracketChildren));
                 return;
             }
 

@@ -1,20 +1,11 @@
 import { BuilderFieldInterface } from '../../form-builder/fields/builder-field-interface';
-import { BuilderFormServiceRegistry } from '../../form-builder/services/builder-form-service';
+import { BuilderFormService, BuilderFormServiceRegistry } from '../../form-builder/services/builder-form-service';
 import { FIELD_TYPE } from '../../form-builder/types';
-import { OptionDto, TranslationDto } from '../model/types';
+import { OptionDto, TokenType, TranslationDto, WordContext } from '../model/types';
 import { VariableService } from '../services/variable-service';
 import { InputNucleus } from './interface/input-base';
 
-export type TokenType = 'TEXT' | 'PAGE_VAR' | 'FORM_VALUE';
 
-interface WordContext {
-    word: string;
-    innerWord: string;
-    startIndex: number;
-    endIndex: number;
-    type: TokenType;
-    isComplete: boolean;
-}
 
 /**
  * Textfield
@@ -34,7 +25,7 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
         { value:'PAGE_VAR', text: 'Formulier variabele' },
     ];
 
-    #builderFormService = BuilderFormServiceRegistry.get('builder-form');
+    #builderFormService: BuilderFormService;
 
     onListItemClickedListener: ((value: any) => void) | null = null;
     onFieldFoundListener: ((value: any) => void) | null = null;
@@ -44,6 +35,7 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
         super(document.createElement('input'), name, labels);
         this.type = 'conditions-autocomplete';
 
+        this.#builderFormService = BuilderFormServiceRegistry.get('builder-form');
         const inputElementContainer = document.createElement('div');
         inputElementContainer.className = 'input-element-container';
 
@@ -54,6 +46,8 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
         autoCompleteMenuIcon.addEventListener('click', (e) => {
             this.toggle();
         });
+
+        
 
         this.inputElement = document.createElement('input') as HTMLInputElement;
         this.inputElement.className = 'form-control autocomplete-input';
@@ -74,6 +68,12 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
         this.setInputKeyDownListener();
         this.setInputBlurListener();
         this.setInputChangeListener();
+
+    }
+
+    external() {
+        this.currentCursorPostion = -2;
+        return this;
     }
 
     focus(index: number = -1) {
@@ -326,6 +326,12 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
                         completedTag = wordContext.innerWord;
                     }
 
+                    if (!wordContext.startIndex) {
+                        wordContext.startIndex = 0;
+                    }
+                    if (!wordContext.endIndex) {
+                        wordContext.endIndex = 0;
+                    }
                     const value = this.getValue() as string;
 
                     this.setValue(value.substring(0, wordContext.startIndex) + 
@@ -349,6 +355,7 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
     getStartMenuNames(): OptionDto[] {
         return this.tokenTypes;
     }
+
     getCurrentFieldNames(tokens: string[]): OptionDto[] {
         const form = this.#builderFormService.getBuilderForm();
         if (!form) {
@@ -401,7 +408,6 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
             if (!this.form || tokens === undefined || tokens.length !== 1) {
                 return [];
             }
-    
             const variables = VariableService.get(this.form.getId());
             if (!variables) {
                 return [];
@@ -476,14 +482,14 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
             switch (e.key) {
                 case 'ArrowUp':
                     e.preventDefault();
-                    // this.selectAutocompleteMenuItem(
-                    //     this.selectedAutocompleteIndex > 0 ? this.selectedAutocompleteIndex - 1 : this.autocompleteMenuElement.children.length - 1);
+                    this.selectAutocompleteMenuItem(
+                        this.selectedAutocompleteIndex > 0 ? this.selectedAutocompleteIndex - 1 : this.autocompleteMenuElement.children.length - 1);
                     
                     break;
                 case 'ArrowDown':
                     e.preventDefault();
-                    // this.selectAutocompleteMenuItem(
-                    //         this.selectedAutocompleteIndex < this.autocompleteMenuElement.children.length - 1 ? this.selectedAutocompleteIndex + 1 : 0);
+                    this.selectAutocompleteMenuItem(
+                            this.selectedAutocompleteIndex < this.autocompleteMenuElement.children.length - 1 ? this.selectedAutocompleteIndex + 1 : 0);
                     break;
                 case 'ArrowLeft':
                     break;
@@ -510,10 +516,22 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
         });
     }
 
+    selectAutocompleteMenuItem(index: number) {
+        this.selectedAutocompleteIndex = index;
+        const menuItems = Array.from(this.autocompleteMenuElement.children);
+        for (let i = 0; i < menuItems.length; i++) {
+            if (i === index) {
+                menuItems[i].classList.add('selected')
+            } else {
+                menuItems[i].classList.remove('selected')
+            }
+        }
+
+    }
+
     saveCursor(e: Event) {
         const target = e.target as HTMLInputElement;
         this.currentCursorPostion = target?.selectionStart ?? 0;
-        console.log(this.currentCursorPostion);
     }
 
     /**

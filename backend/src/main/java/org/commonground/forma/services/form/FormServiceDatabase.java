@@ -11,14 +11,12 @@ import org.commonground.forma.database.dao.translation.FormTranslationEntity;
 import org.commonground.forma.database.repository.FormDefinitionRepository;
 import org.commonground.forma.mapper.FormMapper;
 import org.commonground.forma.mapper.FormWrapperMapper;
-import org.commonground.forma.mapper.TabPageMapper;
 import org.commonground.forma.model.form.FormList;
 import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.Translation;
 import org.commonground.forma.model.form.fields.Form;
 import org.commonground.forma.model.settings.Tenant;
 import org.commonground.forma.processor.FormConfigurationProcessor;
-import org.commonground.forma.services.config.FormConfigSuccessPageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,27 +31,19 @@ public class FormServiceDatabase implements FormService {
     private final FormWrapperMapper formWrapperMapper;
     private final FormMapper formMapper;
     private final FormDefinitionRepository formDefinitionRepository;
-    private final FormConfigSuccessPageService formConfigSuccessPageService;
-    private final TabPageService tabPageService;
+    
     private final FormConfigurationProcessor formConfigurationProcessor;
-    private final TabPageMapper tabPageMapper;
+
     public FormServiceDatabase(
             FormWrapperMapper formWrapperMapper,
             FormMapper formMapper,
-            TabPageService tabPageService,
-            FormConfigSuccessPageService formConfigSuccessPageService,
             FormDefinitionRepository formDefinitionRepository,
-            TabPageMapper tabPageMapper,
             FormConfigurationProcessor formConfigurationProcessor) {
 
         this.formWrapperMapper = formWrapperMapper;
         this.formMapper = formMapper;
         this.formDefinitionRepository = formDefinitionRepository;
-        this.tabPageService = tabPageService;
-        this.formConfigSuccessPageService = formConfigSuccessPageService;
-        this.tabPageMapper = tabPageMapper;
         this.formConfigurationProcessor = formConfigurationProcessor;
-
     }
 
     public FormDefinitionEntity getFormDefinitionById(UUID id) {

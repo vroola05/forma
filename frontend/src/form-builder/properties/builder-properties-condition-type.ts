@@ -78,11 +78,10 @@ export class BuilderPropertiesConditionType {
     addCondition(conditionDto: ConditionDto | undefined = undefined) {
         this.conditionComponent = new ConditionComponent(
             (value: any) => {
-                console.log('main');
-                // this.property.value = value;
-                // if (this.onChanged) {
-                //     this.onChanged(this.content, this.property);
-                // }
+                this.property.value = value;
+                if (this.onChanged) {
+                    this.onChanged(this.content, this.property);
+                }
             },
             () => {
                 this.property.value = null;
