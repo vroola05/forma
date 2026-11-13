@@ -1,6 +1,12 @@
 package org.commonground.forma.model.form;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 import org.commonground.forma.model.form.fields.Form;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,4 +24,18 @@ public class FormWrapper {
     String fileName;
     FormConfig formConfig;
     Form form;
+
+    @JsonIgnore
+    public Set<UUID> getIncomingTabIds() {
+        if (this.form == null || this.form.getFields() == null) {
+            return Set.of();
+        }
+
+        Set<UUID> incomingIds = new HashSet<>();
+        form.getFields().forEach(f -> {
+            if (f.getId() != null) incomingIds.add(f.getId());
+        });
+
+        return incomingIds;
+    }
 }

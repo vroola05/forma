@@ -1,72 +1,52 @@
 import { Form } from '../../../shared/form-components/form';
-import { RepeatingGroup } from '../../../shared/form-components/repeating-group';
-import { FORM_STATUS, FormDto, FormWrapper, OptionDto } from '../../../shared/model/types';
+import { FormVariableDto } from '../../../shared/model/types';
 import { Page } from '../../../shared/page-components/page';
-import { EventService } from '../../../shared/services/event-service';
 import { Lang } from '../../../shared/services/lang';
-import { BuilderFormService } from '../../services/builder-form-service';
+import { BuilderFormServiceRegistry } from '../../services/builder-form-service';
 import { BuilderLayout } from './components/builder-layout';
 
 export class BuilderPageSettingsVariables extends Page {
     #builderLayout: BuilderLayout;
-    form: Form | null = null;
-    constructor() {
-        super();
+    #builderFormService = BuilderFormServiceRegistry.get('builder-form');
 
+    form: Form | null = null;
+    formVariables: FormVariableDto[] = [];
+
+    constructor() {
+        super(false);
+
+        this.setTitle(Lang.get('page.settings.vars'));
         this.#builderLayout = new BuilderLayout();
 
-
-
+        
     }
-    
+
     /**
      * 
      */
     afterInit() {
-        this.subscriptions.push(BuilderFormService.formWrapperSubscription((formWrapper: FormWrapper | undefined) => {
-            if (!formWrapper) {
-                return;
+        this.subscriptions.push(this.#builderFormService.subscribeToForm('variable-form', (variablesForm) => {
+            const content = variablesForm?.getContent();
+            if (content) {
+                const builderPageSettingsVariables = document.createElement('div');
+                builderPageSettingsVariables.className = 'builder-page-settings';
+
+                const header = document.createElement('h1');
+                header.className = 'builder-page-settings-header';
+                header.innerText = Lang.get('page.settings.vars');
+                builderPageSettingsVariables.appendChild(header);
+
+                this.#builderLayout.setCenterContent(builderPageSettingsVariables, true);
+                this.#builderLayout.setCenterContent(content);
             }
-            this.createContent(formWrapper);
         }));
     }
 
-    createContent(formWrapper: FormWrapper) {
-
-        const formDto: FormDto = {
-            "id": "form",
-            "name": "form",
-            "label": Lang.get('page.settings.generic'),
-            "type": "form",
-            "singlePage": true,
-            "fields": [
-                {
-                    "id": "tab",
-                    "name": "tab",
-                    "type": "tab",
-                    "fields": [
-                        {
-                            "id": "repeating-group",
-                            "name": "group",
-                            "label": Lang.get('page.settings.generic'),
-                            "type": "repeating-group",
-                            "fields": [
-                                
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
-
-        Form.create(formDto).then(form => {
-            this.form = form;
-
-            this.#builderLayout?.setCenterContent(this.form.getContent(), true);
-        }).catch(() => {});
-    }
-    
     getContent() {
         return this.#builderLayout.getContent();
+    }
+
+    destroy() {
+        super.destroy();
     }
 }

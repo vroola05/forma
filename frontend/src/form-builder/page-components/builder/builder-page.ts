@@ -13,15 +13,24 @@ import { Lang } from '../../../shared/services/lang';
 import { Router } from '../../../shared/services/router';
 import { ToastService } from '../../../shared/services/toast-service';
 
+import { Form } from '../../../shared/form-components/form';
 import { BaseFieldDto, FormWrapper } from '../../../shared/model/types';
+import { FieldServiceRegistry } from '../../../shared/services/field-service';
 import { Loader } from '../../../shared/services/loader';
-import { BuilderFormService } from '../../services/builder-form-service';
+import { VariableService } from '../../../shared/services/variable-service';
+import { BuilderFormServiceRegistry } from '../../services/builder-form-service';
 import { BuilderPropertiesService } from '../../services/builder-properties-service';
+import { FormGeneric } from './components/forms/form-generic';
+import { FormLogin } from './components/forms/form-login';
+import { FormSuccess } from './components/forms/form-success';
+import { FormVariables } from './components/forms/form-variables';
 
 
 export class BuilderPage extends Page {
     routerOutlet = document.createElement('div');
-    
+    #builderFormService = BuilderFormServiceRegistry.get('builder-form');
+
+    forms: {form: Form, url: string}[] = [];
     adminHeader: AdminHeader;
     footer: Footer;
 
@@ -44,14 +53,13 @@ export class BuilderPage extends Page {
         
         this.attachSubView(this.routerOutlet);
 
-        BuilderFormService.setBuilderForm(new BuilderForm());
-    
         // Check if form name in session storage matches the one in the URL
         let formName = Storage.getPageItem('form-name');
         const formNameUrlParam = Router.getUrlParameter('formName');
         if (!formNameUrlParam) {
             return;
         }
+
         if (formName !== formNameUrlParam) {
                 Storage.removePageItem('form-wrapper');
                 Storage.setPageItem('form-name', formNameUrlParam);
@@ -61,20 +69,54 @@ export class BuilderPage extends Page {
         const formWrapperString = Storage.getPageItem('form-wrapper');
         if (formWrapperString) {
             const formWrapper = JSON.parse(formWrapperString) as FormWrapper
-            BuilderFormService.setFormWrapper(formWrapper);
-            this.init(BuilderFormService.getFormWrapper());
+            this.#builderFormService.setFormWrapper(formWrapper);
+            this.init(this.#builderFormService.getFormWrapper());
         } else if (formName && formName !== 'new') {
             this.getForm(formNameUrlParam);
         } else {
-            BuilderFormService.setFormWrapper({active: true} as FormWrapper);
-            this.init(BuilderFormService.getFormWrapper());
+            this.#builderFormService.setFormWrapper({active: true} as FormWrapper);
+            this.init(this.#builderFormService.getFormWrapper());
         }
 
         this.setFooterButtons();
     }
 
     init(formWrapper: FormWrapper | undefined) {
-        BuilderFormService?.getBuilderForm()?.init(formWrapper?.form as BaseFieldDto);
+        const currentPath = Router.getCurrentRoute();
+        // Create the Builder form
+        const builderForm = new BuilderForm();
+        builderForm.init(formWrapper?.form as BaseFieldDto);
+        this.#builderFormService.setBuilderForm(builderForm);
+
+        const formGeneric = new FormGeneric();
+        formGeneric.createForm(formWrapper).then(form => {
+            this.#builderFormService.setForm(form);
+            this.forms.push({form, url: currentPath?.parentPath + ''});
+        }).catch(() => {});
+
+        const formLogin = new FormLogin();
+        formLogin.createForm(formWrapper?.formConfig?.formConfigLoginPage).then(form => {
+            this.#builderFormService.setForm(form);
+            this.forms.push({form, url: currentPath?.parentPath + '/settings-login'});
+        }).catch(() => {});
+
+        const formSuccess = new FormSuccess();
+        formSuccess.createForm(formWrapper?.formConfig?.formConfigSuccessPage).then(form => {
+            this.#builderFormService.setForm(form);
+            this.forms.push({form, url: currentPath?.parentPath + '/settings-success'});
+        }).catch(() => {});
+
+        // Create the Variables form
+        const formVariables = new FormVariables();
+        formVariables.createForm(formWrapper?.formConfig?.variables).then(form => {
+            form.addValueChangedListener((name, value) => {
+                VariableService.set(form.getId(), formVariables.getFormData(form));
+            });
+
+            this.#builderFormService.setForm(form); 
+            this.forms.push({form, url: currentPath?.parentPath + '/settings-variables'});
+        }).catch(() => {});
+
         this.isLoaded = true;
     }
 
@@ -95,7 +137,7 @@ export class BuilderPage extends Page {
         });
 
         EventService.addEventListener('settings-changed', () => {
-            Storage.setPageItem('form-wrapper', JSON.stringify(BuilderFormService.getFormWrapper()));
+            Storage.setPageItem('form-wrapper', JSON.stringify(this.#builderFormService.getFormWrapper()));
         });
     }
 
@@ -103,23 +145,64 @@ export class BuilderPage extends Page {
         footerService.addButtonRight(new FormButton(Lang.get('generic.btn.cancel'), 'footer-btn btn-secondary cancel', null, () => {
             Router.route('/admin/page/forms');
         }));
+
+
         footerService.addButtonRight(new FormButton(Lang.get('generic.btn.save'), 'footer-btn btn-primary save', null, () => {
-            try {
-                BuilderFormService?.getBuilderForm()?.validate();
-            } catch(error: unknown) {
-                if (error instanceof ValidationError) {
-                    ToastService.error(`${error.getPath()} - ${error.message}`);
-                } else if (error instanceof Error) {
-                    ToastService.error(error.message);
-                } else {
-                    ToastService.error(String(error));
-                }
-                
+            const formWrapper = this.#builderFormService?.getFormWrapper();
+            if (!formWrapper) {
+                return false;
+            }
+            if (!formWrapper?.formConfig) {
+                formWrapper.formConfig = {};
+            }
+
+            if (!this.validate()) {
                 return;
             }
 
+            const formLogin = new FormLogin();
+            const loginForm = this.#builderFormService.getForm('login-form');
+            formWrapper.formConfig.formConfigLoginPage = formLogin.getFormData(loginForm);
+
+            const formSuccess = new FormSuccess();
+            const successForm = this.#builderFormService.getForm('success-form');
+            formWrapper.formConfig.formConfigSuccessPage = formSuccess.getFormData(successForm);
+
+            const formVariables = new FormVariables();
+            const variablesForm = this.#builderFormService.getForm('variable-form');
+            formWrapper.formConfig.variables = formVariables.getFormData(variablesForm);
+
             this.postForm();
         }));
+    }
+
+    validate(): boolean {
+        
+        for (const formItem of this.forms) {
+            if (!formItem.form.validate()) {
+                Router.route(formItem.url);
+                return false;
+            }
+        }
+
+
+        // Validate Form page
+        try {
+            this.#builderFormService?.getBuilderForm()?.validate();
+        } catch(error: unknown) {
+            if (error instanceof ValidationError) {
+                ToastService.error(`${error.getPath()} - ${error.message}`);
+            } else if (error instanceof Error) {
+                ToastService.error(error.message);
+            } else {
+                ToastService.error(String(error));
+            }
+            const currentPath = Router.getCurrentRoute();
+            Router.route(currentPath?.parentPath + '/settings-form');
+            return false;
+        }
+
+        return true;
     }
 
     updateForm() {
@@ -128,12 +211,15 @@ export class BuilderPage extends Page {
         }
     
         try {
-            const formWrapper = BuilderFormService?.getFormWrapper();
+            const formWrapper = this.#builderFormService?.getFormWrapper();
             if (formWrapper){ 
-                formWrapper.form = BuilderFormService?.getBuilderForm()?.getData();
-            }
+                formWrapper.form = this.#builderFormService?.getBuilderForm()?.getData();
 
-            Storage.setPageItem('form-wrapper', JSON.stringify(BuilderFormService.getFormWrapper()));
+                Storage.setPageItem('form-wrapper', JSON.stringify(formWrapper));
+            } else {
+                Storage.removePageItem('form-wrapper');
+            }
+            
         } catch(error) {
             console.error(error);
         }
@@ -143,20 +229,17 @@ export class BuilderPage extends Page {
         Loader.show();
         
         Http.get(`${Router.tenantPath}/api/form-builder/form/${formName}`, {})
-            .then(formWrapper => {
+            .then((formWrapper: FormWrapper) => {
                 Loader.hide();
                 if (!formWrapper) {
-                    console.error('No fields found in the project details');
                     return;
                 }
 
-                if (!formWrapper?.formConfig) {
-                    formWrapper.formConfig = {};
-                }
+                formWrapper.formConfig ??= {};
 
-                BuilderFormService.setFormWrapper(formWrapper as FormWrapper);
+                this.#builderFormService.setFormWrapper(formWrapper as FormWrapper);
 
-                this.init(BuilderFormService.getFormWrapper());
+                this.init(this.#builderFormService.getFormWrapper());
             })
             .catch(error => {
                 Loader.hide();
@@ -168,12 +251,11 @@ export class BuilderPage extends Page {
 
     postForm() {
         Loader.show();
-        const formWrapper = BuilderFormService.getFormWrapper();
+        const formWrapper = this.#builderFormService.getFormWrapper();
         Http.post(`${Router.tenantPath}/api/form-builder/form`, formWrapper)
             .then(tab => {
                 Loader.hide();
                 if (!tab) {
-                    console.error('No fields found in the project details');
                     return;
                 }
                 Router.route(Router.tenantPath + '/admin/page/forms');
@@ -183,7 +265,7 @@ export class BuilderPage extends Page {
                 ToastService.clear();
                 
                 if (error.type === ErrorType.VALIDATION) {
-                    const builderForm = BuilderFormService.getBuilderForm();
+                    const builderForm = this.#builderFormService.getBuilderForm();
                     const errorList = builderForm?.handleValidationError(error.getDetails());
                     for (const error of errorList) {
                         
@@ -205,7 +287,16 @@ export class BuilderPage extends Page {
         super.destroy();
 
         footerService.clear();
-        BuilderFormService.setBuilderForm(undefined);
-        BuilderFormService.setFormWrapper(undefined);
+        
+        for (const formItem of this.forms) {
+            FieldServiceRegistry.destroy(formItem.form.getId());
+        }
+        
+
+        
+        this.#builderFormService.setBuilderForm(undefined);
+        this.#builderFormService.setFormWrapper(undefined);
+
+        BuilderFormServiceRegistry.destroy('builder-form');
     }
 }

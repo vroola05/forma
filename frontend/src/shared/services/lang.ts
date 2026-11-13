@@ -1,4 +1,5 @@
 
+import { TranslationDto } from '../model/types';
 import { Http } from './http';
 import { Router } from './router';
 
@@ -48,5 +49,22 @@ export class Lang {
 
         return translation;
 
+    }
+
+    static getTranslation(translations?: TranslationDto[]): string {
+        const locale = Lang.getLocale();
+        const localeDefault = Lang.getDefaultLocale();
+
+        if (translations && translations.length > 0) {
+            let label = translations.find(l => l.locale === locale);
+            if (label?.text) {
+                return label.text;
+            }
+            label = translations.find(l => l.locale === localeDefault);
+            if (label?.text) {
+                return label.text;
+            }
+        }
+        return '';
     }
 }

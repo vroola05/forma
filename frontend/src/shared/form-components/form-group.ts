@@ -57,7 +57,7 @@ export class FormGroup extends Nucleus {
     
     async createFields(fields: FieldDto[])  {
         for (const fieldDto of fields) {
-            const field = await FormRenderer.createField(fieldDto);
+            const field = await FormRenderer.createField(fieldDto, this.getForm());
             if (!field || (!(field instanceof InputNucleus))) {
                 throw new Error('Input must be an instance of Input class');
             }
@@ -127,6 +127,10 @@ export class FormGroup extends Nucleus {
 
     getFieldValue(name: string) {
         const field = this.fields.find(f => f.name === name);
-        return !field ? undefined : field.hasOptions() ? field.getOptions() : field.getValue();
+        if (!field) {
+            return undefined;
+        }
+        
+        return FormRenderer.isOptionType(field.type) ? field.getOptions() : field.getValue();
     }
 }

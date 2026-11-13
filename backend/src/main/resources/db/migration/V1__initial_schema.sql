@@ -30,9 +30,25 @@ CREATE TABLE tenant (
     status TEXT NOT NULL DEFAULT 'ACTIVE',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    
     version BIGINT DEFAULT 0 NOT NULL
 );
+
+CREATE TABLE tenant_auth_providers (
+    id UUID PRIMARY KEY,
+    tenant_id UUID NOT NULL REFERENCES tenant(id),
+    provider_type TEXT NOT NULL,
+    display_name TEXT NOT NULL,
+    client_id TEXT NOT NULL,
+    client_secret TEXT NOT NULL,
+    issuer_uri TEXT NOT NULL,
+    scopes TEXT NOT NULL,
+    acr_values TEXT NULL,
+    enabled boolean NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    version BIGINT DEFAULT 0 NOT NULL
+);
+
 
 CREATE TABLE users (
     id UUID PRIMARY KEY,
@@ -79,7 +95,7 @@ CREATE TABLE user_groups (
 
 CREATE TABLE form_definition (
     id UUID PRIMARY KEY,
-    tenant_id UUID REFERENCES tenant(id),
+    tenant_id UUID NOT NULL REFERENCES tenant(id),
     name TEXT NOT NULL,
     classes TEXT NULL,
     metadata TEXT[] NULL,
@@ -87,6 +103,9 @@ CREATE TABLE form_definition (
     condition JSONB NULL,
     show boolean NOT NULL DEFAULT TRUE,
     status TEXT NOT NULL DEFAULT 'ACTIVE',
+    public_access boolean NOT NULL DEFAULT TRUE,
+    allow_form_login boolean NOT NULL DEFAULT FALSE,
+    login_instructions JSONB NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     version BIGINT DEFAULT 0 NOT NULL,
@@ -102,14 +121,13 @@ CREATE TABLE form_translations (
 
 CREATE TABLE form_tab_definition (
     id UUID PRIMARY KEY,
-    tenant_id UUID REFERENCES tenant(id),
+    tenant_id UUID NOT NULL REFERENCES tenant(id),
     name TEXT NOT NULL,
     classes TEXT NULL,
     shared_tab BOOLEAN NOT NULL DEFAULT FALSE,
     metadata TEXT[] NULL,
     condition JSONB NULL,
     show boolean NOT NULL DEFAULT TRUE,
-
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     version BIGINT DEFAULT 0 NOT NULL
@@ -131,7 +149,6 @@ CREATE TABLE form_tab_instance_definition (
     version BIGINT DEFAULT 0 NOT NULL,
     PRIMARY KEY (form_id, tab_id)
 );
-
 
 CREATE TABLE form_field_definition (
     id UUID PRIMARY KEY,
@@ -165,10 +182,17 @@ CREATE TABLE field_translations (
     PRIMARY KEY (field_id, locale)
 );
 
+CREATE TABLE form_config_allowed_providers (
+    form_definition_id UUID NOT NULL REFERENCES form_definition(id) ON DELETE CASCADE,
+    provider_id UUID NOT NULL REFERENCES tenant_auth_providers(id) ON DELETE CASCADE,
+    PRIMARY KEY (form_definition_id, provider_id)
+);
+
+
 CREATE TABLE form_config_success_page (
     id UUID PRIMARY KEY,
     form_definition_id UUID NULL REFERENCES form_definition(id) ON DELETE CASCADE,
-    tenant_id UUID REFERENCES tenant(id),
+    tenant_id UUID NOT NULL REFERENCES tenant(id),
     template_name TEXT NULL,
     template_title TEXT NULL,
     template JSONB NULL,
@@ -180,6 +204,43 @@ CREATE TABLE form_config_success_page (
     version BIGINT DEFAULT 0 NOT NULL
 );
 
+CREATE TABLE form_variable (
+    id UUID PRIMARY KEY,
+    form_definition_id UUID NULL REFERENCES form_definition(id) ON DELETE CASCADE,
+    tenant_id UUID NOT NULL REFERENCES tenant(id),
+    variable_name TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    version BIGINT DEFAULT 0 NOT NULL
+);
+
+CREATE TABLE tag (
+    tenant_id UUID NOT NULL REFERENCES tenant(id) ON DELETE CASCADE,
+    tag_name TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    version BIGINT DEFAULT 0 NOT NULL,
+    PRIMARY KEY (tenant_id, tag_name)
+);
+
+CREATE TABLE form_variable_tag (
+    form_variable_id UUID REFERENCES form_variable(id) ON DELETE CASCADE,
+    tenant_id UUID NOT NULL,
+    tag_name TEXT NOT NULL,
+    PRIMARY KEY (form_variable_id, tenant_id, tag_name),
+    FOREIGN KEY (tenant_id, tag_name) REFERENCES tag(tenant_id, tag_name) ON DELETE CASCADE
+);
+
+
+CREATE TABLE form_variable_values (
+    id UUID PRIMARY KEY,
+    form_variable_id UUID NULL REFERENCES form_variable(id) ON DELETE CASCADE,
+    variable_value TEXT NOT NULL,
+    variable_condition JSONB NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    version BIGINT DEFAULT 0 NOT NULL
+);
 
 CREATE TABLE form_submission (
     id UUID PRIMARY KEY,

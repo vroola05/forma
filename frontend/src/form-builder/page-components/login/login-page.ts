@@ -19,11 +19,9 @@ export class LoginPage extends Page {
         super();
         
         this.usernameField = new TextField('username')
-                .setLabel(Lang.get('login.username'))
-                .setLayout('layout-column');
+                .setLabel(Lang.get('login.username'));
         this.passwordField = new PasswordField('password')
-                .setLabel(Lang.get('login.password'))
-                .setLayout('layout-column');
+                .setLabel(Lang.get('login.password'));
 
         this.setTitle(Lang.get('login.title'));
         

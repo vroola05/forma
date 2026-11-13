@@ -7,3 +7,4 @@ database/.env
 s3.json
 node_modules
 /node_modules
+/frontend/coverage

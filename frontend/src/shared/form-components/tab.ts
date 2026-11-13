@@ -47,8 +47,8 @@ export class Tab extends Nucleus {
 
     async createFields(fields: FieldDto[])  {
         for (const fieldDto of fields) {
-            
-            const field = await FormRenderer.createField(fieldDto);
+            const field = await FormRenderer.createField(fieldDto, this.getForm());
+
             if (!field || (!(field instanceof Nucleus))) {
                 throw new Error('Input must be an instance of Nucleus');
             }
@@ -130,4 +130,5 @@ export class Tab extends Nucleus {
         super.setShow(show);
         this.tabLabel?.setShow(show);
     }
+
 }

@@ -2,7 +2,8 @@ import { FormButton } from '../../shared/form-components/components/form-button'
 import { Form } from '../../shared/form-components/form';
 import { Tab } from '../../shared/form-components/tab';
 import { FormRenderer } from '../../shared/generic-components/form-renderer';
-import { FormSubmission } from '../../shared/model/types';
+import { FormSubmission, PERMISSION } from '../../shared/model/types';
+import { Auth } from '../../shared/services/auth';
 import { footerService } from "../../shared/services/footer-service";
 import { ErrorType, Http } from '../../shared/services/http';
 import { Lang } from '../../shared/services/lang';
@@ -12,6 +13,7 @@ export class FormLogic {
     form: Form;
     cancelBtn: FormButton;
     previousBtn: FormButton;
+    logoutBtn: FormButton;
     nextBtn: FormButton;
     summaryBtn: FormButton;
     submitBtn: FormButton;
@@ -27,6 +29,10 @@ export class FormLogic {
             this.form.setTabPrevious();
         }, false);
 
+        this.logoutBtn = new FormButton(Lang.get('generic.btn.logout'), 'footer-btn btn-secondary logout', null, () => {
+            Auth.logout();
+        }, false).setPermissions(PERMISSION.FORM_FILL);
+
         this.nextBtn = new FormButton(Lang.get('generic.btn.next'), 'footer-btn btn-primary next', null, () => {
             this.form.setTabNext();
         }, false);
@@ -41,6 +47,7 @@ export class FormLogic {
 
         footerService.addButtonLeft(this.cancelBtn);
         footerService.addButtonLeft(this.previousBtn);
+        footerService.addButtonLeft(this.logoutBtn);
 
         footerService.addButtonRight(this.nextBtn);
         footerService.addButtonRight(this.summaryBtn);
@@ -101,7 +108,6 @@ export class FormLogic {
             }).catch(error => {
 
                 if (error.type === ErrorType.VALIDATION) {
-                    console.log(error.getDetails());
                     this.form.validateBE(error.getDetails());
                 }
             });

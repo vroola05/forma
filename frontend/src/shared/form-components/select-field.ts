@@ -1,4 +1,5 @@
 import { OptionDto, TranslationDto } from '../model/types';
+import { Lang } from '../services/lang';
 import { InputNucleus } from './interface/input-base';
 
 /**
@@ -91,6 +92,22 @@ export class SelectField extends InputNucleus<HTMLSelectElement> {
             this.valueChanged(noCallback);
         });
         return this;
+    }
+
+    validate(isValid = true, message = ''): boolean {
+        if (!this.getShow()) {
+            return isValid;
+        }
+
+        isValid = super.validate(isValid, message);
+
+        if (this.required && (!this.getValue() || this.value.length === 0)) {
+            isValid = false;
+            this.errors.push(Lang.get('generic.validation.required'));
+            this.setValidationState(isValid);
+        }
+
+        return isValid;
     }
 
     clone() {

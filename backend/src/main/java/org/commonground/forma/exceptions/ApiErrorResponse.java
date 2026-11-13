@@ -3,7 +3,7 @@ package org.commonground.forma.exceptions;
 import java.time.Instant;
 import java.util.Map;
 
-public record ApiErrorResponse(
+public record ApiErrorResponse (
     int status,
     String error,
     ApiErrorType type,

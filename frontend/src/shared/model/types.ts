@@ -1,9 +1,31 @@
-import { InputNucleus } from '../form-components/interface/input-base';
-import { ContitionService } from '../services/condition-service';
+import { Nucleus } from '../form-components/interface/nucleus';
 
 import { Lang } from '../services/lang';
 
 export enum PERMISSION {
+    FORM_CREATE = 'form:create',
+    FORM_READ = 'form:read',
+    FORM_UPDATE = 'form:update',
+    FORM_DELETE = 'form:delete',
+
+    FORM_FILL = 'form:fill',
+    FORM_SUBMIT = 'form:submit',
+
+    GROUP_CREATE = 'group:create',
+    GROUP_READ = 'group:read',
+    GROUP_UPDATE = 'group:update',
+    GROUP_DELETE = 'group:delete',
+
+    LOGIN_MANAGEMENT_CREATE = 'login.management:create',
+    LOGIN_MANAGEMENT_READ = 'login.management:read',
+    LOGIN_MANAGEMENT_UPDATE = 'login.management:update',
+    LOGIN_MANAGEMENT_DELETE = 'login.management:delete',
+
+    SUBMISSION_CREATE = 'submission:create',
+    SUBMISSION_READ = 'submission:read',
+    SUBMISSION_UPDATE = 'submission:update',
+    SUBMISSION_DELETE = 'submission:delete',
+
     TENANT_CREATE_INTERNAL = 'tenant:create:internal',
     TENANT_READ = 'tenant:read',
     TENANT_READ_INTERNAL = 'tenant:read:internal',
@@ -14,22 +36,7 @@ export enum PERMISSION {
     USER_CREATE = 'user:create',
     USER_READ = 'user:read',
     USER_UPDATE = 'user:update',
-    USER_DELETE = 'user:delete',
-
-    GROUP_CREATE = 'group:create',
-    GROUP_READ = 'group:read',
-    GROUP_UPDATE = 'group:update',
-    GROUP_DELETE = 'group:delete',
-
-    FORM_CREATE = 'form:create',
-    FORM_READ = 'form:read',
-    FORM_UPDATE = 'form:update',
-    FORM_DELETE = 'form:delete',
-
-    SUBMISSION_CREATE = 'submission:create',
-    SUBMISSION_READ = 'submission:read',
-    SUBMISSION_UPDATE = 'submission:update',
-    SUBMISSION_DELETE = 'submission:delete'
+    USER_DELETE = 'user:delete'
 }
 
 export const USER_STATUS: Record<string, () => string> = {
@@ -52,9 +59,18 @@ export const FORM_STATUS: Record<string, () => string> = {
     PENDING_DELETION: () => Lang.get('generic.status.pending.deletion')
 };
 
-export type GenericFieldType = 'form' | 'tab' | 'form-group' | 'repeating-group';
-export type InputFieldType = 'text' | 'rich-text' | 'number' | 'email' | 'password' | 'date' | 'hidden' | 'label' | 'valuta' | 'textarea' | 'color';
-export type OptionFieldType = 'checkbox' | 'dual-listbox' | 'radio' | 'select' | 'file';
+
+export const GENERIC_FIELD_TYPES = ['form', 'tab', 'form-group', 'repeating-group'] as const;
+export type GenericFieldType = typeof GENERIC_FIELD_TYPES[number];
+
+export const INPUT_FIELD_TYPES = [
+    'text', 'rich-text', 'number', 'email', 'password', 'date', 
+    'hidden', 'label', 'valuta', 'textarea', 'color', 'conditions-autocomplete', 'conditions'
+] as const;
+export type InputFieldType = typeof INPUT_FIELD_TYPES[number];
+
+export const OPTIONS_FIELD_TYPES = ['checkbox', 'dual-listbox', 'radio', 'select', 'tag', 'file'] as const;
+export type OptionFieldType = typeof OPTIONS_FIELD_TYPES[number];
 export type AllFieldTypes = GenericFieldType | InputFieldType | OptionFieldType;
 
 export type LayoutType = 'default' | 'table';
@@ -91,6 +107,24 @@ export interface UserRegisterRequestDto {
     groups?: GroupRegisterRequestDto[];
 }
 
+export interface ExternalIdpDto {
+    id: string;
+    providerType: string; 
+    displayName: string;
+    information: string;
+    linkText: string;
+    loginUrl: string;
+}
+
+export interface FormAuthenticationDto {
+    formId: string;
+    label: TranslationDto[];
+    description: string;
+    publicAccess: boolean;
+    allowFormLogin: boolean;
+    externalProviders: ExternalIdpDto[]
+}
+
 export interface GroupRegisterRequestDto {
     id?: string;
     name?: string;
@@ -114,7 +148,7 @@ export interface BaseFieldDto {
     label?: string;
     labels?: TranslationDto[];
     type: AllFieldTypes;
-    condition?: Condition;
+    condition?: ConditionDto;
     classes?: string;
     fields?: FieldDto[];
 }
@@ -137,10 +171,10 @@ export interface OptionDto {
 }
 
 export interface RepeatingGroupDto extends BaseFieldDto {
-    layout: LayoutType;
+    layout?: LayoutType;
     minLength?: number;
     maxLength?: number;
-    sets?: FieldDto[];
+    sets?: FieldDto[][];
 }
 
 export interface InputFieldDto extends BaseFieldDto {
@@ -156,13 +190,17 @@ export interface InputFieldDto extends BaseFieldDto {
     change?: any;
 }
 
+export interface RichTextFieldDto extends InputFieldDto {
+    inline?: boolean;
+}
+
 export interface OptionFieldDto extends BaseFieldDto {
     type: OptionFieldType;
     metadata?: string[];
     required?: boolean;
     placeholder?: string;
     readonly?: boolean;
-    value?: OptionDto[];
+    values?: OptionDto[];
     options?: OptionDto[];
     change?: any;
 }
@@ -175,13 +213,15 @@ export interface FileOptionFieldDto extends OptionFieldDto {
 }
 
 
-export type FieldDto = BaseFieldDto | InputFieldDto | OptionFieldDto| RepeatingGroupDto;
+export type FieldDto = BaseFieldDto | InputFieldDto | RichTextFieldDto | OptionFieldDto | RepeatingGroupDto;
 
 export interface FormConfig {
-    formConfigSuccessPage?: FormConfigSuccessPage;
+    formConfigLoginPage?: FormConfigLoginPageDto;
+    formConfigSuccessPage?: FormConfigSuccessPageDto;
+    variables?: FormVariableDto[];
 }
 
-export interface FormConfigSuccessPage {
+export interface FormConfigSuccessPageDto {
     customSuccessPage?: boolean
     id?: string;
     name?: string;
@@ -192,20 +232,29 @@ export interface FormConfigSuccessPage {
     downloadText?: string;
 }
 
+export interface FormConfigLoginPageDto {
+    loginInstructions: any;
+    publicAccess: boolean;
+    allowFormLogin: boolean;
+    providerIds: string[];
+}
+
+export interface FormVariableDto {
+    id?: string;
+    name: string;
+    tags?: string[];
+    values?: FormVariableValueDto[];
+}
+
+export interface FormVariableValueDto {
+    id?: string;
+    value?: string;
+    conditions?: ConditionDto[];
+}
+
 export interface FormSubmission {
     submissionId?: string;
     content?: string;
-}
-
-
-export interface Condition {
-    var1?: string;
-    var1Fields?: InputNucleus[]
-    operator?: Operator;
-    var2?: string;
-    var2Fields?: InputNucleus[]
-    logicalOperator?: LogicalOperator;
-    conditions?: Condition[];
 }
 
 export enum LogicalOperator {
@@ -240,53 +289,44 @@ export function getOperatorType(type: string | undefined): Operator {
     throw new Error();
 }
 
-
 export enum ConditionType {
     SIMPLE = 0,
     COMPOSITE = 1
 }
 
-/**
- * When an object has been created, all the variables that are bound toe fields are registered.
- * This is used for when a fieldname receives an update.
- */
-export class BuilderCondition {
-    var1?: string;
-    operator?: Operator;
-    var2?: string;
-    logicalOperator?: LogicalOperator;
+export interface ConditionDto {
     conditionType?: ConditionType;
-    conditions?: BuilderCondition[];
 
-    constructor(data: any = {}) {
-        Object.assign(this, data);
-        
-        this.conditions = [];
-        if (data?.conditions) {
-            this.conditions = data.conditions.map((con: any) => new BuilderCondition(con));
-        }
+    var1: string;
+    operator?: Operator;
+    var2: string;
+    logicalOperator?: LogicalOperator;
+    
+    conditions?: ConditionDto[];
 
-        this.#registerVariables();
+    var1Fields?: Map<string, WordContext>;
+    var2Fields?: Map<string, WordContext>;
+}
+
+export type TokenType = 'TEXT' | 'PAGE_VAR' | 'FORM_VALUE';
+
+export function getTokenTypeByTrigger(match: string): TokenType {
+    if (match.startsWith('$')) {
+        return 'FORM_VALUE';
     }
-
-    #registerVariables() {
-
-        if (this.var1 &&this.isField(this.var1)) {
-            ContitionService.addCondition(this.var1, this);
-        }
-        if (this.var2 && this.isField(this.var2)) {
-            ContitionService.addCondition(this.var2, this);
-        }
+    if (match.startsWith('#')) {
+        return 'PAGE_VAR';
     }
+    return 'TEXT';
+}
 
-    destroy() {
-        if (this.var1)
-            ContitionService.deleteCondition(this.var1, this);
-        if (this.var2)
-            ContitionService.deleteCondition(this.var2, this);
-    }
-
-    isField(input?: string) {
-        return input && input.startsWith('$.')
-    }
+export interface WordContext {
+    word: string;
+    innerWord: string;
+    type: TokenType;
+    startIndex?: number;
+    endIndex?: number;
+    isComplete?: boolean;
+    value?: any;
+    fields?:Nucleus[];
 }

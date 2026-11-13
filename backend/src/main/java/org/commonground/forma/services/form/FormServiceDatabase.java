@@ -1,28 +1,27 @@
 package org.commonground.forma.services.form;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import org.commonground.forma.config.AppConstants;
 import org.commonground.forma.config.tenant.TenantContext;
-import org.commonground.forma.database.dao.definition.FormConfigSuccessPageEntity;
 import org.commonground.forma.database.dao.definition.FormDefinitionEntity;
 import org.commonground.forma.database.dao.translation.FormTranslationEntity;
 import org.commonground.forma.database.repository.FormDefinitionRepository;
 import org.commonground.forma.mapper.FormMapper;
+import org.commonground.forma.mapper.FormWrapperMapper;
+import org.commonground.forma.model.form.FormAuthentication;
 import org.commonground.forma.model.form.FormConfig;
-import org.commonground.forma.model.form.FormConfigSuccessPage;
+import org.commonground.forma.model.form.FormConfigLoginPage;
 import org.commonground.forma.model.form.FormList;
 import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.Translation;
-import org.commonground.forma.model.form.fields.Field;
+import org.commonground.forma.model.form.Variable;
 import org.commonground.forma.model.form.fields.Form;
-import org.commonground.forma.model.form.fields.TabPage;
 import org.commonground.forma.model.settings.Tenant;
-import org.commonground.forma.services.config.FormConfigSuccessPageService;
+import org.commonground.forma.processor.FormConfigurationProcessor;
+import org.commonground.forma.services.editor.TiptapService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,22 +33,25 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional(readOnly = true)
 public class FormServiceDatabase implements FormService {
+    private final FormWrapperMapper formWrapperMapper;
     private final FormMapper formMapper;
     private final FormDefinitionRepository formDefinitionRepository;
-    private final FormConfigSuccessPageService formConfigSuccessPageService;
-    private final TabPageService tabPageService;
+    private final TiptapService tiptapService;
+    
+    private final FormConfigurationProcessor formConfigurationProcessor;
 
     public FormServiceDatabase(
+            FormWrapperMapper formWrapperMapper,
             FormMapper formMapper,
-            TabPageService tabPageService,
-            FormConfigSuccessPageService formConfigSuccessPageService,
-            FormDefinitionRepository formDefinitionRepository) {
+            FormDefinitionRepository formDefinitionRepository,
+            FormConfigurationProcessor formConfigurationProcessor,
+            TiptapService tiptapService) {
 
+        this.formWrapperMapper = formWrapperMapper;
         this.formMapper = formMapper;
         this.formDefinitionRepository = formDefinitionRepository;
-        this.tabPageService = tabPageService;
-        this.formConfigSuccessPageService = formConfigSuccessPageService;
-
+        this.formConfigurationProcessor = formConfigurationProcessor;
+        this.tiptapService = tiptapService;
     }
 
     public FormDefinitionEntity getFormDefinitionById(UUID id) {
@@ -62,9 +64,8 @@ public class FormServiceDatabase implements FormService {
         Tenant tenant = TenantContext.getTenant();
         List<FormList> formLists = new ArrayList<>();
         List<FormDefinitionEntity> formDefinitionEntities = this.formDefinitionRepository.findByTenantId(tenant.getId());
-        formDefinitionEntities.stream().forEach(formDefinitionEntity -> {
 
-            List<FormTranslationEntity> a = formDefinitionEntity.getLabels();
+        formDefinitionEntities.forEach(formDefinitionEntity -> {
             FormList formList = new FormList();
             formList.setId(formDefinitionEntity.getId());
             formList.setName(formDefinitionEntity.getName());
@@ -88,87 +89,72 @@ public class FormServiceDatabase implements FormService {
     }
 
     @Override
-    public FormWrapper get(String formName) {
-        FormDefinitionEntity formDefinitionEntity = this.formDefinitionRepository.findByName(formName)
+    @Transactional(readOnly = true)
+    public FormDefinitionEntity getEntity(UUID tenantId, String formName) {
+        return this.formDefinitionRepository.findByNameAndTenantId(formName, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.definition.error.not_found}"));
+    }
 
-        FormWrapper formWrapper = new FormWrapper();
+    @Override
+    @Transactional(readOnly = true)
+    public FormWrapper get(UUID tenantId, String formName) {
+        FormDefinitionEntity formDefinitionEntity = getEntity(tenantId, formName);
+        return this.formWrapperMapper.toResponseDto(formDefinitionEntity);
+    }
+
+    public FormAuthentication getFormAuthentication(UUID tenantId, String formName) {
+        FormWrapper formWrapper = get(tenantId, formName);
+
+        Form form = formWrapper.getForm();
         
-        Form form = formMapper.toResponseDto(formDefinitionEntity);
+        FormConfig formConfig = formWrapper.getFormConfig();
+        List<Variable> variables = formConfig.getVariables();
+        FormConfigLoginPage formConfigLoginPage = formConfig.getFormConfigLoginPage();
 
-        form.setFields(tabPageService.get(formDefinitionEntity.getId()));
+        String description = this.tiptapService.convert(formConfigLoginPage.getLoginInstructions(), form, variables);
 
-        formWrapper.setForm(form);
-
-        formWrapper.setFormConfig(new FormConfig());
-        formWrapper.getFormConfig()
-                .setFormConfigSuccessPage(this.formConfigSuccessPageService.getByFormId(formDefinitionEntity.getId()));
-
-        return formWrapper;
+        return new FormAuthentication(
+            form.getId(),
+            formWrapper.getForm().getLabels(),
+            description,
+            formConfigLoginPage.isPublicAccess(),
+            formConfigLoginPage.isAllowFormLogin(),
+            new ArrayList<>()
+        );
     }
 
     @Override
     @Transactional
     public FormWrapper save(UUID tenantId, FormWrapper formWrapper) {
         Form form = formWrapper.getForm();
+        UUID formId = form.getId();
 
-        boolean isNewForm = form.getId() == null;
-        boolean isNotUnique;
-
-        if (isNewForm) {
-            isNotUnique = this.formDefinitionRepository.existsByNameAndTenantId(form.getName(), tenantId);
-        } else {
-            isNotUnique = this.formDefinitionRepository.existsByNameAndTenantIdAndIdNot(form.getName(), tenantId, form.getId());
-        }
-
-        if (isNotUnique) {
+        if (isNameNotUnique(form.getName(), tenantId, formId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{form.definition.error.not_unique}");
         }
 
-        FormDefinitionEntity formDefinitionEntity;
-        if (isNewForm) {
-            formDefinitionEntity = this.formMapper.toNewEntity(form, tenantId);
-        } else {
-            formDefinitionEntity = this.getFormDefinitionById(form.getId());
-            this.formMapper.updateEntityFromDto(formDefinitionEntity, form, tenantId);
-        }
+        FormDefinitionEntity formDefinitionEntity = (formId == null) 
+            ? this.formMapper.toNewEntity(form, tenantId) 
+            : updateExistingEntity(formId, form, tenantId);
 
-        Set<UUID> incomingIds = new HashSet<>();
-        form.getFields().forEach(f -> {
-            if (f.getId() != null) incomingIds.add(f.getId());
-        });
-
-        formDefinitionEntity.getTabs().removeIf(existingTabInstance -> !incomingIds.contains(existingTabInstance.getTab().getId()));
-
-
-        boolean removeSuccessPage = formWrapper.getFormConfig() == null
-                || formWrapper.getFormConfig().getFormConfigSuccessPage() == null
-                || formWrapper.getFormConfig().getFormConfigSuccessPage().getCustomSuccessPage() == null
-                || !formWrapper.getFormConfig().getFormConfigSuccessPage().getCustomSuccessPage();
-
-        FormConfig formConfig = formWrapper.getFormConfig();
-        if (removeSuccessPage) {
-            FormConfigSuccessPageEntity formConfigSuccessPageEntity = formDefinitionEntity.getFormConfigSuccessPageEntity();
-            if (formConfigSuccessPageEntity != null) {
-                formDefinitionEntity.removeFormConfigSuccessPageEntity();
-                formConfig.setFormConfigSuccessPage(null);
-                this.formConfigSuccessPageService.delete(formConfigSuccessPageEntity);
-            }
-        }
+        
+        this.formConfigurationProcessor.processUpdate(formDefinitionEntity, formWrapper);
 
         FormDefinitionEntity resultEntity = this.formDefinitionRepository.save(formDefinitionEntity);
-
-        int sortOrderTab = 0;
-        for (Field field : form.getFields()) {
-            TabPage tabPage = (TabPage) field;
-            this.tabPageService.save(resultEntity, tabPage, sortOrderTab++);
-        }
-
-        if (!removeSuccessPage) {
-            this.formConfigSuccessPageService.saveByForm(resultEntity, formConfig.getFormConfigSuccessPage());
-        }
-
+        // Return dto
         return null;
     }
 
+
+    private boolean isNameNotUnique(String name, UUID tenantId, UUID formId) {
+        return (formId == null) 
+            ? this.formDefinitionRepository.existsByNameAndTenantId(name, tenantId)
+            : this.formDefinitionRepository.existsByNameAndTenantIdAndIdNot(name, tenantId, formId);
+}
+
+    private FormDefinitionEntity updateExistingEntity(UUID formId, Form form, UUID tenantId) {
+        FormDefinitionEntity entity = this.getFormDefinitionById(formId);
+        this.formMapper.updateEntityFromDto(entity, form, tenantId);
+        return entity;
+    }
 }

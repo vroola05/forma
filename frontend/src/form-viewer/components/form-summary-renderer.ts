@@ -1,6 +1,7 @@
 import { Form } from '../../shared/form-components/form';
 import { InputNucleus } from '../../shared/form-components/interface/input-base';
 import { Nucleus } from '../../shared/form-components/interface/nucleus';
+import { RepeatingGroup } from '../../shared/form-components/repeating-group';
 import { Tab } from '../../shared/form-components/tab';
 import { FormRenderer } from '../../shared/generic-components/form-renderer';
 import { FormService } from '../services/form-service';
@@ -8,7 +9,7 @@ import { FormService } from '../services/form-service';
 export class FormSummaryRenderer {
     content = document.createElement('div');
     tabWrapper = document.createElement('div');
-    formService = FormService.getInstance();
+    // formService = FormService.getInstance();
     form: Form | undefined;
     
 
@@ -27,7 +28,7 @@ export class FormSummaryRenderer {
 
     onActiveChange(active: boolean) {
 
-        this.form = this.formService.form;
+        this.form = FormService.getForm();
 
         this.content.innerHTML = '';
         this.tabWrapper.innerHTML = '';
@@ -74,9 +75,44 @@ export class FormSummaryRenderer {
 
         if (field.getType() === 'form-group') {
             this.#renderFormGroup(field, container);
+        } else if (field.getType() === 'repeating-group') {
+            this.#renderRepeatingGroup(field, container);
         } else {
             this.#renderField(field as InputNucleus, container);
         }
+    }
+
+    #renderRepeatingGroup(nucleus: Nucleus, container: HTMLElement) {
+        const repeatingGroup = nucleus as RepeatingGroup;
+        const formGroupWrapper = document.createElement('div');
+        formGroupWrapper.className = 'summary-form-group-wrapper';
+        container.appendChild(formGroupWrapper);
+
+        const label = repeatingGroup.getLabel();
+        if (label) {
+            formGroupWrapper.appendChild(document.createElement('h3')).innerText = label;
+        }
+
+        const groupWrapper = document.createElement('div');
+        groupWrapper.className = 'summary-form-group';
+        formGroupWrapper.appendChild(groupWrapper);
+
+        const sets = repeatingGroup.getSets();
+        for (let index = 0; index < sets.length; index++) {
+            const set = sets[index];
+
+            if (set === null) {
+                continue;
+            }
+
+            for (const field of set) {
+                this.#routeField(field as InputNucleus, groupWrapper);
+            }
+        }
+        
+
+
+        
     }
 
     #renderFormGroup(formGroup: Nucleus, container: HTMLElement) {

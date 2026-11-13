@@ -1,18 +1,23 @@
 import { FormService } from '../../form-viewer/services/form-service';
 import { Form } from '../form-components/form';
 import { InputNucleus } from '../form-components/interface/input-base';
+import type { Nucleus } from '../form-components/interface/nucleus';
 import { FormRenderer } from '../generic-components/form-renderer';
-import { Condition, ConditionType, LogicalOperator, Operator } from '../model/types';
+import { ConditionDto, ConditionType, LogicalOperator, Operator, WordContext } from '../model/types';
 import { JsonPathFinder } from './json-path-finder';
 
 export class ConditionParser {
     condition;
-    func;
+    func?: (value: boolean) => void;
 
-    constructor(condition: Condition, func: (value: boolean) => void) {
+    /**
+     * 
+     * @param condition 
+     * @param func 
+     */
+    constructor(condition: ConditionDto, func?: (value: boolean) => void) {
         this.condition = condition;
         this.func = func;
-        
 
         FormService.addEventListener((form) => {
             this.#bindFieldToConditions(this.condition, form);
@@ -20,114 +25,216 @@ export class ConditionParser {
     }
 
     /**
-     * This function is also called from outside
+     * Returns runs the condition returns true if the 
+     * @returns 
      */
-    eval() {
-        // Check if at least one condition is active (truthy)
-        if (this.func && this.condition && !Object.values(this.condition).every(waarde => !waarde)) {
-            this.func(this.checkLogic(this.condition));
+    eval(): boolean {
+        if (!this.condition || Object.values(this.condition).every(waarde => !waarde)) {
+            return false;
+        }
+
+        return this.#checkLogic(this.condition);
+    }
+
+    onFieldValueChanged() {
+        const result = this.eval();
+
+        if (this.func) {
+            this.func(result);
         }
     }
 
-    isField(input: string | undefined) {
-        return input?.startsWith("$.");
-    }
-
-    getConditionType(condition: Condition) {
-        return !condition.conditions || condition.conditions.length === 0 ? ConditionType.SIMPLE : ConditionType.COMPOSITE;
-    }
-
-    #bindFieldToConditions(condition: Condition, form: Form) {
+    #bindFieldToConditions(condition: ConditionDto, form: Form) {
         if (condition === undefined || form === undefined) {
             return;
         }
 
-        if (this.getConditionType(condition) === ConditionType.COMPOSITE) {
+        if (this.#getConditionType(condition) === ConditionType.COMPOSITE) {
             if (condition.conditions) {
                 for (const element of condition.conditions) {
                     this.#bindFieldToConditions(element, form);
                 }
-            
             }
         } else {
-            console.log('bla');
             this.#bindSimpelConditions(condition, form);
         }
     }
-    
-    #bindSimpelConditions(condition: Condition, form: Form) {
-        if (condition.var1 && this.isField(condition.var1)) {
-            condition.var1Fields = JsonPathFinder.evalTokenized(condition.var1, form);
-            this.#setFieldListeners(condition.var1Fields);
+
+    #bindSimpelConditions(condition: ConditionDto, form: Form) {
+        if (condition.var1) {
+            const conditionalValues = JsonPathFinder.extractVariablesFromInput(condition.var1);
+            if (conditionalValues) {
+                condition.var1Fields = new Map();
+                for (const value of conditionalValues) {
+                    JsonPathFinder.eval(value, form);
+                    condition.var1Fields.set(value.word, value);
+
+                    this.#setFieldListener(value.fields)
+                }
+            }
+
         }
-        if (condition.var2 && this.isField(condition.var2)) {
-            condition.var2Fields = JsonPathFinder.evalTokenized(condition.var2, form);
-            this.#setFieldListeners(condition.var2Fields);
+        if (condition.var2) {
+            const conditionalValues = JsonPathFinder.extractVariablesFromInput(condition.var2);
+            if (conditionalValues) {
+                condition.var2Fields = new Map();
+                for (const value of conditionalValues) {
+                    JsonPathFinder.eval(value, form);
+                    condition.var2Fields.set(value.word, value);
+
+                    this.#setFieldListener(value.fields)
+                }
+            }
         }
     }
 
-    #setFieldListeners(fields: InputNucleus[]) {
-        for (const field of fields) {
-            console.log('bla', field)
+
+
+
+    #filterInputFields(fields: Nucleus[]): InputNucleus[] {
+        return fields.filter((field): field is InputNucleus =>
+            field !== null && field !== undefined && 'getValue' in field
+        );
+    }
+
+
+    #setFieldListener(fields?: Nucleus[]) {
+        if (!fields) {
+            return
+        }
+
+        const inputFields = this.#filterInputFields(fields);
+        for (const field of inputFields) {
             field.addValueChangedListener(() => {
-                this.eval();
+                this.onFieldValueChanged();
             });
         }
     }
 
-    checkLogic(condition: Condition): boolean {
-        console.log('a');
-        if (this.getConditionType(condition) === ConditionType.COMPOSITE) {
-            
-            if( condition.logicalOperator === null) {
-                throw new Error("Composite conditions must have a logical operator.");
-            }
-            if( !condition.conditions || condition.conditions.length === 0) {
-                return true;
-            }
+    #checkLogic(condition: ConditionDto): boolean {
+        if (this.#getConditionType(condition) === ConditionType.COMPOSITE) {
 
-            if (condition.logicalOperator === LogicalOperator.AND) {
-                for(const subCondition of condition.conditions) {
-                    if (!this.checkLogic(subCondition)) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            if (condition.logicalOperator === LogicalOperator.OR) {
-                for(const subCondition of condition.conditions) {
-                    if (this.checkLogic(subCondition)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
+            return this.#evaluateCompositeCondition(condition);
         } else {
             return this.#evaluateCondition(condition);
         }
-        return false;
     }
 
-    #evaluateCondition(condition: Condition) {
-        if(!condition.operator) {
+    #evaluateCompositeCondition(condition: ConditionDto): boolean {
+        if (condition.logicalOperator === null) {
+            throw new Error("Composite conditions must have a logical operator.");
+        }
+        if (!condition.conditions || condition.conditions.length === 0) {
+            return true;
+        }
+
+        switch (condition.logicalOperator) {
+            case LogicalOperator.AND:
+                return condition.conditions.every(subCondition => this.#checkLogic(subCondition));
+            case LogicalOperator.OR:
+                return condition.conditions.some(subCondition => this.#checkLogic(subCondition));
+            default:
+                throw new Error(`Onbekende operator: ${condition.logicalOperator}`);
+        }
+    }
+
+    #evaluateCondition(condition: ConditionDto) {
+        if (!condition.operator) {
             throw new Error('Simple conditions must have an operator.');
         }
 
-        const var1List = condition.var1Fields ? this.#getFieldValues(condition.var1Fields) : [condition.var1];
-        const var2List = condition.var2Fields ? this.#getFieldValues(condition.var2Fields) : [condition.var2];
+        const var1List = this.getParsedValues(condition.var1, condition.var1Fields);
+        const var2List = this.getParsedValues(condition.var2, condition.var2Fields);
 
-        console.log('check simple condition');
         for (const var1 of var1List) {
             for (const var2 of var2List) {
                 if (!this.#evaluateConditionType(var1, condition.operator, var2)) {
                     return false;
                 }
             }
-            return true;
         }
-        return false;
+        return true;
     }
 
+    /**
+     * Returns a list of parsed values 
+     * 
+     * Example: If ${form.field} = "test" and #{varName} = "variable".
+     * And the first parameter (base) is "${form.field} and #{varName}"
+     * the function returns ["test and variable"]
+     * 
+     * Because the use of json path, it is posible that one parameter returns multiple Nucleus
+     * for example: the field ${store[*].book} returns a list of all books
+     * 
+     * Within the second parameter:
+     *  1) index contains the different variables
+     *  2) the group of values
+     * 
+     * TODO - this function is much to slow and has weird multipliers. rebuild this code!
+     * 
+     * @param base 
+     * @param fieldGroups 
+     * @returns 
+     */
+    getParsedValues(base: string, fieldMap?: Map<string, WordContext>): string[] {
+        if (!base) return [];
+        if (!fieldMap || fieldMap.size === 0) return [base];
+
+        const regex = /[#$]\{([A-Za-z0-9._-]+)\}/g;
+
+        // Find all placeholeders in base
+        const matches = [...base.matchAll(regex)];
+        if (matches.length === 0) return [base];
+
+        // extract all values from the Nucleus[]
+        const valueGroupsForThisText: string[][] = [];
+
+        for (const match of matches) {
+            const fullWord = match[0];
+            const context = fieldMap.get(fullWord);
+
+            let extractedValues: string[] = [""];
+            if (context?.fields === undefined) {
+                return [];
+            }
+
+            context.value = this.#getFieldValues(context?.fields);
+
+            if (context && context.value !== undefined && context.value !== null) {
+                if (Array.isArray(context.value)) {
+                    extractedValues = context.value.map(v => String(v));
+                } else {
+                    extractedValues = [String(context.value)];
+                }
+            }
+
+            valueGroupsForThisText.push(extractedValues);
+        }
+
+        // Create an array with all posible cominations
+        let combinations: string[][] = [[]];
+        for (const group of valueGroupsForThisText) {
+            const nextCombinations: string[][] = [];
+            for (const current of combinations) {
+                for (const value of group) {
+                    nextCombinations.push([...current, value]);
+                }
+            }
+            combinations = nextCombinations;
+        }
+
+        // Replace the placeholders in base for each unique comination
+        const results: string[] = [];
+        for (const valueArray of combinations) {
+            let index = 0;
+            const parsedString = base.replace(regex, () => {
+                return valueArray[index++];
+            });
+            results.push(parsedString);
+        }
+
+        return results;
+    }
 
     #evaluateConditionType(var1: string, operator: Operator, var2: string) {
         const isArray1 = Array.isArray(var1);
@@ -150,21 +257,33 @@ export class ConditionParser {
 
         return this.#checkValue(var1, operator, var2);
     }
-        
 
-
-
-    #getFieldValues(fields: InputNucleus[]) {
+    /**
+     * Return a list of al the values of any of the fields. 
+     * Every value is placed in a new record in the array in its own type
+     *  - String
+     *  - Option[]
+     *  - etc
+     * @param fields 
+     * @returns 
+     */
+    #getFieldValues(fields: Nucleus[]): any[] {
         const output = [];
 
-        for (const field of fields) {
-            if (FormRenderer.isOptionType(field.type)) {
-                output.push(field.getOptions())
-            } else {
-                output.push(field.getValue())
-            }
+        const inputFields = this.#filterInputFields(fields);
+
+        for (const field of inputFields) {
+            output.push(this.#getFieldValue(field));
         }
         return output;
+    }
+
+    #getFieldValue(field: InputNucleus) {
+        if (FormRenderer.isOptionType(field.type)) {
+            return field.getOptions().map(option => option.value);
+        } else {
+            return field.getValue();
+        }
     }
 
     #checkValue(var1: string, operator: Operator, var2: string) {
@@ -197,5 +316,9 @@ export class ConditionParser {
         }
         return result;
     }
-    
+
+
+    #getConditionType(condition: ConditionDto) {
+        return !condition.conditions || condition.conditions.length === 0 ? ConditionType.SIMPLE : ConditionType.COMPOSITE;
+    }
 }

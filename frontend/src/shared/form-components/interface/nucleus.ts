@@ -1,6 +1,6 @@
 import { FormService } from '../../../form-viewer/services/form-service';
 import { ConditionParser } from '../../condition-components/condition-parser';
-import { Condition, TranslationDto } from '../../model/types';
+import { ConditionDto, TranslationDto } from '../../model/types';
 import { Lang } from '../../services/lang';
 import { ValidationBase } from './validation-base';
 
@@ -49,7 +49,8 @@ export class Nucleus extends ValidationBase {
      */
     afterFormInit() {
         if (this.showCondition !== undefined) {
-            this.showCondition.eval();
+            this.showCondition?.onFieldValueChanged();
+
         }
     }
 
@@ -82,22 +83,9 @@ export class Nucleus extends ValidationBase {
     }
 
     getLabel(): string {
-        
-        const locale = Lang.getLocale();
 
-        const localeDefault = Lang.getDefaultLocale();
-
-        if (this.labels && this.labels.length > 0) {
-            let label = this.labels.find(l => l.locale === locale);
-            if (label?.text) {
-                return label.text;
-            }
-            label = this.labels.find(l => l.locale === localeDefault);
-            if (label?.text) {
-                return label.text;
-            }
-        }
-        return this.label ? this.label : ''
+        const label = Lang.getTranslation(this.labels)
+        return label !== '' ? label : this.label ? this.label : ''
 
     }
 
@@ -113,6 +101,7 @@ export class Nucleus extends ValidationBase {
     setClasses(classes: string | undefined) {
         if (classes)
             this.classes = classes;
+            this.content.className += ' ' + classes;
         return this;
     }
 
@@ -120,7 +109,7 @@ export class Nucleus extends ValidationBase {
         return this.content;
     }
 
-    setShowConditions(condition: Condition | undefined) {
+    setShowConditions(condition: ConditionDto | undefined) {
         if (!condition || Object.keys(condition).length === 0) {
             return this;
         }
@@ -169,4 +158,5 @@ export class Nucleus extends ValidationBase {
     hasSets(): boolean {
         return false;
     }
+
 }

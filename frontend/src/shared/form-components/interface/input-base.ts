@@ -1,5 +1,5 @@
 import { OptionDto, TranslationDto } from '../../model/types';
-import { FieldService } from '../../services/field-service';
+import { FieldServiceRegistry } from '../../services/field-service';
 import { Lang } from '../../services/lang';
 import { Nucleus } from './nucleus';
 
@@ -38,9 +38,12 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
     afterFormInit() {
         super.afterFormInit();
 
-        const value = FieldService.getFieldValue(this.getId());
-        if (value) {
-            this.setValue(value, true);
+        if (this.form) {
+            const fieldService = FieldServiceRegistry.get(this.form.getId());
+            const value = fieldService.getFieldValue(this.getId());
+            if (value) {
+                this.setValue(value, true);
+            }
         }
     }
 
@@ -75,10 +78,6 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         } else {
             this.labelElement.classList.add('hidden');
         }
-    }
-
-    hasOptions() {
-        return this.type === 'radio' || this.type === 'checkbox' || this.type === 'select' || this.type === 'file';
     }
 
     getValue() {
@@ -120,8 +119,16 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
 
     valueChanged(noCallback: boolean = false, value: any = undefined) {
         if (!noCallback) {
-            FieldService.setFieldValue(this.getId(), this.value);
+            
+            if (this.form) {
+                const fieldService = FieldServiceRegistry.get(this.form.getId());
+                fieldService.setFieldValue(this.getId(), this.value);
 
+                this.form.valueChanged(this.name, value ? value : this.value);
+            }
+
+            // In general these are used for things like
+            // showconditions
             if (this.callback.length > 0) {
                 this.callback.forEach( callback => {
                     callback(this.name, value ? value : this.value, this);
@@ -140,6 +147,14 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         this.callback.push(callback);
         return this;
     }
+
+    removeValueChangedListener(callback: (name: string, value: any, field: InputNucleus) => void) {
+        const index = this.callback.indexOf(callback);
+        if (index > -1) {
+            this.callback.splice(index, 1);
+        }
+    }
+
 
     setReadonly(readonly: boolean | undefined = undefined) {
         readonly ??= false;
@@ -161,14 +176,17 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         return this;
     }
 
-    setRequired(required: boolean = false) {
+    setRequired(required: boolean = false, noAsterisk: boolean = false) {
         this.required = required;
         if (this.#isInput()) {
             this.#getInput().required = required;
         }
-        if (required ) {
+        if (required) {
             if (!this.labelElement.classList.contains('required')) {
                 this.labelElement.classList.add('required');
+                if (noAsterisk) {
+                    this.labelElement.classList.add('no-asterisk');
+                }
             }
         } else {
             this.labelElement.classList.remove('required');
@@ -227,7 +245,7 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         }
 
         this.setValidationState(valid);
-
+        
         return valid;
     }
 

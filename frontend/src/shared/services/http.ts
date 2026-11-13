@@ -100,11 +100,11 @@ export class Http {
 
         return fetch(url, fetchOptions)
             .then(response => {
-
+                
                 // Todo: This is a temporary solution to handle unauthorized responses. 
                 // We should ideally have a more robust way to handle this globally.
                 if (response.status === 401 || response.status === 403) {
-
+                    
                     const isLoginRequest = response.url.includes('/api/login');
                     if (isLoginRequest) {
                         return response.text().then(text => {

@@ -2,6 +2,7 @@ import { Editor, Extension } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 
 import { BuilderTextEditorToolbar } from './builder-editor-toolbar';
+import { FieldMenu } from './builder-field-mention-menu';
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
@@ -16,15 +17,35 @@ export const MentionTriggerExtension = Extension.create({
     addCommands() {
         return {
             openMentions: () => ({ commands, editor }) => {
+                commands.focus();
+
                 const { selection } = editor.state;
-                const { $from } = selection;
+                const { from } = selection;
 
-                const charBefore = $from.nodeBefore?.textContent?.slice(-1);
+                try {
+                    const coords = editor.view.coordsAtPos(from);
+                    
+                    const menu = new FieldMenu();
+                
+                    (menu as any).init({
+                        editor: editor,
+                        getCoordinates: () => new DOMRect(coords.left, coords.top, 0, coords.bottom - coords.top),
+                        initialText: '',
+                        onSelect: (id: string, label: string, fullText?: string) => {
+                            const value = (fullText ? fullText : label) + ' ';
+                            editor.chain()
+                                .insertContent(value)
+                                .focus()
+                                .run();
+                            menu.destroy();
+                        }
+                    });
 
-                if (charBefore !== '$') {
-                    return commands.insertContent('$');
+                    return true;
+                } catch (error) {
+                    console.error("Kon het menu niet openen via de toolbar:", error);
+                    return false;
                 }
-                return commands.focus();
             }
         }
     }
@@ -73,22 +94,25 @@ export class BuilderEditor {
         this.#editorElement.className = 'editor-content';
 
         this.#toolbar = new BuilderTextEditorToolbar(this.#editor);
-       
 
         this.#content.appendChild(this.#toolbar.getContent());
         this.#content.appendChild(this.#editorElement);
     }
 
     addData(jsonData: any) {
-
         if (!jsonData || Object.keys(jsonData).length === 0) {
             this.#editor.commands.clearContent();
             return;
         }
-        
+
         this.#editor.commands.setContent(jsonData, {
             emitUpdate: false
         });
+    }
+
+    setInline() {
+        this.#toolbar.getContent().remove();
+        this.#content.classList.add('text-editor-inline');
     }
 
     #updateEditor() {
@@ -100,6 +124,10 @@ export class BuilderEditor {
                 this.onValueChanged(this.#editor.getJSON());
             }
         }, 400);
+    }
+
+    isEmpty() {
+        return this.#editor.isEmpty;
     }
     
     getJsonData() {

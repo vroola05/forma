@@ -1,18 +1,37 @@
 package org.commonground.forma.services.editor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.commonground.forma.model.editor.TiptapNode;
+import org.commonground.forma.model.form.Variable;
 import org.commonground.forma.model.form.fields.Form;
 import org.commonground.forma.util.condition.JsonPathFinder;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class TiptapService {
-    public String convert(TiptapNode node, Form form) {
-        return "<div class=\"template-container\">" + convertToHtml(node, form) + "</div>";
+
+    private static final Set<String> MENTIONS = Set.of("page-variable-mention", "form-field-mention");
+
+    public String convert(TiptapNode node, Form form, List<Variable> pageVariables) {
+        String output = convertToHtml(node, form);
+        output = convertPageVariables(output, form, pageVariables);
+        
+
+        return "<div class=\"template-container\">" + output + "</div>";
     }
+
+    private String convertPageVariables(String input, Form form, List<Variable> pageVariables) {
+        if (pageVariables == null) {
+            pageVariables = new ArrayList<>();
+        }
+
+        return JsonPathFinder.evalText(input, form, pageVariables);
+    } 
 
     private String convertToHtml(TiptapNode node, Form form) {
         if (node == null)
@@ -22,7 +41,7 @@ public class TiptapService {
             return applyMarks(node.getText(), node.getMarks());
         }
 
-        if ("mention".equals(node.getType())) {
+        if (MENTIONS.contains(node.getType())) {
             return applyMention(node, form);
         }
 
@@ -55,22 +74,13 @@ public class TiptapService {
     private String applyMention(TiptapNode node, Form form) {
         if (node.getAttrs().containsKey("mentionSuggestionChar")) {
             String mentionKey = (String) node.getAttrs().get("mentionSuggestionChar");
-
-            return switch (mentionKey) {
-                case "$" -> applyDollarMention((String) node.getAttrs().get("id"), form);
-                default -> "";
-            };
+            String innerWord = (String) node.getAttrs().get("id");
+            if (mentionKey == null || innerWord == null)
+                return "";
+            return mentionKey + innerWord;
         }
         
         return "";
-    }
-
-    private String applyDollarMention(String input, Form form) {
-        input = input.replace("{", "$.").replace("}", "");
-        List<String> output = JsonPathFinder.evalTokenized(input, form);
-
-        
-        return String.join(", ", output);
     }
 
     private String applyMarks(String text, List<TiptapNode.TiptapMark> marks) {

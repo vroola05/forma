@@ -13,7 +13,7 @@ export class BuilderRepeatingGroup extends BuilderFieldInterface {
 
     dropzone: Dropzone | null = null;
 
-    acceptedTypes = ['text', 'checkbox', 'number', 'date', 'select', 'radio', 'valuta', 'password', 'label', 'hidden', 'file', 'dual-listbox', 'color'];
+    acceptedTypes = ['text', 'checkbox', 'number', 'date', 'select', 'radio', 'valuta', 'password', 'label', 'hidden', 'file', 'dual-listbox', 'color', 'repeating-group'];
 
     fields: BuilderFieldInterface[] = [];
 

@@ -8,6 +8,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.commonground.forma.database.dao.definition.FormDefinitionEntity;
+import org.commonground.forma.database.dao.definition.FormTabDefinitionEntity;
+import org.commonground.forma.database.dao.definition.FormTabInstanceDefinitionEntity;
 import org.commonground.forma.database.dao.translation.FormTranslationEntity;
 import org.commonground.forma.model.form.Option;
 import org.commonground.forma.model.form.Translation;
@@ -18,6 +20,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class FormMapper {
+    private final TabPageMapper tabPageMapper;
+
+    public FormMapper(TabPageMapper tabPageMapper) {
+        this.tabPageMapper = tabPageMapper;
+    }
 
     public FormDefinitionEntity toNewEntity(Form dto, UUID tenantId) {
         if (dto == null)
@@ -108,19 +115,29 @@ public class FormMapper {
         dto.setCondition(entity.getCondition());
         dto.setShow(entity.isShow());
 
-        translationEntityToDto(dto, entity);
+        translationEntityToDto(dto.getLabels(), entity);
+
+        List<FormTabInstanceDefinitionEntity> tabs = entity.getTabs();
+        for (FormTabInstanceDefinitionEntity formTabInstanceDefinitionEntity : tabs) {
+            FormTabDefinitionEntity formTabDefinitionEntity = formTabInstanceDefinitionEntity.getTab();
+            dto.addField(this.tabPageMapper.toResponseDto(formTabDefinitionEntity));
+        }
 
         return dto;
     }
 
 
-    public void translationEntityToDto(Form dto, FormDefinitionEntity entity) {
+    public void translationEntityToDto(List<Translation> translations, FormDefinitionEntity entity) {
+        if (translations == null) {
+            return;
+        }
+
         List<FormTranslationEntity> translationEntities = entity.getLabels();
         for (FormTranslationEntity translationEntity : translationEntities) {
             Translation translation = new Translation();
             translation.setLocale(translationEntity.getLocale());
             translation.setText(translationEntity.getLabel());
-            dto.getLabels().add(translation);
+            translations.add(translation);
         }
     }
 }

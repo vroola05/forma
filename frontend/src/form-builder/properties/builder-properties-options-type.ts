@@ -1,7 +1,7 @@
 import { EventService } from '../../shared/services/event-service';
+import { FooterAddComponent } from '../component/footer-add-component';
 import { BuilderFieldInterface } from '../fields/builder-field-interface';
 import { FIELD_TYPE, FieldProperty, FieldPropertyOption } from '../types';
-import { BuilderPropertiesFooter } from './components/builder-properties-footer';
 
 /**
  * 
@@ -60,11 +60,11 @@ export class BuilderPropertiesOptionsType {
         keyValueContainer.appendChild(this.builderPropertyOptionsContainer);
         
 
-        const builderPropertiesFooter = new BuilderPropertiesFooter('Item toevoegen')
+        const footerAddComponent = new FooterAddComponent('Item toevoegen')
                 .addButton('add', '', 'builder-properties-btn-add', () => {
                     this.addRowNew();
                 });
-        this.content.appendChild(builderPropertiesFooter.getContent());
+        this.content.appendChild(footerAddComponent.getContent());
 
         if (this.property.value) {
             const length = this.property.value.length;

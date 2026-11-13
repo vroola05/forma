@@ -1,9 +1,9 @@
-import type { Tab } from './tab';
-import { FormService } from '../../form-viewer/services/form-service';
 import { FormSummaryRenderer } from '../../form-viewer/components/form-summary-renderer';
+import { FormService } from '../../form-viewer/services/form-service';
 import { BaseFieldDto, FormDto } from '../model/types';
 import { Lang } from '../services/lang';
 import { Nucleus } from './interface/nucleus';
+import { Tab } from './tab';
 
 export interface FormOptions {
     showSummary: boolean
@@ -22,10 +22,12 @@ export class Form extends Nucleus {
     confirmation: any[] = [];
     confirmationCheck: any[] | undefined = undefined;
     clientSessionId: string | undefined = undefined;
-    
+    callback: ((name: string, value: string) => void)[] = [];
+
     #options: {
         showSummary: boolean
     } | undefined;
+
     onTabChange: ((tabObject: Tab, index: number, size: number) => void) | undefined;
 
     constructor(formDto: FormDto, options: FormOptions | undefined = undefined) {
@@ -138,7 +140,7 @@ export class Form extends Nucleus {
         const tab = new Tab(tabDto, (tabName: string) => {
             this.setTab(tabName);
         });
-
+        tab.setForm(this);
         await tab.init(tabDto);
 
         if (!this.singlePage) {
@@ -306,4 +308,24 @@ export class Form extends Nucleus {
     getFields() {
         return this.fields;
     }
+
+    valueChanged(name: string, value: any = undefined) {
+        if (this.callback.length > 0) {
+            this.callback.forEach( callback => {
+                callback(name, value);
+            });
+        }
+    }
+
+    addValueChangedListener(callback: (name: string, value: any) => void) {
+        if (!callback) {
+            return this;
+        }
+        if (typeof callback !== 'function') {
+            throw new Error('Callback must be a function');
+        }
+        this.callback.push(callback);
+        return this;
+    }
+
 }

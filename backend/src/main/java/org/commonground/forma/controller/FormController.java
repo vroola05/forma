@@ -16,8 +16,9 @@ import org.commonground.forma.exceptions.FormFieldError;
 import org.commonground.forma.exceptions.FormValidationException;
 import org.commonground.forma.exceptions.PageExpiredException;
 import org.commonground.forma.mapper.FormMapper;
+import org.commonground.forma.mapper.FormWrapperMapper;
 import org.commonground.forma.model.constants.FormStatus;
-import org.commonground.forma.model.form.FormConfig;
+import org.commonground.forma.model.form.FormAuthentication;
 import org.commonground.forma.model.form.FormConfigSuccessPage;
 import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.fields.Form;
@@ -60,6 +61,7 @@ public class FormController {
     private final FileService fileService;
     private final SecurityService securityService;
     private final FormPdfService formPdfService;
+    private final FormWrapperMapper formWrapperMapper;
     private final FormMapper formMapper;
 
     public FormController(
@@ -70,6 +72,7 @@ public class FormController {
         FileService fileService,
         SecurityService securityService,
         FormMapper formMapper,
+        FormWrapperMapper formWrapperMapper,
         FormPdfService formPdfService
     ) {
         this.formService = formService;
@@ -79,23 +82,36 @@ public class FormController {
         this.fileService = fileService;
         this.securityService = securityService;
         this.formMapper = formMapper;
+        this.formWrapperMapper = formWrapperMapper;
         this.formPdfService = formPdfService;
     }
 
     @GetMapping("/{formName}")
     public FormWrapper getForm(@PathVariable String formName) {
-        FormWrapper formWrapper = this.formService.get(formName);
+        Tenant tenant = TenantContext.getTenant();
+        if (tenant == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{tenant.error.not_found}");
+        }
+
+        FormWrapper formWrapper = this.formService.get(tenant.getId(), formName);
         Form form = formWrapper.getForm();
         FormStatus formStatus = form.getStatus();
         if (FormStatus.PUBLISHED.equals(formStatus)) {
-            return this.formService.get(formName);
+            return formWrapper;
         } else if (FormStatus.DRAFT.equals(formStatus)) {
             if (this.securityService.getCurrentUser().isPresent()) {
-                return this.formService.get(formName);
+                return formWrapper;
             }
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{form.definition.error.unauthorized}");
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.definition.error.not_found}");
+    }
+
+    @GetMapping("/{formName}/auth-metadata")
+    public FormAuthentication getFormAuthMetadata(@PathVariable String formName) {
+        Tenant tenant = TenantContext.getTenant();
+
+        return formService.getFormAuthentication(tenant.getId(), formName);
     }
 
     private boolean isSubmissionExpired(Instant createdAt) {
@@ -114,18 +130,16 @@ public class FormController {
             throw new PageExpiredException("{page.succes.expired}");
         }
 
-        FormWrapper formWrapper = new FormWrapper();
-        formWrapper.setForm(this.formMapper.toResponseDto(formDefinitionEntity));
-
-        FormConfigSuccessPage formConfigSuccessPage = this.formConfigSuccessPageService.get(formDefinitionEntity);
-
-        formWrapper.setFormConfig(new FormConfig());
-        formWrapper.getFormConfig().setFormConfigSuccessPage(formConfigSuccessPage);
-
         
-        if (formConfigSuccessPage != null) {
-            formConfigSuccessPage.setContent(this.formConfigSuccessPageService.transform(formWrapper, formSubmissionEntity.getData()));
+        FormWrapper formWrapper = this.formWrapperMapper.toResponseDto(formDefinitionEntity);
+        
+
+        if (formWrapper.getFormConfig() == null || formWrapper.getFormConfig().getFormConfigSuccessPage() == null) {
+            return new FormConfigSuccessPage();
         }
+
+        FormConfigSuccessPage formConfigSuccessPage = formWrapper.getFormConfig().getFormConfigSuccessPage();
+        formConfigSuccessPage.setContent(this.formConfigSuccessPageService.transform(formWrapper, formSubmissionEntity.getData()));
 
         return formConfigSuccessPage;
     }
@@ -166,7 +180,7 @@ public class FormController {
         if (tenant == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{tenant.error.not_found}");
         }
-        FormWrapper formWrapperDefinition = this.formService.get(form.getName());
+        FormWrapper formWrapperDefinition = this.formService.get(tenant.getId(), form.getName());
         FormValidator.validate(form, formWrapperDefinition.getForm());
 
 

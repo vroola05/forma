@@ -1,11 +1,11 @@
-import { Table, TableRow, TableHeader, TableCell } from "@tiptap/extension-table";
-import { DollarMenuMention } from "../generic-components/editor/builder-dollar-menu";
+import Placeholder from '@tiptap/extension-placeholder';
+import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import { BuilderEditor, MentionTriggerExtension } from "../generic-components/editor/builder-editor";
 import { BuilderEditorTableBubbleMenu } from "../generic-components/editor/builder-editor-table-bubble-menu";
+import { FieldMenuMention, VariableMenuMention } from "../generic-components/editor/builder-field-mention-menu";
 import { TranslationDto } from "../model/types";
 import { Lang } from "../services/lang";
 import { InputNucleus } from "./interface/input-base";
-import Placeholder from '@tiptap/extension-placeholder';
 
 export class RichTextField extends InputNucleus<HTMLDivElement> {
     builderEditor: BuilderEditor;
@@ -14,9 +14,7 @@ export class RichTextField extends InputNucleus<HTMLDivElement> {
         super(document.createElement('div'), name, labels, id);
         this.type = 'rich-text';
 
-        // @TODO: Consider making the extensions configurable through the constructor or a setter method, allowing for more flexibility in the editor's functionality.
         this.builderEditor = new BuilderEditor((jsonData: any) => {
-            
         }, [
             Placeholder.configure({
                     placeholder: Lang.get('text.editor.placeholder'),
@@ -27,7 +25,8 @@ export class RichTextField extends InputNucleus<HTMLDivElement> {
                 TableRow,
                 TableHeader,
                 TableCell,
-                DollarMenuMention,
+                FieldMenuMention,
+                VariableMenuMention,
                 MentionTriggerExtension,
                 BuilderEditorTableBubbleMenu
         ]);
@@ -36,6 +35,7 @@ export class RichTextField extends InputNucleus<HTMLDivElement> {
             this.updateValue(jsonData);
         };
         this.createElement();
+        
     }
 
     createElement() {
@@ -49,8 +49,26 @@ export class RichTextField extends InputNucleus<HTMLDivElement> {
         return this;
     }
 
-    validate() {
-        return true;
+    setInline(inline: boolean | undefined) {
+        if (inline) {
+            this.builderEditor.setInline();
+        }
+        return this;
+    }
+
+    validate(valid: boolean = true, message: string = '') {
+        if (!this.getShow()) {
+            return true;
+        }
+        valid = super.validate(valid, message);
+
+        if (this.required && this.builderEditor.isEmpty())  {
+            this.errors.push(Lang.get('generic.validation.required'));
+            valid = false;
+        }
+
+        this.setValidationState(valid);
+        return valid;
     }
 
     setValue(value: any | undefined, noCallback: boolean = false) {

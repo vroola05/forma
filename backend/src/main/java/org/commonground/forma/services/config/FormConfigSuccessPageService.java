@@ -14,7 +14,7 @@ public interface FormConfigSuccessPageService {
     public FormConfigSuccessPage getByTenantId(UUID id);
     public FormConfigSuccessPageEntity getEntityByTenantId(UUID id);
     public String transform(FormWrapper formWrapper, Form form);
-    public FormConfigSuccessPage saveByForm(FormDefinitionEntity formDefinitionEntity, FormConfigSuccessPage formConfigSuccessPage);
+    
     public FormConfigSuccessPage saveByTenant(FormConfigSuccessPage formConfigSuccessPage);
     public void delete(FormConfigSuccessPageEntity formConfigSuccessPageEntity);
 }

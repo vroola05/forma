@@ -1,4 +1,5 @@
 import { OptionDto, TranslationDto } from '../model/types';
+import { Lang } from '../services/lang';
 import { InputNucleus } from './interface/input-base';
 
 /**
@@ -47,7 +48,7 @@ export class CheckboxField extends InputNucleus<HTMLDivElement> {
         checkboxElement.className = 'checkbox-input-field form-check-input';
         checkboxElement.value = value;
         checkboxElement.id = id;
-        checkboxElement.setAttribute('data-text', text);
+        checkboxElement.dataset.text = text;
         checkboxElement.addEventListener('change', (e) => {
             const target = (e.target as HTMLInputElement);
             const checkboxInputField = target.closest('.checkbox-input-field') as HTMLInputElement;
@@ -113,7 +114,7 @@ export class CheckboxField extends InputNucleus<HTMLDivElement> {
      * Deze functie is gekoppeld aan de input change event van de checkbox input.
      */
     addInputValue(opt: OptionDto, noCallback = false) {
-        const option = this.value.find(o => o.value === opt.value);
+        const option = this.value.some(o => o.value === opt.value);
         if (option) 
             return this;
 
@@ -220,7 +221,7 @@ export class CheckboxField extends InputNucleus<HTMLDivElement> {
         this.errors = [];
         this.inputElement.classList.remove('is-valid', 'is-invalid');
             if (this.required && (!this.getOptions() || this.getOptions().length === 0  )) {
-            this.errors.push('Dit veld is verplicht.');
+            this.errors.push(Lang.get('generic.validation.required'));
             valid = false;
         }
 
@@ -231,9 +232,8 @@ export class CheckboxField extends InputNucleus<HTMLDivElement> {
     }
 
     setReadonly(readonly: boolean | undefined) {
-        if (readonly === undefined) {
-            readonly = false;
-        }
+        readonly ??= false;
+
         this.readonly = readonly;
 
         [...this.inputElements].forEach(inputElement => {

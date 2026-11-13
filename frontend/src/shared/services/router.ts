@@ -31,7 +31,7 @@ export class Router {
     static #currentRoute: RouteExtended | null = null;
     static lastParams: Map<string, string> | null = null;
 
-    static #routerOutlet: HTMLElement | null = document.getElementById('router-outlet');
+    static #routerOutlet: HTMLElement | null = Router.#getRouterOutlet();
 
     static setBase(base: string) {
         let baseTag = document.querySelector('base');
@@ -45,15 +45,22 @@ export class Router {
         if (base.slice(-1) === '/') {
             base = base.slice(0, -1);
         }
+
         try {
             const url = new URL(base);
             Router.basePath = url.pathname;
-
         } catch (e) {
             Router.basePath = base;
         }
 
         Router.#base = !base ? '' : base;
+    }
+
+    static #getRouterOutlet(): HTMLElement | null {
+        if (typeof document === 'undefined') {
+            return null;
+        }
+        return document.getElementById('router-outlet');
     }
 
     static get base() {
@@ -126,7 +133,7 @@ export class Router {
         if (currentRoute.routes) {
             for (const subRoute of currentRoute.routes) {
                 const subPath = subRoute.path === '' ? '' : subRoute.path.startsWith('/') ? subRoute.path : '/' + subRoute.path;
-                
+
                 const fullPath = currentRoute.path.endsWith('/') ? currentRoute.path.slice(0, -1) + subPath : currentRoute.path + subPath;
 
                 if (currentRoute.path === fullPath) {
@@ -170,6 +177,7 @@ export class Router {
         const currentRoute = Router.matchRoute(path, dataParams);
         if (!currentRoute) {
             Router.#currentRoute = null;
+
             if (Router.#routerOutlet) {
                 Router.#routerOutlet.innerHTML = `<h1>404 Not Found</h1><p>No route found for ${path}</p>`;
             }
@@ -273,7 +281,7 @@ export class Router {
 
                     const subPath = currentPath.substring(parentPath.length);
 
-                    
+
 
                     currentRoute.parentPath = parentPath;
                     currentRoute.subPath = subPath;

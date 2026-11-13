@@ -1,6 +1,6 @@
 
 import { ValidationError } from '../../shared/errors/validation-error';
-import { BuilderCondition, LogicalOperator, Operator, TranslationDto } from '../../shared/model/types';
+import { ConditionDto, LogicalOperator, Operator, TranslationDto } from '../../shared/model/types';
 import { Lang } from '../../shared/services/lang';
 import { BuilderFieldInterface } from '../fields/builder-field-interface';
 import { FieldProperty } from '../types';
@@ -114,17 +114,17 @@ export class BuilderFieldProperties {
         }
     }
 
-    #validateCondition (condition: BuilderCondition | undefined, field: BuilderFieldInterface | null = null) {
-        if (!condition || Object.keys(condition).length === 0 || !field) {
+    #validateCondition (conditionDto: ConditionDto | undefined, field: BuilderFieldInterface | null = null) {
+        if (!conditionDto || Object.keys(conditionDto).length === 0 || !field) {
             return;
         }
         
         const fieldName = `${field ? field.getLabel() : ''} - ${this.getFieldIdentifier()}`;
-        if (condition.conditions && condition.conditions.length > 0) {
-            if (condition.logicalOperator === undefined || !Object.values(LogicalOperator).includes(condition.logicalOperator)) {
+        if (conditionDto.conditions && conditionDto.conditions.length > 0) {
+            if (conditionDto.logicalOperator === undefined || !Object.values(LogicalOperator).includes(conditionDto.logicalOperator)) {
                 throw new ValidationError(fieldName, "Fout in de logische operator van de conditie.").setField(field);
             }
-        } else if (condition.operator === undefined || !Object.values(Operator).includes(condition.operator)) {
+        } else if (conditionDto.operator === undefined || !Object.values(Operator).includes(conditionDto.operator)) {
             throw new ValidationError(fieldName, "Fout in de operator van de conditie.").setField(field);
         }
     }

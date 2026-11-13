@@ -1,8 +1,7 @@
 import { FormRenderer } from "../generic-components/form-renderer";
-import { BaseFieldDto, LayoutType, RepeatingGroupDto } from "../model/types";
-import { FieldService } from "../services/field-service";
+import { BaseFieldDto, FieldDto, InputFieldDto, LayoutType, OptionFieldDto, RepeatingGroupDto } from "../model/types";
+import { FieldServiceRegistry } from "../services/field-service";
 import { FormButton } from "./components/form-button";
-import { InputNucleus } from "./interface/input-base";
 import { Nucleus } from "./interface/nucleus";
 
 export class RepeatingGroup extends Nucleus {
@@ -22,11 +21,10 @@ export class RepeatingGroup extends Nucleus {
 
     fields: BaseFieldDto[] | undefined = [];
 
-    sets: { deleteBtn: FormButton | undefined; fields: InputNucleus[] | undefined }[] = [];
+    sets: { deleteBtn: FormButton | undefined; fields: Nucleus[] | undefined; values: FieldDto[] | undefined }[] = [];
 
     constructor(baseFieldDto: RepeatingGroupDto, id: string | undefined = undefined) {
         super(baseFieldDto.name, baseFieldDto.labels, id);
-        
         this.label = baseFieldDto.label;
         this.type = baseFieldDto.type;
 
@@ -35,7 +33,7 @@ export class RepeatingGroup extends Nucleus {
         this.minLength = baseFieldDto.minLength;
         this.maxLength = baseFieldDto.maxLength;
 
-        this.layout = baseFieldDto.layout;
+        this.layout = baseFieldDto.layout ? baseFieldDto.layout : 'default';
 
         this.setShowConditions(baseFieldDto?.condition);
 
@@ -43,12 +41,24 @@ export class RepeatingGroup extends Nucleus {
     }
 
     async init(baseFieldDto: BaseFieldDto): Promise<this> {
+        let setsStr = undefined;
 
-        const setsStr = FieldService.getFieldValue(this.getId());
+        if (this.form) {
+            const fieldService = FieldServiceRegistry.get(this.form.getId());
+            setsStr = fieldService.getFieldValue(this.getId());
+        }
+
         if (setsStr) {
             const sets = Number(setsStr);
             for (let index = 0; index < sets; index++) {
-                await this.addRow();
+                await this.addRow(undefined, true);
+            }
+        } else {
+            const repeatingGroupDto = baseFieldDto as RepeatingGroupDto;
+            if (repeatingGroupDto.sets) {
+                for (let index = 0; index < repeatingGroupDto.sets.length; index++) {
+                    await this.addRow(repeatingGroupDto.sets[index], true);
+                }
             }
         }
 
@@ -60,6 +70,7 @@ export class RepeatingGroup extends Nucleus {
      */
     afterInit() {
         this.checkMinMaxAmount().then(()=> {}).catch(() => {});
+        this.setSetContainer();
     }
 
     /**
@@ -67,6 +78,17 @@ export class RepeatingGroup extends Nucleus {
      * @param {*} classes 
      */
     createElement(classes: string = '') {
+        const onClick = (e?: PointerEvent | undefined) => {
+            if (!e) {
+                return;
+            }
+            e.preventDefault();
+            this.addRow()
+                .then(() => { })
+                .catch(() => { });
+
+            this.valueChanged();
+        };
         this.repeatingGroupFieldDom.className = 'repeating-group-field' + (!classes ? '' : ' ' + classes);
 
         this.repeatingGroupContainerDom.className = 'repeating-group-container';
@@ -77,19 +99,10 @@ export class RepeatingGroup extends Nucleus {
         const repeatingGroupFooterLabelDom = document.createElement('div');
         repeatingGroupFooterLabelDom.className = 'repeating-group-footer-label';
         repeatingGroupFooterLabelDom.innerHTML = `${this.getLabel()} toevoegen`;
+        repeatingGroupFooterLabelDom.onclick = onClick;
         this.repeatingGroupFooterDom.append(repeatingGroupFooterLabelDom);
 
-        this.repeatingGroupFooterAddBtn = new FormButton('', 'icon icon-plus-lg', null, (e?: PointerEvent | undefined) => {
-            if (!e) {
-                return;
-            }
-            e.preventDefault();
-            this.addRow()
-                .then(() => { })
-                .catch(() => { });
-
-            this.valueChanged();
-        });
+        this.repeatingGroupFooterAddBtn = new FormButton('', 'icon icon-plus-lg', null, onClick);
 
         this.repeatingGroupFooterDom.append(this.repeatingGroupFooterAddBtn.getContent());
 
@@ -110,18 +123,24 @@ export class RepeatingGroup extends Nucleus {
     /**
      * 
      */
-    async addRow() {
+    async addRow(values: FieldDto[] | undefined = undefined, noCallback: boolean = false) {
         const index = this.sets.length;
-        this.sets.push({ deleteBtn: undefined, fields: [] });
+
+        this.sets.push({ deleteBtn: undefined, fields: [], values });
+
         if (this.maxLength && index >= this.maxLength) {
             console.error('can\'t append new row');
             return;
         }
 
-        const repeatingGroup = await this.createRepeatingGroup(index);
+        const repeatingGroupDom = await this.createRepeatingGroup(index);
 
-        this.repeatingGroupContainerDom.appendChild(repeatingGroup);
-        this.valueChanged();
+        this.repeatingGroupContainerDom.appendChild(repeatingGroupDom);
+
+        if (!noCallback) {
+            this.valueChanged();
+        }
+        
     }
 
     async createRepeatingGroup(index: number): Promise<HTMLElement> {
@@ -154,6 +173,7 @@ export class RepeatingGroup extends Nucleus {
         const repeatingGroupInnerContainerDom = document.createElement('div');
         repeatingGroupInnerContainerDom.className = 'repeating-group-inner-container';
         repeatingGroup.append(repeatingGroupInnerContainerDom);
+
         await this.createFields(index, repeatingGroupInnerContainerDom);
 
         return repeatingGroup;
@@ -164,17 +184,36 @@ export class RepeatingGroup extends Nucleus {
             return;
         }
 
-        for (const fieldDto of this.fields) {
-            const field = await FormRenderer.createField(fieldDto, `set-${index}`);
-            if (!field || (!(field instanceof InputNucleus))) {
-                throw new Error('Input must be an instance of Input class');
+        for (let i = 0; i < this.fields.length; i++) {
+            
+            const fieldDto = structuredClone(this.fields[i]);
+            
+            const setDto= this.getSetField(index, i);
+
+            if (FormRenderer.isOptionType(fieldDto.type)) {
+                (fieldDto as OptionFieldDto).values = (setDto as OptionFieldDto)?.values;
+
+            } else if (FormRenderer.isInputType(fieldDto.type)) {
+                (fieldDto as InputFieldDto).value = (setDto as InputFieldDto)?.value;
+            } else if (fieldDto.type === 'repeating-group') {
+                (fieldDto as RepeatingGroupDto).sets = (setDto as RepeatingGroupDto)?.sets;
             }
+            
+            const field = await FormRenderer.createField(fieldDto, this.getForm(), `${this.getId()}-set-${index}`);
 
             repeatingGroupInnerContainerDom.appendChild(field.getContent());
             this.sets[index].fields.push(field);
             field.afterInit();
         }
 
+    }
+
+    getSetField(index: number, fieldIndex: number) {
+        if (this.sets[index]?.values === undefined || fieldIndex >= this.sets[index]?.values?.length) {
+            return undefined;
+        }
+
+        return this.sets[index]?.values[fieldIndex];
     }
 
     onRemoveRepeatingGroup(repeatingGroup: HTMLElement) {
@@ -189,20 +228,33 @@ export class RepeatingGroup extends Nucleus {
         this.valueChanged();
     }
 
+    setSetContainer() {
+        if (this.sets.length > 0) {
+            this.repeatingGroupContainerDom.classList.remove('hidden');
+        } else {
+            this.repeatingGroupContainerDom.classList.add('hidden');
+        }
+    }
+
     valueChanged(noCallback: boolean = false, value: any = undefined) {
+        this.setSetContainer();
+        
+        if (this.form) {
+            const fieldService = FieldServiceRegistry.get(this.form.getId());
+            fieldService.setFieldValue(this.getId(), this.sets.length);
+        }
+
+        this.checkMinMaxAmount().then(() => {}).catch(() => {});
+
         if (noCallback) {
             return;
         }
-
-        FieldService.setFieldValue(this.getId(), this.sets.length);
 
         if (this.callback.length > 0) {
             this.callback.forEach(callback => {
                 callback(this.name, this.sets.length, this);
             });
         }
-
-        this.checkMinMaxAmount().then(() => {}).catch(() => {});
     }
 
     /**
@@ -215,6 +267,7 @@ export class RepeatingGroup extends Nucleus {
                     await this.addRow();
                 }
             }
+            
             for (const set of this.sets) {
                 if (this.sets.length <= this.minLength) {
                     set.deleteBtn?.hide();
@@ -257,7 +310,7 @@ export class RepeatingGroup extends Nucleus {
         return valid;
     }
 
-    #validateSet(set: InputNucleus[]): boolean {
+    #validateSet(set: Nucleus[]): boolean {
         let valid = true;
         for (const input of set) {
             if (!input.validate()) {

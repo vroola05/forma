@@ -6,10 +6,12 @@ export class Page extends PageComponent {
     content = document.createElement('div');
     title = '';
 
-    constructor() {
+    constructor(updateActivePage: boolean = true) {
         super();
         this.content.className = 'page-content';
-        Storage.setPage(this.constructor.name);
+        if (updateActivePage) {
+            Storage.setPage(this.constructor.name);
+        }
         
         this.getPageParameters();
     }

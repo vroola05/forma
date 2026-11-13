@@ -1,5 +1,7 @@
 package org.commonground.forma.model.form;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,5 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FormConfig {
+    FormConfigLoginPage formConfigLoginPage;
     FormConfigSuccessPage formConfigSuccessPage;
+    List<Variable> variables;
 }

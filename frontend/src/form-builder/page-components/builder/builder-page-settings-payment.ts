@@ -5,7 +5,7 @@ export class BuilderPageSettingsPayment extends Page {
     #builderLayout: BuilderLayout;
     
     constructor() {
-        super();
+        super(false);
 
         this.#builderLayout = new BuilderLayout();
 

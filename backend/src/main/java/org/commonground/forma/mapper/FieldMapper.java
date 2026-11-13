@@ -7,13 +7,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.commonground.forma.database.dao.definition.FormDefinitionEntity;
 import org.commonground.forma.database.dao.definition.FormFieldDefinitionEntity;
-import org.commonground.forma.database.dao.definition.properties.FieldProperties;
 import org.commonground.forma.database.dao.definition.properties.FileFieldProperties;
 import org.commonground.forma.database.dao.definition.properties.RepeatingGroupProperties;
 import org.commonground.forma.database.dao.translation.FieldTranslationEntity;
-import org.commonground.forma.database.dao.translation.FormTranslationEntity;
 import org.commonground.forma.model.form.Translation;
 import org.commonground.forma.model.form.constants.FieldType;
 import org.commonground.forma.model.form.fields.CheckboxField;
@@ -279,7 +276,7 @@ public class FieldMapper {
 
         return entities.stream()
                 .map(this::toResponseDto)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public boolean isTextField(FieldType fieldType) {

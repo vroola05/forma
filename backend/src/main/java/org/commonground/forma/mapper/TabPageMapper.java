@@ -15,6 +15,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TabPageMapper {
+    private final FieldMapper fieldMapper;
+
+    public TabPageMapper(FieldMapper fieldMapper) {
+        this.fieldMapper = fieldMapper;
+    }
 
     public FormTabDefinitionEntity toNewEntity(TabPage dto) {
         if (dto == null) return null;
@@ -86,6 +91,7 @@ public class TabPageMapper {
 
         translationEntityToDto(dto, entity);
 
+        dto.setFields(fieldMapper.toResponseDtoList(entity.getFields()));
         return dto;
     }
 
