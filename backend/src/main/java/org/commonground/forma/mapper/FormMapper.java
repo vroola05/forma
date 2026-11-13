@@ -115,7 +115,7 @@ public class FormMapper {
         dto.setCondition(entity.getCondition());
         dto.setShow(entity.isShow());
 
-        translationEntityToDto(dto, entity);
+        translationEntityToDto(dto.getLabels(), entity);
 
         List<FormTabInstanceDefinitionEntity> tabs = entity.getTabs();
         for (FormTabInstanceDefinitionEntity formTabInstanceDefinitionEntity : tabs) {
@@ -127,13 +127,17 @@ public class FormMapper {
     }
 
 
-    public void translationEntityToDto(Form dto, FormDefinitionEntity entity) {
+    public void translationEntityToDto(List<Translation> translations, FormDefinitionEntity entity) {
+        if (translations == null) {
+            return;
+        }
+
         List<FormTranslationEntity> translationEntities = entity.getLabels();
         for (FormTranslationEntity translationEntity : translationEntities) {
             Translation translation = new Translation();
             translation.setLocale(translationEntity.getLocale());
             translation.setText(translationEntity.getLabel());
-            dto.getLabels().add(translation);
+            translations.add(translation);
         }
     }
 }

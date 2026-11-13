@@ -31,7 +31,13 @@ describe('JsonPathFinder', () => {
             vi.mocked(JsonPathTokenizer.tokenize).mockReturnValue(['$', 'store']);
             const tree = createMockNucleus('store', []);
 
-            const result = JsonPathFinder.eval('$.store', tree);
+            const conditionalValues = JsonPathFinder.extractVariablesFromInput('${store}');
+
+            expect(conditionalValues).toHaveLength(1);
+
+            const [pathValue] = conditionalValues;
+
+            const result = JsonPathFinder.eval(pathValue, tree);
 
             expect(result).toHaveLength(1);
             expect(result[0].getName()).toBe('store');
@@ -44,7 +50,12 @@ describe('JsonPathFinder', () => {
             const bookNode = createMockNucleus('book', [chapterNode]);
             const storeNode = createMockNucleus('store', [bookNode]);
 
-            const result = JsonPathFinder.eval('$.store.book.chapter', storeNode);
+            const conditionalValues = JsonPathFinder.extractVariablesFromInput('${store.book.chapter}');
+            expect(conditionalValues).toHaveLength(1);
+
+            const [pathValue] = conditionalValues;
+
+            const result = JsonPathFinder.eval(pathValue, storeNode);
 
             expect(result).toHaveLength(1);
             expect(result[0].getName()).toBe('chapter');
@@ -59,7 +70,11 @@ describe('JsonPathFinder', () => {
             const book1 = createMockNucleus('bookB');
             const storeNode = createMockNucleus('store', [book0, book1]);
 
-            const result = JsonPathFinder.eval('$.store[1]', storeNode);
+            const conditionalValues = JsonPathFinder.extractVariablesFromInput('${store[1]}');
+            
+            expect(conditionalValues).toHaveLength(1);
+            const [pathValue] = conditionalValues;
+            const result = JsonPathFinder.eval(pathValue, storeNode);
 
             expect(result).toHaveLength(1);
             expect(result[0].getName()).toBe('bookB');
@@ -68,10 +83,13 @@ describe('JsonPathFinder', () => {
             vi.mocked(JsonPathTokenizer.tokenize).mockReturnValue(['$', 'store', '[1]', 'bookB']);
             
             const book0 = createMockNucleus('bookA');
-            const book1 = createMockNucleus('bookB'); // Deze verwachten we
+            const book1 = createMockNucleus('bookB');
             const storeNode = createMockNucleus('store', [book0, book1]);
 
-            const result = JsonPathFinder.eval('$.store[1].bookB', storeNode);
+            const conditionalValues = JsonPathFinder.extractVariablesFromInput('${store[1].bookB}');
+            expect(conditionalValues).toHaveLength(1);
+            const [pathValue] = conditionalValues;
+            const result = JsonPathFinder.eval(pathValue, storeNode);
 
             expect(result).toHaveLength(1);
             expect(result[0].getName()).toBe('bookB');
@@ -84,7 +102,10 @@ describe('JsonPathFinder', () => {
             const book1 = createMockNucleus('bookB');
             const storeNode = createMockNucleus('store', [book0, book1]);
 
-            const result = JsonPathFinder.eval('$.store[*]', storeNode);
+            const conditionalValues = JsonPathFinder.extractVariablesFromInput('${store[*]}');
+            expect(conditionalValues).toHaveLength(1);
+            const [pathValue] = conditionalValues;
+            const result = JsonPathFinder.eval(pathValue, storeNode);
 
             expect(result).toHaveLength(2);
             expect(result[0].getName()).toBe('bookA');
@@ -99,7 +120,12 @@ describe('JsonPathFinder', () => {
             const child2 = createMockNucleus('C');
             const tree = createMockNucleus('store', [child0, child1, child2]);
 
-            const result = JsonPathFinder.eval('$.store[0:2]', tree);
+            const conditionalValues = JsonPathFinder.extractVariablesFromInput('${store[0:2]}');
+
+            expect(conditionalValues).toHaveLength(1);
+            const [pathValue] = conditionalValues;
+
+            const result = JsonPathFinder.eval(pathValue, tree);
 
             expect(result).toHaveLength(2);
             expect(result[0].getName()).toBe('A');
@@ -116,7 +142,12 @@ describe('JsonPathFinder', () => {
             const subNode = createMockNucleus('sub', [targetNode]);
             const tree = createMockNucleus('store', [subNode]);
 
-            const result = JsonPathFinder.eval('$..target', tree);
+            const conditionalValues = JsonPathFinder.extractVariablesFromInput('${..target}');
+            
+            expect(conditionalValues).toHaveLength(1);
+            const [pathValue] = conditionalValues;
+
+            const result = JsonPathFinder.eval(pathValue, tree);
 
             expect(result).toHaveLength(1);
             expect(result[0].getName()).toBe('target');
@@ -132,7 +163,11 @@ describe('JsonPathFinder', () => {
             const subNode = createMockNucleus('sub', [subSubNode]);
             const tree = createMockNucleus('store', [subNode]);
 
-            const result = JsonPathFinder.eval('$..target', tree);
+            const conditionalValues = JsonPathFinder.extractVariablesFromInput('${..target}');
+            
+            expect(conditionalValues).toHaveLength(1);
+            const [pathValue] = conditionalValues;
+            const result = JsonPathFinder.eval(pathValue, tree);
 
             expect(result).toHaveLength(2);
             expect(result[0].getName()).toBe('target');
@@ -142,9 +177,41 @@ describe('JsonPathFinder', () => {
             vi.mocked(JsonPathTokenizer.tokenize).mockReturnValue(['$', '..']);
             const tree = createMockNucleus('store', []);
 
+            const conditionalValues = JsonPathFinder.extractVariablesFromInput('${..}');
+            
+            expect(conditionalValues).toHaveLength(1);
+            const [pathValue] = conditionalValues;
+
             expect(() => {
-                JsonPathFinder.eval('$..', tree);
+                JsonPathFinder.eval(pathValue, tree);
             }).toThrow('A path can\'t end with ..');
+        });
+    });
+
+    describe('Multiple variables', () => {
+        it('Loop recursively through the tree to find a specific field', () => {
+            vi.mocked(JsonPathTokenizer.tokenize)
+                .mockReturnValueOnce(['$', 'store', '[1]'])
+                .mockReturnValueOnce(['$', 'store', '[0]']);
+
+            
+            const book0 = createMockNucleus('bookA');
+            const book1 = createMockNucleus('bookB');
+            const storeNode = createMockNucleus('store', [book0, book1]);
+
+            const conditionalValues = JsonPathFinder.extractVariablesFromInput('${store[1]} ${store[0]}');
+            
+            expect(conditionalValues).toHaveLength(2);
+            
+            const result1 = JsonPathFinder.eval(conditionalValues[0], storeNode);
+            const result2 = JsonPathFinder.eval(conditionalValues[1], storeNode);
+            
+
+            expect(result1).toHaveLength(1);
+            expect(result1[0].getName()).toBe('bookB');
+
+            expect(result2).toHaveLength(1);
+            expect(result2[0].getName()).toBe('bookA');
         });
     });
 });

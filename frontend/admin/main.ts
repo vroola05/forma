@@ -36,6 +36,7 @@ import { BuilderPageSettingsSuccess } from '../src/form-builder/page-components/
 import { BuilderPageSettingsVariables } from '../src/form-builder/page-components/builder/builder-page-settings-variables';
 import { FormDashboard } from '../src/form-builder/page-components/builder/form-dashboard-page';
 import { FormSettingsGenericSuccessPage } from '../src/form-builder/page-components/form-settings/form-settings-generic-success-page';
+import { LoginManagementPage } from '../src/form-builder/page-components/login-management/login-management-page';
 
 
 export class Main {
@@ -43,15 +44,6 @@ export class Main {
         new Forma({
             routes: [
                 {'path': '/admin', 'page': DashboardPage, 'authenticated': true},
-                {'path': '/admin/page/login', 'page': LoginPage},
-                {'path': '/admin/page/tenant', 'page': TenantPage, 'authenticated': true},
-                {'path': '/admin/page/tenant/customise', 'page': TenantPageCustomise, 'authenticated': true},
-                {'path': '/admin/page/tenant/new', 'page': TenantPageNew, 'authenticated': true},
-                {'path': '/admin/page/tenant/edit/:slug', 'page': TenantPageEdit, 'authenticated': true},
-                {'path': '/admin/page/groups', 'page': GroupPage, 'authenticated': true},
-                {'path': '/admin/page/groups/:id', 'page': GroupPageEdit, 'authenticated': true},
-                {'path': '/admin/page/users', 'page': UserPage, 'authenticated': true},
-                {'path': '/admin/page/users/:id', 'page': UserPageEdit, 'authenticated': true},
                 {'path': '/admin/page/forms', 'page': FormDashboard, 'authenticated': true},
                 {'path': '/admin/page/form-generic-successpage', 'page': FormSettingsGenericSuccessPage, 'authenticated': true},
                 {'path': '/admin/page/forms/:formName', 'page': BuilderPage, 'authenticated': true,
@@ -66,7 +58,19 @@ export class Main {
                         {'path': '/settings-variables', 'page': BuilderPageSettingsVariables},
                     ]
 
-                }
+                },
+                {'path': '/admin/page/groups', 'page': GroupPage, 'authenticated': true},
+                {'path': '/admin/page/groups/:id', 'page': GroupPageEdit, 'authenticated': true},
+                {'path': '/admin/page/login', 'page': LoginPage},
+                {'path': '/admin/page/login-management', 'page': LoginManagementPage, 'authenticated': true},
+                {'path': '/admin/page/tenant', 'page': TenantPage, 'authenticated': true},
+                {'path': '/admin/page/tenant/customise', 'page': TenantPageCustomise, 'authenticated': true},
+                {'path': '/admin/page/tenant/new', 'page': TenantPageNew, 'authenticated': true},
+                {'path': '/admin/page/tenant/edit/:slug', 'page': TenantPageEdit, 'authenticated': true},
+                
+                {'path': '/admin/page/users', 'page': UserPage, 'authenticated': true},
+                {'path': '/admin/page/users/:id', 'page': UserPageEdit, 'authenticated': true}
+                
             ],
             homeUrl: '/admin',
             loginUrl: '/admin/page/login'

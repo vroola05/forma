@@ -17,7 +17,7 @@ import org.commonground.forma.util.RegexConstants;
 
 public class JsonPathFinder {
     Map<String, String> history = new HashMap<>();
-    
+
     private JsonPathFinder() {
     }
 
@@ -78,6 +78,11 @@ public class JsonPathFinder {
             
             if (variableOptional.isPresent()) {
                 Variable variable = variableOptional.get();
+                if (history.containsKey(variable.getName())) {
+                    throw new RuntimeException("Circulair loop in var:" + variable.getName());
+                }
+                history.put(variable.getName(), variable.getName());
+
                 List<VariableValue> variableValues = variable.getValues();
 
                 String value = getVariableValue(variableValues, field);

@@ -40,7 +40,7 @@ export class FormSuccess {
                             "label": Lang.get('page.settings.successpage.title'),
                             "type": "form-group",
                             "condition": {
-                                var1: "${form.success-page-tab.custom-success-page}",
+                                var1: "${success-form.success-page-tab.custom-success-page}",
                                 operator: Operator.EQ,
                                 var2: "true"
                             },

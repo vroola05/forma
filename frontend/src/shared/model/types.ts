@@ -3,6 +3,29 @@ import { Nucleus } from '../form-components/interface/nucleus';
 import { Lang } from '../services/lang';
 
 export enum PERMISSION {
+    FORM_CREATE = 'form:create',
+    FORM_READ = 'form:read',
+    FORM_UPDATE = 'form:update',
+    FORM_DELETE = 'form:delete',
+
+    FORM_FILL = 'form:fill',
+    FORM_SUBMIT = 'form:submit',
+
+    GROUP_CREATE = 'group:create',
+    GROUP_READ = 'group:read',
+    GROUP_UPDATE = 'group:update',
+    GROUP_DELETE = 'group:delete',
+
+    LOGIN_MANAGEMENT_CREATE = 'login.management:create',
+    LOGIN_MANAGEMENT_READ = 'login.management:read',
+    LOGIN_MANAGEMENT_UPDATE = 'login.management:update',
+    LOGIN_MANAGEMENT_DELETE = 'login.management:delete',
+
+    SUBMISSION_CREATE = 'submission:create',
+    SUBMISSION_READ = 'submission:read',
+    SUBMISSION_UPDATE = 'submission:update',
+    SUBMISSION_DELETE = 'submission:delete',
+
     TENANT_CREATE_INTERNAL = 'tenant:create:internal',
     TENANT_READ = 'tenant:read',
     TENANT_READ_INTERNAL = 'tenant:read:internal',
@@ -13,22 +36,7 @@ export enum PERMISSION {
     USER_CREATE = 'user:create',
     USER_READ = 'user:read',
     USER_UPDATE = 'user:update',
-    USER_DELETE = 'user:delete',
-
-    GROUP_CREATE = 'group:create',
-    GROUP_READ = 'group:read',
-    GROUP_UPDATE = 'group:update',
-    GROUP_DELETE = 'group:delete',
-
-    FORM_CREATE = 'form:create',
-    FORM_READ = 'form:read',
-    FORM_UPDATE = 'form:update',
-    FORM_DELETE = 'form:delete',
-
-    SUBMISSION_CREATE = 'submission:create',
-    SUBMISSION_READ = 'submission:read',
-    SUBMISSION_UPDATE = 'submission:update',
-    SUBMISSION_DELETE = 'submission:delete'
+    USER_DELETE = 'user:delete'
 }
 
 export const USER_STATUS: Record<string, () => string> = {
@@ -97,6 +105,24 @@ export interface UserRegisterRequestDto {
     email?: string;
     status?: string;
     groups?: GroupRegisterRequestDto[];
+}
+
+export interface ExternalIdpDto {
+    id: string;
+    providerType: string; 
+    displayName: string;
+    information: string;
+    linkText: string;
+    loginUrl: string;
+}
+
+export interface FormAuthenticationDto {
+    formId: string;
+    label: TranslationDto[];
+    description: string;
+    publicAccess: boolean;
+    allowFormLogin: boolean;
+    externalProviders: ExternalIdpDto[]
 }
 
 export interface GroupRegisterRequestDto {
@@ -190,6 +216,7 @@ export interface FileOptionFieldDto extends OptionFieldDto {
 export type FieldDto = BaseFieldDto | InputFieldDto | RichTextFieldDto | OptionFieldDto | RepeatingGroupDto;
 
 export interface FormConfig {
+    formConfigLoginPage?: FormConfigLoginPageDto;
     formConfigSuccessPage?: FormConfigSuccessPageDto;
     variables?: FormVariableDto[];
 }
@@ -203,6 +230,13 @@ export interface FormConfigSuccessPageDto {
     content?: string;
     showSummary?: boolean;
     downloadText?: string;
+}
+
+export interface FormConfigLoginPageDto {
+    loginInstructions: any;
+    publicAccess: boolean;
+    allowFormLogin: boolean;
+    providerIds: string[];
 }
 
 export interface FormVariableDto {
@@ -254,7 +288,6 @@ export function getOperatorType(type: string | undefined): Operator {
     }
     throw new Error();
 }
-
 
 export enum ConditionType {
     SIMPLE = 0,

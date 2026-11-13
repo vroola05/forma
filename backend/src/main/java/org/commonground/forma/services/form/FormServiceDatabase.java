@@ -11,12 +11,17 @@ import org.commonground.forma.database.dao.translation.FormTranslationEntity;
 import org.commonground.forma.database.repository.FormDefinitionRepository;
 import org.commonground.forma.mapper.FormMapper;
 import org.commonground.forma.mapper.FormWrapperMapper;
+import org.commonground.forma.model.form.FormAuthentication;
+import org.commonground.forma.model.form.FormConfig;
+import org.commonground.forma.model.form.FormConfigLoginPage;
 import org.commonground.forma.model.form.FormList;
 import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.Translation;
+import org.commonground.forma.model.form.Variable;
 import org.commonground.forma.model.form.fields.Form;
 import org.commonground.forma.model.settings.Tenant;
 import org.commonground.forma.processor.FormConfigurationProcessor;
+import org.commonground.forma.services.editor.TiptapService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +36,7 @@ public class FormServiceDatabase implements FormService {
     private final FormWrapperMapper formWrapperMapper;
     private final FormMapper formMapper;
     private final FormDefinitionRepository formDefinitionRepository;
+    private final TiptapService tiptapService;
     
     private final FormConfigurationProcessor formConfigurationProcessor;
 
@@ -38,12 +44,14 @@ public class FormServiceDatabase implements FormService {
             FormWrapperMapper formWrapperMapper,
             FormMapper formMapper,
             FormDefinitionRepository formDefinitionRepository,
-            FormConfigurationProcessor formConfigurationProcessor) {
+            FormConfigurationProcessor formConfigurationProcessor,
+            TiptapService tiptapService) {
 
         this.formWrapperMapper = formWrapperMapper;
         this.formMapper = formMapper;
         this.formDefinitionRepository = formDefinitionRepository;
         this.formConfigurationProcessor = formConfigurationProcessor;
+        this.tiptapService = tiptapService;
     }
 
     public FormDefinitionEntity getFormDefinitionById(UUID id) {
@@ -82,11 +90,37 @@ public class FormServiceDatabase implements FormService {
 
     @Override
     @Transactional(readOnly = true)
-    public FormWrapper get(String formName) {
-        FormDefinitionEntity formDefinitionEntity = this.formDefinitionRepository.findByName(formName)
+    public FormDefinitionEntity getEntity(UUID tenantId, String formName) {
+        return this.formDefinitionRepository.findByNameAndTenantId(formName, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.definition.error.not_found}"));
+    }
 
+    @Override
+    @Transactional(readOnly = true)
+    public FormWrapper get(UUID tenantId, String formName) {
+        FormDefinitionEntity formDefinitionEntity = getEntity(tenantId, formName);
         return this.formWrapperMapper.toResponseDto(formDefinitionEntity);
+    }
+
+    public FormAuthentication getFormAuthentication(UUID tenantId, String formName) {
+        FormWrapper formWrapper = get(tenantId, formName);
+
+        Form form = formWrapper.getForm();
+        
+        FormConfig formConfig = formWrapper.getFormConfig();
+        List<Variable> variables = formConfig.getVariables();
+        FormConfigLoginPage formConfigLoginPage = formConfig.getFormConfigLoginPage();
+
+        String description = this.tiptapService.convert(formConfigLoginPage.getLoginInstructions(), form, variables);
+
+        return new FormAuthentication(
+            form.getId(),
+            formWrapper.getForm().getLabels(),
+            description,
+            formConfigLoginPage.isPublicAccess(),
+            formConfigLoginPage.isAllowFormLogin(),
+            new ArrayList<>()
+        );
     }
 
     @Override

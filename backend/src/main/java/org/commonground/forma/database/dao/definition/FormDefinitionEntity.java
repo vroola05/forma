@@ -1,13 +1,16 @@
 package org.commonground.forma.database.dao.definition;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import org.commonground.forma.database.dao.BaseEntity;
+import org.commonground.forma.database.dao.settings.TenantAuthProviderEntity;
 import org.commonground.forma.database.dao.translation.FormTranslationEntity;
 import org.commonground.forma.model.constants.FormStatus;
+import org.commonground.forma.model.editor.TiptapNode;
 import org.commonground.forma.model.form.condition.Condition;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -21,14 +24,18 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 
 @Getter
 @Setter
@@ -63,13 +70,30 @@ public class FormDefinitionEntity extends BaseEntity {
     @Column(name = "status", nullable = false, length = 20)
     private FormStatus status;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @JdbcType(PostgreSQLJsonPGObjectJsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private TiptapNode loginInstructions;
+    private boolean publicAccess = true;
+    private boolean allowFormLogin = false;
+
     @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
     @Fetch(FetchMode.SUBSELECT)
     private List<FormTranslationEntity> labels = new ArrayList<>();
 
     @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
     @Fetch(FetchMode.SUBSELECT)
+    @OrderBy("sortOrder ASC")
     private List<FormTabInstanceDefinitionEntity> tabs = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "form_config_allowed_providers",
+        joinColumns = @JoinColumn(name = "form_definition_id"),
+        inverseJoinColumns = @JoinColumn(name = "provider_id")
+    )
+    private Set<TenantAuthProviderEntity> allowedProviders = new HashSet<>();
+
 
     @OneToOne(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
     private FormConfigSuccessPageEntity successPage;

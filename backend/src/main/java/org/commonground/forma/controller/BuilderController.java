@@ -40,7 +40,12 @@ public class BuilderController {
     @PreAuthorizeTenant
     @GetMapping("/{formName}")
     public FormWrapper getForm(@PathVariable String formName) {
-        return formService.get(formName);
+        Tenant tenant = TenantContext.getTenant();
+        if (tenant == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{tenant.error.not_found}");
+        }
+
+        return formService.get(tenant.getId(), formName);
     }
 
     @PreAuthorize("hasAuthority(@Permissions.FORM_CREATE)")

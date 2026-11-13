@@ -15,6 +15,9 @@
     "generic.btn.previous": "Vorige",
     "generic.btn.next": "Volgende",
     "generic.btn.summary": "Overzicht",
+    "generic.btn.logout": "Uitloggen",
+    "generic.btn.profile": "Profiel instellingen",
+    "generic.btn.tenant": "Tenant instellingen",
 
     "generic.permissions": "Permissies",
 
@@ -46,7 +49,9 @@
     "generic.status.archived": "Gearchiveerd",
 
     "generic.role.tenant.admin": "Tenant admin",
-    
+
+    "generic.auth.management": "Inlog beheer",
+
     "header.home": "Home",
 
     "login.title": "Aanmelden bij Forma",
@@ -55,6 +60,15 @@
     "login.username": "Gebruikersnaam",
     "login.password": "Wachtwoord",
     "login.submit": "Aanmelden",
+
+    "login.default.description": "Begeleidende tekst voor de inlogpagina",
+    "login.default.method": "Standaard inlog methodes",
+    "login.default.method.none": "Zonder inloggen",
+    "login.default.method.none.title": "Zonder inloggen verdergaan",
+    "login.default.method.none.information": "Vul dit formulier direct anoniem in. U heeft hiervoor geen account",
+    "login.default.method.form.login": "Inloggen met gebruikersnaam en wachtwoord",
+    "login.default.method.form.login.title": "Inloggen met uw account",
+    "login.default.method.form.login.information": "Log in met uw gebruikersnaam en wachtwoord om het formulier te openen.",
 
     "dashboad.title": "Dashboad",
 
@@ -71,8 +85,8 @@
     "group.edit.title": "Groep bewerken",
     "group.name": "Naam van de groep",
 
+    "user.management": "Gebruikersbeheer",
     "user.title": "Gebruikers",
-
     "user.new.title": "Nieuwe gebruiker aanmaken",
     "user.edit.title": "Gebruiker wijzigen",
 
@@ -106,6 +120,8 @@
     
     "page.settings.successpage.custom": "Gebruikt dit formulier een eigen dankpagina",
     "page.settings.successpage.title": "Gegevens van de dankpagina",
+
+    
 
     "page.successpage.download.pdf": "Download de pdf",
 

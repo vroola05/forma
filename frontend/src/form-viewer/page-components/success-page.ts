@@ -5,6 +5,7 @@ import { FormConfigSuccessPageDto, FormSubmission } from '../../shared/model/typ
 import { Page } from '../../shared/page-components/page';
 import { Http } from '../../shared/services/http';
 import { Lang } from '../../shared/services/lang';
+import { PurifyService } from '../../shared/services/purify-service';
 import { Router } from '../../shared/services/router';
 
 import { Storage } from '../../shared/services/storage-service';
@@ -88,7 +89,7 @@ export class SuccessPage extends Page {
         const contentContainer = document.createElement('div');
         contentContainer.className = 'success-page-content-container';
         if (formConfigSuccessPageDto.content) {
-            contentContainer.innerHTML = formConfigSuccessPageDto.content;
+            contentContainer.innerHTML = PurifyService.renderSafeHtml(formConfigSuccessPageDto.content);
         }
 
         this.successPage.appendChild(contentContainer);

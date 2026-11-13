@@ -43,6 +43,7 @@
     "@tiptap/pm": "^3.27.4",
     "@tiptap/starter-kit": "^3.27.4",
     "bootstrap": "^5.3.8",
+    "dompurify": "^3.4.17",
     "lowlight": "^3.3.0"
   }
 }

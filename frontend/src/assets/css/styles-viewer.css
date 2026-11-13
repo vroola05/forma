@@ -29,30 +29,100 @@
 
 }
 
-.form-container.success-page {
-    display: flex;
-    flex-direction: column;
+.form-container {
+    .success-page {
+        display: flex;
+        flex-direction: column;
 
-    .success-page-content-container {
+        .success-page-content-container {
 
-        .template-container {
-            h1 {}
+            .template-container {
+                h1 {}
 
-            h2 {}
+                h2 {}
+            }
+
         }
 
-    }
-
-    .success-page-btn-container {
-        .form-btn {
-            border: var(--secondary-color) solid 1px;
-            border-radius: var(--default-space-half);
-            color: var(--secondary-color);
-            background-color: var(--white);
+        .success-page-btn-container {
+            .form-btn {
+                border: var(--secondary-color) solid 1px;
+                border-radius: var(--default-space-half);
+                color: var(--secondary-color);
+                background-color: var(--white);
+            }
         }
     }
 
+    .form-login {
+        display: flex;
+        flex-direction: column;
+        gap: var(--default-space);
+
+        .form-login-description {
+
+        }
+
+        .form-login-method-container {
+            display: flex;
+            flex-direction: row;
+            gap: var(--default-space-double);
+
+
+            .auth-method-container {
+                display: flex;
+                flex-direction: row;
+
+                .auth-method {
+                    display: flex;
+                    flex-direction: column;
+                    max-width: 350px;
+                    margin: var(--default-space);
+
+                    padding: var(--default-space-triple) var(--default-space);
+                    border: var(--border-grey) solid 1px;
+
+                    gap: var(--default-space-double);
+
+                    background-color: var(--bg-grey);
+                    /* box-shadow: 0px 0px var(--default-space-half) rgba(61, 61, 61, 0.2); */
+                    
+                    .auth-method-header {
+                        font-weight: bold;
+                        padding: var(--default-space);
+                    }
+                    .auth-method-information {
+                        padding: var(--default-space);
+                    }
+                    .auth-method-logo-container {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        flex: auto;
+
+                        .auth-method-logo {
+
+                        }
+                    }
+                    .auth-method-input-container {
+
+                    }
+                    .auth-method-btn-container {
+                        display: flex;
+                        justify-content: center;
+                        align-items:center;
+
+                        button {
+                            padding: var(--default-space) var(--default-space-triple);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
+
+
 
 .tab-nav-container {
     .tab-nav-inner-container {

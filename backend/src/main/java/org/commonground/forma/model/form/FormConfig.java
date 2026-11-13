@@ -14,6 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FormConfig {
+    FormConfigLoginPage formConfigLoginPage;
     FormConfigSuccessPage formConfigSuccessPage;
     List<Variable> variables;
 }

@@ -16,15 +16,23 @@ export class AdminHeader extends Header {
                 new FormButton(Lang.get('page.settings.generic.forms.successpage'), null, '/admin/page/form-generic-successpage').setPermissions(PERMISSION.FORM_READ)
             ]).setPermissions(PERMISSION.FORM_READ),
             new FormButton(Lang.get('tenant.title'), null, '/admin/page/tenant').setPermissions(PERMISSION.TENANT_READ_INTERNAL),
-            new FormButton(Lang.get('group.title'), null, '/admin/page/groups').setPermissions(PERMISSION.GROUP_READ),
-            new FormButton(Lang.get('user.title'), null, '/admin/page/users').setPermissions(PERMISSION.USER_READ)
+
+            new Dropdown(Lang.get('generic.auth.management'), [
+                new FormButton(Lang.get('tenant.title'), null, '/admin/page/login-management').setPermissions(PERMISSION.LOGIN_MANAGEMENT_READ),
+                
+            ]).setPermissions(PERMISSION.LOGIN_MANAGEMENT_READ),
+            new Dropdown(Lang.get('user.management'), [
+                new FormButton(Lang.get('group.title'), null, '/admin/page/groups').setPermissions(PERMISSION.GROUP_READ),
+                new FormButton(Lang.get('user.title'), null, '/admin/page/users').setPermissions(PERMISSION.USER_READ)
+            ]).setPermissions(PERMISSION.GROUP_READ, PERMISSION.USER_READ),
+            
 
         ]);
 
         EventService.emit('header-buttons-right', [
-            new FormButton('Profiel', null, '/admin/page/form'),
-            new FormButton('Tenant instellingen', null, '/admin/page/tenant/customise'),
-            new FormButton('Uitloggen', null, null, () => {
+            new FormButton(Lang.get('generic.btn.profile'), null, '/admin/page/form'),
+            new FormButton(Lang.get('generic.btn.tenant'), null, '/admin/page/tenant/customise'),
+            new FormButton(Lang.get('generic.btn.logout'), null, null, () => {
                 Auth.logout();
             })
         ]);

@@ -3,7 +3,7 @@ import { Form } from '../form-components/form';
 import { InputNucleus } from '../form-components/interface/input-base';
 import type { Nucleus } from '../form-components/interface/nucleus';
 import { FormRenderer } from '../generic-components/form-renderer';
-import { ConditionDto, ConditionType, getTokenTypeByTrigger, LogicalOperator, Operator, WordContext } from '../model/types';
+import { ConditionDto, ConditionType, LogicalOperator, Operator, WordContext } from '../model/types';
 import { JsonPathFinder } from './json-path-finder';
 
 export class ConditionParser {
@@ -62,7 +62,7 @@ export class ConditionParser {
 
     #bindSimpelConditions(condition: ConditionDto, form: Form) {
         if (condition.var1) {
-            const conditionalValues = this.#getVarFields(condition.var1);
+            const conditionalValues = JsonPathFinder.extractVariablesFromInput(condition.var1);
             if (conditionalValues) {
                 condition.var1Fields = new Map();
                 for (const value of conditionalValues) {
@@ -75,7 +75,7 @@ export class ConditionParser {
 
         }
         if (condition.var2) {
-            const conditionalValues = this.#getVarFields(condition.var2);
+            const conditionalValues = JsonPathFinder.extractVariablesFromInput(condition.var2);
             if (conditionalValues) {
                 condition.var2Fields = new Map();
                 for (const value of conditionalValues) {
@@ -89,24 +89,6 @@ export class ConditionParser {
     }
 
 
-    /**
-     * Parses the variable string and returns a list of all variables and form fields
-     * @param input 
-     * @returns 
-     */
-    #getVarFields(input: string): WordContext[] {
-        const regex = /([#$])\{([A-Za-z0-9._-]+)\}/g;
-        const matches = [...input.matchAll(regex)];
-
-        return matches.map(match => {
-            return {
-                word: match[0],
-                innerWord: match[2],
-                type: getTokenTypeByTrigger(match[1]),
-                value: undefined
-            }
-        });
-    }
 
 
     #filterInputFields(fields: Nucleus[]): InputNucleus[] {

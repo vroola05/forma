@@ -130,4 +130,5 @@ export class Tab extends Nucleus {
         super.setShow(show);
         this.tabLabel?.setShow(show);
     }
+
 }

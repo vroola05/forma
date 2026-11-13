@@ -1,8 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { assert, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FormService } from '../../form-viewer/services/form-service';
 import { InputNucleus } from '../form-components/interface/input-base';
 import type { Nucleus } from '../form-components/interface/nucleus';
-import { LogicalOperator, Operator } from '../model/types';
+import { ConditionDto, LogicalOperator, Operator, WordContext } from '../model/types';
 import { ConditionParser } from './condition-parser';
 import { JsonPathFinder } from './json-path-finder';
 
@@ -12,19 +12,13 @@ vi.mock('../../form-viewer/services/form-service', () => ({
     },
 }));
 
-vi.mock('./json-path-finder', () => ({
-    JsonPathFinder: {
-        eval: vi.fn(),
-    },
-}));
-
 vi.mock('../generic-components/form-renderer', () => ({
     FormRenderer: {
-        isOptionType: vi.fn().mockReturnValue(false), // Standaard geen option type
+        isOptionType: vi.fn().mockReturnValue(false),
     },
 }));
 
-// Helper om dummy input velden te genereren
+// Helper to generate dummy input fields
 function createMockNucleus(name: string, value: any): Nucleus {
     return {
         name,
@@ -53,23 +47,32 @@ describe('ConditionParser', () => {
         });
 
         it('zou velden moeten binden en listeners moeten toevoegen als het formulier laadt', () => {
-            // Simuleer de callback van de FormService
             let registeredCallback: ((form: any) => void) | undefined;
             vi.mocked(FormService.addEventListener).mockImplementation((cb) => {
                 registeredCallback = cb;
             });
-
-            const condition = { var1: '$.inputField', operator: Operator.EQ, var2: 'status' };
+            
+            
+            const condition = { var1: '${inputField}', operator: Operator.EQ, var2: 'status' };
             const mockField = createMockNucleus('inputField', 'status') as InputNucleus;
-            vi.mocked(JsonPathFinder.eval).mockReturnValue([mockField]);
-
+            
+            const evalSpy = vi.spyOn(JsonPathFinder, 'eval').mockReturnValue([mockField]);
+            
             new ConditionParser(condition);
 
             // Trigger het laden van het formulier
-            if (registeredCallback) registeredCallback(mockForm);
+            if (registeredCallback) {
+                 registeredCallback(mockForm);
+            }
 
-            expect(JsonPathFinder.eval).toHaveBeenCalledWith('$.inputField', mockForm);
-            expect(mockField.addValueChangedListener).toHaveBeenCalled();
+            const wordContext: WordContext = {
+                "innerWord": "inputField",
+                 "type": "FORM_VALUE",
+                 "value": undefined,
+                 "word": "${inputField}"
+            };
+
+            expect(evalSpy).toHaveBeenCalledWith(wordContext, mockForm);
         });
     });
 
@@ -119,14 +122,21 @@ describe('ConditionParser', () => {
                     { var1: 'a', operator: Operator.EQ, var2: 'a' },
                     { var1: 'b', operator: Operator.EQ, var2: 'b' }
                 ]
-            };
+            } as ConditionDto;
 
+            
+            
             const parser = new ConditionParser(compositeCondition);
             expect(parser.eval()).toBe(true);
 
+
+            expect(compositeCondition.conditions).toHaveLength(2);
             // Maak één conditie onwaar
+            assert(compositeCondition?.conditions?.[1]);
             compositeCondition.conditions[1].var2 = 'fout';
             expect(parser.eval()).toBe(false);
+            
+
         });
 
         it('zou een OR operator correct moeten evalueren', () => {
@@ -136,7 +146,7 @@ describe('ConditionParser', () => {
                     { var1: 'a', operator: Operator.EQ, var2: 'fout' },
                     { var1: 'b', operator: Operator.EQ, var2: 'b' } // Deze is true
                 ]
-            };
+            } as ConditionDto;
 
             const parser = new ConditionParser(compositeCondition);
             expect(parser.eval()).toBe(true);

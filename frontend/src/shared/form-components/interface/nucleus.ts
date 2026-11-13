@@ -83,22 +83,9 @@ export class Nucleus extends ValidationBase {
     }
 
     getLabel(): string {
-        
-        const locale = Lang.getLocale();
 
-        const localeDefault = Lang.getDefaultLocale();
-
-        if (this.labels && this.labels.length > 0) {
-            let label = this.labels.find(l => l.locale === locale);
-            if (label?.text) {
-                return label.text;
-            }
-            label = this.labels.find(l => l.locale === localeDefault);
-            if (label?.text) {
-                return label.text;
-            }
-        }
-        return this.label ? this.label : ''
+        const label = Lang.getTranslation(this.labels)
+        return label !== '' ? label : this.label ? this.label : ''
 
     }
 

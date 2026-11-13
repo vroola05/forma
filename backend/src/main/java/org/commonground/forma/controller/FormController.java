@@ -18,6 +18,7 @@ import org.commonground.forma.exceptions.PageExpiredException;
 import org.commonground.forma.mapper.FormMapper;
 import org.commonground.forma.mapper.FormWrapperMapper;
 import org.commonground.forma.model.constants.FormStatus;
+import org.commonground.forma.model.form.FormAuthentication;
 import org.commonground.forma.model.form.FormConfigSuccessPage;
 import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.fields.Form;
@@ -87,18 +88,30 @@ public class FormController {
 
     @GetMapping("/{formName}")
     public FormWrapper getForm(@PathVariable String formName) {
-        FormWrapper formWrapper = this.formService.get(formName);
+        Tenant tenant = TenantContext.getTenant();
+        if (tenant == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{tenant.error.not_found}");
+        }
+
+        FormWrapper formWrapper = this.formService.get(tenant.getId(), formName);
         Form form = formWrapper.getForm();
         FormStatus formStatus = form.getStatus();
         if (FormStatus.PUBLISHED.equals(formStatus)) {
-            return this.formService.get(formName);
+            return formWrapper;
         } else if (FormStatus.DRAFT.equals(formStatus)) {
             if (this.securityService.getCurrentUser().isPresent()) {
-                return this.formService.get(formName);
+                return formWrapper;
             }
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{form.definition.error.unauthorized}");
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.definition.error.not_found}");
+    }
+
+    @GetMapping("/{formName}/auth-metadata")
+    public FormAuthentication getFormAuthMetadata(@PathVariable String formName) {
+        Tenant tenant = TenantContext.getTenant();
+
+        return formService.getFormAuthentication(tenant.getId(), formName);
     }
 
     private boolean isSubmissionExpired(Instant createdAt) {
@@ -167,7 +180,7 @@ public class FormController {
         if (tenant == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{tenant.error.not_found}");
         }
-        FormWrapper formWrapperDefinition = this.formService.get(form.getName());
+        FormWrapper formWrapperDefinition = this.formService.get(tenant.getId(), form.getName());
         FormValidator.validate(form, formWrapperDefinition.getForm());
 
 

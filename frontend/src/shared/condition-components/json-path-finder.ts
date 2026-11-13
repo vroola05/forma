@@ -1,5 +1,5 @@
 import type { Nucleus } from '../form-components/interface/nucleus';
-import { WordContext } from '../model/types';
+import { getTokenTypeByTrigger, WordContext } from '../model/types';
 import { JsonPathTokenizer } from './json-path-tokenizer';
 
 export class JsonPathFinder {
@@ -20,6 +20,27 @@ export class JsonPathFinder {
         const tokens = JsonPathTokenizer.tokenize(wordContext.innerWord);
         const finder = new JsonPathFinder(wordContext, tokens);
         return finder.#run(input);
+    }
+
+    /**
+     * Parses the variable string and returns a list of all variables and form fields
+     * @param input 
+     * @returns 
+     */
+    static extractVariablesFromInput(input: string): WordContext[] {
+        const regex = /([#$])\{([a-zA-Z0-9_\-*.]+(?:\[[0-9*:]+\][a-zA-Z0-9_\-*.]*)*)\}/g;
+
+        // const regex = /([#$])\{([A-Za-z0-9._-]+)\}/g;
+        const matches = [...input.matchAll(regex)];
+
+        return matches.map(match => {
+            return {
+                word: match[0],
+                innerWord: match[2],
+                type: getTokenTypeByTrigger(match[1]),
+                value: undefined
+            }
+        });
     }
 
     #run(input: Nucleus): Nucleus[] {

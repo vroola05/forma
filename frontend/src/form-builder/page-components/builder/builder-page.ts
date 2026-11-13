@@ -21,6 +21,7 @@ import { VariableService } from '../../../shared/services/variable-service';
 import { BuilderFormServiceRegistry } from '../../services/builder-form-service';
 import { BuilderPropertiesService } from '../../services/builder-properties-service';
 import { FormGeneric } from './components/forms/form-generic';
+import { FormLogin } from './components/forms/form-login';
 import { FormSuccess } from './components/forms/form-success';
 import { FormVariables } from './components/forms/form-variables';
 
@@ -93,6 +94,12 @@ export class BuilderPage extends Page {
             this.forms.push({form, url: currentPath?.parentPath + ''});
         }).catch(() => {});
 
+        const formLogin = new FormLogin();
+        formLogin.createForm(formWrapper?.formConfig?.formConfigLoginPage).then(form => {
+            this.#builderFormService.setForm(form);
+            this.forms.push({form, url: currentPath?.parentPath + '/settings-login'});
+        }).catch(() => {});
+
         const formSuccess = new FormSuccess();
         formSuccess.createForm(formWrapper?.formConfig?.formConfigSuccessPage).then(form => {
             this.#builderFormService.setForm(form);
@@ -153,9 +160,13 @@ export class BuilderPage extends Page {
                 return;
             }
 
+            const formLogin = new FormLogin();
+            const loginForm = this.#builderFormService.getForm('login-form');
+            formWrapper.formConfig.formConfigLoginPage = formLogin.getFormData(loginForm);
+
             const formSuccess = new FormSuccess();
-            const form = this.#builderFormService.getForm('success-form');
-            formWrapper.formConfig.formConfigSuccessPage = formSuccess.getFormData(form);
+            const successForm = this.#builderFormService.getForm('success-form');
+            formWrapper.formConfig.formConfigSuccessPage = formSuccess.getFormData(successForm);
 
             const formVariables = new FormVariables();
             const variablesForm = this.#builderFormService.getForm('variable-form');

@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -61,15 +62,14 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain globalAdminFilterChain(HttpSecurity http) throws Exception {
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
-        
+
         http
                 .securityMatcher("/system/**")
                 .csrf(csrf -> csrf
-                
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .csrfTokenRequestHandler(requestHandler)
-            )
-            .addFilterAfter(new CsrfCookieFilter(), org.springframework.security.web.csrf.CsrfFilter.class)
+
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(requestHandler))
+                .addFilterAfter(new CsrfCookieFilter(), org.springframework.security.web.csrf.CsrfFilter.class)
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(AppConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
                         .requestMatchers(
@@ -106,60 +106,101 @@ public class SecurityConfig {
 
     @Bean
     @Order(2)
+    public SecurityFilterChain publicFormsFilterChain(
+            HttpSecurity http, 
+            FormAuthorizationManager formAuthorizationManager) throws Exception {
+        
+        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+
+        http
+            // Deze chain geldt alleen voor formulier-acties en de formulier-login
+            .securityMatcher(
+                "/{tenantSlug}/api/forms/{formId}/**",
+                "/{tenantSlug}/api/forms/login"
+            )
+            .csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRequestHandler(requestHandler)
+            )
+            .addFilterAfter(new CsrfCookieFilter(), CsrfFilter.class)
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers(
+                    "/{tenantSlug}/api/forms/login",
+                    "/{tenantSlug}/api/forms/{formId}/auth-metadata").permitAll()
+                .requestMatchers("/{tenantSlug}/api/forms/{formId}/**").access(formAuthorizationManager)
+                .anyRequest().denyAll()
+            )
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint((req, res, authException) -> {
+                    resolver.resolveException(req, res, null,
+                        new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{form.login.required}"));
+                })
+            )
+            .formLogin(form -> form
+                .loginProcessingUrl("/{tenantSlug}/api/forms/login")
+                .successHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
+                .failureHandler((req, res, authException) -> resolver.resolveException(req, res, null,
+                    new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{login.failure}")))
+                .permitAll()
+            );
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(3)
     public SecurityFilterChain tenantAndPublicFilterChain(HttpSecurity http) throws Exception {
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
 
         http
-        .csrf(csrf -> csrf
-                
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .csrfTokenRequestHandler(requestHandler)
-            )
-            .addFilterAfter(new CsrfCookieFilter(), org.springframework.security.web.csrf.CsrfFilter.class)
-                
-                .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(AppConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
-                        .requestMatchers(
-                                "/{tenantSlug}/public/**",
-                                "/{tenantSlug}/page/**",
-                                "/{tenantSlug}/admin",
-                                "/{tenantSlug}/admin/page/**",
-                                "/{tenantSlug}/api/tenant",
-                                "/{tenantSlug}/api/tenant/logo",
-                                "/{tenantSlug}/api/language/nl",
-                                "/{tenantSlug}/api/forms/**"
-                        )
-                        .permitAll()
-                        .requestMatchers(
-                                "/{tenantSlug}/admin/**",
-                                "/{tenantSlug}/api/**")
-                        .authenticated()
-                        .anyRequest().denyAll())
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint((req, res, authException) -> resolver.resolveException(req, res, null,
-                                new ResponseStatusException(
-                                        HttpStatus.UNAUTHORIZED, "{login.failure}"))))
-                .formLogin(form -> form
-                        .loginPage("/{tenantSlug}/admin/page/login")
-                        .loginProcessingUrl("/{tenantSlug}/api/login")
-                        .successHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
-                        .failureHandler((req, res, authException) -> resolver.resolveException(req, res, null,
-                                new ResponseStatusException(
-                                        HttpStatus.UNAUTHORIZED, "{login.failure}")))
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutUrl("/{tenantSlug}/api/logout")
-                        .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
+            .csrf(csrf -> csrf
 
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID"));
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .csrfTokenRequestHandler(requestHandler))
+            .addFilterAfter(new CsrfCookieFilter(), org.springframework.security.web.csrf.CsrfFilter.class)
+
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers(AppConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
+                .requestMatchers(
+                        "/{tenantSlug}/public/**",
+                        "/{tenantSlug}/page/**",
+                        "/{tenantSlug}/admin",
+                        "/{tenantSlug}/admin/page/**",
+                        "/{tenantSlug}/api/tenant",
+                        "/{tenantSlug}/api/tenant/logo",
+                        "/{tenantSlug}/api/language/nl")
+                .permitAll()
+                .requestMatchers(
+                        "/{tenantSlug}/admin/**",
+                        "/{tenantSlug}/api/**")
+                .authenticated()
+                .anyRequest().denyAll())
+            .exceptionHandling(exception -> exception
+                    .authenticationEntryPoint((req, res, authException) -> resolver.resolveException(req, res, null,
+                            new ResponseStatusException(
+                                    HttpStatus.UNAUTHORIZED, "{login.failure}"))))
+            .formLogin(form -> form
+                    .loginPage("/{tenantSlug}/admin/page/login")
+                    .loginProcessingUrl("/{tenantSlug}/api/login")
+                    .successHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
+                    .failureHandler((req, res, authException) -> resolver.resolveException(req, res, null,
+                            new ResponseStatusException(
+                                    HttpStatus.UNAUTHORIZED, "{login.failure}")))
+                    .permitAll())
+            .logout(logout -> logout
+                    .logoutUrl("/{tenantSlug}/api/logout")
+                    .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
+
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID"));
 
         return http.build();
     }
 
     private static final class CsrfCookieFilter extends OncePerRequestFilter {
         @Override
-        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                FilterChain filterChain)
                 throws ServletException, IOException {
             CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
             if (csrfToken != null) {

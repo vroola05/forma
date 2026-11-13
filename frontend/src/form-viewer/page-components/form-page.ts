@@ -69,6 +69,7 @@ export class FormPage extends Page {
     }
 
     afterInit() {
+        Router.setLogin(`${Router.tenantPath}/page/form/${this.formName}/login`)
         this.getForm(this.formName);
     }
 

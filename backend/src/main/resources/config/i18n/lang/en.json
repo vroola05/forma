@@ -7,7 +7,6 @@
     "generic.tags": "Tags",
     "generic.primary.color": "Primairy color",
     "generic.secondary.color": "Secondairy color",
-
     "generic.not.logged.in": "Logged out",
 
     "generic.btn.cancel": "Cancel",
@@ -45,8 +44,10 @@
     "generic.status.draft": "Concept",
     "generic.status.published": "Published",
     "generic.status.archived": "Archived",
-    
+
     "generic.role.tenant.admin": "Tenant admin",
+
+    "generic.auth.management": "Login management",
 
     "header.home": "Home",
 
@@ -56,6 +57,15 @@
     "login.username": "Username",
     "login.password": "Password",
     "login.submit": "Login",
+
+    "login.default.description": "Introductory text for the login page",
+    "login.default.method": "Login methods",
+    "login.default.method.none": "No login",
+    "login.default.method.none.title": "Continue without logging in",
+    "login.default.method.none.information": "Fill out this form anonymously right away. You do not need an account for this.",
+    "login.default.method.form.login": "Username and password",
+    "login.default.method.form.login.title": "Log in with your account",
+    "login.default.method.form.login.information": "Log in with your username and password to open the form.",
 
     "dashboad.title": "Dashboard",
 
@@ -72,8 +82,8 @@
     "group.edit.title": "Edit Group",
     "group.name": "Group Name",
 
+    "user.management": "Gebruikersbeheer",
     "user.title": "User",
-
     "user.new.title": "Create new user",
     "user.edit.title": "Change user",
 

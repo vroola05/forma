@@ -20,6 +20,7 @@ import org.commonground.forma.database.repository.TagRepository;
 import org.commonground.forma.mapper.SuccessPageMapper;
 import org.commonground.forma.mapper.TabPageMapper;
 import org.commonground.forma.model.form.FormConfig;
+import org.commonground.forma.model.form.FormConfigLoginPage;
 import org.commonground.forma.model.form.FormConfigSuccessPage;
 import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.Variable;
@@ -51,8 +52,8 @@ public class FormConfigurationProcessor {
     }
 
     public void processUpdate(FormDefinitionEntity formDefinitionEntity, FormWrapper wrapper)  {
-        
         processTabs(formDefinitionEntity, wrapper);
+        processLoginPage(formDefinitionEntity, wrapper);
         processSuccessPage(formDefinitionEntity, wrapper);
         processFormVariables(formDefinitionEntity, wrapper);
     }
@@ -88,7 +89,7 @@ public class FormConfigurationProcessor {
                     .filter(tab -> tab.getTab().getId().equals(tabPage.getId()))
                     .findFirst()
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tab niet gevonden"));
-            
+
             instanceEntity.setSortOrder(sortOrder);
             tabDefEntity = instanceEntity.getTab();
             this.tabPageMapper.updateEntityFromDto(tabDefEntity, tabPage);
@@ -98,7 +99,20 @@ public class FormConfigurationProcessor {
         fieldConfigurationProcessor.syncFieldsForTab(tabDefEntity, tabPage.getFields());
     }
 
-    
+    private void processLoginPage(FormDefinitionEntity formDefinitionEntity, FormWrapper wrapper) {
+        FormConfig config = wrapper.getFormConfig();
+
+        FormConfigLoginPage formConfigLoginPage = config.getFormConfigLoginPage();
+        if (formConfigLoginPage == null) {
+            formDefinitionEntity.setPublicAccess(true);
+            formDefinitionEntity.setAllowFormLogin(false);
+            return;
+        }
+
+        formDefinitionEntity.setLoginInstructions(formConfigLoginPage.getLoginInstructions());
+        formDefinitionEntity.setPublicAccess(formConfigLoginPage.isPublicAccess());
+        formDefinitionEntity.setAllowFormLogin(formConfigLoginPage.isAllowFormLogin());
+    }
 
     /**
      * Update the successpage in the 
@@ -108,15 +122,10 @@ public class FormConfigurationProcessor {
     private void processSuccessPage(FormDefinitionEntity formDefinitionEntity, FormWrapper wrapper) {
         FormConfig config = wrapper.getFormConfig();
 
-        // Check if the success-page needs to be removed
         boolean removeSuccessPage = isSuccessPageMissing(wrapper);
         if (removeSuccessPage) {
             formDefinitionEntity.clearSuccessPage();
-            // FormConfigSuccessPageEntity formConfigSuccessPageEntity = formDefinitionEntity.getSuccessPage();
-            // if (formConfigSuccessPageEntity != null) {
-                
             config.setFormConfigSuccessPage(null);
-            // }
             return;
         }
         
