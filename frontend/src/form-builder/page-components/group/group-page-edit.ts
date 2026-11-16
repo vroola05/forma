@@ -94,7 +94,7 @@ export class GroupPageEdit extends SettingsPage {
                                             "text": permission
                                         }))
                                     ],
-                                    "value": this.group?.permissions?.map(permission => ({
+                                    "values": this.group?.permissions?.map(permission => ({
                                         "value": permission,
                                         "text": permission
                                     })) || []

@@ -18,6 +18,7 @@
     "generic.btn.logout": "Uitloggen",
     "generic.btn.profile": "Profiel instellingen",
     "generic.btn.tenant": "Tenant instellingen",
+    "generic.btn.idp":"Identity Providers (IdP)",
 
     "generic.permissions": "Permissies",
 
@@ -69,6 +70,7 @@
     "login.default.method.form.login": "Inloggen met gebruikersnaam en wachtwoord",
     "login.default.method.form.login.title": "Inloggen met uw account",
     "login.default.method.form.login.information": "Log in met uw gebruikersnaam en wachtwoord om het formulier te openen.",
+    "login.external.method": "Externe inlog methodes",
 
     "dashboad.title": "Dashboad",
 
@@ -90,6 +92,8 @@
     "user.new.title": "Nieuwe gebruiker aanmaken",
     "user.edit.title": "Gebruiker wijzigen",
 
+    "idp.title": "Identity Provider",
+    
     "text.editor.placeholder": "Begin hier met typen...",
     "text.editor.table.create": "Maken",
     "text.editor.table.row.add": "Rij toevoegen",

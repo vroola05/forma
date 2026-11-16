@@ -1,9 +1,10 @@
 package org.commonground.forma.model.form;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import org.commonground.forma.model.editor.TiptapNode;
+import org.commonground.forma.model.form.idp.FormAuthProvider;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,6 @@ public class FormConfigLoginPage {
     private TiptapNode loginInstructions;
     private boolean publicAccess;
     private boolean allowFormLogin;
-    private Set<UUID> providerIds;
+    private Set<FormAuthProvider> formAuthProvider = new HashSet<>();
 
 }

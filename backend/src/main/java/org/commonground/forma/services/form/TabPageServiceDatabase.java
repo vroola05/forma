@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.commonground.forma.database.dao.definition.FormTabDefinitionEntity;
 import org.commonground.forma.database.dao.definition.FormTabInstanceDefinitionEntity;
-import org.commonground.forma.database.repository.FormTabDefinitionEntityRepository;
+import org.commonground.forma.database.repository.FormTabDefinitionRepository;
 import org.commonground.forma.database.repository.FormTabInstanceDefinitionRepository;
 import org.commonground.forma.mapper.TabPageMapper;
 import org.commonground.forma.model.form.fields.Field;
@@ -21,24 +21,24 @@ import org.springframework.web.server.ResponseStatusException;
 public class TabPageServiceDatabase implements TabPageService {
     private final TabPageMapper tabPageMapper;
     private final FieldService fieldService;
-    private final FormTabDefinitionEntityRepository formTabDefinitionEntityRepository;
+    private final FormTabDefinitionRepository formTabDefinitionRepository;
     private final FormTabInstanceDefinitionRepository formTabInstanceDefinitionRepository;
 
     public TabPageServiceDatabase(
             TabPageMapper tabPageMapper,
 
             FieldService fieldService,
-            FormTabDefinitionEntityRepository formTabDefinitionEntityRepository,
+            FormTabDefinitionRepository formTabDefinitionRepository,
             FormTabInstanceDefinitionRepository formTabInstanceDefinitionRepository) {
         this.tabPageMapper = tabPageMapper;
 
         this.fieldService = fieldService;
-        this.formTabDefinitionEntityRepository = formTabDefinitionEntityRepository;
+        this.formTabDefinitionRepository = formTabDefinitionRepository;
         this.formTabInstanceDefinitionRepository = formTabInstanceDefinitionRepository;
     }
 
     public FormTabDefinitionEntity getFormTabDefinitionById(UUID id) {
-        return this.formTabDefinitionEntityRepository.findById(id)
+        return this.formTabDefinitionRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.tab.error.not_found}"));
     }
 

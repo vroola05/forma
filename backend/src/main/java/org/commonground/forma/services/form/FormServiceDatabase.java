@@ -2,6 +2,7 @@ package org.commonground.forma.services.form;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.commonground.forma.config.AppConstants;
@@ -11,7 +12,6 @@ import org.commonground.forma.database.dao.translation.FormTranslationEntity;
 import org.commonground.forma.database.repository.FormDefinitionRepository;
 import org.commonground.forma.mapper.FormMapper;
 import org.commonground.forma.mapper.FormWrapperMapper;
-import org.commonground.forma.model.form.FormAuthentication;
 import org.commonground.forma.model.form.FormConfig;
 import org.commonground.forma.model.form.FormConfigLoginPage;
 import org.commonground.forma.model.form.FormList;
@@ -19,8 +19,11 @@ import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.Translation;
 import org.commonground.forma.model.form.Variable;
 import org.commonground.forma.model.form.fields.Form;
+import org.commonground.forma.model.form.idp.FormAuthProvider;
+import org.commonground.forma.model.form.idp.FormAuthentication;
 import org.commonground.forma.model.settings.Tenant;
 import org.commonground.forma.processor.FormConfigurationProcessor;
+import org.commonground.forma.services.IdpService;
 import org.commonground.forma.services.editor.TiptapService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,7 @@ public class FormServiceDatabase implements FormService {
     private final FormMapper formMapper;
     private final FormDefinitionRepository formDefinitionRepository;
     private final TiptapService tiptapService;
+    private final IdpService idpService;
     
     private final FormConfigurationProcessor formConfigurationProcessor;
 
@@ -45,13 +49,15 @@ public class FormServiceDatabase implements FormService {
             FormMapper formMapper,
             FormDefinitionRepository formDefinitionRepository,
             FormConfigurationProcessor formConfigurationProcessor,
-            TiptapService tiptapService) {
+            TiptapService tiptapService,
+            IdpService idpService) {
 
         this.formWrapperMapper = formWrapperMapper;
         this.formMapper = formMapper;
         this.formDefinitionRepository = formDefinitionRepository;
         this.formConfigurationProcessor = formConfigurationProcessor;
         this.tiptapService = tiptapService;
+        this.idpService = idpService;
     }
 
     public FormDefinitionEntity getFormDefinitionById(UUID id) {
@@ -113,13 +119,17 @@ public class FormServiceDatabase implements FormService {
 
         String description = this.tiptapService.convert(formConfigLoginPage.getLoginInstructions(), form, variables);
 
+        Set<FormAuthProvider> formAuthProviders = formConfigLoginPage.getFormAuthProvider();
+
+        
+
         return new FormAuthentication(
             form.getId(),
             formWrapper.getForm().getLabels(),
             description,
             formConfigLoginPage.isPublicAccess(),
             formConfigLoginPage.isAllowFormLogin(),
-            new ArrayList<>()
+            formAuthProviders
         );
     }
 

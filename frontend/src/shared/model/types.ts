@@ -64,7 +64,7 @@ export const GENERIC_FIELD_TYPES = ['form', 'tab', 'form-group', 'repeating-grou
 export type GenericFieldType = typeof GENERIC_FIELD_TYPES[number];
 
 export const INPUT_FIELD_TYPES = [
-    'text', 'rich-text', 'number', 'email', 'password', 'date', 
+    'text', 'rich-text', 'number', 'email', 'password', 'date',
     'hidden', 'label', 'valuta', 'textarea', 'color', 'conditions-autocomplete', 'conditions'
 ] as const;
 export type InputFieldType = typeof INPUT_FIELD_TYPES[number];
@@ -107,13 +107,36 @@ export interface UserRegisterRequestDto {
     groups?: GroupRegisterRequestDto[];
 }
 
-export interface ExternalIdpDto {
+export const ProviderType = {
+    DIGID: 'DIGID',
+    EHERKENNING: 'EHERKENNING',
+    GOOGLE: 'GOOGLE',
+    MICROSOFT: 'MICROSOFT',
+    CUSTOM_OIDC: 'CUSTOM_OIDC',
+} as const;
+
+export type ProviderType = (typeof ProviderType)[keyof typeof ProviderType];
+
+export interface TenantAuthProviderDto {
     id: string;
-    providerType: string; 
+    providerType: ProviderType;
     displayName: string;
-    information: string;
+    informationText: string;
     linkText: string;
-    loginUrl: string;
+    clientId: string;
+    clientSecret: string;
+    issuerUri: string;
+    scopes: string;
+    acrValues: string;
+    active: boolean;
+}
+
+export interface FormAuthProviderDto {
+    id: string;
+    providerType: ProviderType;
+    displayName: string;
+    informationText: string;
+    linkText: string;
 }
 
 export interface FormAuthenticationDto {
@@ -122,7 +145,7 @@ export interface FormAuthenticationDto {
     description: string;
     publicAccess: boolean;
     allowFormLogin: boolean;
-    externalProviders: ExternalIdpDto[]
+    formAuthProvider: FormAuthProviderDto[];
 }
 
 export interface GroupRegisterRequestDto {
@@ -208,7 +231,7 @@ export interface OptionFieldDto extends BaseFieldDto {
 export interface FileOptionFieldDto extends OptionFieldDto {
     isMultiple?: boolean;
     allowedExtensions: string[];
-    maxFiles? : number;
+    maxFiles?: number;
     maxFileSize?: number;
 }
 
@@ -233,10 +256,10 @@ export interface FormConfigSuccessPageDto {
 }
 
 export interface FormConfigLoginPageDto {
-    loginInstructions: any;
+    loginInstructions?: any;
     publicAccess: boolean;
     allowFormLogin: boolean;
-    providerIds: string[];
+    externalProviders: FormAuthProviderDto[];
 }
 
 export interface FormVariableDto {
@@ -301,7 +324,7 @@ export interface ConditionDto {
     operator?: Operator;
     var2: string;
     logicalOperator?: LogicalOperator;
-    
+
     conditions?: ConditionDto[];
 
     var1Fields?: Map<string, WordContext>;
@@ -328,5 +351,5 @@ export interface WordContext {
     endIndex?: number;
     isComplete?: boolean;
     value?: any;
-    fields?:Nucleus[];
+    fields?: Nucleus[];
 }

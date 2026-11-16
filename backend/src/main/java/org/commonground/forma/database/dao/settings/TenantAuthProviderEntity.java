@@ -10,10 +10,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,13 +22,11 @@ import lombok.Setter;
 @Entity
 @Table(name = "tenant_auth_providers")
 public class TenantAuthProviderEntity extends BaseEntity {
-
     @Id
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tenant_id", nullable = false)
-    private TenantEntity tenant;
+    @Column(nullable = false)
+    private UUID tenantId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "provider_type", nullable = false)
@@ -39,6 +34,12 @@ public class TenantAuthProviderEntity extends BaseEntity {
 
     @Column(name = "display_name", nullable = false)
     private String displayName;
+
+    @Column(name = "information_text")
+    private String informationText;
+
+    @Column(name = "link_text")
+    private String linkText;
 
     @Column(name = "client_id", nullable = false)
     private String clientId;
@@ -56,5 +57,5 @@ public class TenantAuthProviderEntity extends BaseEntity {
     private String acrValues;
 
     @Column(nullable = false)
-    private boolean enabled = true;
+    private boolean active = true;
 }

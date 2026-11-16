@@ -2,6 +2,8 @@ package org.commonground.forma.config;
 
 import java.io.IOException;
 
+import org.commonground.forma.config.security.oauth.DatabaseClientRegistrationRepository;
+import org.commonground.forma.config.security.oauth.FormOAuth2SuccessHandler;
 import org.commonground.forma.model.settings.constants.Permissions;
 import org.commonground.forma.services.TenantUserDetailsService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -108,7 +110,8 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain publicFormsFilterChain(
             HttpSecurity http, 
-            FormAuthorizationManager formAuthorizationManager) throws Exception {
+            FormAuthorizationManager formAuthorizationManager, DatabaseClientRegistrationRepository clientRegistrationRepository,
+        FormOAuth2SuccessHandler formOAuth2SuccessHandler) throws Exception {
         
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
 
@@ -116,7 +119,9 @@ public class SecurityConfig {
             // Deze chain geldt alleen voor formulier-acties en de formulier-login
             .securityMatcher(
                 "/{tenantSlug}/api/forms/{formId}/**",
-                "/{tenantSlug}/api/forms/login"
+                "/{tenantSlug}/api/forms/login",
+                "/{tenantSlug}/oauth2/authorization/**",
+                "/{tenantSlug}/login/oauth2/code/**"
             )
             .csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
@@ -126,7 +131,10 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers(
                     "/{tenantSlug}/api/forms/login",
-                    "/{tenantSlug}/api/forms/{formId}/auth-metadata").permitAll()
+                    "/{tenantSlug}/api/forms/{formId}/auth-metadata",
+                    "/{tenantSlug}/oauth2/authorization/**",
+                    "/{tenantSlug}/login/oauth2/code/**"
+                ).permitAll()
                 .requestMatchers("/{tenantSlug}/api/forms/{formId}/**").access(formAuthorizationManager)
                 .anyRequest().denyAll()
             )
@@ -142,6 +150,16 @@ public class SecurityConfig {
                 .failureHandler((req, res, authException) -> resolver.resolveException(req, res, null,
                     new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{login.failure}")))
                 .permitAll()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .authorizationEndpoint(auth -> auth
+                    .baseUri("/{tenantSlug}/oauth2/authorization")
+                )
+                .redirectionEndpoint(redirection -> redirection
+                    .baseUri("/{tenantSlug}/login/oauth2/code/*")
+                )
+                .clientRegistrationRepository(clientRegistrationRepository)
+                .successHandler(formOAuth2SuccessHandler)
             );
 
         return http.build();

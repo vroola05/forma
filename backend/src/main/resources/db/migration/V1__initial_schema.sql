@@ -35,24 +35,27 @@ CREATE TABLE tenant (
 
 CREATE TABLE tenant_auth_providers (
     id UUID PRIMARY KEY,
-    tenant_id UUID NOT NULL REFERENCES tenant(id),
+    tenant_id UUID NOT NULL REFERENCES tenant(id) ON DELETE CASCADE,
     provider_type TEXT NOT NULL,
     display_name TEXT NOT NULL,
+    information_text TEXT,
+    link_text TEXT,
     client_id TEXT NOT NULL,
     client_secret TEXT NOT NULL,
     issuer_uri TEXT NOT NULL,
-    scopes TEXT NOT NULL,
+    scopes TEXT NOT NULL DEFAULT 'openid,profile,email',
     acr_values TEXT NULL,
-    enabled boolean NOT NULL DEFAULT TRUE,
+    active boolean NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    version BIGINT DEFAULT 0 NOT NULL
+    version BIGINT DEFAULT 0 NOT NULL,
+    CONSTRAINT unique_idp_display_name UNIQUE (tenant_id, display_name)
 );
 
 
 CREATE TABLE users (
     id UUID PRIMARY KEY,
-    tenant_id UUID REFERENCES tenant(id),
+    tenant_id UUID REFERENCES tenant(id) ON DELETE CASCADE,
     name TEXT,
     username TEXT NOT NULL,
     password TEXT NOT NULL,

@@ -12,6 +12,7 @@ import org.commonground.forma.database.dao.translation.FormTranslationEntity;
 import org.commonground.forma.model.constants.FormStatus;
 import org.commonground.forma.model.editor.TiptapNode;
 import org.commonground.forma.model.form.condition.Condition;
+import org.commonground.forma.model.form.idp.FormAuthProvider;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.JdbcType;
@@ -151,4 +152,10 @@ public class FormDefinitionEntity extends BaseEntity {
         this.variables.add(formVariableEntity);
         formVariableEntity.setForm(this);
     }
+
+    public void retainAllowedProviders(Set<FormAuthProvider> incomingAllowedProvidersIds) {
+        
+        this.allowedProviders.removeIf(instance -> !incomingAllowedProvidersIds.stream().anyMatch(p-> p.getId() == instance.getId()));
+    }
 }
+

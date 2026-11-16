@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.commonground.forma.database.dao.definition.FormDefinitionEntity;
-import org.commonground.forma.model.form.FormAuthentication;
 import org.commonground.forma.model.form.FormList;
 import org.commonground.forma.model.form.FormWrapper;
+import org.commonground.forma.model.form.idp.FormAuthentication;
 
 public interface FormService {
     public List<FormList> list();

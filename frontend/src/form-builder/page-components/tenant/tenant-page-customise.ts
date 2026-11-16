@@ -96,7 +96,7 @@ export class TenantPageCustomise extends SettingsPage {
                                         { 'value': 'SUSPENDED', 'text': Lang.get('generic.status.suspended') },
                                         { 'value': 'PENDING_DELETION', 'text': Lang.get('generic.status.pending.deletion') }
                                     ],
-                                    "value": !this.tenant?.status ? [] : [{value: this.tenant?.status, text: ''}]
+                                    "values": !this.tenant?.status ? [] : [{value: this.tenant?.status, text: ''}]
                                 },
                                 {
                                     "name": "email",

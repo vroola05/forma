@@ -93,7 +93,7 @@ export class TenantPageEdit extends SettingsPage {
                                     "required": true,
                                     "options": Object.entries(TENANT_STATUS).map(([key, val_fnc]) => ({
                                         value: key, text: val_fnc()})),
-                                    "value": !tenant?.status ? [] : [{value: tenant?.status, text: ''}]
+                                    "values": !tenant?.status ? [] : [{value: tenant?.status, text: ''}]
                                 },
                                 {
                                     "name": "email",

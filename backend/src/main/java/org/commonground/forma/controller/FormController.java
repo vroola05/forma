@@ -18,10 +18,10 @@ import org.commonground.forma.exceptions.PageExpiredException;
 import org.commonground.forma.mapper.FormMapper;
 import org.commonground.forma.mapper.FormWrapperMapper;
 import org.commonground.forma.model.constants.FormStatus;
-import org.commonground.forma.model.form.FormAuthentication;
 import org.commonground.forma.model.form.FormConfigSuccessPage;
 import org.commonground.forma.model.form.FormWrapper;
 import org.commonground.forma.model.form.fields.Form;
+import org.commonground.forma.model.form.idp.FormAuthentication;
 import org.commonground.forma.model.settings.Tenant;
 import org.commonground.forma.model.submission.FormSubmissionResponse;
 import org.commonground.forma.services.FileService;
@@ -110,7 +110,6 @@ public class FormController {
     @GetMapping("/{formName}/auth-metadata")
     public FormAuthentication getFormAuthMetadata(@PathVariable String formName) {
         Tenant tenant = TenantContext.getTenant();
-
         return formService.getFormAuthentication(tenant.getId(), formName);
     }
 

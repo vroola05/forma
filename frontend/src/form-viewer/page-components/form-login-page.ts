@@ -7,7 +7,7 @@ import { PasswordField } from '../../shared/form-components/password-field';
 import { TextField } from '../../shared/form-components/text-field';
 import { Footer } from '../../shared/generic-components/footer';
 import { Header } from '../../shared/generic-components/header';
-import { ExternalIdpDto, FormAuthenticationDto, FormWrapper } from '../../shared/model/types';
+import { FormAuthenticationDto, FormAuthProviderDto, FormWrapper, ProviderType } from '../../shared/model/types';
 import { Auth } from '../../shared/services/auth';
 import { ApiError, Http } from '../../shared/services/http';
 import { Lang } from '../../shared/services/lang';
@@ -117,7 +117,7 @@ export class FormLoginPage extends Page {
                 
                 this.setTitle(Lang.getTranslation(formAuthentication.label));
 
-                if (!formAuthentication.allowFormLogin && (!formAuthentication.externalProviders || formAuthentication.externalProviders.length === 0)) {
+                if (!formAuthentication.allowFormLogin && (!formAuthentication.formAuthProvider || formAuthentication.formAuthProvider.length === 0)) {
                     Router.route(`${Router.tenantPath}/page/form/${formName}`);
                 }
 
@@ -130,14 +130,18 @@ export class FormLoginPage extends Page {
                 if (formAuthentication.publicAccess) {
                     
                     this.formLoginMethodContainer.appendChild(this.createExternalLoginType({
-                        displayName: Lang.get('login.default.method.none.title'),
-                        information: Lang.get('login.default.method.none.information'),
                         id: '',
-                        loginUrl: Router.tenantPath + `/page/form/${formName}`,
+                        providerType: ProviderType.CUSTOM_OIDC,
+                        displayName: Lang.get('login.default.method.none.title'),
+                        informationText: Lang.get('login.default.method.none.information'),
                         linkText: 'Verder',
-                        providerType: ''
-                    }));
+                        
+                    }, Router.tenantPath + `/page/form/${formName}`));
 
+                }
+
+                for (const p of formAuthentication.formAuthProvider) {
+                    this.formLoginMethodContainer.appendChild(this.createExternalLoginType(p, `/${Router.basePath}oauth2/authorization/${p.id}?formName=${formName}`));
                 }
                 
             })
@@ -228,7 +232,7 @@ export class FormLoginPage extends Page {
         return authMethodContainer;
     }
 
-    createExternalLoginType(externalIdpDto: ExternalIdpDto) {
+    createExternalLoginType(formAuthProviderDto: FormAuthProviderDto, url: string | undefined = undefined) {
         const authMethodContainer = document.createElement('div');
         authMethodContainer.classList.add('auth-method-container');
 
@@ -238,22 +242,25 @@ export class FormLoginPage extends Page {
 
         const authMethodHeader = document.createElement('div');
         authMethodHeader.className = 'auth-method-header';
-        authMethodHeader.innerHTML = externalIdpDto.displayName;
+        authMethodHeader.innerHTML = formAuthProviderDto.displayName;
         authMethod.appendChild(authMethodHeader);
 
         const authMethodInformation = document.createElement('div');
         authMethodInformation.className = 'auth-method-information';
-        authMethodInformation.innerHTML = externalIdpDto.information;
+        authMethodInformation.innerHTML = formAuthProviderDto.informationText;
         authMethod.appendChild(authMethodInformation);
 
         const authMethodLogoContainer = document.createElement('div');
         authMethodLogoContainer.className = 'auth-method-logo-container';
         authMethod.appendChild(authMethodLogoContainer);
 
-        const btnText = externalIdpDto.linkText ? externalIdpDto.linkText : Lang.get('login.submit');
+        const btnText = formAuthProviderDto.linkText ? formAuthProviderDto.linkText : Lang.get('login.submit');
         const submitBtn = new FormButton(
             btnText, 'login-button btn-primary', undefined, () => {
-                Router.route(externalIdpDto.loginUrl);
+                if (url) {
+                    Router.route(url);
+                    // Router.route(formAuthProviderDto.loginUrl);
+                }
             });
 
         const authMethodBtnContainer = document.createElement('div');
