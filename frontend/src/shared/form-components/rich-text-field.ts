@@ -6,12 +6,13 @@ import { FieldMenuMention, VariableMenuMention } from "../generic-components/edi
 import { TranslationDto } from "../model/types";
 import { Lang } from "../services/lang";
 import { InputNucleus } from "./interface/input-base";
+import { Form } from './form';
 
 export class RichTextField extends InputNucleus<HTMLDivElement> {
     builderEditor: BuilderEditor;
 
-    constructor(name: string, labels: TranslationDto[] | undefined, id: string | undefined = undefined) {
-        super(document.createElement('div'), name, labels, id);
+    constructor(name: string, labels?: TranslationDto[], form?: Form, id?: string) {
+        super(document.createElement('div'), name, labels, form, id);
         this.type = 'rich-text';
 
         this.builderEditor = new BuilderEditor((jsonData: any) => {
@@ -89,7 +90,7 @@ export class RichTextField extends InputNucleus<HTMLDivElement> {
     }
 
     clone() {
-        const richTextField = new RichTextField(this.name, this.labels);
+        const richTextField = new RichTextField(this.name, this.labels, this.form, this.id);
         richTextField.setType(this.type);
         richTextField.setValue(this.value);
         richTextField.setClasses(this.classes);

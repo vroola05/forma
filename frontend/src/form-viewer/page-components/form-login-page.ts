@@ -141,7 +141,7 @@ export class FormLoginPage extends Page {
                 }
 
                 for (const p of formAuthentication.formAuthProvider) {
-                    this.formLoginMethodContainer.appendChild(this.createExternalLoginType(p, `/${Router.basePath}oauth2/authorization/${p.id}?formName=${formName}`));
+                    this.formLoginMethodContainer.appendChild(this.createExternalLoginType(p, `${Router.tenantPath}/oauth2/authorization/${p.id}?formName=${formName}`));
                 }
                 
             })
@@ -256,12 +256,7 @@ export class FormLoginPage extends Page {
 
         const btnText = formAuthProviderDto.linkText ? formAuthProviderDto.linkText : Lang.get('login.submit');
         const submitBtn = new FormButton(
-            btnText, 'login-button btn-primary', undefined, () => {
-                if (url) {
-                    Router.route(url);
-                    // Router.route(formAuthProviderDto.loginUrl);
-                }
-            });
+            btnText, 'login-button btn-primary', url).useHref();
 
         const authMethodBtnContainer = document.createElement('div');
         authMethodBtnContainer.className = 'auth-method-btn-container';

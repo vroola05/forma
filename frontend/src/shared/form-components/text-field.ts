@@ -1,19 +1,21 @@
 import { TranslationDto } from '../model/types';
+import { Form } from './form';
 import { InputNucleus } from './interface/input-base';
 
 /**
  * Textfield
  */
 export class TextField extends InputNucleus<HTMLInputElement> {
-    minLength: number | undefined = undefined;
-    maxLength: number | undefined = undefined;
+    minLength?: number;
+    maxLength?: number;
 
     constructor(
             name: string,
-            labels: TranslationDto[] | undefined = undefined,
-            id: string | undefined = undefined,
-            prefix: string | undefined = undefined) {
-        super(document.createElement('input'), name, labels, id, prefix);
+            labels?: TranslationDto[],
+            form?: Form,
+            id?: string,
+            prefix?: string) {
+        super(document.createElement('input'), name, labels, form, id, prefix);
         this.type = 'text';
 
         this.createElement();
@@ -84,7 +86,7 @@ export class TextField extends InputNucleus<HTMLInputElement> {
     }
 
     clone() {
-        const textfield = new TextField(this.name, this.labels);
+        const textfield = new TextField(this.name, this.labels, this.form, this.id, this.prefix);
         textfield.setType(this.type);
         textfield.setValue(this.value);
         textfield.setClasses(this.classes);

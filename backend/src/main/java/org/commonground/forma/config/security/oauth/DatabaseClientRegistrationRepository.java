@@ -3,6 +3,7 @@ package org.commonground.forma.config.security.oauth;
 import java.util.Arrays;
 import java.util.UUID;
 
+import org.commonground.forma.config.tenant.TenantContext;
 import org.commonground.forma.database.dao.settings.TenantAuthProviderEntity;
 import org.commonground.forma.database.repository.TenantAuthProviderRepository;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -15,15 +16,16 @@ public class DatabaseClientRegistrationRepository implements ClientRegistrationR
 
     private final TenantAuthProviderRepository providerRepository;
 
-    public DatabaseClientRegistrationRepository(TenantAuthProviderRepository providerRepository) {
+    public DatabaseClientRegistrationRepository(
+            TenantAuthProviderRepository providerRepository) {
         this.providerRepository = providerRepository;
+
     }
 
     @Override
     public ClientRegistration findByRegistrationId(String registrationId) {
         UUID providerId;
         try {
-            System.out.println("DatabaseClientRegistrationRepository - findByRegistrationId");
             providerId = UUID.fromString(registrationId);
         } catch (IllegalArgumentException e) {
             return null;
@@ -36,18 +38,22 @@ public class DatabaseClientRegistrationRepository implements ClientRegistrationR
     }
 
     private ClientRegistration toClientRegistration(TenantAuthProviderEntity entity) {
-        System.out.println("DatabaseClientRegistrationRepository - toClientRegistration");
-        // Splits de komma-gescheiden scopes uit je database ("openid,profile,email")
-        String[] scopes = Arrays.stream(entity.getScopes().split(","))
-                .map(String::trim)
-                .toArray(String[]::new);
+        String tenantSlug = TenantContext.getTenant().getSlug();
+        
+        String rawScopes = entity.getScopes();
 
-        // ClientRegistrations.fromIssuerLocation haalt automatisch de endpoints op
-        // via {issuerUri}/.well-known/openid-configuration (werkt standaard voor Microsoft!)
+        String[] scopes = (rawScopes == null || rawScopes.isBlank())
+                ? new String[0]
+                : Arrays.stream(rawScopes.split("[\\s,]+"))
+                        .map(String::trim)
+                        .filter(s -> !s.isEmpty())
+                        .toArray(String[]::new);
+
         return ClientRegistrations.fromIssuerLocation(entity.getIssuerUri())
                 .registrationId(entity.getId().toString())
                 .clientId(entity.getClientId())
                 .clientSecret(entity.getClientSecret())
+                .redirectUri("{baseUrl}/" + tenantSlug + "/login/oauth2/code/{registrationId}")
                 .scope(scopes)
                 .build();
     }

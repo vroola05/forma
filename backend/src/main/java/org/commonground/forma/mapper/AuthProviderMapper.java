@@ -2,11 +2,14 @@ package org.commonground.forma.mapper;
 
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.commonground.forma.database.dao.settings.TenantAuthProviderEntity;
+import org.commonground.forma.database.dao.settings.TenantAuthProviderGroupEntity;
 import org.commonground.forma.model.form.idp.FormAuthProvider;
 import org.commonground.forma.model.form.idp.TenantAuthProvider;
+import org.commonground.forma.model.form.idp.TenantAuthProviderGroup;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -62,6 +65,15 @@ public class AuthProviderMapper {
         dto.setScopes(entity.getScopes());
         dto.setAcrValues(entity.getAcrValues());
         dto.setActive(entity.isActive());
+
+        Set<TenantAuthProviderGroupEntity> groupMappingEntities = entity.getGroupMapping();
+        for (TenantAuthProviderGroupEntity groupEntity : groupMappingEntities) {
+            TenantAuthProviderGroup tenantAuthProviderGroup = new TenantAuthProviderGroup();
+            tenantAuthProviderGroup.setExternalId(groupEntity.getExternalId());
+            tenantAuthProviderGroup.setExternalName(groupEntity.getExternalName());
+            tenantAuthProviderGroup.setGroupId(groupEntity.getGroup().getId());
+            dto.getProviderGroups().add(tenantAuthProviderGroup);
+        }
 
         return dto;
     }

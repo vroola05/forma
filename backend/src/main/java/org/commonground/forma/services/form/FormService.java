@@ -11,6 +11,7 @@ import org.commonground.forma.model.form.idp.FormAuthentication;
 public interface FormService {
     public List<FormList> list();
     public FormDefinitionEntity getEntity(UUID tenantId, String formName);
+    public FormDefinitionEntity getEntityWithAuthDetails(UUID tenantId, String formName);
     public FormWrapper get(UUID tenantId, String formName);
     public FormAuthentication getFormAuthentication(UUID tenantId, String formName);
     public FormWrapper save(UUID tenantId, FormWrapper formWrapper);

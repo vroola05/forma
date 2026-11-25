@@ -117,6 +117,12 @@ export const ProviderType = {
 
 export type ProviderType = (typeof ProviderType)[keyof typeof ProviderType];
 
+export interface TenantAuthProviderGroupDtp {
+    externalId: string;
+    externalName: string;
+    groupId: string;
+}
+
 export interface TenantAuthProviderDto {
     id: string;
     providerType: ProviderType;
@@ -129,6 +135,7 @@ export interface TenantAuthProviderDto {
     scopes: string;
     acrValues: string;
     active: boolean;
+    providerGroups: TenantAuthProviderGroupDtp[];
 }
 
 export interface FormAuthProviderDto {
@@ -259,7 +266,7 @@ export interface FormConfigLoginPageDto {
     loginInstructions?: any;
     publicAccess: boolean;
     allowFormLogin: boolean;
-    externalProviders: FormAuthProviderDto[];
+    formAuthProvider: FormAuthProviderDto[];
 }
 
 export interface FormVariableDto {
@@ -320,9 +327,9 @@ export enum ConditionType {
 export interface ConditionDto {
     conditionType?: ConditionType;
 
-    var1: string;
+    var1?: string;
     operator?: Operator;
-    var2: string;
+    var2?: string;
     logicalOperator?: LogicalOperator;
 
     conditions?: ConditionDto[];

@@ -1,6 +1,7 @@
 import { OptionDto, TranslationDto } from '../../model/types';
 import { FieldServiceRegistry } from '../../services/field-service';
 import { Lang } from '../../services/lang';
+import { Form } from '../form';
 import { Nucleus } from './nucleus';
 
 export const InputLayout = ['no-label', 'layout-row', 'layout-column'];
@@ -28,10 +29,11 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
             element: T, 
             name: string,
             labels: TranslationDto[] | undefined = undefined,
+            form?: Form,
             id: string | undefined = undefined,
             prefix: string | undefined = undefined) {
 
-        super(name, labels, id, prefix);
+        super(name, labels, form, id, prefix);
         this.inputElement = element;
     }
 
@@ -39,6 +41,7 @@ export class InputNucleus <T extends HTMLElement = HTMLElement> extends Nucleus 
         super.afterFormInit();
 
         if (this.form) {
+            
             const fieldService = FieldServiceRegistry.get(this.form.getId());
             const value = fieldService.getFieldValue(this.getId());
             if (value) {

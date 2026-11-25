@@ -3,6 +3,7 @@ import { ConditionComponent } from "../../form-builder/component/condition-compo
 import { FooterAddComponent } from "../../form-builder/component/footer-add-component";
 import { ConditionDto, TranslationDto } from "../model/types";
 import { Lang } from "../services/lang";
+import { Form } from "./form";
 import { InputNucleus } from "./interface/input-base";
 
 export class ConditionsField extends InputNucleus<HTMLDivElement> {
@@ -11,8 +12,8 @@ export class ConditionsField extends InputNucleus<HTMLDivElement> {
     conditionsContainerDom: HTMLElement = document.createElement('div');
     footerAddComponent: FooterAddComponent;
 
-    constructor(name: string, labels: TranslationDto[] | undefined, id: string | undefined = undefined) {
-        super(document.createElement('div'), name, labels, id);
+    constructor(name: string, labels: TranslationDto[] | undefined, form?: Form, id: string | undefined = undefined) {
+        super(document.createElement('div'), name, labels, form, id);
         this.type = 'conditions';
 
         this.inputElement.id = this.getId();
@@ -97,7 +98,7 @@ export class ConditionsField extends InputNucleus<HTMLDivElement> {
     }
 
     clone() {
-        const conditionsField = new ConditionsField(this.name, this.labels);
+        const conditionsField = new ConditionsField(this.name, this.labels, this.form, this.id);
         conditionsField.setType(this.type);
         conditionsField.setValue(this.value);
         conditionsField.setClasses(this.classes);

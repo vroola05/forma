@@ -19,7 +19,8 @@ export class Main {
                 {'path': '/page/form/:formName/tab/:tabName', 'page': FormPage},
                 {'path': '/page/form/:formName/success', 'page': SuccessPage}
             ],
-            homeUrl: '/admin'
+            homeUrl: '/admin',
+            me: '/api/users/forms/me'
         });
 
     }

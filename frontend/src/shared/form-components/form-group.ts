@@ -1,6 +1,7 @@
 import { FormRenderer } from '../generic-components/form-renderer';
 
 import { BaseFieldDto, FieldDto } from '../model/types';
+import { Form } from './form';
 import { InputNucleus } from './interface/input-base';
 import { Nucleus } from './interface/nucleus';
 
@@ -12,8 +13,8 @@ export class FormGroup extends Nucleus {
 
     fields: InputNucleus[] = [];
 
-    constructor(baseFieldDto: BaseFieldDto, id: string | undefined = undefined) {
-        super(baseFieldDto.name, baseFieldDto.labels, id);
+    constructor(baseFieldDto: BaseFieldDto, form?: Form, id: string | undefined = undefined) {
+        super(baseFieldDto.name, baseFieldDto.labels, form, id);
 
         this.type = baseFieldDto.type;
         this.label = baseFieldDto.label;

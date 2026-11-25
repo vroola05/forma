@@ -101,6 +101,14 @@ public class FormServiceDatabase implements FormService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.definition.error.not_found}"));
     }
 
+    
+
+    @Override
+    public FormDefinitionEntity getEntityWithAuthDetails(UUID tenantId, String formName) {
+        return this.formDefinitionRepository.findByIdWithAuthDetails(formName, tenantId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "{form.definition.error.not_found}"));
+    }
+
     @Override
     @Transactional(readOnly = true)
     public FormWrapper get(UUID tenantId, String formName) {
@@ -120,8 +128,6 @@ public class FormServiceDatabase implements FormService {
         String description = this.tiptapService.convert(formConfigLoginPage.getLoginInstructions(), form, variables);
 
         Set<FormAuthProvider> formAuthProviders = formConfigLoginPage.getFormAuthProvider();
-
-        
 
         return new FormAuthentication(
             form.getId(),

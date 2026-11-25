@@ -4,12 +4,15 @@ import { SettingsPage } from '../settings-page';
 
 import { FormButton } from '../../../shared/form-components/components/form-button';
 
-import { FormDto, GroupRegisterRequestDto, OptionDto, ProviderType, TenantAuthProviderDto } from '../../../shared/model/types';
+import { FieldDto, FormDto, GroupRegisterRequestDto, OptionDto, ProviderType, TenantAuthProviderDto, TenantAuthProviderGroupDtp } from '../../../shared/model/types';
 import { footerService } from '../../../shared/services/footer-service';
 
 import { Form } from '../../../shared/form-components/form';
 import { FormGroup } from '../../../shared/form-components/form-group';
 import { RadioField } from '../../../shared/form-components/radio-field';
+import { RepeatingGroup } from '../../../shared/form-components/repeating-group';
+import { SelectField } from '../../../shared/form-components/select-field';
+import { TextField } from '../../../shared/form-components/text-field';
 import { Http } from '../../../shared/services/http';
 
 export class IdentityProviderPageEdit extends SettingsPage {
@@ -23,13 +26,7 @@ export class IdentityProviderPageEdit extends SettingsPage {
         const id = Router.getUrlParameter('id') as string;
         this.isNew = id === 'new';
 
-        Http.get(`${Router.tenantPath}/api/idp/${id}`)
-            .then((idp) => {
-                this.createContent(idp);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        void this.createContent(id);
     }
 
     afterInit() {
@@ -39,10 +36,17 @@ export class IdentityProviderPageEdit extends SettingsPage {
         }));
     }
 
-    
 
-    createContent(authProviderDto?: TenantAuthProviderDto) {
-       
+
+    async createContent(id: string) {
+        let authProviderDto: TenantAuthProviderDto | undefined = undefined;
+
+        if (!this.isNew) {
+            authProviderDto = await Http.get(`${Router.tenantPath}/api/idp/${id}`);
+        }
+
+        const groupDto: GroupRegisterRequestDto[] = await Http.get(`${Router.tenantPath}/api/groups/list`);
+        console.log(groupDto);
         const formDto: FormDto = {
             "name": "idp-form",
             "label": 'IDP',
@@ -64,20 +68,20 @@ export class IdentityProviderPageEdit extends SettingsPage {
                                     "value": authProviderDto?.id
                                 },
                                 {
-                                    "name": "displayName",
+                                    "name": "display-name",
                                     "label": 'Titel',
                                     "type": "text",
                                     "required": true,
                                     "value": authProviderDto?.displayName
                                 },
                                 {
-                                    "name": "informationText",
+                                    "name": "information-text",
                                     "label": 'Begeleidende tekst',
                                     "type": "textarea",
                                     "value": authProviderDto?.informationText
                                 },
                                 {
-                                    "name": "linkText",
+                                    "name": "link-text",
                                     "label": 'Tekst verzendknop',
                                     "type": "text",
                                     "value": authProviderDto?.linkText
@@ -90,27 +94,27 @@ export class IdentityProviderPageEdit extends SettingsPage {
                             "type": "form-group",
                             "fields": [
                                 {
-                                    "name": "providerType",
+                                    "name": "provider-type",
                                     "label": 'Provider type',
                                     "type": "select",
                                     "required": true,
                                     "options": this.getProviderTypes(),
-                                    "values": [{value: authProviderDto?.providerType, text: ''}] as OptionDto[]
+                                    "values": [{ value: authProviderDto?.providerType, text: '' }] as OptionDto[]
                                 },
                                 {
-                                    "name": "clientId",
+                                    "name": "client-id",
                                     "label": 'Client Id',
                                     "type": "text",
                                     "required": true,
                                     "value": authProviderDto?.clientId
                                 },
                                 {
-                                    "name": "clientSecret",
+                                    "name": "client-secret",
                                     "label": 'Client Secret',
                                     "type": "text"
                                 },
                                 {
-                                    "name": "issuerUri",
+                                    "name": "issuer-uri",
                                     "label": 'Issuer Uri',
                                     "type": "text",
                                     "value": authProviderDto?.issuerUri
@@ -122,7 +126,7 @@ export class IdentityProviderPageEdit extends SettingsPage {
                                     "value": authProviderDto?.scopes
                                 },
                                 {
-                                    "name": "acrValues",
+                                    "name": "acr-values",
                                     "label": 'Acr Values',
                                     "type": "text",
                                     "value": authProviderDto?.acrValues
@@ -132,10 +136,41 @@ export class IdentityProviderPageEdit extends SettingsPage {
                                     "label": 'Actief',
                                     "type": "radio",
                                     "options": [
-                                        {value: "true",text:"Ja"},
-                                        {value: "false",text:"Nee"}
+                                        { value: "true", text: "Ja" },
+                                        { value: "false", text: "Nee" }
                                     ],
-                                    "values": [{"value": authProviderDto?.active ? "true": "false", "text": ""}]
+                                    "values": [{ "value": authProviderDto?.active ? "true" : "false", "text": "" }]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "group-mapping",
+                            "label": "gekoppelde groepen",
+                            "type": "repeating-group",
+                            "classes": "width-100",
+                            "sets": this.getGroup(authProviderDto?.providerGroups),
+                            "fields": [
+                                {
+                                    "name": "external-id",
+                                    "label": "Extern id",
+                                    "type": "text",
+                                    "classes": "width-30 p-1 layout-column",
+                                    "required": true
+                                },
+                                {
+                                    "name": "external-name",
+                                    "label": "Externe naam",
+                                    "type": "text",
+                                    "classes": "width-30 p-1 layout-column",
+                                    "required": true
+                                },
+                                {
+                                    "name": "group",
+                                    "label": "Groep",
+                                    "type": "select",
+                                    "classes": "width-30 p-1 layout-column",
+                                    "required": true,
+                                    "options": this.getGroupOptions(groupDto)
                                 }
                             ]
                         }
@@ -144,16 +179,54 @@ export class IdentityProviderPageEdit extends SettingsPage {
             ]
         };
 
-        Form.create(formDto).then(form => {
-            this.form = form;
-            
-            this.append(this.form.getContent());
-        }).catch(() => {});
+        this.form = await Form.create(formDto);
+        this.append(this.form.getContent());
+    }
 
+    getGroup(providerGroups?: TenantAuthProviderGroupDtp[]): FieldDto[][] | undefined {
+        const sets: FieldDto[][] | undefined = [];
+        if (!providerGroups) {
+            return sets;
+        }
+
+        for (const group of providerGroups) {
+            const set: FieldDto[] = [];
+            set.push(
+                {
+                    type: 'text',
+                    name: 'external-id',
+                    value: group.externalId
+                },
+                {
+                    type: 'text',
+                    name: 'external-name',
+                    value: group.externalName
+                },
+                {
+                    type: 'select',
+                    name: 'group',
+                    values: [{value: group.groupId, text: ''}]
+                },
+            );
+
+            sets.push(set);
+        }
+
+        return sets;
+    }
+
+    getGroupOptions(groupDto?: GroupRegisterRequestDto[]): OptionDto[] {
+        
+        return groupDto === undefined ? [] : groupDto.map(g => { 
+            return {
+                    value: g.id,
+                    text: g.name
+                } as OptionDto
+            });
     }
 
     getProviderTypes(): OptionDto[] {
-        return Object.values(ProviderType).map(p => { return {value: p, text: p}});
+        return Object.values(ProviderType).map(p => { return { value: p, text: p } });
     }
 
     getFormData(form?: Form): TenantAuthProviderDto | undefined {
@@ -163,7 +236,7 @@ export class IdentityProviderPageEdit extends SettingsPage {
         const genericGroup = form.getTabField('idp-tab', 'idp-generic') as FormGroup;
         const contextGroup = form.getTabField('idp-tab', 'idp-context') as FormGroup;
 
-        const providerTypeOption = contextGroup.getFieldValue('providerType') as OptionDto[];
+        const providerTypeOption = contextGroup.getFieldValue('provider-type') as OptionDto[];
         if (!providerTypeOption || providerTypeOption.length === 0 || !providerTypeOption.at(0)?.value) {
             return undefined;
         }
@@ -171,18 +244,37 @@ export class IdentityProviderPageEdit extends SettingsPage {
         const providerType = providerTypeOption.at(0)?.value as ProviderType;
 
         const id = genericGroup.getFieldValue('id') || undefined;
-        const displayName = genericGroup.getFieldValue('displayName');
-        const informationText = genericGroup.getFieldValue('informationText');
-        const linkText = genericGroup.getFieldValue('linkText');
+        const displayName = genericGroup.getFieldValue('display-name');
+        const informationText = genericGroup.getFieldValue('information-text');
+        const linkText = genericGroup.getFieldValue('link-text');
 
-        const clientId = contextGroup.getFieldValue('clientId');
-        const clientSecret = contextGroup.getFieldValue('clientSecret');
-        const issuerUri = contextGroup.getFieldValue('issuerUri');
+        const clientId = contextGroup.getFieldValue('client-id');
+        const clientSecret = contextGroup.getFieldValue('client-secret');
+        const issuerUri = contextGroup.getFieldValue('issuer-uri');
         const scopes = contextGroup.getFieldValue('scopes');
-        const acrValues = contextGroup.getFieldValue('acrValues');
+        const acrValues = contextGroup.getFieldValue('acr-values');
         const enabledField = contextGroup.getField('active') as RadioField;
         const active = !!enabledField.getOptions().some(option => option.value === 'true');
 
+        const groupMappingRG = form.getTabField('idp-tab', 'group-mapping') as RepeatingGroup;
+        const sets = groupMappingRG.getSets();
+
+        const providerGroups: TenantAuthProviderGroupDtp[] = []
+
+        console.log('sets', sets);
+        for (const index in sets) {
+            const set = sets[index];
+
+            const externalId = set[0] as TextField;
+            const externalName = set[1] as TextField;
+            const group = set[2] as SelectField;
+
+            providerGroups.push({
+                externalId: externalId.getValue(),
+                externalName: externalName.getValue(),
+                groupId: group.getSelectedValue()?? ''
+            });
+        }
         return {
             id,
             providerType,
@@ -194,7 +286,8 @@ export class IdentityProviderPageEdit extends SettingsPage {
             issuerUri,
             scopes,
             acrValues,
-            active
+            active,
+            providerGroups
         }
     }
 
@@ -207,7 +300,7 @@ export class IdentityProviderPageEdit extends SettingsPage {
         if (!authProviderDto) {
             return;
         }
-        
+
         if (this.isNew) {
             this.post(authProviderDto);
         } else {
@@ -218,22 +311,22 @@ export class IdentityProviderPageEdit extends SettingsPage {
 
     put(authProviderDto: TenantAuthProviderDto) {
         Http.put(`${Router.tenantPath}/api/idp/${authProviderDto.id}`, authProviderDto, {})
-        .then((idp) => {
-            Router.route('/admin/page/identity-providers');
-        })
-        .catch((error) => {
+            .then((idp) => {
+                Router.route('/admin/page/identity-providers');
+            })
+            .catch((error) => {
 
-        });
+            });
     }
 
     post(authProviderDto: TenantAuthProviderDto) {
         Http.post(`${Router.tenantPath}/api/idp`, authProviderDto, {})
-        .then((idp) => {
-            Router.route('/admin/page/identity-providers');
-        })
-        .catch((error) => {
+            .then((idp) => {
+                Router.route('/admin/page/identity-providers');
+            })
+            .catch((error) => {
 
-        });
+            });
     }
 
     destroy() {

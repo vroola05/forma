@@ -1,27 +1,27 @@
 import { Form } from '../../shared/form-components/form';
 import { Nucleus } from '../../shared/form-components/interface/nucleus';
 
-export class FormService {
-    static #fields: Nucleus[] = [];
+export class FormServiceInstance {
+    #fields: Nucleus[] = [];
 
-    static #form: Form | undefined;
-    static #formChangeListeners: ((form: Form) => void)[] = [];
+    #form: Form | undefined;
+    #formChangeListeners: ((form: Form) => void)[] = [];
 
-    static addEventListener(callback: (form: Form) => void): void {
+    constructor(form:Form) {
+        this.#form = form;
+        this.#fields = [];
+        this.#formChangeListeners = [];
+    }
+
+    addEventListener(callback: (form: Form) => void): void {
         this.#formChangeListeners.push(callback);
     }
 
-    static getForm(): Form | undefined {
+    getForm(): Form | undefined {
         return this.#form;
     }
 
-    static setForm(form: Form): void {
-        this.#fields = [];
-        this.#formChangeListeners = [];
-        this.#form = form;
-    }
-
-    static formReady() {
+    formReady() {
         if (!this.#form) {
             console.error('Form is not yet ready')
             return;
@@ -32,11 +32,62 @@ export class FormService {
         };
     }
 
-    static addNucleus(field: Nucleus): void {
+    addNucleus(field: Nucleus): void {
         this.#fields.push(field);
     }
 
-    static getNucleus(): Nucleus[] {
+    getNucleus(): Nucleus[] {
         return this.#fields;
     }
 }
+
+export class FormServiceImpl {
+    #forms = new Map<string, FormServiceInstance>();
+    
+    addEventListener(formName: string, callback: (form: Form) => void): void {
+        if (formName === undefined || !this.#forms.has(formName)) {
+            return;
+        }
+
+        this.#forms.get(formName)?.addEventListener(callback);
+    }
+
+    getForm(formName: string): Form | undefined {
+        if (formName && this.#forms.has(formName)) {
+            return this.#forms.get(formName)?.getForm();
+        }
+
+        return undefined;
+    }
+
+    setForm(form: Form): void {
+        if (this.#forms.has(form.getName())) {
+            this.#forms.delete(form.getName());
+        }
+        this.#forms.set(form.getName(), new FormServiceInstance(form))
+    }
+
+    formReady(formName: string): void {
+        if (formName === undefined || !this.#forms.has(formName)) {
+            return
+        }
+
+        this.#forms.get(formName)?.formReady()
+    }
+
+    addNucleus(formName: string, field: Nucleus): void {
+        if (formName === undefined || !this.#forms.has(formName)) {
+            return
+        }
+        this.#forms.get(formName)?.addNucleus(field);
+    }
+
+    getNucleus(formName: string): Nucleus[] {
+        if (formName === undefined || !this.#forms.has(formName)) {
+            return []
+        }
+        return this.#forms.get(formName)?.getNucleus()?? [];
+    }
+}
+
+export const FormService = new FormServiceImpl();

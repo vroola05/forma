@@ -23,7 +23,7 @@ export class FormLogin {
                             "name": "description",
                             "label": Lang.get('login.default.description'),
                             "type": "rich-text",
-                            "required": true,
+                            "required": false,
                             "value": loginPageDto?.loginInstructions
 
                         },
@@ -31,7 +31,7 @@ export class FormLogin {
                             "name": "default-login-methods",
                             "label": Lang.get('login.default.method'),
                             "type": "checkbox",
-                            "required": true,
+                            "required": false,
                             "options": [
                                 { "value": "NONE", "text": Lang.get('login.default.method.none') },
                                 { "value": "FORM_LOGIN", "text": Lang.get('login.default.method.form.login') }
@@ -42,9 +42,9 @@ export class FormLogin {
                             "name": "external-login-methods",
                             "label": Lang.get('login.external.method'),
                             "type": "checkbox",
-                            "required": true,
+                            "required": false,
                             "options": this.getTenantAuthProviderDtos(authProviderDtos),
-                            "values": this.getTenantAuthProviderDtos(loginPageDto?.externalProviders)
+                            "values": this.getTenantAuthProviderDtos(loginPageDto?.formAuthProvider)
                         }
                     ]
                 }
@@ -82,13 +82,13 @@ export class FormLogin {
         const descriptionField = form.getTabField('login-methods-tab', 'description') as InputNucleus;
         const description = descriptionField ? descriptionField.getValue() : undefined
         const defaultLoginMethods = form.getTabField('login-methods-tab', 'default-login-methods') as CheckboxField;
-        const externalLoginMethods = form.getTabField('login-methods-tab', 'external-login-methods') as CheckboxField;
+        const formAuthProvider = form.getTabField('login-methods-tab', 'external-login-methods') as CheckboxField;
 
         return {
             loginInstructions: description,
             publicAccess: defaultLoginMethods.getOptions().some(option => option.value === 'NONE'),
             allowFormLogin: defaultLoginMethods.getOptions().some(option => option.value === 'FORM_LOGIN'),
-            externalProviders: externalLoginMethods.getOptions().map(option => {
+            formAuthProvider: formAuthProvider.getOptions().map(option => {
                 return {id:option.value} as FormAuthProviderDto
             })
         }

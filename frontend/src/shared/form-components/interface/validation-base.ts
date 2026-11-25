@@ -49,6 +49,10 @@ import { Nucleus } from "./nucleus";
 export class ValidationBase {
     form?: Form;
 
+    constructor(form?: Form) {
+        this.form = form;
+    }
+
     handleValidationError(errorMap : Map<string, any>) {
         for (const [key, errors] of errorMap) {
             if (key === 'fields') {

@@ -1,5 +1,6 @@
 import { OptionDto, TranslationDto } from '../model/types';
 import { Lang } from '../services/lang';
+import { Form } from './form';
 import { InputNucleus } from './interface/input-base';
 
 /**
@@ -10,10 +11,10 @@ export class CheckboxField extends InputNucleus<HTMLDivElement> {
     
     value: OptionDto[];
 
-    constructor(name: string, labels: TranslationDto[] | undefined, classes: string, id: string | undefined = undefined) {
-        super(document.createElement('div'), name, labels, id);
+    constructor(name: string, labels: TranslationDto[] | undefined, form?: Form, classes?: string, id?: string) {
+        super(document.createElement('div'), name, labels, form, id);
         this.value = [];
-        this.classes = classes;
+        this.classes = classes?? '';
         this.createElement();
     }
 
@@ -180,7 +181,7 @@ export class CheckboxField extends InputNucleus<HTMLDivElement> {
      * @returns 
      */
     clone() {
-        const checkboxField = new CheckboxField(this.name, this.labels, this.classes, this.id);
+        const checkboxField = new CheckboxField(this.name, this.labels, this.form, this.classes, this.id);
 
         [...this.inputElements].forEach(inputElement => {
             checkboxField.addOption(inputElement.checkbox.value, inputElement.checkbox.dataset.text ?? '');

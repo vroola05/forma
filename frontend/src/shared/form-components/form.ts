@@ -31,7 +31,7 @@ export class Form extends Nucleus {
     onTabChange: ((tabObject: Tab, index: number, size: number) => void) | undefined;
 
     constructor(formDto: FormDto, options: FormOptions | undefined = undefined) {
-        super(formDto.name, formDto.labels, formDto.id)
+        super(formDto.name, formDto.labels, undefined, formDto.id)
 
         FormService.setForm(this);
 

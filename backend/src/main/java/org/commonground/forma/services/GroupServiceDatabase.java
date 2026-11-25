@@ -39,6 +39,11 @@ public class GroupServiceDatabase implements GroupService {
     public List<Group> getAll(UUID tenantId) {
         return this.groupRepository.findAllByTenantIdOrderByNameAsc(tenantId).stream().map(this.groupMapper::toResponseDto).collect(java.util.stream.Collectors.toList());
     }
+    
+    @Override
+    public List<GroupEntity> getEntities(UUID tenantId) {
+        return this.groupRepository.findAllByTenantIdOrderByNameAsc(tenantId);
+    }
 
     @Override
     public GroupRegisterRequest get(UUID tenantId, UUID groupId) {
@@ -123,5 +128,4 @@ public class GroupServiceDatabase implements GroupService {
 
         return this.createGroup(tenantId, groupRequest);
     }
-
 }

@@ -10,7 +10,7 @@ export class FormButton {
     permissions: PERMISSION[] | null = null;
     
     events: ((e?: PointerEvent | undefined) => void)[] = [];
-    // event: ((e?: PointerEvent | undefined) => void) | null = null;
+    isHref: boolean = false;
 
     constructor(label: string, classes: string | null, path: string | null = null, event: ((e?: PointerEvent | undefined) => void) | null = null, show: boolean = true) {
         this.label = label;
@@ -47,6 +47,11 @@ export class FormButton {
             this.show();
             return true;
         }
+    }
+
+    useHref() {
+        this.isHref = true;
+        return this;
     }
 
     show() {
@@ -95,7 +100,10 @@ export class FormButton {
                 if (!this.#checkAccess()) {
                     return;
                 }
-                if (this.path) {
+                if (this.isHref && this.path) {
+                    console.log(this.path);
+                    window.location.href = this.path;
+                } else if (this.path) {
                     Router.route(this.path);
                 }
             });

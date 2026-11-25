@@ -52,7 +52,6 @@ CREATE TABLE tenant_auth_providers (
     CONSTRAINT unique_idp_display_name UNIQUE (tenant_id, display_name)
 );
 
-
 CREATE TABLE users (
     id UUID PRIMARY KEY,
     tenant_id UUID REFERENCES tenant(id) ON DELETE CASCADE,
@@ -80,6 +79,21 @@ CREATE TABLE groups (
     CONSTRAINT unique_group_name UNIQUE (tenant_id, name)
 );
 
+CREATE TABLE tenant_auth_provider_groups (
+    auth_provider_id UUID REFERENCES tenant_auth_providers(id) ON DELETE CASCADE,
+    group_id UUID REFERENCES groups(id) ON DELETE CASCADE,
+    external_id TEXT NOT NULL,
+    external_name TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    version BIGINT DEFAULT 0 NOT NULL,
+    PRIMARY KEY (auth_provider_id, group_id)
+);
+
+CREATE INDEX idx_tenant_auth_provider_groups_lookup 
+ON tenant_auth_provider_groups (auth_provider_id, external_id);
+
+
 CREATE TABLE permissions (
     id TEXT PRIMARY KEY
 );
@@ -95,6 +109,8 @@ CREATE TABLE user_groups (
     group_id UUID REFERENCES groups(id),
     PRIMARY KEY (user_id, group_id)
 );
+
+
 
 CREATE TABLE form_definition (
     id UUID PRIMARY KEY,

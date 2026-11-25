@@ -121,22 +121,26 @@ public class FormConfigurationProcessor {
         formDefinitionEntity.setAllowFormLogin(formConfigLoginPage.isAllowFormLogin());
 
 
-        Set<FormAuthProvider> providers = formConfigLoginPage.getFormAuthProvider();
+        Set<FormAuthProvider> formAuthProviderDto = formConfigLoginPage.getFormAuthProvider();
 
-        formDefinitionEntity.retainAllowedProviders(providers);
+        formDefinitionEntity.retainAllowedProviders(formAuthProviderDto);
 
-        if (providers.isEmpty()) {
+        if (formAuthProviderDto == null || formAuthProviderDto.isEmpty()) {
             return;
         }
 
-        List<TenantAuthProviderEntity> tenantAuthProviderEntities = this.idpService.getFormTenantAuthProviderEntities(formDefinitionEntity.getTenantId());
+        List<TenantAuthProviderEntity> tenantAuthProviderEntitiesAll = this.idpService.getFormTenantAuthProviderEntities(formDefinitionEntity.getTenantId());
 
-        Set<TenantAuthProviderEntity> allowedProviders = formDefinitionEntity.getAllowedProviders();
-        for (TenantAuthProviderEntity tenantAuthProviderEntity : tenantAuthProviderEntities) {
-            if (providers.stream().anyMatch( p -> p.getId() == tenantAuthProviderEntity.getId())) {
-                allowedProviders.add(tenantAuthProviderEntity);
-            }
-        }
+        Set<TenantAuthProviderEntity> tenantAuthProviderEntitiesExisting = formDefinitionEntity.getAllowedProviders();
+
+        List<TenantAuthProviderEntity> tenantAuthProviderEntitiesNew = tenantAuthProviderEntitiesAll.stream().filter(tenantAuthProviderEntity -> {
+                return formAuthProviderDto.stream().anyMatch( p -> tenantAuthProviderEntity.getId().equals(p.getId())) 
+                    && !tenantAuthProviderEntitiesExisting.stream().anyMatch( p -> p.getId().equals(tenantAuthProviderEntity.getId()));
+            }).toList();
+
+        tenantAuthProviderEntitiesExisting.addAll(tenantAuthProviderEntitiesNew);
+        
+
     }
 
     /**

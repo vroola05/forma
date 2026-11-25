@@ -2,6 +2,7 @@ import { FormRenderer } from "../generic-components/form-renderer";
 import { BaseFieldDto, FieldDto, InputFieldDto, LayoutType, OptionFieldDto, RepeatingGroupDto } from "../model/types";
 import { FieldServiceRegistry } from "../services/field-service";
 import { FormButton } from "./components/form-button";
+import { Form } from "./form";
 import { Nucleus } from "./interface/nucleus";
 
 export class RepeatingGroup extends Nucleus {
@@ -23,8 +24,8 @@ export class RepeatingGroup extends Nucleus {
 
     sets: { deleteBtn: FormButton | undefined; fields: Nucleus[] | undefined; values: FieldDto[] | undefined }[] = [];
 
-    constructor(baseFieldDto: RepeatingGroupDto, id: string | undefined = undefined) {
-        super(baseFieldDto.name, baseFieldDto.labels, id);
+    constructor(baseFieldDto: RepeatingGroupDto, form?: Form, id?: string) {
+        super(baseFieldDto.name, baseFieldDto.labels, form, id);
         this.label = baseFieldDto.label;
         this.type = baseFieldDto.type;
 

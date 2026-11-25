@@ -3,6 +3,7 @@ import { BuilderFormService, BuilderFormServiceRegistry } from '../../form-build
 import { FIELD_TYPE } from '../../form-builder/types';
 import { OptionDto, TokenType, TranslationDto, WordContext } from '../model/types';
 import { VariableService } from '../services/variable-service';
+import { Form } from './form';
 import { InputNucleus } from './interface/input-base';
 
 
@@ -31,8 +32,8 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
     onFieldFoundListener: ((value: any) => void) | null = null;
     currentCursorPostion: number = -1;
 
-    constructor(name: string, labels: TranslationDto[] | undefined = undefined) {
-        super(document.createElement('input'), name, labels);
+    constructor(name: string, labels: TranslationDto[] | undefined = undefined, form?: Form) {
+        super(document.createElement('input'), name, labels, form);
         this.type = 'conditions-autocomplete';
 
         this.#builderFormService = BuilderFormServiceRegistry.get('builder-form');
@@ -46,8 +47,6 @@ export class ConditionsAutocompleteField extends InputNucleus<HTMLInputElement> 
         autoCompleteMenuIcon.addEventListener('click', (e) => {
             this.toggle();
         });
-
-        
 
         this.inputElement = document.createElement('input') as HTMLInputElement;
         this.inputElement.className = 'form-control autocomplete-input';

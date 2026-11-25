@@ -61,9 +61,9 @@ export class BuilderPage extends Page {
         }
 
         if (formName !== formNameUrlParam) {
-                Storage.removePageItem('form-wrapper');
-                Storage.setPageItem('form-name', formNameUrlParam);
-                formName = formNameUrlParam;
+            Storage.removePageItem('form-wrapper');
+            Storage.setPageItem('form-name', formNameUrlParam);
+            formName = formNameUrlParam;
         }
 
         const formWrapperString = Storage.getPageItem('form-wrapper');
@@ -99,7 +99,9 @@ export class BuilderPage extends Page {
         formSuccess.createForm(formWrapper?.formConfig?.formConfigSuccessPage).then(form => {
             this.#builderFormService.setForm(form);
             this.forms.push({form, url: currentPath?.parentPath + '/settings-success'});
-        }).catch(() => {});
+        }).catch((e) => {
+            console.log(e);
+        });
 
         // Create the Variables form
         const formVariables = new FormVariables();

@@ -18,7 +18,6 @@ public class OAuth2FormRedirectFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        System.out.println("OAuth2FormRedirectFilter - doFilterInternal");
         // Alleen uitvoeren bij de start van de OAuth2 flow
         if (request.getRequestURI().contains("/oauth2/authorization/")) {
             String formName = request.getParameter("formName");

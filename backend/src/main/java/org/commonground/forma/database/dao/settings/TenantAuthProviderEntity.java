@@ -1,16 +1,19 @@
 package org.commonground.forma.database.dao.settings;
 
-
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.commonground.forma.database.dao.BaseEntity;
 import org.commonground.forma.model.constants.ProviderType;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -58,4 +61,29 @@ public class TenantAuthProviderEntity extends BaseEntity {
 
     @Column(nullable = false)
     private boolean active = true;
+
+    @OneToMany(mappedBy = "authProvider", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TenantAuthProviderGroupEntity> groupMapping = new HashSet<>();
+
+    public void addGroupMapping(GroupEntity group, String externalId, String externalName) {
+        TenantAuthProviderGroupEntity tenantAuthProviderGroupEntity = new TenantAuthProviderGroupEntity(
+                this,
+                group,
+                externalId,
+                externalName);
+        this.groupMapping.add(tenantAuthProviderGroupEntity);
+    }
+
+    public void retainGroups(Set<UUID> groupIdsNotToRemove) {
+        if (groupIdsNotToRemove == null) {
+            return;
+        }
+
+        this.groupMapping.removeIf(g -> !groupIdsNotToRemove.contains(g.getId().getGroupId()));
+    }
+
+    public void removeGroupMapping(TenantAuthProviderGroupEntity tenantAuthProviderGroupEntity) {
+        this.groupMapping.remove(tenantAuthProviderGroupEntity);
+        tenantAuthProviderGroupEntity.setAuthProvider(null);
+    }
 }

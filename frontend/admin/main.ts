@@ -75,7 +75,8 @@ export class Main {
                 
             ],
             homeUrl: '/admin',
-            loginUrl: '/admin/page/login'
+            loginUrl: '/admin/page/login',
+            me: '/api/users/me'
         });
     }
 }

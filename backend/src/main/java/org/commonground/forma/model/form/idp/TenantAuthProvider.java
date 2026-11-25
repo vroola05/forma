@@ -1,5 +1,7 @@
 package org.commonground.forma.model.form.idp;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.commonground.forma.model.constants.ProviderType;
@@ -23,4 +25,6 @@ public class TenantAuthProvider {
     private String scopes;
     private String acrValues;
     private boolean active = true;
+
+    private List<TenantAuthProviderGroup> providerGroups = new ArrayList<>();
 }

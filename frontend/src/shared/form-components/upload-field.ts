@@ -2,6 +2,7 @@ import { OptionDto, TranslationDto } from '../model/types';
 import { Http } from '../services/http';
 import { Lang } from '../services/lang';
 import { FormButton } from './components/form-button';
+import { Form } from './form';
 import { InputNucleus } from './interface/input-base';
 
 export interface FileUploadOption {
@@ -32,8 +33,8 @@ export class FileUploadField extends InputNucleus<HTMLInputElement> {
 
     value: FileUploadOption[] = [];
 
-    constructor( name: string, labels: TranslationDto[] | undefined, id: string | undefined = undefined) {
-        super(document.createElement('input'), name, labels, id);
+    constructor( name: string, labels?: TranslationDto[], form?: Form, id?: string) {
+        super(document.createElement('input'), name, labels, form, id);
 
         this.createElement();
         this.bindEvents();
@@ -377,7 +378,7 @@ export class FileUploadField extends InputNucleus<HTMLInputElement> {
     }
 
     clone() {
-        const uploadField = new FileUploadField(this.name, this.labels);
+        const uploadField = new FileUploadField(this.name, this.labels, this.form, this.id);
         uploadField.setType(this.type);
         uploadField.setValue(this.value);
         uploadField.setClasses(this.classes);

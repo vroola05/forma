@@ -26,7 +26,6 @@ public class IdpController {
 
     public IdpController(IdpService idpService) {
         this.idpService = idpService;
-
     }
 
     @PreAuthorize("hasAuthority(@Permissions.LOGIN_MANAGEMENT_READ)")
