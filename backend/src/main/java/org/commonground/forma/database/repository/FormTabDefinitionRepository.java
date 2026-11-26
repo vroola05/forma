@@ -5,6 +5,6 @@ import java.util.UUID;
 import org.commonground.forma.database.dao.definition.FormTabDefinitionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface FormTabDefinitionEntityRepository extends JpaRepository<FormTabDefinitionEntity, UUID> {
+public interface FormTabDefinitionRepository extends JpaRepository<FormTabDefinitionEntity, UUID> {
 
 }

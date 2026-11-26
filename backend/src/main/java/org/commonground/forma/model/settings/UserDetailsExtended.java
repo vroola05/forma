@@ -9,7 +9,7 @@ import org.commonground.forma.model.constants.UserStatus;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 
-public class UserDetailsExtended extends org.springframework.security.core.userdetails.User {
+public class UserDetailsExtended extends org.springframework.security.core.userdetails.User implements UserAuthenticated {
 
     private final UUID tenantId;
     private String email;
@@ -18,8 +18,13 @@ public class UserDetailsExtended extends org.springframework.security.core.userd
     private Set<String> permissions;
     private UserStatus status;
 
-    public UserDetailsExtended(String username, @Nullable String password, Collection<? extends GrantedAuthority> authorities,
-        UserEntity userEntity, Set<Group> groups, Set<String> permissions) {
+    public UserDetailsExtended(
+        String username,
+        @Nullable String password,
+        Collection<? extends GrantedAuthority> authorities,
+        UserEntity userEntity,
+        Set<Group> groups,
+        Set<String> permissions) {
 
         super(username, password, authorities);
         this.tenantId = userEntity.getTenantId();
@@ -30,27 +35,37 @@ public class UserDetailsExtended extends org.springframework.security.core.userd
         this.status = userEntity.getStatus();
     }
 
+    @Override
     public UUID getTenantId() {
         return tenantId;
     }
 
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
     public String getEmail() {
         return email;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
-    public UserStatus getStatus() {
-        return status;
+    @Override
+    public Set<Group> getGroups() {
+        return groups;
     }
 
+    @Override
     public Set<String> getPermissions() {
         return permissions;
     }
 
-    public Set<Group> getGroups() {
-        return groups;
+    public UserStatus getStatus() {
+        return status;
     }
 }

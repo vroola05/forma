@@ -13,7 +13,7 @@ import org.commonground.forma.model.settings.Tenant;
 import org.commonground.forma.services.GroupService;
 import org.commonground.forma.services.StorageService;
 import org.commonground.forma.services.TenantService;
-import org.commonground.forma.services.UserService;
+import org.commonground.forma.services.auth.UserService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

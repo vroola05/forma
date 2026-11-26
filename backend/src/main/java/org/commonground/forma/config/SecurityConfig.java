@@ -2,9 +2,16 @@ package org.commonground.forma.config;
 
 import java.io.IOException;
 
+import org.commonground.forma.config.security.authentication.FormAuthorizationManager;
+import org.commonground.forma.config.security.authentication.oauth.DatabaseClientRegistrationRepository;
+import org.commonground.forma.config.security.authentication.oauth.FormOAuth2AuthorizationRequestResolver;
+import org.commonground.forma.config.security.authentication.oauth.FormOAuth2SuccessHandler;
+import org.commonground.forma.config.tenant.TenantContextFilter;
 import org.commonground.forma.model.settings.constants.Permissions;
-import org.commonground.forma.services.TenantUserDetailsService;
+import org.commonground.forma.services.auth.TenantUserDetailsService;
+import org.commonground.forma.services.auth.UserServiceOidcCustom;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -14,6 +21,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
@@ -36,6 +45,9 @@ public class SecurityConfig {
     // private final SecurityTenantFilter securityTenantFilter;
     private final TenantUserDetailsService tenantUserDetailsService;
     private final PasswordEncoder passwordEncoder;
+
+    public static final String BASE_OAUTH_URI = "/{tenantSlug}/oauth2/authorization";
+    public static final String BASE_OAUTH_CODE_URI = "/{tenantSlug}/login/oauth2/code";
 
     // Injecteer de volledig door Spring opgebouwde filter
     public SecurityConfig(
@@ -60,46 +72,47 @@ public class SecurityConfig {
 
     @Bean
     @Order(1)
-    public SecurityFilterChain globalAdminFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain globalAdminFilterChain(HttpSecurity http, TenantContextFilter tenantContextFilter) throws Exception {
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
 
         http
-                .securityMatcher("/system/**")
-                .csrf(csrf -> csrf
+            .addFilterBefore(tenantContextFilter, OAuth2AuthorizationRequestRedirectFilter.class)
+            .securityMatcher("/system/**")
+            .csrf(csrf -> csrf
 
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(requestHandler))
-                .addFilterAfter(new CsrfCookieFilter(), org.springframework.security.web.csrf.CsrfFilter.class)
-                .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(AppConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
-                        .requestMatchers(
-                                "/system/page/**",
-                                "/system/admin",
-                                "/system/admin/page/**",
-                                "/system/api/login",
-                                "/system/api/tenant",
-                                "/system/api/language/nl")
-                        .permitAll()
-                        .anyRequest().hasAuthority(Permissions.TENANT_READ_INTERNAL))
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(
-                                (req, res, authException) -> resolver.resolveException(req, res, null,
-                                        new ResponseStatusException(
-                                                HttpStatus.UNAUTHORIZED, "{login.failure}"))))
-                .formLogin(form -> form
-                        .loginPage("/system/admin/page/login")
-                        .loginProcessingUrl("/system/api/login")
-                        .successHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
-                        .failureHandler((req, res, authException) -> resolver.resolveException(req, res, null,
-                                new ResponseStatusException(
-                                        HttpStatus.UNAUTHORIZED, "{login.failure}")))
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutUrl("/system/api/logout")
-                        .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .csrfTokenRequestHandler(requestHandler))
+            .addFilterAfter(new CsrfCookieFilter(), org.springframework.security.web.csrf.CsrfFilter.class)
+            .authorizeHttpRequests(authz -> authz
+                    .requestMatchers(AppConstants.PUBLIC_MATCHERS.toArray(String[]::new)).permitAll()
+                    .requestMatchers(
+                            "/system/page/**",
+                            "/system/admin",
+                            "/system/admin/page/**",
+                            "/system/api/login",
+                            "/system/api/tenant",
+                            "/system/api/language/nl")
+                    .permitAll()
+                    .anyRequest().hasAuthority(Permissions.TENANT_READ_INTERNAL))
+            .exceptionHandling(exception -> exception
+                    .authenticationEntryPoint(
+                            (req, res, authException) -> resolver.resolveException(req, res, null,
+                                    new ResponseStatusException(
+                                            HttpStatus.UNAUTHORIZED, "{login.failure}"))))
+            .formLogin(form -> form
+                    .loginPage("/system/admin/page/login")
+                    .loginProcessingUrl("/system/api/login")
+                    .successHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
+                    .failureHandler((req, res, authException) -> resolver.resolveException(req, res, null,
+                            new ResponseStatusException(
+                                    HttpStatus.UNAUTHORIZED, "{login.failure}")))
+                    .permitAll())
+            .logout(logout -> logout
+                    .logoutUrl("/system/api/logout")
+                    .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpStatus.OK.value()))
 
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID"));
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID"));
 
         return http.build();
     }
@@ -108,15 +121,26 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain publicFormsFilterChain(
             HttpSecurity http, 
-            FormAuthorizationManager formAuthorizationManager) throws Exception {
+            FormAuthorizationManager formAuthorizationManager,
+            DatabaseClientRegistrationRepository clientRegistrationRepository,
+            FormOAuth2SuccessHandler formOAuth2SuccessHandler,
+            TenantContextFilter tenantContextFilter,
+            UserServiceOidcCustom userServiceOidcCustom) throws Exception {
         
-        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+        
 
+        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+        OAuth2AuthorizationRequestResolver customResolver = 
+            new FormOAuth2AuthorizationRequestResolver(clientRegistrationRepository, BASE_OAUTH_URI);
         http
+            .addFilterBefore(tenantContextFilter, OAuth2AuthorizationRequestRedirectFilter.class)
             // Deze chain geldt alleen voor formulier-acties en de formulier-login
             .securityMatcher(
+                "/{tenantSlug}/api/users/forms/me",
                 "/{tenantSlug}/api/forms/{formId}/**",
-                "/{tenantSlug}/api/forms/login"
+                "/{tenantSlug}/api/forms/login",
+                BASE_OAUTH_URI + "/**",
+                BASE_OAUTH_CODE_URI + "/**"
             )
             .csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
@@ -125,8 +149,12 @@ public class SecurityConfig {
             .addFilterAfter(new CsrfCookieFilter(), CsrfFilter.class)
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers(
+                    "/{tenantSlug}/api/users/forms/me",
                     "/{tenantSlug}/api/forms/login",
-                    "/{tenantSlug}/api/forms/{formId}/auth-metadata").permitAll()
+                    "/{tenantSlug}/api/forms/{formId}/auth-metadata",
+                    BASE_OAUTH_URI + "/**",
+                    BASE_OAUTH_CODE_URI + "/**"
+                ).permitAll()
                 .requestMatchers("/{tenantSlug}/api/forms/{formId}/**").access(formAuthorizationManager)
                 .anyRequest().denyAll()
             )
@@ -142,6 +170,20 @@ public class SecurityConfig {
                 .failureHandler((req, res, authException) -> resolver.resolveException(req, res, null,
                     new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{login.failure}")))
                 .permitAll()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .authorizationEndpoint(auth -> auth
+                    .baseUri(BASE_OAUTH_URI)
+                    .authorizationRequestResolver(customResolver)
+                )
+                .redirectionEndpoint(redirection -> redirection
+                    .baseUri(BASE_OAUTH_CODE_URI + "/*")
+                )
+                .clientRegistrationRepository(clientRegistrationRepository)
+                .userInfoEndpoint(userInfo -> userInfo
+                    .oidcUserService(userServiceOidcCustom)
+                )
+                .successHandler(formOAuth2SuccessHandler)
             );
 
         return http.build();
@@ -149,10 +191,11 @@ public class SecurityConfig {
 
     @Bean
     @Order(3)
-    public SecurityFilterChain tenantAndPublicFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain tenantAndPublicFilterChain(HttpSecurity http, TenantContextFilter tenantContextFilter) throws Exception {
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
 
         http
+            .addFilterBefore(tenantContextFilter, OAuth2AuthorizationRequestRedirectFilter.class)
             .csrf(csrf -> csrf
 
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
@@ -195,6 +238,13 @@ public class SecurityConfig {
                     .deleteCookies("JSESSIONID"));
 
         return http.build();
+    }
+
+    @Bean
+    public FilterRegistrationBean<TenantContextFilter> tenantFilterRegistration(TenantContextFilter filter) {
+        FilterRegistrationBean<TenantContextFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
     }
 
     private static final class CsrfCookieFilter extends OncePerRequestFilter {

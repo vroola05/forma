@@ -1,5 +1,6 @@
 import { OptionDto, TranslationDto } from '../model/types';
 import { Lang } from '../services/lang';
+import { Form } from './form';
 import { InputNucleus } from './interface/input-base';
 
 /**
@@ -8,8 +9,8 @@ import { InputNucleus } from './interface/input-base';
 export class SelectField extends InputNucleus<HTMLSelectElement> {
     value: OptionDto[];
 
-    constructor(name: string, labels: TranslationDto[] | undefined = undefined, classes: string | undefined = undefined, id: string | undefined = undefined) {
-        super(document.createElement('select'), name, labels, id);
+    constructor(name: string, labels?: TranslationDto[], form?: Form, classes?: string, id?: string) {
+        super(document.createElement('select'), name, labels, form, id);
         
         this.value = [];
         
@@ -78,6 +79,10 @@ export class SelectField extends InputNucleus<HTMLSelectElement> {
         return this.value ? this.value : [];
     }
 
+    getSelectedValue(): string | undefined {
+        return this.value && this.value.length > 0? this.value[0].value: undefined;
+    }
+
     setValue(value: OptionDto[] | undefined, noCallback = false) {
         requestAnimationFrame(() => {
             const isEmpty = value === undefined  || (Array.isArray(value) && value.length === 0);
@@ -111,7 +116,7 @@ export class SelectField extends InputNucleus<HTMLSelectElement> {
     }
 
     clone() {
-        const selectField = new SelectField(this.name, this.labels, this.classes, this.id);
+        const selectField = new SelectField(this.name, this.labels, this.form, this.classes, this.id);
         [...this.inputElement.options].forEach(option => {
             const clone = option.cloneNode(true) as HTMLOptionElement
             clone.selected = option.selected;

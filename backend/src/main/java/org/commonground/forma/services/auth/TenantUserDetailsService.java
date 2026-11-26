@@ -1,4 +1,4 @@
-package org.commonground.forma.services;
+package org.commonground.forma.services.auth;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,6 +16,7 @@ import org.commonground.forma.mapper.GroupMapper;
 import org.commonground.forma.model.settings.Group;
 import org.commonground.forma.model.settings.Tenant;
 import org.commonground.forma.model.settings.UserDetailsExtended;
+import org.commonground.forma.services.TenantService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

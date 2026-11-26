@@ -1,13 +1,14 @@
 import { OptionDto, TranslationDto } from '../model/types';
 import { Lang } from '../services/lang';
+import { Form } from './form';
 import { InputNucleus } from './interface/input-base';
 
 export class TagField extends InputNucleus<HTMLDivElement> {
     tagContainer = document.createElement('div');
 
 
-    constructor(name: string, labels: TranslationDto[] | undefined = undefined, classes: string | undefined = undefined, id: string | undefined = undefined) {
-        super(document.createElement('div'), name, labels, id);
+    constructor(name: string, labels?: TranslationDto[], form?: Form, classes?: string, id?: string) {
+        super(document.createElement('div'), name, labels, form, id);
         this.type = 'tag';
         this.value = [];
         
@@ -148,7 +149,7 @@ export class TagField extends InputNucleus<HTMLDivElement> {
     }
 
     clone() {
-        const tagField = new TagField(this.name, this.labels);
+        const tagField = new TagField(this.name, this.labels, this.form, this.classes, this.id);
         tagField.setType(this.type);
         tagField.setValue(this.value);
         tagField.setClasses(this.classes);

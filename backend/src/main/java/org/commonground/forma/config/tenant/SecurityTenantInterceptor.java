@@ -1,28 +1,21 @@
 package org.commonground.forma.config.tenant;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.commonground.forma.config.AppConstants;
-import org.commonground.forma.model.settings.Tenant;
 import org.commonground.forma.services.SecurityService;
 import org.commonground.forma.services.TenantService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.HandlerMapping;
-import java.util.Map;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class SecurityTenantInterceptor implements HandlerInterceptor {
-
-    private final TenantService tenantService;
     private final SecurityService securityService;
 
     public SecurityTenantInterceptor(
             TenantService tenantService,
             SecurityService securityService) {
-        this.tenantService = tenantService;
         this.securityService = securityService;
     }
 
@@ -35,16 +28,7 @@ public class SecurityTenantInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(
-                HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-
-        TenantContext.setTenant(new Tenant());
-        if (pathVariables != null && pathVariables.containsKey("tenantSlug")) {
-            String tenantSlug = pathVariables.get("tenantSlug");
-            if (!AppConstants.SYSTEM_TENANT_SLUG.equals(tenantSlug)) {
-                TenantContext.setTenant(this.tenantService.get(tenantSlug));
-            }
-        }
+ 
 
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;

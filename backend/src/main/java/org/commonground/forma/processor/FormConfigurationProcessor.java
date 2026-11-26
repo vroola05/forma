@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -16,6 +17,7 @@ import org.commonground.forma.database.dao.definition.FormVariableEntity;
 import org.commonground.forma.database.dao.definition.FormVariableValueEntity;
 import org.commonground.forma.database.dao.definition.TagEntity;
 import org.commonground.forma.database.dao.definition.TagId;
+import org.commonground.forma.database.dao.settings.TenantAuthProviderEntity;
 import org.commonground.forma.database.repository.TagRepository;
 import org.commonground.forma.mapper.SuccessPageMapper;
 import org.commonground.forma.mapper.TabPageMapper;
@@ -27,6 +29,8 @@ import org.commonground.forma.model.form.Variable;
 import org.commonground.forma.model.form.VariableValue;
 import org.commonground.forma.model.form.fields.Field;
 import org.commonground.forma.model.form.fields.TabPage;
+import org.commonground.forma.model.form.idp.FormAuthProvider;
+import org.commonground.forma.services.IdpService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -39,16 +43,19 @@ public class FormConfigurationProcessor {
     private final TabPageMapper tabPageMapper;
     private final FormFieldConfigurationProcessor fieldConfigurationProcessor;
     private final SuccessPageMapper successPageMapper;
+    private final IdpService idpService;
 
     public FormConfigurationProcessor(
             TagRepository tagRepository,
             TabPageMapper tabPageMapper,
             FormFieldConfigurationProcessor fieldConfigurationProcessor,
-            SuccessPageMapper successPageMapper) {
+            SuccessPageMapper successPageMapper,
+            IdpService idpService) {
         this.tagRepository = tagRepository;
         this.tabPageMapper = tabPageMapper;
         this.fieldConfigurationProcessor = fieldConfigurationProcessor;
         this.successPageMapper = successPageMapper;
+        this.idpService = idpService;
     }
 
     public void processUpdate(FormDefinitionEntity formDefinitionEntity, FormWrapper wrapper)  {
@@ -112,6 +119,28 @@ public class FormConfigurationProcessor {
         formDefinitionEntity.setLoginInstructions(formConfigLoginPage.getLoginInstructions());
         formDefinitionEntity.setPublicAccess(formConfigLoginPage.isPublicAccess());
         formDefinitionEntity.setAllowFormLogin(formConfigLoginPage.isAllowFormLogin());
+
+
+        Set<FormAuthProvider> formAuthProviderDto = formConfigLoginPage.getFormAuthProvider();
+
+        formDefinitionEntity.retainAllowedProviders(formAuthProviderDto);
+
+        if (formAuthProviderDto == null || formAuthProviderDto.isEmpty()) {
+            return;
+        }
+
+        List<TenantAuthProviderEntity> tenantAuthProviderEntitiesAll = this.idpService.getFormTenantAuthProviderEntities(formDefinitionEntity.getTenantId());
+
+        Set<TenantAuthProviderEntity> tenantAuthProviderEntitiesExisting = formDefinitionEntity.getAllowedProviders();
+
+        List<TenantAuthProviderEntity> tenantAuthProviderEntitiesNew = tenantAuthProviderEntitiesAll.stream().filter(tenantAuthProviderEntity -> {
+                return formAuthProviderDto.stream().anyMatch( p -> tenantAuthProviderEntity.getId().equals(p.getId())) 
+                    && !tenantAuthProviderEntitiesExisting.stream().anyMatch( p -> p.getId().equals(tenantAuthProviderEntity.getId()));
+            }).toList();
+
+        tenantAuthProviderEntitiesExisting.addAll(tenantAuthProviderEntitiesNew);
+        
+
     }
 
     /**

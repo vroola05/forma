@@ -125,10 +125,10 @@ export class FormRenderer {
         const form = await Form.create(formDto, options);
         form.setClientSessionId(clientSessionId);
 
-        FormService.formReady();
+        FormService.formReady(form.getName());
         // Logic that needs to be initialized after the form is loaded.
         // For example the showconditions
-        const fields = FormService.getNucleus();
+        const fields = FormService.getNucleus(form.getName());
         
         for (const element of fields) {
             element.afterFormInit();
@@ -160,15 +160,13 @@ export class FormRenderer {
             switch (fieldDto.type) {
                 case 'form-group': {
                     const { FormGroup } = await import('../form-components/form-group');
-                    const formGroup = new FormGroup(fieldDto, fieldDto.id);
-                    formGroup.setForm(form);
+                    const formGroup = new FormGroup(fieldDto, form, fieldDto.id);
                     await formGroup.init(fieldDto);
                     return formGroup;
                 }
                 case 'repeating-group': {
                     const { RepeatingGroup } = await import('../form-components/repeating-group');
-                    const repeatingGroup = new RepeatingGroup((fieldDto as RepeatingGroupDto), fieldDto.id)
-                    repeatingGroup.setForm(form);
+                    const repeatingGroup = new RepeatingGroup((fieldDto as RepeatingGroupDto), form, fieldDto.id)
                     
                     await repeatingGroup.init(fieldDto);
                     return repeatingGroup;
@@ -191,18 +189,18 @@ export class FormRenderer {
         switch (fieldDto.type) {
             case 'hidden': {
                 const { HiddenField } = await import('../form-components/hidden-field');
-                nucleus = new HiddenField(fieldDto.name, fieldDto.labels, fieldDto.id)
+                nucleus = new HiddenField(fieldDto.name, fieldDto.labels, form, fieldDto.id)
                     .setValue(fieldDto.value, true);
                 break;
             }
             case 'label': {
                 const { LabelField } = await import('../form-components/label-field');
-                nucleus = new LabelField(fieldDto.name, fieldDto.labels, fieldDto.id)
+                nucleus = new LabelField(fieldDto.name, fieldDto.labels, form, fieldDto.id)
                     .setRequired(fieldDto.required)
                 break;
             }
             case 'text':
-                nucleus = new TextField(fieldDto.name, fieldDto.labels, fieldDto.id, prefix)
+                nucleus = new TextField(fieldDto.name, fieldDto.labels, form, fieldDto.id, prefix)
                     .setRequired(fieldDto.required)
                     .setMinLength(fieldDto.minLength)
                     .setMaxLength(fieldDto.maxLength)
@@ -213,7 +211,7 @@ export class FormRenderer {
 
                 const richTextFieldDto = fieldDto as RichTextFieldDto;
 
-                nucleus = new RichTextField(richTextFieldDto.name, richTextFieldDto.labels, richTextFieldDto.id)
+                nucleus = new RichTextField(richTextFieldDto.name, richTextFieldDto.labels, form, richTextFieldDto.id)
                     .setRequired(richTextFieldDto.required)
                     .setInline(richTextFieldDto.inline)
                     .addValueChangedListener(richTextFieldDto.change);
@@ -221,20 +219,20 @@ export class FormRenderer {
             }
             case 'conditions-autocomplete': {
                 const { ConditionsAutocompleteField } = await import('../form-components/conditions-autocomplete-field');
-                nucleus = new ConditionsAutocompleteField(fieldDto.name, fieldDto.labels)
+                nucleus = new ConditionsAutocompleteField(fieldDto.name, fieldDto.labels, form)
                     .setRequired(fieldDto.required)
                     .addValueChangedListener(fieldDto.change);
                 break;
             }
             case 'conditions': {
                 const { ConditionsField } = await import('../form-components/conditions-field');
-                nucleus = new ConditionsField(fieldDto.name, fieldDto.labels)
+                nucleus = new ConditionsField(fieldDto.name, fieldDto.labels, form)
                     .setRequired(fieldDto.required)
                     .addValueChangedListener(fieldDto.change);
                 break;
             }
             case 'number':
-                nucleus = new TextField(fieldDto.name, fieldDto.labels, fieldDto.id, prefix)
+                nucleus = new TextField(fieldDto.name, fieldDto.labels, form, fieldDto.id, prefix)
                     .setType('number')
                     .setRequired(fieldDto.required)
                     .setMinLength(fieldDto.minLength)
@@ -243,7 +241,7 @@ export class FormRenderer {
                 break;
             case 'valuta': {
                 const { ValutaField } = await import('../form-components/valuta-field');
-                nucleus = new ValutaField(fieldDto.name, fieldDto.labels, fieldDto.id)
+                nucleus = new ValutaField(fieldDto.name, fieldDto.labels, form, fieldDto.id)
                     .setType('text')
                     .setRequired(fieldDto.required)
                     .setMinLength(fieldDto.minLength)
@@ -253,7 +251,7 @@ export class FormRenderer {
             }
             case 'date': {
                 const { DateField } = await import('../form-components/date-field');
-                nucleus = new DateField(fieldDto.name, fieldDto.labels, fieldDto.id)
+                nucleus = new DateField(fieldDto.name, fieldDto.labels, form, fieldDto.id)
                     .setType('date')
                     .setRequired(fieldDto.required)
                     .setMinLength(fieldDto.minLength)
@@ -263,7 +261,7 @@ export class FormRenderer {
             }
             case 'textarea': {
                 const { TextAreaField } = await import('../form-components/textarea-field');
-                nucleus = new TextAreaField(fieldDto.name, fieldDto.labels, fieldDto.id)
+                nucleus = new TextAreaField(fieldDto.name, fieldDto.labels, form, fieldDto.id)
                     .setType('textarea')
                     .setRequired(fieldDto.required)
                     .setMinLength(fieldDto.minLength)
@@ -272,7 +270,7 @@ export class FormRenderer {
                 break;
             }
             case 'email':
-                nucleus = new TextField(fieldDto.name, fieldDto.labels, fieldDto.id, prefix)
+                nucleus = new TextField(fieldDto.name, fieldDto.labels, form, fieldDto.id, prefix)
                     .setType('email')
                     .setRequired(fieldDto.required)
                     .setMinLength(fieldDto.minLength)
@@ -281,7 +279,7 @@ export class FormRenderer {
                 break;
             case 'password': {
                 const { PasswordField } = await import('../form-components/password-field');
-                nucleus = new PasswordField(fieldDto.name, fieldDto.labels, fieldDto.id)
+                nucleus = new PasswordField(fieldDto.name, fieldDto.labels, form, fieldDto.id)
                     .setType('password')
                     .setRequired(fieldDto.required)
                     .setMinLength(fieldDto.minLength)
@@ -291,7 +289,7 @@ export class FormRenderer {
             }
             case 'color': {
                 const { ColorField } = await import('../form-components/color-field');
-                nucleus = new ColorField(fieldDto.name, fieldDto.labels, fieldDto.id)
+                nucleus = new ColorField(fieldDto.name, fieldDto.labels, form, fieldDto.id)
                     .setType('color')
                     .setRequired(fieldDto.required)
                     .setValue(fieldDto.value, true)
@@ -307,8 +305,8 @@ export class FormRenderer {
             .setPlaceholder(fieldDto.placeholder)
             .setReadonly(fieldDto.readonly)
             .setValue(fieldDto.value, true)
-            .setShowConditions(fieldDto.condition)
-            .setForm(form);
+            .setShowConditions(fieldDto.condition);
+            
 
         return nucleus;
     }
@@ -319,7 +317,7 @@ export class FormRenderer {
             case 'file': {
                 const fileOptionFieldDto = fieldDto as FileOptionFieldDto;
                 const { FileUploadField } = await import('../form-components/upload-field');
-                nucleus = new FileUploadField(fieldDto.name, fieldDto.labels, fieldDto.id)
+                nucleus = new FileUploadField(fieldDto.name, fieldDto.labels, form, fieldDto.id)
 
                     .setIsMultiple(fileOptionFieldDto.isMultiple)
                     .setAccept(fileOptionFieldDto.allowedExtensions)
@@ -330,7 +328,7 @@ export class FormRenderer {
             }
             case 'radio': {
                 const { RadioField } = await import('../form-components/radio-field');
-                nucleus = new RadioField(fieldDto.name, fieldDto.labels, fieldDto?.classes || '', fieldDto.id)
+                nucleus = new RadioField(fieldDto.name, fieldDto.labels, form, fieldDto?.classes || '', fieldDto.id)
                     .addOptions(fieldDto.options)
                     .setReadonly(fieldDto.readonly)
                     .setValue(fieldDto.values, true)
@@ -339,7 +337,7 @@ export class FormRenderer {
             }
             case 'checkbox': {
                 const { CheckboxField } = await import('../form-components/checkbox-field');
-                nucleus = new CheckboxField(fieldDto.name, fieldDto.labels, fieldDto?.classes || '', fieldDto.id)
+                nucleus = new CheckboxField(fieldDto.name, fieldDto.labels, form, fieldDto?.classes || '', fieldDto.id)
                     .addOptions(fieldDto.options)
                     .setValue(fieldDto.values, true)
                     .addValueChangedListener(fieldDto.change);
@@ -347,7 +345,7 @@ export class FormRenderer {
             }
             case 'tag': {
                 const { TagField } = await import('../form-components/tag-field');
-                nucleus = new TagField(fieldDto.name, fieldDto.labels, fieldDto?.classes || '', fieldDto.id)
+                nucleus = new TagField(fieldDto.name, fieldDto.labels, form, fieldDto?.classes || '', fieldDto.id)
                     .addOptions(fieldDto.options)
                     .setValue(fieldDto.values, true)
                     .addValueChangedListener(fieldDto.change);
@@ -355,7 +353,7 @@ export class FormRenderer {
             }
             case 'select': {
                 const { SelectField } = await import('../form-components/select-field');
-                const selectField = new SelectField(fieldDto.name, fieldDto.labels, fieldDto?.classes || '', fieldDto.id)
+                const selectField = new SelectField(fieldDto.name, fieldDto.labels, form, fieldDto?.classes || '', fieldDto.id)
                     .addOptions(fieldDto.options);
 
                 selectField
@@ -366,7 +364,7 @@ export class FormRenderer {
             }
             case 'dual-listbox': {
                 const { DualListboxField } = await import('../form-components/dual-listbox-field');
-                nucleus = new DualListboxField(fieldDto.name, fieldDto.labels, fieldDto?.classes || '', fieldDto.id)
+                nucleus = new DualListboxField(fieldDto.name, fieldDto.labels, form, fieldDto?.classes || '', fieldDto.id)
                     .addOptions(fieldDto.options)
                     .setValue(fieldDto.values, true)
                     .addValueChangedListener(fieldDto.change);
@@ -382,8 +380,8 @@ export class FormRenderer {
             .setRequired(fieldDto.required)
             .setPlaceholder(fieldDto.placeholder)
             .setReadonly(fieldDto.readonly)
-            .setShowConditions(fieldDto.condition)
-            .setForm(form)
+            .setShowConditions(fieldDto.condition);
+            
         return nucleus;
     }
 }

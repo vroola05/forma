@@ -21,7 +21,6 @@ export class FormVariables {
                     "type": "tab",
                     "fields": [
                         {
-
                             "name": "variables-repeating-group",
                             "label": Lang.get('page.settings.vars.table'),
                             "type": "repeating-group",
@@ -110,7 +109,6 @@ export class FormVariables {
                 }
             );
 
-            
             sets.push(set);
         }
 
@@ -132,7 +130,6 @@ export class FormVariables {
 
         for (const value of values) {
             const set: FieldDto[] = [];
-            console.log('value', value);
             set.push(
                 {
                     type: 'hidden',

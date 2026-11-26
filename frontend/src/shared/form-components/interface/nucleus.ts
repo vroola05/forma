@@ -2,6 +2,7 @@ import { FormService } from '../../../form-viewer/services/form-service';
 import { ConditionParser } from '../../condition-components/condition-parser';
 import { ConditionDto, TranslationDto } from '../../model/types';
 import { Lang } from '../../services/lang';
+import { Form } from '../form';
 import { ValidationBase } from './validation-base';
 
 export class Nucleus extends ValidationBase {
@@ -22,10 +23,12 @@ export class Nucleus extends ValidationBase {
     content: HTMLDivElement = document.createElement('div');
 
     constructor(
-            name: string, labels: TranslationDto[] | undefined,
+            name: string,
+            labels: TranslationDto[] | undefined,
+            form?: Form,
             id: string | undefined = undefined,
             prefix: string | undefined = undefined) {
-        super();
+        super(form);
         if (!name) {
             throw new Error('Name is a required parameter');
         }
@@ -35,13 +38,16 @@ export class Nucleus extends ValidationBase {
         this.prefix = prefix;
         this.id = id;
 
-        FormService.addNucleus(this);
+
     }
 
     /**
      * This function is called after the field is added to its parent.
      */
     afterInit() {
+        if (this.form !== undefined && this.form.getName() !== undefined) {
+            FormService.addNucleus(this.form.getName(), this);
+        }
     }
 
     /**
@@ -50,7 +56,6 @@ export class Nucleus extends ValidationBase {
     afterFormInit() {
         if (this.showCondition !== undefined) {
             this.showCondition?.onFieldValueChanged();
-
         }
     }
 
@@ -119,11 +124,11 @@ export class Nucleus extends ValidationBase {
             return this;
         }
 
-
-        this.showCondition = new ConditionParser(condition, (hasCondition: boolean) => {
-            this.setShow(hasCondition);
-        });
-        
+        if (this.form !== undefined && this.form.getName() !== undefined) {
+            this.showCondition = new ConditionParser(this.form.getName(), condition, (hasCondition: boolean) => {
+                this.setShow(hasCondition);
+            });
+        }
         return this;
     }
 

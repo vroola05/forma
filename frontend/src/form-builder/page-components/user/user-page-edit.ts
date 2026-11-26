@@ -130,7 +130,7 @@ export class UserPageEdit extends SettingsPage {
                                     "options": Object.entries(USER_STATUS).map(([key, val_fnc]) => ({
                                         value: key, text: val_fnc()
                                     })),
-                                    "value": !this.user?.status ? [] : [{value: this.user.status, text: ''}]
+                                    "values": !this.user?.status ? [] : [{value: this.user.status, text: ''}]
                                 },
                                 {
                                     "name": "groups",
@@ -138,7 +138,7 @@ export class UserPageEdit extends SettingsPage {
                                     "type": "dual-listbox",
                                     "required": false,
                                     "options": groupOptions,
-                                    "value": groupOptionValues
+                                    "values": groupOptionValues
                                 }
                             ]
                         }

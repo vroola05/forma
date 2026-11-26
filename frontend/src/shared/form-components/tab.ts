@@ -6,6 +6,7 @@ import { FormRenderer } from '../generic-components/form-renderer';
 
 import { FormSummaryRenderer } from '../../form-viewer/components/form-summary-renderer';
 import { BaseFieldDto, FieldDto } from '../model/types';
+import { Form } from './form';
 
 export class Tab extends Nucleus {
     content: HTMLDivElement = document.createElement('div');
@@ -16,8 +17,8 @@ export class Tab extends Nucleus {
 
     onTabClick: ((tabName: string) => void) | undefined;
 
-    constructor(baseFieldDto: BaseFieldDto, onTabClick: (tabName: string) => void) {
-        super(baseFieldDto.name, baseFieldDto.labels, baseFieldDto.id);
+    constructor(baseFieldDto: BaseFieldDto, form?: Form, onTabClick?: (tabName: string) => void) {
+        super(baseFieldDto.name, baseFieldDto.labels, form, baseFieldDto.id);
 
         this.label = baseFieldDto.label;
         this.type = baseFieldDto.type;

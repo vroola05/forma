@@ -18,7 +18,7 @@ export class AdminHeader extends Header {
             new FormButton(Lang.get('tenant.title'), null, '/admin/page/tenant').setPermissions(PERMISSION.TENANT_READ_INTERNAL),
 
             new Dropdown(Lang.get('generic.auth.management'), [
-                new FormButton(Lang.get('tenant.title'), null, '/admin/page/login-management').setPermissions(PERMISSION.LOGIN_MANAGEMENT_READ),
+                new FormButton(Lang.get('generic.btn.idp'), null, '/admin/page/identity-providers').setPermissions(PERMISSION.LOGIN_MANAGEMENT_READ),
                 
             ]).setPermissions(PERMISSION.LOGIN_MANAGEMENT_READ),
             new Dropdown(Lang.get('user.management'), [

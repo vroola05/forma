@@ -1,4 +1,5 @@
 import { TranslationDto } from '../model/types';
+import { Form } from './form';
 import { InputNucleus } from './interface/input-base';
 
 /**
@@ -10,8 +11,8 @@ export class ColorField extends InputNucleus<HTMLInputElement> {
     minLength = undefined;
     maxLength = undefined;
 
-    constructor(name: string, labels: TranslationDto[] | undefined, id: string | undefined = undefined) {
-        super(document.createElement('input'),name, labels, id);
+    constructor(name: string, labels: TranslationDto[] | undefined, form?: Form, id: string | undefined = undefined) {
+        super(document.createElement('input'), name, labels, form, id);
         this.type = 'color';
 
         this.createElement();
@@ -54,10 +55,8 @@ export class ColorField extends InputNucleus<HTMLInputElement> {
 
     setType(type: string) {
         this.type = type;
-        
         return this;
     }
-
 
     setValue(value: string | undefined, noCallback: boolean = false, fromUi: boolean = false) {
         this.value = value ?? '';
@@ -106,7 +105,7 @@ export class ColorField extends InputNucleus<HTMLInputElement> {
     }
 
     clone() {
-        const colorfield = new ColorField(this.name, this.labels);
+        const colorfield = new ColorField(this.name, this.labels, this.form, this.id);
         colorfield.setType(this.type);
         colorfield.setValue(this.value);
         colorfield.setClasses(this.classes);

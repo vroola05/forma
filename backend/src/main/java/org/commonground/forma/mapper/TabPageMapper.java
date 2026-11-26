@@ -91,7 +91,7 @@ public class TabPageMapper {
 
         translationEntityToDto(dto, entity);
 
-        dto.setFields(fieldMapper.toResponseDtoList(entity.getFields()));
+        dto.setFields(fieldMapper.toResponseDtoList(entity.getFields().stream().filter(e -> e.getParent() == null).toList()));
         return dto;
     }
 

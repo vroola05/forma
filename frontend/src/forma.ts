@@ -13,6 +13,7 @@ export interface FormaOptions {
     baseAddition?: any;
     homeUrl?: string;
     loginUrl?: string;
+    me?: string;
 }
 
 export class Forma {
@@ -37,14 +38,14 @@ export class Forma {
 
         TenantService.load()
             .then((tenant: TenantDto) => {
-                this.onTenantLoaded(tenant, options.routes);
+                this.onTenantLoaded(tenant, options.routes, options);
             })
             .catch((error) => {
                 console.error(error);
             });
     }
 
-    onTenantLoaded(tenant: TenantDto, routes: Route[]) {
+    onTenantLoaded(tenant: TenantDto, routes: Route[], options: FormaOptions) {
         Router.register(routes);
 
         if (Router.tenantSlug && tenant.hasLogo) {
@@ -57,8 +58,8 @@ export class Forma {
 
         Lang.load().then(() => {
             this.addRouteListener();
-
-            Http.get(`${Router.tenantPath}/api/users/me`).then(user => {
+            const me = options.me && options.me!=='' ? options.me : '/api/users/me';
+            Http.get(`${Router.tenantPath}${me}`).then(user => {
                 Auth.setUser(user);
             })
             .catch((error: any) => {

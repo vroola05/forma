@@ -39,9 +39,7 @@ public class GroupMapper {
             return null;
         }
 
-        Group dto = new Group();
-        dto.setId(entity.getId());
-        dto.setName(entity.getName());
+        Group dto = new Group(entity.getId(), entity.getName());
 
         return dto;
     }

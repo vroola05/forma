@@ -1,19 +1,19 @@
 package org.commonground.forma.database.dao.settings;
 
-
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.commonground.forma.database.dao.BaseEntity;
 import org.commonground.forma.model.constants.ProviderType;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,13 +25,11 @@ import lombok.Setter;
 @Entity
 @Table(name = "tenant_auth_providers")
 public class TenantAuthProviderEntity extends BaseEntity {
-
     @Id
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tenant_id", nullable = false)
-    private TenantEntity tenant;
+    @Column(nullable = false)
+    private UUID tenantId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "provider_type", nullable = false)
@@ -39,6 +37,12 @@ public class TenantAuthProviderEntity extends BaseEntity {
 
     @Column(name = "display_name", nullable = false)
     private String displayName;
+
+    @Column(name = "information_text")
+    private String informationText;
+
+    @Column(name = "link_text")
+    private String linkText;
 
     @Column(name = "client_id", nullable = false)
     private String clientId;
@@ -56,5 +60,30 @@ public class TenantAuthProviderEntity extends BaseEntity {
     private String acrValues;
 
     @Column(nullable = false)
-    private boolean enabled = true;
+    private boolean active = true;
+
+    @OneToMany(mappedBy = "authProvider", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TenantAuthProviderGroupEntity> groupMapping = new HashSet<>();
+
+    public void addGroupMapping(GroupEntity group, String externalId, String externalName) {
+        TenantAuthProviderGroupEntity tenantAuthProviderGroupEntity = new TenantAuthProviderGroupEntity(
+                this,
+                group,
+                externalId,
+                externalName);
+        this.groupMapping.add(tenantAuthProviderGroupEntity);
+    }
+
+    public void retainGroups(Set<UUID> groupIdsNotToRemove) {
+        if (groupIdsNotToRemove == null) {
+            return;
+        }
+
+        this.groupMapping.removeIf(g -> !groupIdsNotToRemove.contains(g.getId().getGroupId()));
+    }
+
+    public void removeGroupMapping(TenantAuthProviderGroupEntity tenantAuthProviderGroupEntity) {
+        this.groupMapping.remove(tenantAuthProviderGroupEntity);
+        tenantAuthProviderGroupEntity.setAuthProvider(null);
+    }
 }

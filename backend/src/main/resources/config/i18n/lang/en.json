@@ -15,6 +15,10 @@
     "generic.btn.previous": "Previous",
     "generic.btn.next": "Next",
     "generic.btn.summary": "Overview",
+    "generic.btn.logout": "Logout",
+    "generic.btn.profile": "Profile settings",
+    "generic.btn.tenant": "Tenant settings",
+    "generic.btn.idp":"Identity Providers (IdP)",
 
     "generic.permissions": "Permissions",
 
@@ -59,13 +63,14 @@
     "login.submit": "Login",
 
     "login.default.description": "Introductory text for the login page",
-    "login.default.method": "Login methods",
+    "login.default.method": "Default login methods",
     "login.default.method.none": "No login",
     "login.default.method.none.title": "Continue without logging in",
     "login.default.method.none.information": "Fill out this form anonymously right away. You do not need an account for this.",
     "login.default.method.form.login": "Username and password",
     "login.default.method.form.login.title": "Log in with your account",
     "login.default.method.form.login.information": "Log in with your username and password to open the form.",
+    "login.external.method": "External login methods",
 
     "dashboad.title": "Dashboard",
 
@@ -86,6 +91,8 @@
     "user.title": "User",
     "user.new.title": "Create new user",
     "user.edit.title": "Change user",
+
+    "idp.title": "Identity Provider",
 
     "text.editor.placeholder": "Start typing here...",
     "text.editor.table.create": "Create",

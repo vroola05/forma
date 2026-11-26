@@ -1,4 +1,5 @@
 import { TranslationDto } from '../model/types';
+import { Form } from './form';
 import { InputNucleus } from './interface/input-base';
 
 /**
@@ -9,8 +10,8 @@ export class TextAreaField extends InputNucleus<HTMLTextAreaElement> {
     minLength: number | undefined = undefined;
     maxLength: number | undefined = undefined;
 
-    constructor(name: string, labels: TranslationDto[] | undefined, id: string | undefined = undefined) {
-        super(document.createElement('textarea'), name, labels, id);
+    constructor(name: string, labels?: TranslationDto[], form?: Form, id?: string) {
+        super(document.createElement('textarea'), name, labels, form, id);
         this.type = 'textarea';
 
         this.createElement();
@@ -71,7 +72,7 @@ export class TextAreaField extends InputNucleus<HTMLTextAreaElement> {
     }
 
     clone() {
-        const textfield = new TextAreaField(this.name, this.labels);
+        const textfield = new TextAreaField(this.name, this.labels, this.form, this.id);
         textfield.setType(this.type);
         textfield.setValue(this.value);
         textfield.setClasses(this.classes);

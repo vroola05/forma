@@ -14,7 +14,7 @@ import { Router } from '../../../shared/services/router';
 import { ToastService } from '../../../shared/services/toast-service';
 
 import { Form } from '../../../shared/form-components/form';
-import { BaseFieldDto, FormWrapper } from '../../../shared/model/types';
+import { BaseFieldDto, FormAuthProviderDto, FormWrapper } from '../../../shared/model/types';
 import { FieldServiceRegistry } from '../../../shared/services/field-service';
 import { Loader } from '../../../shared/services/loader';
 import { VariableService } from '../../../shared/services/variable-service';
@@ -61,9 +61,9 @@ export class BuilderPage extends Page {
         }
 
         if (formName !== formNameUrlParam) {
-                Storage.removePageItem('form-wrapper');
-                Storage.setPageItem('form-name', formNameUrlParam);
-                formName = formNameUrlParam;
+            Storage.removePageItem('form-wrapper');
+            Storage.setPageItem('form-name', formNameUrlParam);
+            formName = formNameUrlParam;
         }
 
         const formWrapperString = Storage.getPageItem('form-wrapper');
@@ -94,17 +94,14 @@ export class BuilderPage extends Page {
             this.forms.push({form, url: currentPath?.parentPath + ''});
         }).catch(() => {});
 
-        const formLogin = new FormLogin();
-        formLogin.createForm(formWrapper?.formConfig?.formConfigLoginPage).then(form => {
-            this.#builderFormService.setForm(form);
-            this.forms.push({form, url: currentPath?.parentPath + '/settings-login'});
-        }).catch(() => {});
-
+        
         const formSuccess = new FormSuccess();
         formSuccess.createForm(formWrapper?.formConfig?.formConfigSuccessPage).then(form => {
             this.#builderFormService.setForm(form);
             this.forms.push({form, url: currentPath?.parentPath + '/settings-success'});
-        }).catch(() => {});
+        }).catch((e) => {
+            console.log(e);
+        });
 
         // Create the Variables form
         const formVariables = new FormVariables();
@@ -116,6 +113,17 @@ export class BuilderPage extends Page {
             this.#builderFormService.setForm(form); 
             this.forms.push({form, url: currentPath?.parentPath + '/settings-variables'});
         }).catch(() => {});
+
+        Http.get(`${Router.tenantPath}/api/idp/form/list`).then((authProviderDtos: FormAuthProviderDto[]) => {
+            const formLogin = new FormLogin();
+            formLogin.createForm(formWrapper?.formConfig?.formConfigLoginPage, authProviderDtos).then(form => {
+                this.#builderFormService.setForm(form);
+                this.forms.push({form, url: currentPath?.parentPath + '/settings-login'});
+            }).catch(() => {});
+        })
+        .catch((error) => {
+            console.error(error);
+        });
 
         this.isLoaded = true;
     }

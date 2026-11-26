@@ -15,11 +15,11 @@ export class ConditionParser {
      * @param condition 
      * @param func 
      */
-    constructor(condition: ConditionDto, func?: (value: boolean) => void) {
+    constructor(formName: string, condition: ConditionDto, func?: (value: boolean) => void) {
         this.condition = condition;
         this.func = func;
 
-        FormService.addEventListener((form) => {
+        FormService.addEventListener(formName, (form) => {
             this.#bindFieldToConditions(this.condition, form);
         });
     }
@@ -64,11 +64,11 @@ export class ConditionParser {
         if (condition.var1) {
             const conditionalValues = JsonPathFinder.extractVariablesFromInput(condition.var1);
             if (conditionalValues) {
+                
                 condition.var1Fields = new Map();
                 for (const value of conditionalValues) {
                     JsonPathFinder.eval(value, form);
                     condition.var1Fields.set(value.word, value);
-
                     this.#setFieldListener(value.fields)
                 }
             }
@@ -142,6 +142,12 @@ export class ConditionParser {
         if (!condition.operator) {
             throw new Error('Simple conditions must have an operator.');
         }
+        if (!condition.var1) {
+            throw new Error('Simple conditions must have a left-hand variable.');
+        }
+        if (!condition.var2) {
+            throw new Error('Simple conditions must have a right-hand variable.');
+        }        
 
         const var1List = this.getParsedValues(condition.var1, condition.var1Fields);
         const var2List = this.getParsedValues(condition.var2, condition.var2Fields);

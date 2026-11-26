@@ -1,4 +1,5 @@
 import { OptionDto, TranslationDto } from '../model/types';
+import { Form } from './form';
 import { InputNucleus } from './interface/input-base';
 
 /**
@@ -9,10 +10,10 @@ export class RadioField extends InputNucleus {
 
     inputElements: { radio: HTMLInputElement; label: HTMLLabelElement }[] = [];
 
-    constructor(name: string, labels: TranslationDto[] | undefined, classes: string, id: string | undefined = undefined) {
-        super(document.createElement('div'), name, labels, id);
+    constructor(name: string, labels?: TranslationDto[], form?: Form, classes?: string, id?: string) {
+        super(document.createElement('div'), name, labels, form, id);
         
-        this.classes = classes;
+        this.classes = classes?? '';
 
         this.createElement();
     }
@@ -157,7 +158,7 @@ export class RadioField extends InputNucleus {
      * @returns 
      */
     clone() {
-        const radioField = new RadioField(this.name, this.labels, this.classes, this.id);
+        const radioField = new RadioField(this.name, this.labels, this.form, this.classes, this.id);
 
         [...this.inputElements].forEach(inputElement => {
             const radioElement = inputElement.radio as HTMLElement;

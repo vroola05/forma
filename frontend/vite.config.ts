@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite';
-import { resolve } from 'path';
 import dns from 'dns';
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
 
 dns.setDefaultResultOrder('ipv4first');
 
@@ -65,12 +65,12 @@ export default defineConfig({
       '^/[a-zA-Z0-9_-]+/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,
-        secure: false,
-        // configure: (proxy) => {
-        //   proxy.on('proxyReq', (proxyReq, req) => {
-        //     console.log(' [Vite Proxy] Forwarding:', req.method, req.url);
-        //   });
-        // }
+        secure: false
+      },
+      '^/[a-zA-Z0-9_-]+/(oauth2|login/oauth2)': {
+        target: 'http://localhost:8080',
+        changeOrigin: false, // Belangrijk: behoud 'localhost:5173' als Host header!
+        secure: false
       }
     }
   }
