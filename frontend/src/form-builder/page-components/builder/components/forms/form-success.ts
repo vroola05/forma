@@ -7,7 +7,7 @@ import { FormConfigSuccessPageDto, FormDto, Operator } from "../../../../../shar
 import { Lang } from "../../../../../shared/services/lang";
 
 export class FormSuccess {
-    createForm(successPageDto: FormConfigSuccessPageDto | undefined) {
+    createForm(successPageDto?: FormConfigSuccessPageDto) {
         const formDto: FormDto = {
             "name": "success-form",
             "label": Lang.get('page.settings.generic'),

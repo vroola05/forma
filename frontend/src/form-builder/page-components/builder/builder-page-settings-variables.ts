@@ -18,7 +18,6 @@ export class BuilderPageSettingsVariables extends Page {
         this.setTitle(Lang.get('page.settings.vars'));
         this.#builderLayout = new BuilderLayout();
 
-        
     }
 
     /**

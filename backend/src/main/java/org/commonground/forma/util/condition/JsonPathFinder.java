@@ -158,7 +158,7 @@ public class JsonPathFinder {
         // 3. Afhandelen van Deep Scan (..)
         if ("..".equals(token)) {
             if (tokenIndex + 1 >= tokens.size())
-                throw new RuntimeException("Pad mag niet eindigen met ..");
+                throw new RuntimeException("{path.finder.error.ends.with}");
             String nextToken = tokens.get(tokenIndex + 1);
             // Zoek recursief in de hele boom naar velden die matchen met nextToken
             searchDeep(currentField, nextToken, tokens, tokenIndex + 2, results);
@@ -229,10 +229,10 @@ public class JsonPathFinder {
 
         Matcher matcher = RegexConstants.PAGE_VAR.matcher(input);
         while (matcher.find()) {
-            String fullMatch = matcher.group(1);
+            String fullMatch = matcher.group(0);
             String cleanName = matcher.group(2);
 
-            conditionVariables.add(new ConditionVariable(fullMatch, cleanName, getVariableType(fullMatch)));
+            conditionVariables.add(new ConditionVariable(fullMatch, cleanName, getVariableType(matcher.group(1))));
         }
         
 
@@ -240,13 +240,11 @@ public class JsonPathFinder {
     }
 
     private ConditionVariableType getVariableType(String variable) {
-        if (variable == null || variable.isEmpty()) {
-            return ConditionVariableType.TEXT;
-        } else if (variable.startsWith("$")) {
-            return ConditionVariableType.FORM_VALUE;
-        } if (variable.startsWith("#")) {
-            return ConditionVariableType.PAGE_VAR;
-        }
-        return ConditionVariableType.TEXT;
+        return "$".equals(variable) 
+            ? ConditionVariableType.FORM_VALUE 
+            : "#".equals(variable)
+                ? ConditionVariableType.PAGE_VAR 
+                : ConditionVariableType.TEXT;
+
     }
 }

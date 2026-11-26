@@ -27,10 +27,10 @@ public class ConditionParser {
     public static boolean checkCondition(Field field, Condition condition) {
         if(condition.getConditionType() == ConditionType.COMPOSITE.getValue()) {
             if( condition.getLogicalOperator() == null) {
-                throw new IllegalArgumentException("Composite conditions must have a logical operator.");
+                throw new IllegalArgumentException("{conditions.error.required.logical}");
             }
             if( condition.getConditions() == null || condition.getConditions().isEmpty()) {
-                throw new IllegalArgumentException("Composite conditions must contain at least one sub-condition.");
+                throw new IllegalArgumentException("{conditions.error.required.conditions}");
             }
 
             if (condition.getLogicalOperator() == LogicalOperator.AND) {
@@ -41,15 +41,15 @@ public class ConditionParser {
             }
         } else {
             if (condition.getOperator() == null) {
-                throw new IllegalArgumentException("Operator is required.");
+                throw new IllegalArgumentException("{conditions.error.required.operator}");
             }
 
             if (condition.getVar1() == null || condition.getVar1().isEmpty()) {
-                throw new IllegalArgumentException("Var1 is required.");
+                throw new IllegalArgumentException("{conditions.error.required.var1}");
             }
 
             if (condition.getVar2() == null || condition.getVar2().isEmpty()) {
-                throw new IllegalArgumentException("Var2 is required.");
+                throw new IllegalArgumentException("{conditions.error.required.var1}");
             }
 
             return evaluateCondition(field, condition);
