@@ -1,4 +1,4 @@
-package org.commonground.forma.config.security.oauth;
+package org.commonground.forma.config.security.authentication.oauth;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;

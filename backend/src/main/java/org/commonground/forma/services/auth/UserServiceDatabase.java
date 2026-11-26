@@ -1,4 +1,4 @@
-package org.commonground.forma.services;
+package org.commonground.forma.services.auth;
 
 import java.util.List;
 import java.util.Set;

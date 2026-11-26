@@ -2,13 +2,14 @@ package org.commonground.forma.config;
 
 import java.io.IOException;
 
-import org.commonground.forma.config.security.FormAuthorizationManager;
-import org.commonground.forma.config.security.oauth.DatabaseClientRegistrationRepository;
-import org.commonground.forma.config.security.oauth.FormOAuth2AuthorizationRequestResolver;
-import org.commonground.forma.config.security.oauth.FormOAuth2SuccessHandler;
+import org.commonground.forma.config.security.authentication.FormAuthorizationManager;
+import org.commonground.forma.config.security.authentication.oauth.DatabaseClientRegistrationRepository;
+import org.commonground.forma.config.security.authentication.oauth.FormOAuth2AuthorizationRequestResolver;
+import org.commonground.forma.config.security.authentication.oauth.FormOAuth2SuccessHandler;
 import org.commonground.forma.config.tenant.TenantContextFilter;
 import org.commonground.forma.model.settings.constants.Permissions;
-import org.commonground.forma.services.TenantUserDetailsService;
+import org.commonground.forma.services.auth.TenantUserDetailsService;
+import org.commonground.forma.services.auth.UserServiceOidcCustom;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -120,8 +121,11 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain publicFormsFilterChain(
             HttpSecurity http, 
-            FormAuthorizationManager formAuthorizationManager, DatabaseClientRegistrationRepository clientRegistrationRepository,
-        FormOAuth2SuccessHandler formOAuth2SuccessHandler, TenantContextFilter tenantContextFilter) throws Exception {
+            FormAuthorizationManager formAuthorizationManager,
+            DatabaseClientRegistrationRepository clientRegistrationRepository,
+            FormOAuth2SuccessHandler formOAuth2SuccessHandler,
+            TenantContextFilter tenantContextFilter,
+            UserServiceOidcCustom userServiceOidcCustom) throws Exception {
         
         
 
@@ -176,6 +180,9 @@ public class SecurityConfig {
                     .baseUri(BASE_OAUTH_CODE_URI + "/*")
                 )
                 .clientRegistrationRepository(clientRegistrationRepository)
+                .userInfoEndpoint(userInfo -> userInfo
+                    .oidcUserService(userServiceOidcCustom)
+                )
                 .successHandler(formOAuth2SuccessHandler)
             );
 

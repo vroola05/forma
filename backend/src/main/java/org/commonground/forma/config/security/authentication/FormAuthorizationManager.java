@@ -1,4 +1,4 @@
-package org.commonground.forma.config.security;
+package org.commonground.forma.config.security.authentication;
 
 import java.util.List;
 import java.util.Map;
@@ -64,14 +64,12 @@ public class FormAuthorizationManager implements AuthorizationManager<RequestAut
         }
 
         if (auth instanceof OAuth2AuthenticationToken oauthToken) {
-            // 1. Check of het formulier überhaupt OAuth2/Entra-login toestaat
             Set<TenantAuthProviderEntity> allowedProviders = formDefinitionEntity.getAllowedProviders();
             if (allowedProviders == null || allowedProviders.isEmpty()) {
                 return new AuthorizationDecision(false);
             }
 
             String usedProviderId = oauthToken.getAuthorizedClientRegistrationId();
-            // 2. Check of de gebruiker is ingelogd via een van de providers die aan dit formulier zijn gekoppeld
              Optional<TenantAuthProviderEntity> tenantAuthProviderEntityOptional = allowedProviders.stream()
                 .filter(provider -> provider.getId().toString().equals(usedProviderId)).findFirst();
 
@@ -80,14 +78,11 @@ public class FormAuthorizationManager implements AuthorizationManager<RequestAut
             }
 
             TenantAuthProviderEntity tenantAuthProviderEntity = tenantAuthProviderEntityOptional.get();
-            // 3. Check of er voor dit formulier ook specifieke groepen vereist zijn (bijv. KCC)
             Set<TenantAuthProviderGroupEntity> allowedGroups = tenantAuthProviderEntity.getGroupMapping(); // Pas aan naar jouw veldnaam
             
-            // Als er geen specifieke groepen zijn ingesteld op het formulier, mag iedereen van die provider erin:
             if (allowedGroups == null || allowedGroups.isEmpty()) {
                 return new AuthorizationDecision(true);
             }
-
 
             boolean isInAllowedGroup = false;
             if (oauthToken.getPrincipal() instanceof OidcUser oidcUser) {

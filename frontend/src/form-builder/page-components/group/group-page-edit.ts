@@ -10,10 +10,11 @@ import { footerService } from '../../../shared/services/footer-service';
 
 import { Form } from '../../../shared/form-components/form';
 import { FormGroup } from '../../../shared/form-components/form-group';
+import { threadId } from 'worker_threads';
 
 export class GroupPageEdit extends SettingsPage {
     form: Form | null = null;
-    group: GroupRegisterRequestDto = {};
+    group?: GroupRegisterRequestDto;
     isNew = false;
 
     constructor() {
@@ -22,19 +23,7 @@ export class GroupPageEdit extends SettingsPage {
         const id = Router.getUrlParameter('id') as string;
         this.isNew = id === 'new';
 
-
-        Http.get(`${Router.tenantPath}/api/groups/permissions/list`)
-            .then((permissions) => {
-                if (this.isNew) {
-                    this.createContent(permissions);
-                    return;
-                } else {
-                    this.#getGroup(id, permissions);
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        void this.createContent(id);
     }
 
     afterInit() {
@@ -44,19 +33,12 @@ export class GroupPageEdit extends SettingsPage {
         }));
     }
 
-    #getGroup(id: string, permissions: string[]) {
-        Http.get(`${Router.tenantPath}/api/groups/${id}`)
-            .then((group: GroupRegisterRequestDto) => {
-                this.group = group;
+    async createContent(id: string) {
+        const permissions: string[] = await Http.get(`${Router.tenantPath}/api/groups/permissions/list`);
 
-                this.createContent(permissions);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }
-
-    createContent(permissions: string[]) {
+        if (!this.isNew) {
+            this.group = await Http.get(`${Router.tenantPath}/api/groups/${id}`);
+        }
 
         const formDto: FormDto = {
             "id": "group-form",
@@ -116,7 +98,7 @@ export class GroupPageEdit extends SettingsPage {
 
 
     save() {
-        if (!this.form || !this.group || (this.isNew && !this.group.id)) {
+        if (!this.form || (!this.group && !this.isNew) || (this.isNew && this.group)) {
             return;
         }
 
@@ -125,22 +107,23 @@ export class GroupPageEdit extends SettingsPage {
         }
 
         const formGroup = this.form.getTabField('group-tab', 'group-group') as FormGroup;
-
         const permissions = formGroup.getField('permissions')?.getOptions().map(option => option.value);
 
-        this.group.name = formGroup.getFieldValue('name');
-
-        this.group.permissions = permissions;
+        const group: GroupRegisterRequestDto = {
+            id: this.group?.id,
+            name: formGroup.getFieldValue('name'),
+            permissions: permissions
+        }
 
         if (this.isNew) {
-            this.post(formGroup);
+            this.post(formGroup, group);
         } else {
-            this.put(formGroup);
+            this.put(formGroup, group);
         }
     }
 
-    put(formGroup: FormGroup) {
-        Http.put(`${Router.tenantPath}/api/groups/${this.group.id}`, this.group, {})
+    put(formGroup: FormGroup, group: GroupRegisterRequestDto) {
+        Http.put(`${Router.tenantPath}/api/groups/${group.id}`, group, {})
             .then((group) => {
                 Router.route('/admin/page/groups');
             })
@@ -151,8 +134,8 @@ export class GroupPageEdit extends SettingsPage {
             });
     }
 
-    post(formGroup: FormGroup) {
-        Http.post(`${Router.tenantPath}/api/groups`, this.group, {})
+    post(formGroup: FormGroup, group: GroupRegisterRequestDto) {
+        Http.post(`${Router.tenantPath}/api/groups`, group, {})
             .then((group) => {
                 Router.route('/admin/page/groups');
             })

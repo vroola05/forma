@@ -1,4 +1,4 @@
-package org.commonground.forma.config.security.oauth;
+package org.commonground.forma.config.security.authentication.oauth;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -22,7 +22,6 @@ public class FormOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHand
         String tenantSlug = TenantContext.getTenant().getSlug();
 
         if (response.isCommitted()) {
-            System.out.println("Vreemd");
             return;
         }
         if (formName != null) {
@@ -40,8 +39,7 @@ public class FormOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHand
         try {
             byte[] decodedBytes = Base64.getUrlDecoder().decode(encodedState);
             String rawState = new String(decodedBytes, StandardCharsets.UTF_8);
-            
-            // Splits op de "|" om het tweede deel (formName) op te halen
+
             String[] parts = rawState.split("\\|", 2);
             return parts.length == 2 ? parts[1] : null;
         } catch (IllegalArgumentException e) {
